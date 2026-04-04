@@ -242,7 +242,8 @@ function updateUIFromState() {
   // ── Goal tracker ───────────────────────────────────────────────────
   setEl('gt-goal-text',  S.goalLabel);
   setEl('prof-goal-txt', S.goalLabel);
-  const pct = Math.round((S.completedMods.length / 20) * 100);
+  const _gtTotal = (typeof MODULES!=='undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 131;
+  const pct = Math.round((S.completedMods.length / _gtTotal) * 100);
   setEl('gt-pct', pct + '%');
   const fill = document.getElementById('gt-fill');
   if (fill) fill.style.width = pct + '%';
@@ -265,7 +266,7 @@ function updateUIFromState() {
   setEl('cert-rank',  'Top ' + (100 - percData.pct) + '%');
 
   // ── Level bar in home hero ─────────────────────────────────────────
-  const xpPerLevel = 1500;
+  const xpPerLevel = 500;
   const xpInLevel  = S.xp % xpPerLevel;
   const xpPct      = Math.round((xpInLevel / xpPerLevel) * 100);
   const xpToNext   = xpPerLevel - xpInLevel;
@@ -305,7 +306,8 @@ function updateUIFromState() {
   // ── Time to goal (profile) ────────────────────────────────────────
   const timeEl = document.getElementById('prof-time-to-goal');
   if (timeEl) {
-    const modsLeft = Math.max(0, 20 - (S.completedMods || []).length);
+    const _gtTotal2 = (typeof MODULES!=='undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 131;
+    const modsLeft = Math.max(0, _gtTotal2 - (S.completedMods || []).length);
     if (modsLeft === 0) {
       timeEl.textContent = '¡Completado!';
     } else {
@@ -370,7 +372,7 @@ function refreshUI() {
   if (gtPct) gtPct.textContent = pct + '%';
 
   // ── 3. XP bar + level (home hero) ─────────────────────────────────
-  const xpPerLevel = 1500;
+  const xpPerLevel = 500;
   const xpInLevel  = S.xp % xpPerLevel;
   const xpPct      = Math.round((xpInLevel / xpPerLevel) * 100);
   const xpFill     = document.getElementById('xp-level-fill');
@@ -411,7 +413,7 @@ function syncAllData() {
   if (gtPct) gtPct.textContent = pct + '%';
 
   // ── 3. Perfil: módulos completados + barra XP ───────────────────────
-  const xpPerLevel = 1500;
+  const xpPerLevel = 500;
   const xpInLevel  = S.xp % xpPerLevel;
   const xpPct      = Math.round((xpInLevel / xpPerLevel) * 100);
   const xpFill     = document.getElementById('xp-level-fill');
@@ -840,7 +842,7 @@ function renderModules() {
   const branch = (typeof F28_BRANCHES !== 'undefined') ? F28_BRANCHES.find(b => b.id === _activeModBranch) : null;
   const modsToShow = branch
     ? branch.mods.map(id => MODULES.find(m => m && m.id === id)).filter(Boolean)
-    : MODULES.filter(m => m);
+    : MODULES.filter(function(m){return m&&typeof m.id==='number';});
 
   const branchMap = {};
   if (typeof F28_BRANCHES !== 'undefined') {
@@ -3414,7 +3416,7 @@ function openCharCard() {
 
   const titleData    = getLevelTitle(S.xp || 0);
   const completed    = S.completedMods || [];
-  const totalMods    = MODULES.filter(m => m).length;
+  const totalMods    = MODULES.filter(function(m){return m&&typeof m.id==='number';}).length;
   const pct          = totalMods > 0 ? Math.round((completed.length / totalMods) * 100) : 0;
   const streak       = S.streak || 0;
   const name         = S.userName || 'Explorador';
@@ -4435,6 +4437,7 @@ function completeModule() {
     if (typeof F34_onXPGained === 'function') F34_onXPGained(xpGain);
     S.patrimony    += 500;
     S.invested     += 200;
+    if (typeof recalcPatrimony === 'function') recalcPatrimony();
     if (hasMultiplier) toast('🚀 ¡Multiplicador x2 activo!', '+' + xpGain + ' XP (doble)', 't-success');
 
     // Subir de nivel automáticamente

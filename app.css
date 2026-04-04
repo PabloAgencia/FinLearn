@@ -8401,10 +8401,10 @@ body.light-mode #ambient-canvas { opacity: 0.18; }
 }
 
 /* Light mode: reducir opacidades */
-body.light-mode .aurora-blob-a { background: radial-gradient(ellipse at 40% 40%, rgba(0,160,100,0.10) 0%, transparent 70%); }
-body.light-mode .aurora-blob-b { background: radial-gradient(ellipse at 60% 60%, rgba(100,60,200,0.08) 0%, transparent 70%); }
-body.light-mode .aurora-blob-c { background: radial-gradient(ellipse at 50% 50%, rgba(56,180,248,0.07) 0%, transparent 75%); }
-body.light-mode .aurora-blob-d { background: radial-gradient(ellipse at 50% 50%, rgba(20,180,120,0.07) 0%, transparent 75%); }
+body.light-mode .aurora-blob-a { background: radial-gradient(ellipse at 40% 40%, rgba(0,130,80,0.07) 0%, transparent 70%); mix-blend-mode: multiply; }
+body.light-mode .aurora-blob-b { background: radial-gradient(ellipse at 60% 60%, rgba(80,40,180,0.05) 0%, transparent 70%); mix-blend-mode: multiply; }
+body.light-mode .aurora-blob-c { background: radial-gradient(ellipse at 50% 50%, rgba(0,120,200,0.05) 0%, transparent 75%); mix-blend-mode: multiply; }
+body.light-mode .aurora-blob-d { background: radial-gradient(ellipse at 50% 50%, rgba(0,150,100,0.04) 0%, transparent 75%); mix-blend-mode: multiply; }
 body.light-mode #scanlines-layer { opacity: 0.3; }
 body.light-mode #vignette-layer  { opacity: 0.3; }
 
@@ -12717,6 +12717,7 @@ body.light-mode .mbt-prog { background: rgba(50,40,20,.08); }
 
 /* Variables que faltaban */
 body.light-mode {
+  --text:    #1a1e30;
   --bg3:     #d8d2c5;
   --glass-bg: rgba(255,252,245,.6);
   --glass-border: rgba(50,40,20,.12);
@@ -14998,6 +14999,9 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
   .nav-pill { padding: 3px 7px; font-size: 10px; gap: 3px; }
   .nav-pills { gap: 4px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; max-width: calc(100vw - 80px); }
   .nav-pills::-webkit-scrollbar { display: none; }
+  #game-speed-btn { display: none; }
+  #rpg-multiplier-badge { display: none; }
+  #music-control { display: none; }
 
   /* Home inner: menos padding lateral */
   .home-inner {

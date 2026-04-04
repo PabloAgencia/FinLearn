@@ -2507,38 +2507,16 @@ function _renderTutStep() {
     ).join('');
   }
 
-  // Highlight target element
   const hl   = document.getElementById('tut-highlight');
   const arr  = document.getElementById('tut-arrow');
   const card = document.getElementById('tut-card');
-  const isMobile = window.innerWidth < 480;
-
-  if (step.target && !isMobile) {
-    const el = document.getElementById(step.target);
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      if (hl) {
-        hl.style.display = 'block';
-        hl.style.top    = (rect.top  - 6)  + 'px';
-        hl.style.left   = (rect.left - 6)  + 'px';
-        hl.style.width  = (rect.width  + 12) + 'px';
-        hl.style.height = (rect.height + 12) + 'px';
-      }
-      // Position card based on pos
-      const cardH = 220;
-      if (step.pos === 'below') {
-        if (card) { card.style.top = (rect.bottom + 20) + 'px'; card.style.left = '50%'; card.style.transform = 'translateX(-50%)'; }
-        if (arr)  { arr.style.display = 'block'; arr.style.top = (rect.bottom + 10) + 'px'; arr.style.left = (rect.left + rect.width/2) + 'px'; arr.textContent = '▲'; }
-      } else {
-        if (card) { card.style.top = Math.max(8, rect.top - cardH - 20) + 'px'; card.style.left = '50%'; card.style.transform = 'translateX(-50%)'; }
-        if (arr)  { arr.style.display = 'block'; arr.style.top = (rect.top - 18) + 'px'; arr.style.left = (rect.left + rect.width/2) + 'px'; arr.textContent = '▼'; }
-      }
-    }
-  } else {
-    // Center (always on mobile, or when no target)
-    if (hl)   hl.style.display = 'none';
-    if (arr)  arr.style.display = 'none';
-    if (card) { card.style.top = '50%'; card.style.left = '50%'; card.style.transform = 'translate(-50%,-50%)'; }
+  if (hl)   hl.style.display  = 'none';
+  if (arr)  arr.style.display = 'none';
+  if (card) {
+    card.style.position  = 'fixed';
+    card.style.top       = '50%';
+    card.style.left      = '50%';
+    card.style.transform = 'translate(-50%, -50%)';
   }
 
   SFX.xp();
