@@ -835,7 +835,29 @@ function renderModules() {
     F28_BRANCHES.forEach(b => b.mods.forEach(id => { branchMap[id] = b.color; }));
   }
 
-  grid.innerHTML = modsToShow.map(m => _buildModuleCard(m, branchMap[m.id])).join('');
+  const MAX_VISIBLE = 8;
+  const isExpanded = GAME._expandedBranch === _activeModBranch;
+  const visibleMods = isExpanded ? modsToShow : modsToShow.slice(0, MAX_VISIBLE);
+  const hasMore = modsToShow.length > MAX_VISIBLE;
+
+  grid.innerHTML = visibleMods.map(m => _buildModuleCard(m, branchMap[m.id])).join('');
+
+  const existingBtn = document.getElementById('branch-show-more');
+  if (existingBtn) existingBtn.remove();
+  if (hasMore) {
+    const moreBtn = document.createElement('button');
+    moreBtn.id = 'branch-show-more';
+    moreBtn.className = 'btn btn-ghost btn-sm';
+    moreBtn.style.cssText = 'width:100%;margin-top:8px;padding:10px;border:1px dashed var(--border);border-radius:12px;';
+    moreBtn.textContent = isExpanded
+      ? '▴ Mostrar menos'
+      : `Ver todos los módulos de esta rama (${modsToShow.length - MAX_VISIBLE} más) ▾`;
+    moreBtn.onclick = function() {
+      GAME._expandedBranch = isExpanded ? null : _activeModBranch;
+      renderModules();
+    };
+    grid.parentNode.insertBefore(moreBtn, grid.nextSibling);
+  }
 
   if (wrap) wrap.style.display = 'none';
 }
@@ -872,6 +894,7 @@ function _renderBranchTabs() {
 }
 
 function switchModBranch(branchId) {
+  GAME._expandedBranch = null;
   _activeModBranch = branchId;
   _modulesExpanded = false;
   renderModules();

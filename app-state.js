@@ -264,6 +264,7 @@ const GAME = {
   currentStock: null,      // objeto del stock activo en el modal de bolsa
   stockQty: 1,
   examScore: 0,
+  _expandedBranch: null,   // rama actualmente expandida en el grid de módulos
 };
 
 
