@@ -750,7 +750,7 @@ function renderLessonNav() {
 
 const MODULES_INITIAL_COUNT = 8;  // cuántos se muestran por defecto
 let _modulesExpanded = false;
-let _activeModBranch = 'all'; // rama activa: 'all' | branch.id
+let _activeModBranch = (typeof F28_BRANCHES !== 'undefined' && F28_BRANCHES[0]) ? F28_BRANCHES[0].id : 'fundamentos';
 
 // ─── Utilidad: obtener la rama de un módulo ────────────────────
 function _getModBranch(modId) {
@@ -818,25 +818,11 @@ function renderModules() {
   const grid = document.getElementById('modules-grid');
   const wrap = document.getElementById('modules-show-more-wrap');
   const btn  = document.getElementById('modules-show-more-btn');
-  const f28  = document.getElementById('f28-skill-tree');
   if (!grid) return;
 
   // ── Tabs de rama ───────────────────────────────────────────
   _renderBranchTabs();
 
-  // ── Cuando "Todos": mostrar F28, ocultar cards ─────────────
-  if (_activeModBranch === 'all') {
-    grid.style.display = 'none';
-    grid.innerHTML = '';
-    if (wrap) wrap.style.display = 'none';
-    if (f28) f28.style.display = '';
-    // Forzar render F28
-    if (typeof F28_render === 'function') { try { F28_render(); } catch(e) {} }
-    return;
-  }
-
-  // ── Cuando rama específica: ocultar F28, mostrar cards ─────
-  if (f28) f28.style.display = 'none';
   grid.style.display = '';
 
   const branch = (typeof F28_BRANCHES !== 'undefined') ? F28_BRANCHES.find(b => b.id === _activeModBranch) : null;
@@ -867,7 +853,7 @@ function _renderBranchTabs() {
   if (typeof F28_BRANCHES === 'undefined') return;
 
   const completed = S.completedMods || [];
-  const tabs = [{ id: 'all', label: 'Todos', emoji: '📚', color: 'var(--accent)' }, ...F28_BRANCHES];
+  const tabs = [...F28_BRANCHES];
   tabsEl.innerHTML = tabs.map(b => {
     const active = _activeModBranch === b.id;
     let progress = '';
