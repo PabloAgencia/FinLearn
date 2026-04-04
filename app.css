@@ -5695,6 +5695,7 @@ a.btn {
   text-align: center;
   max-width: 340px;
   padding: 28px 24px 20px;
+  -webkit-overflow-scrolling: touch;
 }
 .dr-mega {
   border-color: rgba(240,180,41,.4) !important;
@@ -5820,6 +5821,9 @@ a.btn {
 .rl-modal {
   max-width: 360px;
   padding: 24px 20px 18px;
+  overflow-y: auto;
+  max-height: 85vh;
+  -webkit-overflow-scrolling: touch;
 }
 .rl-streak-badge {
   display: inline-block;
@@ -5837,6 +5841,10 @@ a.btn {
   position: relative;
   width: 220px;
   margin: 0 auto 16px;
+}
+@media(max-height:700px) {
+  .rl-wheel-wrap { width: 160px; }
+  #rl-wheel-svg  { width: 160px; height: 160px; }
 }
 .rl-pointer {
   position: absolute;

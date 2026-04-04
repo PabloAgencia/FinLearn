@@ -499,7 +499,8 @@ function showDailyRewardModal(dayCount) {
   }
 
   modal.innerHTML =
-    '<div class="modal-box dr-modal rl-modal">' +
+    '<div class="modal-box dr-modal rl-modal" style="position:relative">' +
+      '<button onclick="document.getElementById(\'m-daily-reward\').style.display=\'none\'" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);z-index:10;">✕</button>' +
       '<div class="dr-glow"></div>' +
       '<div class="dr-eyebrow">\uD83C\uDF81 RULETA DIARIA \u00b7 D\xcdA ' + cycleDay + ' DE 7</div>' +
       '<div class="rl-streak-badge">' + tierLabel + '</div>' +
@@ -2510,8 +2511,9 @@ function _renderTutStep() {
   const hl   = document.getElementById('tut-highlight');
   const arr  = document.getElementById('tut-arrow');
   const card = document.getElementById('tut-card');
+  const isMobile = window.innerWidth < 480;
 
-  if (step.target) {
+  if (step.target && !isMobile) {
     const el = document.getElementById(step.target);
     if (el) {
       const rect = el.getBoundingClientRect();
@@ -2533,7 +2535,7 @@ function _renderTutStep() {
       }
     }
   } else {
-    // Center
+    // Center (always on mobile, or when no target)
     if (hl)   hl.style.display = 'none';
     if (arr)  arr.style.display = 'none';
     if (card) { card.style.top = '50%'; card.style.left = '50%'; card.style.transform = 'translate(-50%,-50%)'; }
