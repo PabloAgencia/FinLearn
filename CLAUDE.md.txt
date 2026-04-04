@@ -1,0 +1,123 @@
+# FinLearn — Contexto para Claude Code
+
+## Qué es esto
+App web de educación financiera en español. Vanilla JS puro, sin frameworks, sin build step. Se abre directamente en el navegador.
+
+
+## Estado actual del proyecto
+- La app funciona y está en producción/desarrollo activo
+- NO hay sistema de módulos ES6 (no hay import/export)
+- Todos los archivos se cargan con <script> en index.html en este orden:
+  1. app-data.js
+  2. app-state.js
+  3. app-game.js
+  4. app-tools.js
+  5. app-ui.js
+  6. app-extras.js
+  7. app.js
+- Todas las variables son globales entre archivos
+
+## Cómo verificar cambios
+- Abrir index.html directamente en el navegador
+- Abrir DevTools (F12) → pestaña Console → no debe haber errores en rojo
+- Navegar a 2-3 módulos distintos y completar un quiz
+- Si algo falla: Ctrl+Z en el archivo tocado y reportar el error exacto
+
+## Archivos y su responsabilidad
+
+| Archivo       | Qué hace                                        | Tamaño        |
+|---|---|---|
+| `index.html`  | HTML completo de la app                         | 152 KB / ~4600 líneas |
+| `app-data.js` | Array MODULES[] con todos los módulos           | 555 KB / ~5500 líneas |
+| `app-state.js`| Estado global (objeto S), persistencia, modales | 67 KB         |
+| `app-ui.js`   | Todo el renderizado de pantallas                | 235 KB        |
+| `app-game.js` | XP, niveles, logros, progreso                   | 121 KB        |
+| `app-tools.js`| F28_BRANCHES, calculadoras, features avanzadas  | 525 KB        |
+| `app-extras.js`| Features adicionales                           | 174 KB        |
+| `app.js`      | Entry point principal                           | 504 KB        |
+| `app-extra.js`| (verificar si es distinto de app-extras.js)     | 8 KB          |
+## Flujo de render principal
+```
+renderHomeScreen()
+  ├── updateUIFromState()   ← actualiza DOM con estado actual
+  └── renderModules()       ← pinta el grid de módulos
+
+refreshUI()
+  ├── renderModules()
+  ├── updateProgressText()
+  └── updateUIFromState()
+```
+
+## Variables y constantes críticas
+- `xpPerLevel = 1200` — en app-ui.js, aparece 3 veces
+- `_activeModBranch` — 'all' muestra árbol F28, string muestra rama específica
+- `S` — objeto de estado global (en app-state.js)
+- `MODULES` — array de módulos (en app-data.js), IDs 0-130
+
+## Reglas al modificar
+
+### SIEMPRE
+- Buscar en TODOS los archivos antes de cambiar algo (ej: una constante puede estar en 3 sitios)
+- Confirmar qué archivos se van a tocar antes de tocarlos
+- Verificar sintaxis JS después de cada cambio
+
+### NUNCA
+- Tocar código fuera del scope de lo pedido
+- Añadir módulos con IDs que ya existen
+- Poner en F28_BRANCHES un ID que no exista en MODULES
+- Cambiar xpPerLevel a ningún valor distinto de 1200
+- Revertir los bugs ya corregidos (ver sección siguiente)
+- Usar import/export ni convertir a módulos ES6 (rompe la carga de scripts)
+- Reordenar los <script> en index.html
+
+## Bugs ya corregidos — no revertir
+1. F28_BRANCHES tenía IDs 108-130 inválidos → eliminados
+2. renderModules() se llamaba dos veces en renderHomeScreen → una eliminada
+3. grid.style.display no se gestionaba explícitamente → corregido
+4. xpPerLevel = 1500 → cambiado a 1200
+5. updateProgressText usaba MODULES.length → usa filter por typeof id
+
+## Estructura de un módulo (para añadir nuevos)
+```js
+{
+  id: N,                    // siguiente ID libre (actualmente 131+)
+  icon: '📊',
+  title: 'Título del módulo',
+  desc: 'Subtítulo corto de una línea',
+  xp: 100,
+  tag: 'CATEGORÍA',
+  tagC: 'green',            // green | blue | purple | orange | red
+  users: '12.400',
+  steps: [
+    {
+      type: 'content',
+      tag: '📖 M131',
+      title: 'Título',
+      content: '<h3>Subtítulo</h3><p>Contenido...</p>'
+    },
+    {
+      type: 'quiz',
+      tag: '🧠 TEST',
+      q: '¿Pregunta?',
+      opts: ['Opción A', 'Opción B', 'Opción C', 'Opción D'],
+      ans: 0,               // índice de la respuesta correcta
+      exp: 'Explicación.'
+    }
+  ]
+}
+```
+
+## Cómo trabajar en este proyecto con Claude Code
+```bash
+# Desde la carpeta del proyecto:
+claude
+
+# Ejemplos de instrucciones útiles:
+# "Busca todos los sitios donde aparece xpPerLevel y dime sus valores"
+# "El módulo con id 45 no aparece en ninguna rama de F28_BRANCHES, ¿por qué?"
+# "Añade soporte para modo oscuro en el componente X"
+# "Revisa app-tools.js y dime si hay algún ID en F28_BRANCHES que no exista en app-data.js"
+
+
+
+
