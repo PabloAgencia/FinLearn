@@ -15087,3 +15087,56 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
 input, select, textarea {
   font-size: max(16px, 1em);
 }
+
+/* ── Numeric Control Component ── */
+.num-ctrl-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+.num-ctrl-btn {
+  background: rgba(255,255,255,.06);
+  border: none;
+  color: var(--text1);
+  font-size: 20px;
+  font-weight: 300;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.num-ctrl-btn:active { background: rgba(0,229,160,.15); }
+.num-ctrl-wrap input {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text1);
+  padding: 0 4px;
+  min-width: 0;
+  -moz-appearance: textfield;
+}
+.num-ctrl-wrap input::-webkit-outer-spin-button,
+.num-ctrl-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.num-ctrl-suffix {
+  font-size: 13px;
+  color: var(--text3);
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+body.light-mode .num-ctrl-btn { background: rgba(50,40,20,.06); }
+body.light-mode .num-ctrl-btn:active { background: rgba(10,112,80,.12); }

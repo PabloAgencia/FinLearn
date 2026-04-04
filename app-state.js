@@ -1178,6 +1178,87 @@ function tickMissionTool(toolId) {
 }
 window.tickMissionTool = tickMissionTool;
 
+function makeNumericControl(opts) {
+  function smartStep(val) {
+    if (val < 1000)   return opts.step || 50;
+    if (val < 10000)  return opts.step || 100;
+    if (val < 100000) return opts.step || 500;
+    return opts.step || 1000;
+  }
+
+  var el = document.getElementById(opts.inputId);
+  if (!el) return;
+
+  if (!el.parentNode.classList.contains('num-ctrl-wrap')) {
+    var wrap = document.createElement('div');
+    wrap.className = 'num-ctrl-wrap';
+    el.parentNode.insertBefore(wrap, el);
+    wrap.appendChild(el);
+
+    var btnMinus = document.createElement('button');
+    btnMinus.type = 'button';
+    btnMinus.className = 'num-ctrl-btn num-ctrl-minus';
+    btnMinus.textContent = '−';
+    wrap.insertBefore(btnMinus, el);
+
+    var btnPlus = document.createElement('button');
+    btnPlus.type = 'button';
+    btnPlus.className = 'num-ctrl-btn num-ctrl-plus';
+    btnPlus.textContent = '+';
+    wrap.appendChild(btnPlus);
+
+    if (opts.suffix) {
+      var suf = document.createElement('span');
+      suf.className = 'num-ctrl-suffix';
+      suf.textContent = opts.suffix;
+      wrap.insertBefore(suf, btnPlus);
+    }
+  }
+
+  function clamp(v) {
+    return Math.min(opts.max || 9999999, Math.max(opts.min || 0, v));
+  }
+
+  function change(delta) {
+    var cur = parseFloat(el.value) || 0;
+    var step = smartStep(cur);
+    var next = clamp(cur + delta * step);
+    el.value = next;
+    if (opts.onChange) opts.onChange(next);
+  }
+
+  function setupHold(btn, dir) {
+    var timer, interval;
+    var speed = 300;
+    function startHold() {
+      change(dir);
+      timer = setTimeout(function() {
+        interval = setInterval(function() {
+          change(dir);
+          if (speed > 60) { speed -= 20; clearInterval(interval); interval = setInterval(arguments.callee, speed); }
+        }, speed);
+      }, 400);
+    }
+    function stopHold() { clearTimeout(timer); clearInterval(interval); speed = 300; }
+    btn.addEventListener('mousedown',  startHold);
+    btn.addEventListener('touchstart', startHold, { passive: true });
+    btn.addEventListener('mouseup',    stopHold);
+    btn.addEventListener('mouseleave', stopHold);
+    btn.addEventListener('touchend',   stopHold);
+  }
+
+  var w = el.parentNode;
+  var minus = w.querySelector('.num-ctrl-minus');
+  var plus  = w.querySelector('.num-ctrl-plus');
+  if (minus) setupHold(minus, -1);
+  if (plus)  setupHold(plus,  +1);
+
+  el.addEventListener('input', function() {
+    if (opts.onChange) opts.onChange(parseFloat(el.value) || 0);
+  });
+}
+window.makeNumericControl = makeNumericControl;
+
 
 /* ══════════════════════════════════════════════════════════════════
    RANKING

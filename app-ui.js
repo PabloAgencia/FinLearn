@@ -4058,9 +4058,18 @@ function obNext(step) {
       slider.value = S.monthlyContribution || 100;
       _ob_updateMonthlySlider();
     }
+    setTimeout(_ob_initNumericInputs, 50);
   } else if (step === 4) {
     _renderProjectionStepFinal();
   }
+}
+
+function _ob_initNumericInputs() {
+  if (typeof makeNumericControl !== 'function') return;
+  makeNumericControl({ inputId:'ob-savings',    min:0,  max:500000, suffix:'€', onChange: _renderProjectionStepFinal });
+  makeNumericControl({ inputId:'ob-income',     min:0,  max:30000,  suffix:'€', onChange: _renderProjectionStepFinal });
+  makeNumericControl({ inputId:'ob-debt-total', min:0,  max:500000, suffix:'€', onChange: _renderProjectionStepFinal });
+  makeNumericControl({ inputId:'ob-age',        min:16, max:80,     suffix:'',  step:1,   onChange: _renderProjectionStepFinal });
 }
 
 function _renderProjectionStepFinal() {

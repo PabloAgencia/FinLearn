@@ -58,7 +58,9 @@ function filterStocks(cat, el) {
  * delta: +1 o -1. Mínimo 1 acción.
  */
 function changeQty(delta) {
-  GAME.stockQty = Math.max(1, GAME.stockQty + delta);
+  var price = (GAME.stockPrices && GAME.currentStock) ? (GAME.stockPrices[GAME.currentStock.ticker] || GAME.currentStock.price || 1) : 1;
+  var step = price < 10 ? 5 : price < 100 ? 2 : 1;
+  GAME.stockQty = Math.max(1, GAME.stockQty + delta * step);
   updateQtyDisplay();
 }
 
@@ -190,6 +192,27 @@ function openStockDetail(ticker) {
   updateQtyDisplay();
   renderMiniChart(ticker);
   openModal('m-stock');
+  (function() {
+    function holdBtn(id, dir) {
+      var btn = document.getElementById(id);
+      if (!btn || btn.dataset.hold) return;
+      btn.dataset.hold = '1';
+      var iv, tm, sp = 250;
+      function start() {
+        changeQty(dir);
+        tm = setTimeout(function go() {
+          changeQty(dir);
+          sp = Math.max(60, sp - 30);
+          iv = setTimeout(go, sp);
+        }, 400);
+      }
+      function stop() { clearTimeout(tm); clearTimeout(iv); sp = 250; }
+      ['mousedown','touchstart'].forEach(function(e){ btn.addEventListener(e, start, {passive:true}); });
+      ['mouseup','mouseleave','touchend'].forEach(function(e){ btn.addEventListener(e, stop); });
+    }
+    holdBtn('stock-qty-minus', -1);
+    holdBtn('stock-qty-plus',   1);
+  })();
 }
 
 
