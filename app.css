@@ -3743,10 +3743,10 @@ body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
 
 /* Nav pills con font más legible */
 .nav-pill {
-  font-size: 12.5px !important;
-  padding: 6px 12px !important;
-  border-radius: 20px !important;
-  font-weight: 600 !important;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: 600;
 }
 
 /* Bottom nav más cómodo */
@@ -14999,8 +14999,9 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
     padding: 10px 14px;
   }
   .logo { font-size: 17px; }
-  .nav-pill { padding: 4px 8px; font-size: 11px; }
-  .nav-pills { gap: 6px; }
+  .nav-pill { padding: 3px 7px; font-size: 10px; gap: 3px; }
+  .nav-pills { gap: 4px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; max-width: calc(100vw - 80px); }
+  .nav-pills::-webkit-scrollbar { display: none; }
 
   /* Home inner: menos padding lateral */
   .home-inner {
@@ -15072,8 +15073,8 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
   .home-inner { padding: 10px 12px; }
   .top-nav    { padding: 8px 12px; }
   .logo       { font-size: 15px; }
-  .nav-pills  { gap: 4px; }
-  .nav-pill   { padding: 3px 7px; font-size: 10px; }
+  .nav-pills  { gap: 3px; }
+  .nav-pill   { padding: 2px 6px; font-size: 9px; }
   .perc-num   { font-size: 34px; }
   .mbt-label  { font-size: .62rem !important; }
   .mbt-tab    { padding: 7px 8px !important; }

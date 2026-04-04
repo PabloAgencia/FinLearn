@@ -4396,6 +4396,10 @@ function lessonPrev() {
  */
 function lessonNextModule() {
   if (!S.currentMod) return;
+  if (!S.lessonDone) {
+    toast('⚠️ Termina el módulo actual', 'Completa este módulo antes de pasar al siguiente', 't-warn');
+    return;
+  }
   const nextId = S.currentMod.id + 1;
   const next   = MODULES.find(m => m.id === nextId);
   if (next) { startModule(nextId); }
