@@ -5582,7 +5582,20 @@ const EXAM_QUESTION_POOL = [
     ]},
 ];
 
-
-
-
+// Fix: los módulos 108-130 quedaron dentro de EXAM_QUESTION_POOL por error.
+// Los extraemos a MODULES y limpiamos EXAM_QUESTION_POOL.
+(function() {
+  for (var i = EXAM_QUESTION_POOL.length - 1; i >= 0; i--) {
+    if (EXAM_QUESTION_POOL[i] && typeof EXAM_QUESTION_POOL[i].id === 'number') {
+      MODULES.push(EXAM_QUESTION_POOL[i]);
+      EXAM_QUESTION_POOL.splice(i, 1);
+    }
+  }
+  // Ordenar MODULES por id para consistencia
+  MODULES.sort(function(a, b) {
+    var aId = (a && typeof a.id === 'number') ? a.id : -1;
+    var bId = (b && typeof b.id === 'number') ? b.id : -1;
+    return aId - bId;
+  });
+})();
 

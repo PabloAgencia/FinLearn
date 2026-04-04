@@ -467,8 +467,8 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 }
 .sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;}
 
-/* Modules */
-.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+/* Modules — regla base, sobreescrita más abajo para móvil */
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
 .mod-card{
   background:var(--glass-bg);
   border:1px solid var(--glass-border);
@@ -3692,10 +3692,7 @@ body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
   gap: 10px;
 }
 
-/* Módulos grid más espaciado */
-.modules-grid {
-  gap: 12px !important;
-}
+/* módulos grid — solo gap override aquí */
 
 /* Modal border radius más suave */
 .modal {
@@ -3786,10 +3783,7 @@ body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
   100% { box-shadow: 0 0  6px rgba(0,229,160,.2); }
 }
 
-/* ── MODULES GRID: gap override ──── */
-.modules-grid {
-  gap: 12px !important;
-}
+/* módulos grid — gap consolidado en regla base */
 
 /* Módulo card: altura mínima uniforme para grid alineado */
 .mod-card {
@@ -14951,18 +14945,12 @@ body.light-mode .t7-table td { border-color:var(--border); }
   pointer-events: none;
 }
 
-/* Módulos — modules-grid (cuando hay tarjetas) */
-.modules-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 12px;
-}
+/* Módulos — media queries responsivas */
 @media(min-width: 600px) {
   .modules-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media(max-width: 380px) {
-  .modules-grid { grid-template-columns: 1fr !important; }
+  .modules-grid { grid-template-columns: 1fr; }
 }
 
 /* Light mode overrides para las mejoras */
