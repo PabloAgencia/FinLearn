@@ -91,7 +91,7 @@ function renderHealthScore() {
     {name:'EMERGENCIA', val:Math.min(100,Math.round((S.cash/3000)*100)), color:'#00e5a0'},
     {name:'INVERSIÓN', val:Math.min(100,Math.round((S.invested/(S.patrimony||1))*200)), color:'#0091ff'},
     {name:'CONSTANCIA', val:Math.min(100,Math.round((S.streak/30)*100)), color:'#ff6b35'},
-    {name:'APRENDIZAJE', val:Math.min(100,Math.round((S.completedMods.length/((typeof MODULES!=='undefined')?MODULES.length:30))*100)), color:'#a855f7'},
+    {name:'APRENDIZAJE', val:Math.min(100,Math.round((S.completedMods.length/((typeof MODULES!=='undefined')?MODULES.filter(function(m){return m&&typeof m.id==='number';}).length:30))*100)), color:'#a855f7'},
   ];
 
   const fEl = document.getElementById('health-factors');
@@ -362,7 +362,7 @@ function refreshUI() {
 
   // ── 2. Progress bar + "X de N módulos" text ──────────────────────
   updateProgressText();
-  const _totalMods = (typeof MODULES !== 'undefined') ? MODULES.length : 30;
+  const _totalMods = (typeof MODULES !== 'undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 30;
   const pct  = Math.round((S.completedMods.length / _totalMods) * 100);
   const fill = document.getElementById('gt-fill');
   if (fill) fill.style.width = pct + '%';
@@ -394,7 +394,7 @@ function refreshUI() {
 
 function syncAllData() {
   const n   = (S.completedMods || []).length;
-  const _totalMods = (typeof MODULES !== 'undefined') ? MODULES.length : 30;
+  const _totalMods = (typeof MODULES !== 'undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 30;
   const pct = Math.round((n / _totalMods) * 100);
 
   // ── 1. Dashboard: "X de N módulos" (todas las instancias) ──────────
@@ -595,7 +595,7 @@ function refreshSettingsSection() {
   const modsCount = document.getElementById('settings-mods-count');
   const modsPct   = document.getElementById('settings-mods-pct');
   const n = (S.completedMods || []).length;
-  const _totalMods = (typeof MODULES !== 'undefined') ? MODULES.length : 30;
+  const _totalMods = (typeof MODULES !== 'undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 30;
   if (modsCount) modsCount.textContent = n + ' de ' + _totalMods + ' módulos';
   if (modsPct)   modsPct.textContent   = Math.round((n / _totalMods) * 100) + '%';
 }
@@ -1062,7 +1062,7 @@ function renderCourseBadges() {
   const section = document.getElementById('course-badges-section');
   if (!section) return;
 
-  const total     = MODULES.length;
+  const total     = MODULES.filter(function(m){return m&&typeof m.id==='number';}).length;
   const completed = S.completedMods.length;
   const pct       = total > 0 ? (completed / total) * 100 : 0;
 
@@ -3318,11 +3318,12 @@ function renderProfileScreen() {
     }
   })();
 
-  const pct  = Math.round((S.completedMods.length / MODULES.length) * 100);
+  const _modTotal = MODULES.filter(function(m){return m&&typeof m.id==='number';}).length;
+  const pct  = Math.round((S.completedMods.length / _modTotal) * 100);
   setEl('prof-goal-pct', pct + '%');
   const fill = document.getElementById('prof-goal-fill');
   if (fill) fill.style.width = pct + '%';
-  setEl('progress-text-profile', `${S.completedMods.length} de ${MODULES.length}`);
+  setEl('progress-text-profile', `${S.completedMods.length} de ${_modTotal}`);
 
   // PRIORIDAD 2: Personality Test + Branch Certs cards
   if (typeof PROF_renderGamifCards === 'function') PROF_renderGamifCards();

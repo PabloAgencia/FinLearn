@@ -468,7 +468,7 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;}
 
 /* Modules */
-.modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:20px;}
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
 .mod-card{
   background:var(--glass-bg);
   border:1px solid var(--glass-border);
@@ -3786,40 +3786,9 @@ body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
   100% { box-shadow: 0 0  6px rgba(0,229,160,.2); }
 }
 
-/* ── MODULES GRID: perfecto con 20 módulos en móvil ──── */
-/* Grid adaptable: 1 columna en móvil estrecho,
-   2 en móvil ancho, 3 en tablet, 4 en desktop */
+/* ── MODULES GRID: gap override ──── */
 .modules-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: 12px !important;
-  /* Scroll limpio vertical sin overflow horizontal */
-  width: 100%;
-  box-sizing: border-box;
-}
-
-@media (max-width: 380px) {
-  .modules-grid {
-    grid-template-columns: 1fr; /* 1 columna en móvil muy estrecho */
-  }
-}
-
-@media (min-width: 381px) and (max-width: 640px) {
-  .modules-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil normal */
-  }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-  .modules-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 en tablet */
-  }
-}
-
-@media (min-width: 1025px) {
-  .modules-grid {
-    grid-template-columns: repeat(4, 1fr); /* 4 en desktop */
-  }
 }
 
 /* Módulo card: altura mínima uniforme para grid alineado */
@@ -7705,6 +7674,7 @@ body.scenario-active #bn-home::after {
   overflow: hidden;
   width: 100%;
   max-width: 420px;
+  position: relative;
 }
 .duel-header {
   background: linear-gradient(135deg, rgba(110,86,255,.15), rgba(0,229,160,.08));
@@ -14865,10 +14835,6 @@ body.light-mode .prof-boss-item { background: rgba(0,0,0,0.04); border-color: rg
 /* ── Legal / privacidad ── */
 .ob-legal-note { font-size:11px; color:var(--text3); text-align:center; margin-top:12px; line-height:1.5; }
 .ob-legal-note a { color:var(--accent); text-decoration:underline; }
-.app-legal-footer { display:flex; align-items:center; justify-content:center; gap:8px;
-  padding:20px 16px 40px; font-size:11px; color:var(--text3); }
-.app-legal-footer a { color:var(--text3); text-decoration:underline; }
-.alf-sep { opacity:.4; }
 
 /* ── T7 Simulador de Hipoteca ───────────────────────────────── */
 .t7-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -14986,6 +14952,9 @@ body.light-mode .t7-table td { border-color:var(--border); }
 }
 @media(min-width: 600px) {
   .modules-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media(max-width: 380px) {
+  .modules-grid { grid-template-columns: 1fr !important; }
 }
 
 /* Light mode overrides para las mejoras */
@@ -15108,8 +15077,6 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
   .perc-num   { font-size: 34px; }
   .mbt-label  { font-size: .62rem !important; }
   .mbt-tab    { padding: 7px 8px !important; }
-  /* 1 columna si la pantalla es muy estrecha */
-  .modules-grid { grid-template-columns: 1fr !important; }
   .lesson-inner { padding: 10px 10px 120px; }
 }
 

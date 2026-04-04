@@ -399,7 +399,8 @@ function openCareerModal() {
     return `
       <div class="career-option ${isCurrent?'current':''} ${isLocked?'locked':''} ${isNext?'next-up':''}"
         onclick="${(!isLocked && !isCurrent) ? `changeCareer('${career.id}')` : ''}"
-        style="cursor:${(!isLocked && !isCurrent) ? 'pointer' : 'default'};">
+        style="cursor:${(!isLocked && !isCurrent) ? 'pointer' : 'default'};"
+        ${isLocked ? `title="Necesitas ${career.xpRequired} XP para desbloquear"` : ''}>
         <div class="career-opt-left">
           <div class="career-opt-icon" style="background:${career.color}20;border-color:${career.color}40;">${career.icon}</div>
         </div>
@@ -428,7 +429,7 @@ function openCareerModal() {
       <button class="modal-close" onclick="document.getElementById('m-career').style.display='none'">✕</button>
       <div class="h3 mb4">💼 Trayectoria profesional</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">
-        Tu carrera define tus ingresos y el tipo de vida que puedes permitirte.
+        Tu nivel de XP desbloquea nuevas etapas profesionales. Cuantos más módulos completes, más carreras se abren.
         XP actual: <strong style="color:var(--accent);">${S.xp||0} XP</strong>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;max-height:65vh;overflow-y:auto;">

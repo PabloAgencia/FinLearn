@@ -3904,6 +3904,7 @@ const SCENARIOS = [
       ]},
     objective: { type:'net_worth', target: 10000, label:'Patrimonio neto positivo de €10.000', gameDays: 5*365 },
     xpReward: 1500,
+    relatedTag: 'DEUDA',
     lesson: 'La deuda no es el fin del mundo. Con el método correcto, el orden importa más que los ingresos.',
   },
   {
@@ -3916,6 +3917,7 @@ const SCENARIOS = [
       monthlyContribution: 400 },
     objective: { type:'invested', target: 300000, label:'€300.000 invertidos', gameDays: 15*365 },
     xpReward: 2000,
+    relatedTag: 'FIRE',
     lesson: 'Con una tasa de ahorro del 40%+ y retornos compuestos, la jubilación anticipada es matemáticamente posible.',
   },
   {
@@ -3927,6 +3929,7 @@ const SCENARIOS = [
     startConditions: { cash: 3000, balance: 5000, invested: 16000, lifeSalary: 2800 },
     objective: { type:'patrimony_recover', target: 40000, label:'Recuperar €40.000 de patrimonio (partiste de €21.000 tras el crash)', gameDays: 3*365 },
     xpReward: 1200,
+    relatedTag: 'INVERSIÓN',
     lesson: 'El S&P 500 tardó 5 años en recuperar el crash de 2008. Quienes mantuvieron triplicaron en 10 años.',
   },
   {
@@ -3938,6 +3941,7 @@ const SCENARIOS = [
     startConditions: { cash: 0, balance: 0, invested: 0, lifeSalary: 1800 },
     objective: { type:'patrimony', target: 500000, label:'€500.000 de patrimonio', gameDays: 30*365 },
     xpReward: 2500,
+    relatedTag: 'AHORRO',
     lesson: 'El tiempo es el activo más valioso. Empezar con nada a los 25 y ser millonario a los 55 es estadísticamente normal con DCA.',
   },
   {
@@ -3950,6 +3954,7 @@ const SCENARIOS = [
       career: 'entrepreneur' },
     objective: { type:'biz_income', target: 5000, label:'€5.000/mes de ingresos de negocios', gameDays: 5*365 },
     xpReward: 2000,
+    relatedTag: 'EMPRENDIMIENTO',
     lesson: 'El emprendedor apuesta todo al principio. El riesgo es real, pero la asimetría del retorno también.',
   },
 ];
@@ -3968,7 +3973,11 @@ function openScenariosScreen() {
     document.body.appendChild(modal);
   }
 
-  const cards = SCENARIOS.map(sc => `
+  const cards = SCENARIOS.map(sc => {
+    const relMod = (typeof MODULES !== 'undefined' && sc.relatedTag)
+      ? MODULES.find(m => m && m.tag && m.tag.toUpperCase().includes(sc.relatedTag) && !(S.completedMods||[]).includes(m.id))
+      : null;
+    return `
     <div class="scenario-card" onclick="startScenario('${sc.id}')">
       <div class="sc-header">
         <span class="sc-icon">${sc.icon}</span>
@@ -3980,7 +3989,9 @@ function openScenariosScreen() {
       </div>
       <div class="sc-tagline">${sc.tagline}</div>
       <div class="sc-obj">🎯 ${sc.objective.label}</div>
-    </div>`).join('');
+      ${relMod ? `<div onclick="event.stopPropagation();openModule(${relMod.id})" style="font-size:11px;color:var(--accent);margin-top:6px;cursor:pointer;">📖 Repasar: ${relMod.title} →</div>` : ''}
+    </div>`;
+  }).join('');
 
   modal.innerHTML = `
     <div class="modal-box" style="max-width:420px;max-height:85vh;overflow-y:auto;">
@@ -5984,6 +5995,16 @@ const DUEL_QUESTIONS = [
   { q:'¿Qué es el efecto del market timing?', opts:['Invertir en el momento perfecto (imposible de predecir)','Comprar y vender según el reloj','Un indicador técnico','La hora óptima de apertura de bolsa'], a:0 },
   { q:'¿Qué ventaja fiscal tienen los ETFs de acumulación en España?', opts:['Tributación 0%','No tributan hasta que vendes (diferimiento fiscal)','Deducción del 100%','Exención hasta 10.000€'], a:1 },
   { q:'¿Qué es el fondo de emergencia ideal?', opts:['1 mes de gastos','3-6 meses de gastos en cuenta corriente o monetario','Todo el ahorro','El 10% del patrimonio'], a:1 },
+  { q:'¿Qué es un fondo indexado?', opts:['Un fondo que supera al mercado','Un fondo que replica un índice como el S&P500','Un depósito bancario','Un bono del estado'], a:1 },
+  { q:'¿Qué significa TAE?', opts:['Tipo Anual Estimado','Tasa Anual Equivalente','Total Acumulado de Euríbor','Tipo de Ahorro Estipulado'], a:1 },
+  { q:'¿Cuánto debería ser tu fondo de emergencia mínimo?', opts:['1 mes de gastos','3-6 meses de gastos','12 meses de gastos','El 10% de tu patrimonio'], a:1 },
+  { q:'¿Qué es el rebalanceo de cartera?', opts:['Cambiar toda la cartera cada año','Vender en pérdidas para compensar','Restaurar los porcentajes objetivo de tu asignación de activos','Diversificar en más de 10 países'], a:2 },
+  { q:'¿Qué ventaja tiene el interés compuesto frente al simple?', opts:['No hay diferencia a corto plazo en más de 10 años','Los intereses también generan intereses','El capital inicial crece más rápido en el simple','Solo aplica a inversiones en bolsa'], a:1 },
+  { q:'¿Qué es el sesgo de confirmación en inversión?', opts:['Buscar solo información que confirme tu tesis','Diversificar demasiado','Vender demasiado pronto','Invertir siempre en lo mismo'], a:0 },
+  { q:'Si la inflación es del 4% y tu depósito da el 2%, ¿qué ocurre?', opts:['Ganas poder adquisitivo','Lo pierdes: tu dinero vale menos en términos reales','Es neutro, se compensan','Depende del plazo'], a:1 },
+  { q:'¿Qué es un ETF de distribución?', opts:['Reparte dividendos periódicamente','Reinvierte los dividendos','No tiene dividendos','Solo invierte en bonos'], a:0 },
+  { q:'¿Qué significa tener una cartera 60/40?', opts:['60% bonos, 40% RV','60% RV, 40% bonos','60% nacional, 40% internacional','60% largo plazo, 40% corto plazo'], a:1 },
+  { q:'¿Cuál es el riesgo principal de las tarjetas revolving?', opts:['Comisión de apertura alta','Intereses muy altos (20-30% TAE) que se acumulan fácilmente','Límite de crédito bajo','No se pueden usar en el extranjero'], a:1 },
 ];
 
 const DUEL = (() => {
@@ -6014,6 +6035,7 @@ const DUEL = (() => {
     modal.style.display = 'flex';
     modal.innerHTML = `
       <div class="modal-box duel-box">
+        <button onclick="DUEL.close()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);z-index:10;">✕</button>
         <div class="duel-header">
           <div class="duel-vs">
             <div class="duel-player">
@@ -6138,7 +6160,12 @@ const DUEL = (() => {
       </div>`;
   }
 
-  return { start, answer };
+  function close() {
+    if (_timer) clearInterval(_timer);
+    const modal = document.getElementById('m-duel');
+    if (modal) modal.style.display = 'none';
+  }
+  return { start, answer, close };
 })();
 
 /* ── FinAI API Key Configuration ─────────────────────────── */
@@ -7727,7 +7754,7 @@ function _setStats(id, val) {
 /* ── 1. Barra de progreso de módulos ───────────────────────── */
 function _renderStatsModsProgress() {
   const completed = (S.completedMods || []).length;
-  const total     = (typeof MODULES !== 'undefined') ? MODULES.length : 30;
+  const total     = (typeof MODULES !== 'undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 30;
   const pct       = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   const sub  = document.getElementById('st-mods-sub');
@@ -9881,11 +9908,17 @@ const F34_CHALLENGE_TYPES = [
                     'DIVIDENDOS','MERCADOS','JUBILACIÓN','CRYPTO','AHORRO'];
       const rng = F34_rng(seed + 1);
       const tag = tags[Math.floor(rng() * tags.length)];
+      const pendingMods = (typeof MODULES !== 'undefined' && Array.isArray(S.completedMods))
+        ? MODULES.filter(m => m && typeof m.id === 'number' && !S.completedMods.includes(m.id) && m.tag && m.tag.toUpperCase().includes(tag))
+        : [];
+      const rng2 = F34_rng(seed + 7);
+      const picked = pendingMods.length > 0 ? pendingMods[Math.floor(rng2() * pendingMods.length)] : null;
       return {
         tag,
         target: 1,
         xpReward: 100 + Math.floor(rng() * 5) * 25,  // 100, 125, 150, 175, 200
         desc: `Completa 1 módulo de la rama <strong>${tag}</strong> antes de medianoche.`,
+        moduleId: picked ? picked.id : null,
       };
     },
   },
@@ -10172,6 +10205,9 @@ function F34_render() {
       <div class="f34-body">
         <div class="f34-desc">${ch.desc}</div>
         ${progressHTML}
+        ${(ch.type === 'module' && ch.moduleId != null)
+          ? `<button onclick="openModule(${ch.moduleId})" style="margin-top:8px;width:100%;padding:10px;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);border-radius:10px;color:var(--accent);font-weight:700;font-size:12px;cursor:pointer;">→ Ir al módulo del reto</button>`
+          : ''}
         <div class="f34-reward-row">
           <div class="f34-reward-icon">🎁</div>
           <div class="f34-reward-text">Premio único de hoy — expira a medianoche</div>
