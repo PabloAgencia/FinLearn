@@ -8674,7 +8674,8 @@ body.scenario-active #finai-fab {
 
 /* Top-nav responsive */
 @media (max-width: 480px) {
-  #game-speed-btn, #music-control, #mute-all-btn { display: none !important; }
+  #game-speed-btn, #music-control { display: none !important; }
+  #mute-all-btn { display: flex !important; }
   .logo { font-size: 16px !important; }
 }
 
