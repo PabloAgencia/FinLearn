@@ -1937,7 +1937,7 @@ var BUDGET_CATS = [
 
 var _BUDGET = (function() {
   function _getState() {
-    if (!S._budget) S._budget = { income: 2000, cats: {}, saved: false };
+    if (!S._budget) S._budget = { income: S.lifeSalary || S.income || 2000, cats: {}, saved: false };
     // Default values if not set
     BUDGET_CATS.forEach(function(c) {
       if (S._budget.cats[c.id] === undefined) S._budget.cats[c.id] = Math.round(c.bench);
@@ -2113,6 +2113,13 @@ var _BUDGET = (function() {
     if (barEl) {
       var pct = b.income > 0 ? Math.min(Math.round((b.cats[catId]/b.income)*100), 100) : 0;
       // just rely on CSS for bar width
+      var actualFill = document.querySelector('#bcat-' + catId + ' .bgt-actual-fill');
+      if (actualFill && b.income > 0) {
+        var pct2 = Math.min(Math.round((b.cats[catId] / b.income) * 100), 100);
+        actualFill.style.width = pct2 + '%';
+        var c2 = BUDGET_CATS ? BUDGET_CATS.find(function(x){return x.id===catId;}) : null;
+        actualFill.style.background = c2 ? c2.color : 'var(--accent)';
+      }
     }
   }
 
