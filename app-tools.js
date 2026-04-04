@@ -8683,55 +8683,27 @@ window.F27_openModule = F27_openModule;
 const F28_BRANCHES = [
   {
     id: 'fundamentos', label: 'Fundamentos', emoji: '🏗️', color: '#00e5a0',
-    // Interés compuesto, regla 50/30/20, fondo emergencia, presupuesto,
-    // 3 fases patrimonio, balance personal, automatiza finanzas, hábitos
-    // M116: Regla del 72 | M122: Balance Personal | M129: Automatiza Finanzas
-    mods: [0, 11, 29, 39, 53, 57, 70, 75, 103, 105]
+    mods: [0, 11, 29, 39, 53, 57, 70, 75, 103, 105, 108, 114, 116, 122, 129]
   },
   {
     id: 'inversion', label: 'Inversión', emoji: '📈', color: '#60a5fa',
-    // ETFs, dividendos, bolsa, análisis técnico, value investing,
-    // bonos, ESG, cómo leer cuentas, ingresos pasivos, geopolítica,
-    // cómo leer prospecto ETF (M101), opciones/derivados, cartera permanente
-    // M117: TER/NAV fondos | M123: Bonos | M127: Rebalanceo | M128: Small Caps
-    mods: [1, 7, 16, 26, 30, 32, 34, 36, 48, 58, 61, 62, 66, 92, 96, 99, 101, 104, 106]
+    mods: [1, 7, 16, 26, 30, 32, 34, 36, 48, 58, 61, 62, 66, 92, 96, 99, 101, 104, 106, 113, 117, 121, 123, 125, 127, 128]
   },
   {
     id: 'deuda', label: 'Deuda & Riesgo', emoji: '🔄', color: '#fb923c',
-    // Deuda ciclo, deuda buena/mala, deuda inteligente, apalancamiento,
-    // negocia todo, gestión riesgo, gestión riesgo personal
-    // M120: Refinanciación de deuda
-    mods: [3, 14, 25, 31, 37, 41, 55]
+    mods: [3, 14, 25, 31, 37, 41, 55, 120]
   },
   {
     id: 'fiscalidad', label: 'Fiscalidad', emoji: '🧾', color: '#fbbf24',
-    // Fiscalidad e inflación, optimización España, fiscalidad avanzada,
-    // declaración renta, fiscal avanzada, fiscal internacional,
-    // inflación y protección, autónomos, seguridad digital,
-    // inflación real vs oficial (M100), nómada digital
-    // M119: Modelo 720 | M126: Plusvalías herencia
-    mods: [4, 9, 21, 28, 38, 42, 49, 51, 60, 68, 91, 94, 100]
+    mods: [4, 9, 21, 28, 38, 42, 49, 51, 60, 68, 91, 94, 100, 110, 119, 126]
   },
   {
     id: 'psicologia', label: 'Psicología', emoji: '🧠', color: '#c084fc',
-    // Psicología inversor, psicología gasto, mentalidad dinero,
-    // no perder cabeza crash, sesgos precio, economía comportamiento,
-    // mentalidad riqueza, mentalidad escasez, trampas precios,
-    // detectar estafas, neuromarketing financiero
-    // M118: Efecto dotación | M124: Contabilidad mental | M130: El poder del No
-    mods: [2, 6, 20, 33, 54, 59, 67, 71, 74, 95, 98, 107]
+    mods: [2, 6, 20, 33, 54, 59, 67, 71, 74, 95, 98, 107, 112, 118, 124, 130]
   },
   {
     id: 'avanzado', label: 'Avanzado', emoji: '🚀', color: '#f87171',
-    // Reto final, cripto, FIRE, mercados globales, jubilación, ingresos múltiples,
-    // inmobiliario, cripto sin hype, FIRE anticipado, startups, alquiler vs compra,
-    // inv. inmobiliaria, seguros, seguros guía, pensiones, ciclo económico,
-    // negociación salarial, independencia financiera, el millonario de al lado,
-    // expatriados, educ. hijos, ciclo inmobiliario, seguros vida,
-    // los errores, networking, vender, macroeconomía, camino millón,
-    // pensiones españolas (M102), nómada digital, método X (IF)
-    // M121: Lump Sum vs DCA | M125: Factor Investing
-    mods: [5, 8, 10, 12, 13, 15, 17, 18, 19, 22, 23, 24, 27, 35, 40, 43, 44, 45, 46, 47, 50, 52, 56, 63, 64, 65, 69, 72, 73, 76, 89, 90, 93, 97, 102]
+    mods: [5, 8, 10, 12, 13, 15, 17, 18, 19, 22, 23, 24, 27, 35, 40, 43, 44, 45, 46, 47, 50, 52, 56, 63, 64, 65, 69, 72, 73, 76, 89, 90, 93, 97, 102, 109, 111, 115]
   },
   {
     id: 'vivienda', label: 'Vivienda', emoji: '🏠', color: '#34d399',

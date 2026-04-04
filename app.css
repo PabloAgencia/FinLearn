@@ -15140,3 +15140,19 @@ input, select, textarea {
 }
 body.light-mode .num-ctrl-btn { background: rgba(50,40,20,.06); }
 body.light-mode .num-ctrl-btn:active { background: rgba(10,112,80,.12); }
+
+/* ── Módulos section card ── */
+.modules-section-card {
+  padding: 16px 14px 12px;
+  margin-bottom: 12px;
+}
+.modules-section-card .sec-head {
+  margin-bottom: 10px;
+}
+.modules-section-card .mod-branch-tabs {
+  margin-left: -2px;
+  margin-right: -2px;
+}
+@media (max-width: 480px) {
+  .modules-section-card { padding: 12px 10px 10px; }
+}

@@ -402,20 +402,22 @@
         <div id="m1-dxp-banner" style="display:none;" class="mb8"></div>
 
         <!-- ① MÓDULOS — primera sección ────────────────────── -->
-        <div class="sec-head mb12">
-          <div class="sec-title">📚 Módulos de aprendizaje</div>
-          <button class="btn btn-ghost btn-sm" onclick="goTo('rank')">Ranking →</button>
-        </div>
+        <div class="card modules-section-card">
+          <div class="sec-head mb12">
+            <div class="sec-title">📚 Módulos de aprendizaje</div>
+            <button class="btn btn-ghost btn-sm" onclick="goTo('rank')">Ranking →</button>
+          </div>
 
-        <!-- F28 — SKILL TREE (solo visible en tab "Todos") ──── -->
-        <div id="f28-skill-tree" class="f28-wrap mb8"></div>
+          <!-- F28 — SKILL TREE (solo visible en tab "Todos") ──── -->
+          <div id="f28-skill-tree" class="f28-wrap mb8"></div>
 
-        <!-- Branch tabs + cards (visibles en todo momento) ──── -->
-        <div class="modules-grid" id="modules-grid"></div>
-        <div id="modules-show-more-wrap" style="text-align:center;margin-bottom:16px;display:none;">
-          <button class="btn btn-ghost btn-sm" id="modules-show-more-btn" onclick="toggleModulesExpand()" style="width:100%;padding:10px;">
-            Ver todos los módulos ▾
-          </button>
+          <!-- Branch tabs + cards (visibles al seleccionar rama) ── -->
+          <div class="modules-grid" id="modules-grid"></div>
+          <div id="modules-show-more-wrap" style="text-align:center;margin-top:8px;display:none;">
+            <button class="btn btn-ghost btn-sm" id="modules-show-more-btn" onclick="toggleModulesExpand()" style="width:100%;padding:10px;">
+              Ver todos los módulos ▾
+            </button>
+          </div>
         </div>
 
         <!-- ② HERO CARD COMPACTO ────────────────────────────── -->
