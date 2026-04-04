@@ -3649,7 +3649,7 @@ function _renderFacts() {
     if (src) { src.style.opacity = '0'; setTimeout(() => { src.textContent = f.source || ''; src.style.opacity = '1'; }, 300); }
   };
   show(0);
-  setInterval(() => { idx = (idx + 1) % FINANCIAL_FACTS.length; show(idx); }, 9000);
+  setInterval(() => { idx = (idx + 1) % FINANCIAL_FACTS.length; show(idx); }, 8000);
 }
 
 /**

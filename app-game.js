@@ -58,9 +58,7 @@ function filterStocks(cat, el) {
  * delta: +1 o -1. Mínimo 1 acción.
  */
 function changeQty(delta) {
-  var price = (GAME.stockPrices && GAME.currentStock) ? (GAME.stockPrices[GAME.currentStock.ticker] || GAME.currentStock.price || 1) : 1;
-  var step = price < 10 ? 5 : price < 100 ? 2 : 1;
-  GAME.stockQty = Math.max(1, GAME.stockQty + delta * step);
+  GAME.stockQty = Math.max(1, (GAME.stockQty || 1) + delta);
   updateQtyDisplay();
 }
 
@@ -202,9 +200,9 @@ function openStockDetail(ticker) {
         changeQty(dir);
         tm = setTimeout(function go() {
           changeQty(dir);
-          sp = Math.max(60, sp - 30);
+          sp = Math.max(150, sp - 15);
           iv = setTimeout(go, sp);
-        }, 400);
+        }, 600);
       }
       function stop() { clearTimeout(tm); clearTimeout(iv); sp = 250; }
       ['mousedown','touchstart'].forEach(function(e){ btn.addEventListener(e, start, {passive:true}); });

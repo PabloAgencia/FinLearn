@@ -2362,7 +2362,8 @@ const MUSIC = (() => {
         </button>
         <div class="music-vol-wrap">
           <input type="range" class="music-vol-slider" min="0" max="100" value="${vol}"
-            oninput="const v=this.value/100; MUSIC.setVolume(v); window._savedMusicVol=v; document.getElementById('music-vol-pct').textContent=this.value+'%'"
+            style="--val:${vol}%"
+            oninput="const v=this.value/100; MUSIC.setVolume(v); window._savedMusicVol=v; document.getElementById('music-vol-pct').textContent=this.value+'%'; this.style.setProperty('--val',this.value+'%');"
             title="Volumen">
           <span class="music-vol-pct" id="music-vol-pct">${vol}%</span>
         </div>
@@ -4101,6 +4102,45 @@ function _updateScenarioBanner(sc) {
     </div>`;
 }
 
+function _triggerScenarioEvent(sc) {
+  const events = {
+    debt_hell: [{ q:'¿Qué deuda atacas primero?', opts:[
+      { label:'La de mayor interés (tarjeta 24% TAE)', xp:80, effect: s => { const d = s.debts.find(x=>x.rate>=20); if(d) d.balance = Math.max(0, d.balance - 800); } },
+      { label:'La más pequeña (efecto psicológico)', xp:40, effect: s => { const d = s.debts.slice().sort((a,b)=>a.balance-b.balance)[0]; if(d) d.balance = Math.max(0, d.balance - 500); } },
+      { label:'Pago mínimo a todas', xp:10, effect: ()=>{} },
+    ]}],
+    early_retirement: [{ q:'El mercado cae un 20%. ¿Qué haces?', opts:[
+      { label:'Compro más, es una oportunidad', xp:100, effect: s => { s.invested = (s.invested||0) * 0.8 + 2000; } },
+      { label:'Mantengo mi DCA sin cambios', xp:60, effect: ()=>{} },
+      { label:'Espero a que se estabilice', xp:0, effect: s => { s.invested = (s.invested||0) * 0.8; } },
+    ]}],
+    from_zero: [{ q:'Recibes un bonus de €1.000. ¿Qué haces?', opts:[
+      { label:'Todo al fondo de emergencia primero', xp:70, effect: s => { s.cash = (s.cash||0) + 1000; } },
+      { label:'70% invertir, 30% fondo emergencia', xp:100, effect: s => { s.invested = (s.invested||0) + 700; s.cash = (s.cash||0) + 300; } },
+      { label:'Me lo gasto, me lo merezco', xp:0, effect: ()=>{} },
+    ]}],
+  };
+  const pool = events[sc.id];
+  if (!pool) return;
+  const ev = pool[Math.floor(Math.random() * pool.length)];
+  let modal = document.getElementById('m-scenario-event');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-scenario-event';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `<div class="modal-box" style="max-width:380px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:8px;">⚡</div>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;margin-bottom:6px;">Decisión del escenario</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">${ev.q}</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${ev.opts.map(o => `<button class="btn btn-secondary" onclick="(${o.effect.toString()})(S);S.xp+=${o.xp};if(${o.xp}>0)spawnXP('+${o.xp} XP');saveState();updateUIFromState();document.getElementById('m-scenario-event').style.display='none';toast('✅ Decisión tomada','+${o.xp} XP','t-success');">${o.label}${o.xp>0?` <span style="color:var(--accent);font-size:10px;">+${o.xp}XP</span>`:''}</button>`).join('')}
+    </div>
+  </div>`;
+  modal.style.display = 'flex';
+}
+
 function _checkScenarioCompletion() {
   if (!_activeScenario) return;
   const sc  = _activeScenario;
@@ -4115,6 +4155,13 @@ function _checkScenarioCompletion() {
 
   const daysElapsed = S.gameDay - _scenarioStartDay;
   const failed      = daysElapsed > obj.gameDays;
+
+  // Decision events every 30 game days
+  const lastEvent = S._lastScenarioEventDay || 0;
+  if (daysElapsed > 0 && (daysElapsed - lastEvent) >= 30) {
+    S._lastScenarioEventDay = daysElapsed;
+    _triggerScenarioEvent(sc);
+  }
 
   // Don't allow instant win — min 3 game days must pass
   if (daysElapsed < 3) return;
@@ -6826,7 +6873,7 @@ const MISSION_POOL = [
   {
     id:'m_dca1',      icon:'🎯', diff:'easy',
     title:'Pregunta del día',
-    desc:'Responde la Acción del día (tarjeta azul en inicio)',
+    desc:'Responde la pregunta financiera del día en la pantalla de inicio',
     type:'dca', goal:1, xp:60,
   },
   {
@@ -8695,15 +8742,15 @@ const F28_BRANCHES = [
   },
   {
     id: 'fiscalidad', label: 'Fiscalidad', emoji: '🧾', color: '#fbbf24',
-    mods: [4, 9, 21, 28, 38, 42, 49, 51, 60, 68, 91, 94, 100, 110, 119, 126]
+    mods: [4, 9, 21, 28, 38, 42, 49, 51, 60, 68, 83, 91, 94, 100, 110, 119, 126]
   },
   {
     id: 'psicologia', label: 'Psicología', emoji: '🧠', color: '#c084fc',
-    mods: [2, 6, 20, 33, 54, 59, 67, 71, 74, 95, 98, 107, 112, 118, 124, 130]
+    mods: [2, 6, 20, 33, 54, 59, 67, 71, 74, 78, 95, 98, 107, 112, 118, 124, 130]
   },
   {
     id: 'avanzado', label: 'Avanzado', emoji: '🚀', color: '#f87171',
-    mods: [5, 8, 10, 12, 13, 15, 17, 18, 19, 22, 23, 24, 27, 35, 40, 43, 44, 45, 46, 47, 50, 52, 56, 63, 64, 65, 69, 72, 73, 76, 89, 90, 93, 97, 102, 109, 111, 115]
+    mods: [5, 8, 10, 12, 13, 15, 17, 18, 19, 22, 23, 24, 27, 35, 40, 43, 44, 45, 46, 47, 50, 52, 56, 63, 64, 65, 69, 72, 73, 76, 77, 79, 80, 81, 82, 89, 90, 93, 97, 102, 109, 111, 115]
   },
   {
     id: 'vivienda', label: 'Vivienda', emoji: '🏠', color: '#34d399',
