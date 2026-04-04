@@ -477,7 +477,7 @@ function simulateMonthlyGrowth() {
  */
 function calcHealthScore() {
   let score = 0;
-  const income         = S.income || 2000;
+  const income         = S.lifeSalary || S.income || 2000;
   const monthlyExp     = income * 0.7;
   const emergencyTarget= Math.max(monthlyExp * 3, 3000);
   const debtTotal      = (S.debts || []).reduce((s,d) => s + (d.balance||0), 0);
@@ -489,7 +489,7 @@ function calcHealthScore() {
   score += Math.min(25, (S.invested / totalPat) * 50);
   // 3. Racha y aprendizaje (25 pts)
   score += Math.min(15, (S.streak / 30) * 15);
-  score += Math.min(10, (S.completedMods.length / ((typeof MODULES !== 'undefined') ? MODULES.length : 30)) * 10);
+  score += Math.min(10, (S.completedMods.length / ((typeof MODULES !== 'undefined') ? MODULES.filter(function(m){return m&&typeof m.id==='number';}).length : 30)) * 10);
   // 4. Ratio deuda/ingresos anuales (25 pts)
   const annualIncome = income * 12;
   if (annualIncome > 0) score += Math.max(0, 25 - (debtTotal / annualIncome) * 25);

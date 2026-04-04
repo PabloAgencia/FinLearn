@@ -388,12 +388,12 @@ function openCareerModal() {
   }
 
   const careerList = CAREERS.map((career, idx) => {
-    const isCurrent  = career.id === (S.career || 'intern');
+    const isCurrent  = career.id === (S.career || 'junior');
     const canChange  = S.xp >= (career.xpRequired || 0);
     const isLocked   = !canChange && !isCurrent;
     const xpNeeded   = Math.max(0, (career.xpRequired||0) - (S.xp||0));
     const careerIds  = CAREERS.map(c => c.id);
-    const currentIdx = careerIds.indexOf(S.career || 'intern');
+    const currentIdx = careerIds.indexOf(S.career || 'junior');
     const isNext     = idx === currentIdx + 1;
 
     return `
