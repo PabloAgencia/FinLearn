@@ -1638,8 +1638,11 @@ function renderHomeRank() {
   const top  = list.slice(0, 5);
   const me   = list.find(r => r.me);
   const rows = (me && !top.includes(me)) ? [...top, me] : top;
+  const html = rows.map(rankRow).join('');
   const el = document.getElementById('home-rank-list');
-  if (el) el.innerHTML = rows.map(rankRow).join('');
+  if (el) el.innerHTML = html;
+  const profileEl = document.getElementById('home-rank-list-profile');
+  if (profileEl) profileEl.innerHTML = html;
 }
 
 
@@ -2144,7 +2147,9 @@ function renderHomeScreen() {
   updateUIFromState();
   renderModules();
   renderHomeRank();
-  renderChallengeMembers();
+  // renderChallengeMembers(); — chal-members removed from home
+  if (typeof F31_renderBadges === 'function') F31_renderBadges('f31-profile-badges');
+  if (typeof F32_render === 'function') F32_render('f32-profile-league');
   renderHealthScore();
   renderFinancialProfile();
   renderTemporalProgress();

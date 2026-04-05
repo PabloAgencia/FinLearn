@@ -489,9 +489,6 @@
         </div>
 
         <!-- ② PATRIMONY CHART — curva histórica ─────────────── -->
-        <!-- CAMINO DE INICIO: widget para usuarios nuevos -->
-        <div id="first-path-widget" style="display:none;"></div>
-
         <!-- ══════════════════════════════════════════════════════
              F27 — PLAN DE ACCIÓN PERSONALIZADO
         ══════════════════════════════════════════════════════ -->
@@ -694,16 +691,6 @@
 
         <!-- M3 — FRIEND STREAK ─────────────────────────────── -->
         <div id="m3-friend-streak" class="mb16"></div>
-
-        <!-- F31 — BADGES DE IDENTIDAD ──────────────────────── -->
-        <div class="f31-home-section mb16">
-          <div class="sec-head mb8"><div class="sec-title">🏅 Mis Badges</div></div>
-          <div id="f31-home-badges" class="f31-badges-row"></div>
-        </div>
-
-        <!-- F32 — LIGAS SEMANALES ──────────────────────────── -->
-        <div id="f32-league-widget" class="mb16"></div>
-
         <!-- F30 — MISIONES GRUPALES ─────────────────────────── -->
         <div id="f30-group-mission" class="mb16"></div>
 
@@ -743,24 +730,6 @@
           <div id="id-prog-fill"></div>
           <div id="id-current-tag-old"></div>
         </div>
-
-        <!-- ⑧ RETO SEMANAL — compacto ───────────────────────── -->
-        <div class="chal-compact mb16">
-          <div class="chal-compact-left">
-            <div class="tag tag-orange" style="margin-bottom:6px;">🔥 Reto 7 días</div>
-            <div style="font-size:12px;color:var(--text2);">Termina en <strong id="chal-countdown" style="color:var(--text1);">—</strong></div>
-          </div>
-          <button class="btn btn-fire btn-sm" onclick="openModal('m-challenge')">Unirse</button>
-        </div>
-        <div id="chal-members" style="display:none;"></div>
-
-        <!-- ⑨ RANKING PREVIEW ─────────────────────────────── -->
-        <div class="sec-head mb12">
-          <div class="sec-title">🏆 Ranking semanal</div>
-          <button class="btn btn-ghost btn-sm" onclick="goTo('rank')">Ver todo →</button>
-        </div>
-        <div id="home-rank-list" class="mb16"></div>
-
       </div><!-- /home-inner -->
     </div>
     <!-- ══════════════════════════════════════
@@ -1001,6 +970,11 @@
         <div class="ach-summary" style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:8px;"></div>
         <div class="ach-grid" id="ach-grid"></div>
 
+        <!-- F31 Badges / F32 Liga / Ranking — movidos desde home -->
+        <div id="f31-profile-badges" class="f31-badges-row" style="margin:12px 0;"></div>
+        <div id="f32-profile-league" class="mb16"></div>
+        <div id="home-rank-list-profile" class="mb16"></div>
+
         <!-- F19: Test de personalidad inversora -->
         <div class="sec-head mb10" style="margin-top:20px;"><div class="sec-title">&#x1F9E0; Tu perfil inversor</div></div>
         <div id="investor-profile-card" class="inv-profile-card mb16" style="display:none;">
@@ -1206,45 +1180,6 @@
               <input class="ob-input" id="debt-input-payment" type="number" placeholder="150" min="1">
             </div>
             <button class="btn btn-primary btn-block" onclick="addDebt()">Añadir deuda</button>
-          </div>
-        </div>
-
-        <!-- ★ B2B BANNER — FinLearn for Business -->
-        <div class="b2b-banner mb16" id="b2b-banner">
-          <div class="b2b-banner-inner">
-            <div class="b2b-banner-left">
-              <div class="b2b-banner-eyebrow">🏢 FinLearn for Business</div>
-              <div class="b2b-banner-title">Potencia la educación financiera<br>de tus empleados y clientes.</div>
-              <div class="b2b-banner-sub">Dashboard de métricas · Contenido a medida · Panel de empresa</div>
-            </div>
-            <button class="b2b-banner-btn" onclick="openModal('m-b2b')">
-              Solicitar<br>Demo →
-            </button>
-          </div>
-          <div class="b2b-banner-logos">
-            <span class="b2b-logo-chip">RRHH</span>
-            <span class="b2b-logo-chip">Formación</span>
-            <span class="b2b-logo-chip">Banca</span>
-            <span class="b2b-logo-chip">Fintech</span>
-            <span class="b2b-logo-chip">Seguros</span>
-          </div>
-          <!-- ★ WHITE-LABEL DEMO TOGGLE -->
-          <div class="wl-demo-row">
-            <div class="wl-demo-left">
-              <span class="wl-demo-icon">🏦</span>
-              <div>
-                <div class="wl-demo-label">Simular Marca Blanca</div>
-                <div class="wl-demo-sub">Adapta colores y nombre en 1 clic</div>
-              </div>
-            </div>
-            <button class="wl-toggle" id="wl-toggle" onclick="WhiteLabel.toggle()" aria-label="Activar modo marca blanca">
-              <span class="wl-toggle-knob" id="wl-knob"></span>
-            </button>
-          </div>
-          <div class="wl-active-bar" id="wl-active-bar" style="display:none;">
-            <span class="wl-active-logo" id="wl-app-name-bar">Partner Finance</span>
-            <span class="wl-active-tag">Demo activa · #0052FF</span>
-            <button class="wl-reset-btn" onclick="WhiteLabel.toggle()">Restaurar →</button>
           </div>
         </div>
 
