@@ -3754,6 +3754,32 @@ const STOCKS = [
 
   // ── CRYPTO ───────────────────────────────────────────────
   {ticker:'ETH',   name:'Ethereum',           icon:'🔷', bg:'#001020', sector:'crypto', exchange:'—', price:2850, dividendYield:0, per:0, isCrypto:true, annualReturn:0.60, annualVolatility:0.90, description:'Plataforma de contratos inteligentes. Base de DeFi, NFTs y Web3. Lanzada en 2015.', fundamentals:{eps:0, pb:0, market:'340B USD', beta:3.2}},
+
+  // ── SALUD Y FARMA ───────────────────────────────────────
+  {ticker:'NVO',   name:'Novo Nordisk',      icon:'💉', bg:'#001a10', sector:'health', exchange:'CPH',   price:128.0, dividendYield:1.1, per:32, annualReturn:0.28, annualVolatility:0.30, description:'Líder mundial en diabetes y obesidad. Ozempic/Wegovy cambiando la medicina moderna.', fundamentals:{eps:4.0, pb:24, market:'580B EUR', beta:0.7}},
+  {ticker:'PFE',   name:'Pfizer',            icon:'🔬', bg:'#00001a', sector:'health', exchange:'NYSE',  price:27.5,  dividendYield:6.8, per:12, annualReturn:0.04, annualVolatility:0.22, description:'Gigante farmacéutico global. Alto dividendo, pipeline amplio. Creador de la vacuna COVID mRNA.', fundamentals:{eps:2.29, pb:1.8, market:'155B USD', beta:0.6}},
+
+  // ── CONSUMO DEFENSIVO ────────────────────────────────────
+  {ticker:'NESN',  name:'Nestlé',            icon:'☕', bg:'#1a0f00', sector:'consumer', exchange:'SIX', price:94.5,  dividendYield:3.2, per:20, annualReturn:0.07, annualVolatility:0.13, description:'El mayor grupo de alimentación del mundo. Nespresso, KitKat, Maggi. Dividendo creciente 25+ años.', fundamentals:{eps:4.72, pb:5.5, market:'245B CHF', beta:0.5}},
+  {ticker:'KO',    name:'Coca-Cola',         icon:'🥤', bg:'#1a0000', sector:'consumer', exchange:'NYSE',price:61.2,  dividendYield:3.1, per:24, annualReturn:0.09, annualVolatility:0.14, description:'200 países, 500 marcas. Dividend King con 62 años consecutivos de aumento de dividendo.', fundamentals:{eps:2.55, pb:10, market:'265B USD', beta:0.6}},
+
+  // ── ENERGÍA ──────────────────────────────────────────────
+  {ticker:'SHEL',  name:'Shell',             icon:'🛢️', bg:'#1a1500', sector:'energy', exchange:'LSE',  price:28.4,  dividendYield:4.2, per:9,  annualReturn:0.08, annualVolatility:0.25, description:'Supermajor energético global. Petróleo, gas natural y transición a renovables.', fundamentals:{eps:3.16, pb:1.1, market:'210B USD', beta:0.7}},
+
+  // ── INMOBILIARIO / REITs ─────────────────────────────────
+  {ticker:'VICI',  name:'VICI Properties',   icon:'🎰', bg:'#1a1000', sector:'reit', exchange:'NYSE',   price:31.8,  dividendYield:5.8, per:15, annualReturn:0.12, annualVolatility:0.18, description:'REIT de casinos y entretenimiento. Propietario de Caesars Palace y MGM Grand Las Vegas.', fundamentals:{eps:2.12, pb:1.8, market:'33B USD', beta:0.9}},
+
+  // ── ETFs ADICIONALES ─────────────────────────────────────
+  {ticker:'EMIM',  name:'iShares MSCI EM',   icon:'🌏', bg:'#001010', sector:'etf', exchange:'LSE',     price:29.8,  dividendYield:2.8, per:13, annualReturn:0.07, annualVolatility:0.20, description:'2.000 empresas emergentes: China, India, Brasil, Corea. Diversificación global real. TER 0.18%.', fundamentals:{eps:2.29, pb:1.7, market:'18B USD', beta:1.1}},
+  {ticker:'XDWD',  name:'Xtrackers MSCI World', icon:'🗺️', bg:'#000a1a', sector:'etf', exchange:'XETRA',price:104.2, dividendYield:1.6, per:19, annualReturn:0.10, annualVolatility:0.14, description:'1.600 empresas de países desarrollados. Alternativa a IWDA con TER 0.19%. Acumulación.', fundamentals:{eps:5.49, pb:2.9, market:'12B USD', beta:1.0}},
+
+  // ── TECNOLOGÍA ADICIONAL ─────────────────────────────────
+  {ticker:'META',  name:'Meta Platforms',    icon:'📘', bg:'#00001a', sector:'tech', exchange:'NASDAQ', price:487.0, dividendYield:0.4, per:26, annualReturn:0.35, annualVolatility:0.38, description:'Facebook, Instagram, WhatsApp y Quest VR. 3.200M usuarios diarios activos.', fundamentals:{eps:18.73, pb:8.5, market:'1.2T USD', beta:1.3}},
+  {ticker:'AMZN',  name:'Amazon',            icon:'📦', bg:'#1a1000', sector:'tech', exchange:'NASDAQ', price:185.0, dividendYield:0,   per:44, annualReturn:0.25, annualVolatility:0.32, description:'E-commerce + AWS (cloud líder mundial) + Prime + Ads. El negocio de cloud crece al 20% anual.', fundamentals:{eps:4.21, pb:8.2, market:'1.9T USD', beta:1.2}},
+
+  // ── IBEX ADICIONAL ───────────────────────────────────────
+  {ticker:'REP',   name:'Repsol',            icon:'⛽', bg:'#1a0a00', sector:'ibex', exchange:'BME',    price:14.2,  dividendYield:6.1, per:7,  annualReturn:0.06, annualVolatility:0.22, description:'Multinacional energética española. Petróleo, gas y transición energética. Alto dividendo.', fundamentals:{eps:2.03, pb:0.8, market:'17B EUR', beta:0.9}},
+  {ticker:'AMS',   name:'Amadeus IT',        icon:'✈️', bg:'#001020', sector:'ibex', exchange:'BME',    price:67.8,  dividendYield:1.8, per:25, annualReturn:0.11, annualVolatility:0.25, description:'Líder mundial en tecnología para el sector turístico. Reservas de vuelos, hoteles y sistemas GDS.', fundamentals:{eps:2.71, pb:5.0, market:'30B EUR', beta:1.1}},
 ];
 
 const CAREERS = [
