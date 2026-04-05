@@ -147,12 +147,24 @@ function F44_render() {
   const el = document.getElementById('f44-chests');
   if (!el) return;
   const chests = S.chestsAvailable || [];
+  el.style.display = '';
+
   if (chests.length === 0) {
-    el.innerHTML = '';
-    el.style.display = 'none';
+    const next5 = 5 - ((S.completedMods || []).length % 5 || 5);
+    const hint = next5 === 0
+      ? 'Completa un módulo para ganar tu próximo cofre'
+      : `${next5} módulo${next5 !== 1 ? 's' : ''} para tu próximo cofre`;
+    el.innerHTML = `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:28px;">📦</span>
+        <div>
+          <div style="font-weight:700;font-size:13px;">Próximo cofre</div>
+          <div style="font-size:11px;color:var(--text2);">${hint}</div>
+        </div>
+      </div>`;
     return;
   }
-  el.style.display = '';
+
   const icons = { bronze: '📦', silver: '🥈', gold: '🏅', legendary: '👑' };
   el.innerHTML = `
     <div class="f44-wrap">

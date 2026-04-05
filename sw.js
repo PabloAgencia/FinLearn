@@ -3,7 +3,7 @@
    Estrategia: Cache First para assets estáticos, Network First para API
    ══════════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME    = 'finlearn-v1.15.0';
+const CACHE_NAME    = 'finlearn-v1.16.0';
 const OFFLINE_URL   = 'index.html';
 
 // Assets que se cachean en la instalación

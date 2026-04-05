@@ -2161,6 +2161,7 @@ function renderHomeScreen() {
   const dcaStreakEl = document.getElementById('dca-streak-nav');
   if (dcaStreakEl) dcaStreakEl.textContent = S.streak || 0;
   if (typeof renderMissionsCard === 'function') renderMissionsCard();
+  if (typeof F44_render === 'function') F44_render();
   // F24: personalized hero message + suggested module badge
   _f24_renderHeroMsg();
   _f24_highlightSuggestedModule();
