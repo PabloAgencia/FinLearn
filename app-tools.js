@@ -3887,6 +3887,7 @@ const SCENARIOS = [
     xpReward: 1500,
     relatedTag: 'DEUDA',
     lesson: 'La deuda no es el fin del mundo. Con el método correcto, el orden importa más que los ingresos.',
+    milestones: [{pct:30,label:'Deuda por debajo de €35.000',xp:120},{pct:60,label:'Deuda a la mitad',xp:180},{pct:85,label:'Casi libre de deudas',xp:250}],
   },
   {
     id: 'early_retirement',
@@ -3900,6 +3901,7 @@ const SCENARIOS = [
     xpReward: 2000,
     relatedTag: 'FIRE',
     lesson: 'Con una tasa de ahorro del 40%+ y retornos compuestos, la jubilación anticipada es matemáticamente posible.',
+    milestones: [{pct:25,label:'Primeros €75.000 invertidos',xp:150},{pct:55,label:'Más de la mitad del camino',xp:200},{pct:80,label:'FIRE a la vista',xp:300}],
   },
   {
     id: 'crisis_survivor',
@@ -3912,6 +3914,7 @@ const SCENARIOS = [
     xpReward: 1200,
     relatedTag: 'INVERSIÓN',
     lesson: 'El S&P 500 tardó 5 años en recuperar el crash de 2008. Quienes mantuvieron triplicaron en 10 años.',
+    milestones: [{pct:40,label:'Superada la primera caída',xp:100},{pct:65,label:'Recuperando terreno',xp:150},{pct:85,label:'Casi recuperado',xp:200}],
   },
   {
     id: 'from_zero',
@@ -3924,6 +3927,7 @@ const SCENARIOS = [
     xpReward: 2500,
     relatedTag: 'AHORRO',
     lesson: 'El tiempo es el activo más valioso. Empezar con nada a los 25 y ser millonario a los 55 es estadísticamente normal con DCA.',
+    milestones: [{pct:20,label:'Primeros €100.000',xp:200},{pct:50,label:'A mitad del camino',xp:300},{pct:80,label:'El millón está cerca',xp:400}],
   },
   {
     id: 'entrepreneur',
@@ -3937,6 +3941,47 @@ const SCENARIOS = [
     xpReward: 2000,
     relatedTag: 'EMPRENDIMIENTO',
     lesson: 'El emprendedor apuesta todo al principio. El riesgo es real, pero la asimetría del retorno también.',
+    milestones: [{pct:30,label:'€1.500/mes de negocios',xp:150},{pct:60,label:'€3.000/mes de negocios',xp:250},{pct:85,label:'Casi independiente',xp:350}],
+  },
+  {
+    id: 'inheritance',
+    icon: '💰',
+    name: 'La Herencia Inesperada',
+    tagline: 'Tu tío fallece y te deja €50.000. Tienes 3 años para no arruinarlo — y ojalá triplicarlo.',
+    difficulty: '🟡 Difícil',
+    startConditions: { cash: 50000, balance: 0, invested: 0, lifeSalary: 2200 },
+    objective: { type:'patrimony', target: 120000, label:'€120.000 de patrimonio en 3 años', gameDays: 3*365 },
+    xpReward: 1800,
+    relatedTag: 'INVERSIÓN',
+    lesson: 'El dinero inesperado suele perderse en 3 años. La disciplina de invertirlo inmediatamente marca la diferencia.',
+    milestones: [{pct:30,label:'€36.000 de patrimonio',xp:120},{pct:60,label:'€72.000 alcanzados',xp:180},{pct:85,label:'Casi en el objetivo',xp:220}],
+  },
+  {
+    id: 'inflation_hell',
+    icon: '📈',
+    name: 'La Inflación del 10%',
+    tagline: 'Es 2022. La inflación devora tus ahorros al 10% anual. ¿Qué activos te salvan?',
+    difficulty: '🟠 Medio',
+    startConditions: { cash: 8000, balance: 0, invested: 5000, lifeSalary: 2500 },
+    objective: { type:'patrimony', target: 35000, label:'€35.000 de patrimonio preservado en 2 años', gameDays: 2*365 },
+    xpReward: 1400,
+    relatedTag: 'INVERSIÓN',
+    lesson: 'En 2022, el cash perdió un 10% de poder adquisitivo. El MSCI World cayó un 18% pero el oro subió un 12%.',
+    milestones: [{pct:40,label:'Patrimonio estabilizado',xp:100},{pct:70,label:'Batiendo la inflación',xp:150},{pct:90,label:'Casi preservado',xp:180}],
+  },
+  {
+    id: 'divorce',
+    icon: '💔',
+    name: 'Reconstrucción',
+    tagline: 'Tu patrimonio se divide a la mitad. €15.000 y un sueldo de €2.000. Reconstruye en 5 años.',
+    difficulty: '🔴 Extremo',
+    startConditions: { cash: 15000, balance: 0, invested: 0, lifeSalary: 2000,
+      debts: [{ name:'Préstamo personal', amount:8000, rate:7, minPayment:180 }] },
+    objective: { type:'patrimony', target: 60000, label:'€60.000 de patrimonio en 5 años', gameDays: 5*365 },
+    xpReward: 2200,
+    relatedTag: 'AHORRO',
+    lesson: 'Reconstruir desde cero con 35-45 años es posible. La clave: eliminar deuda primero, automatizar ahorro después.',
+    milestones: [{pct:25,label:'Deuda cancelada',xp:150},{pct:55,label:'€33.000 reconstruidos',xp:200},{pct:85,label:'Casi en el objetivo',xp:280}],
   },
 ];
 
@@ -3954,23 +3999,50 @@ function openScenariosScreen() {
     document.body.appendChild(modal);
   }
 
+  const SCENARIO_LOCKS = {
+    debt_hell:        null,
+    from_zero:        null,
+    crisis_survivor:  { type:'mods', count:5, tag:'inversion', label:'Completa 5 módulos de Inversión' },
+    early_retirement: { type:'level', count:3, label:'Alcanza el nivel 3' },
+    entrepreneur:     { type:'level', count:5, label:'Alcanza el nivel 5' },
+    inheritance:      { type:'mods', count:3, label:'Completa 3 módulos' },
+    inflation_hell:   { type:'mods', count:4, tag:'inversion', label:'Completa 4 módulos de Inversión' },
+    divorce:          { type:'level', count:4, label:'Alcanza el nivel 4' },
+  };
+
   const cards = SCENARIOS.map(sc => {
     const relMod = (typeof MODULES !== 'undefined' && sc.relatedTag)
       ? MODULES.find(m => m && m.tag && m.tag.toUpperCase().includes(sc.relatedTag) && !(S.completedMods||[]).includes(m.id))
       : null;
+    const lock = SCENARIO_LOCKS[sc.id];
+    let isLocked = false;
+    if (lock) {
+      if (lock.type === 'level') isLocked = (S.level||1) < lock.count;
+      if (lock.type === 'mods') {
+        const branch = lock.tag ? (typeof F28_BRANCHES !== 'undefined' ? F28_BRANCHES.find(b=>b.id===lock.tag) : null) : null;
+        const relevant = branch ? branch.mods : [];
+        const done = relevant.length > 0
+          ? relevant.filter(id=>(S.completedMods||[]).includes(id)).length
+          : (S.completedMods||[]).length;
+        isLocked = done < lock.count;
+      }
+    }
+    const alreadyDone = (S.completedScenarios||[]).includes(sc.id);
     return `
-    <div class="scenario-card" onclick="startScenario('${sc.id}')">
+    <div class="scenario-card${isLocked?' sc-locked':''}${alreadyDone?' sc-done':''}" onclick="${isLocked?'':'startScenario(\''+sc.id+'\')'}">
       <div class="sc-header">
         <span class="sc-icon">${sc.icon}</span>
         <div>
           <div class="sc-name">${sc.name}</div>
           <div class="sc-diff">${sc.difficulty}</div>
         </div>
-        <div class="sc-xp">+${sc.xpReward} XP</div>
+        <div class="sc-xp">${alreadyDone?'<span class="sc-done-badge">✓ Completado</span>':''} +${sc.xpReward} XP</div>
       </div>
       <div class="sc-tagline">${sc.tagline}</div>
       <div class="sc-obj">🎯 ${sc.objective.label}</div>
-      ${relMod ? `<div onclick="event.stopPropagation();openModule(${relMod.id})" style="font-size:11px;color:var(--accent);margin-top:6px;cursor:pointer;">📖 Repasar: ${relMod.title} →</div>` : ''}
+      ${isLocked ? `<div style="font-size:11px;color:var(--text3);margin-top:8px;">🔒 ${lock.label}</div>` : ''}
+      ${relMod && !isLocked ? `<div onclick="event.stopPropagation();openModule(${relMod.id})" style="font-size:11px;color:var(--accent);margin-top:6px;cursor:pointer;">📖 Repasar: ${relMod.title} →</div>` : ''}
+      ${!isLocked && !alreadyDone ? `<button class="sc-start-btn" onclick="event.stopPropagation();startScenario('${sc.id}')">▶ Iniciar reto</button>` : ''}
     </div>`;
   }).join('');
 
@@ -4093,7 +4165,10 @@ function _updateScenarioBanner(sc) {
     </div>
     <div class="sc-hud-center">
       <div class="sc-hud-pct">${pct}%</div>
-      <div class="sc-hud-bar-wrap"><div class="sc-hud-bar" style="width:${pct}%"></div></div>
+      <div class="sc-hud-bar-wrap" style="position:relative;">
+        <div class="sc-hud-bar" style="width:${pct}%"></div>
+        ${(sc.milestones||[]).map(m=>`<div style="position:absolute;top:-4px;left:${m.pct}%;width:2px;height:calc(100% + 8px);background:${pct>=m.pct?'var(--accent)':'rgba(255,255,255,.3)'};border-radius:1px;" title="${m.label}"></div>`).join('')}
+      </div>
       <div class="sc-hud-time">⏱ ${yearsLeft}a restantes</div>
     </div>
     <div style="display:flex;gap:6px;flex-shrink:0;">
@@ -4119,6 +4194,42 @@ function _triggerScenarioEvent(sc) {
       { label:'70% invertir, 30% fondo emergencia', xp:100, effect: s => { s.invested = (s.invested||0) + 700; s.cash = (s.cash||0) + 300; } },
       { label:'Me lo gasto, me lo merezco', xp:0, effect: ()=>{} },
     ]}],
+    crisis_survivor: [{ q:'El mercado se desploma un 40%. Tu cartera vale la mitad. ¿Qué haces?', opts:[
+      { label:'Compro más con todo el efectivo disponible', xp:100, effect: s => { const extra = Math.min(s.cash||0, 3000); s.cash = (s.cash||0) - extra; s.invested = (s.invested||0) * 0.6 + extra; } },
+      { label:'Mantengo y no miro la cartera', xp:70, effect: s => { s.invested = (s.invested||0) * 0.6; } },
+      { label:'Vendo todo para no perder más', xp:0, effect: s => { s.cash = (s.cash||0) + (s.invested||0) * 0.6; s.invested = 0; } },
+    ]}],
+    entrepreneur: [{ q:'Tu primer cliente te ofrece €5.000 por trabajo puntual. ¿Cómo lo usas?', opts:[
+      { label:'Reinvierto el 80% en marketing y herramientas', xp:100, effect: s => { s.invested = (s.invested||0) + 4000; s.cash = (s.cash||0) + 1000; } },
+      { label:'Lo guardo como colchón de emergencia empresarial', xp:60, effect: s => { s.cash = (s.cash||0) + 5000; } },
+      { label:'Me lo pago como sueldo', xp:20, effect: s => { s.cash = (s.cash||0) + 5000; } },
+    ]}],
+    inheritance: [
+      { q:'Tienes €50.000. ¿Cuál es tu primer movimiento?', opts:[
+        { label:'Fondo emergencia (€10k) + invertir el resto en MSCI World', xp:120, effect: s => { s.cash = 10000; s.invested = (s.invested||0) + 40000; } },
+        { label:'Todo en inmueble para alquilar', xp:60, effect: s => { s.invested = (s.invested||0) + 50000; } },
+        { label:'Diversifico: €20k ETF, €15k depósito, €15k guardado', xp:90, effect: s => { s.invested = (s.invested||0) + 20000; s.cash = (s.cash||0) - 15000 + 30000; } },
+      ]},
+      { q:'El mercado sube un 25%. Tus amigos te dicen que vendas y te vayas de vacaciones.', opts:[
+        { label:'Mantengo. El largo plazo es el plan.', xp:100, effect: s => { s.invested = (s.invested||0) * 1.25; } },
+        { label:'Vendo un 20% para asegurar beneficios', xp:50, effect: s => { const v=(s.invested||0)*0.2*1.25; s.cash=(s.cash||0)+v; s.invested=(s.invested||0)*0.8*1.25; } },
+        { label:'Vendo todo. Prefiero no arriesgar.', xp:0, effect: s => { s.cash=(s.cash||0)+(s.invested||0)*1.25; s.invested=0; } },
+      ]},
+    ],
+    inflation_hell: [
+      { q:'La inflación está al 10%. Tienes €8.000 en cuenta corriente. ¿Qué haces?', opts:[
+        { label:'Muevo todo a un ETF de commodities y oro', xp:110, effect: s => { s.invested=(s.invested||0)+6000; s.cash=(s.cash||0)-6000; } },
+        { label:'Lo dejo en el banco, es lo más seguro', xp:0, effect: s => { s.cash=(s.cash||0)*0.90; } },
+        { label:'Compro un fondo monetario al 3.5%', xp:70, effect: s => { s.cash=(s.cash||0)*0.97; s.invested=(s.invested||0)+3000; } },
+      ]},
+    ],
+    divorce: [
+      { q:'Tienes €15.000 y una deuda de €8.000 al 7%. ¿Orden de prioridad?', opts:[
+        { label:'Cancelo la deuda primero (garantiza 7% de retorno)', xp:120, effect: s => { const d=s.debts&&s.debts[0]; if(d){d.balance=0;} s.cash=(s.cash||0)-8000; } },
+        { label:'Invierto todo en ETFs y pago mínimos de deuda', xp:40, effect: s => { s.invested=(s.invested||0)+15000; } },
+        { label:'Mitad a deuda, mitad a fondo emergencia', xp:90, effect: s => { const d=s.debts&&s.debts[0]; if(d){d.balance=Math.max(0,d.balance-4000);} s.cash=(s.cash||0)-4000; } },
+      ]},
+    ],
   };
   const pool = events[sc.id];
   if (!pool) return;
@@ -4156,9 +4267,31 @@ function _checkScenarioCompletion() {
   const daysElapsed = S.gameDay - _scenarioStartDay;
   const failed      = daysElapsed > obj.gameDays;
 
-  // Decision events every 30 game days
+  // Progress toward objective (for milestones)
+  let progress = 0;
+  if (obj.type === 'net_worth')           progress = Math.max(0, (S.patrimony - (S.debts||[]).reduce((a,d)=>a+(d.balance||0),0))) / obj.target;
+  else if (obj.type === 'invested')       progress = (S.invested||0) / obj.target;
+  else if (obj.type === 'patrimony')      progress = (S.patrimony||0) / obj.target;
+  else if (obj.type === 'patrimony_recover') progress = (S.patrimony||0) / obj.target;
+  else if (obj.type === 'biz_income')     progress = ((S.yearBizIncome||0)/12) / obj.target;
+  const pct = Math.round(Math.min(1, Math.max(0, progress)) * 100);
+
+  // Hitos intermedios
+  if (!Array.isArray(S._scenarioMilestones)) S._scenarioMilestones = [];
+  (sc.milestones || []).forEach(function(m) {
+    const key = sc.id + '_' + m.pct;
+    if (pct >= m.pct && !S._scenarioMilestones.includes(key)) {
+      S._scenarioMilestones.push(key);
+      S.xp += m.xp;
+      spawnXP('+' + m.xp + ' XP');
+      toast('🎯 ' + m.label, 'Hito alcanzado · +' + m.xp + ' XP', 't-success');
+      saveState();
+    }
+  });
+
+  // Decision events every 15 game days
   const lastEvent = S._lastScenarioEventDay || 0;
-  if (daysElapsed > 0 && (daysElapsed - lastEvent) >= 30) {
+  if (daysElapsed > 0 && (daysElapsed - lastEvent) >= 15) {
     S._lastScenarioEventDay = daysElapsed;
     _triggerScenarioEvent(sc);
   }
