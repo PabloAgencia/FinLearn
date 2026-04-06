@@ -3928,7 +3928,7 @@ const SCENARIOS = [
     xpReward: 2500,
     relatedTag: 'AHORRO',
     lesson: 'El tiempo es el activo más valioso. Empezar con nada a los 25 y ser millonario a los 55 es estadísticamente normal con DCA.',
-    milestones: [{pct:20,label:'Primeros €100.000',xp:200},{pct:50,label:'A mitad del camino',xp:300},{pct:80,label:'El millón está cerca',xp:400}],
+    milestones: [{pct:10,label:'Primeros €50.000',xp:150},{pct:40,label:'€200.000 acumulados',xp:250},{pct:75,label:'El millón está cerca',xp:400}],
   },
   {
     id: 'entrepreneur',
@@ -3964,11 +3964,11 @@ const SCENARIOS = [
     tagline: 'Es 2022. La inflación devora tus ahorros al 10% anual. ¿Qué activos te salvan?',
     difficulty: '🟠 Medio',
     startConditions: { cash: 8000, balance: 0, invested: 5000, lifeSalary: 2500 },
-    objective: { type:'patrimony', target: 35000, label:'€35.000 de patrimonio preservado en 2 años', gameDays: 2*365 },
+    objective: { type:'patrimony', target: 45000, label:'€45.000 de patrimonio preservado en 2 años', gameDays: 2*365 },
     xpReward: 1400,
     relatedTag: 'INVERSIÓN',
     lesson: 'En 2022, el cash perdió un 10% de poder adquisitivo. El MSCI World cayó un 18% pero el oro subió un 12%.',
-    milestones: [{pct:40,label:'Patrimonio estabilizado',xp:100},{pct:70,label:'Batiendo la inflación',xp:150},{pct:90,label:'Casi preservado',xp:180}],
+    milestones: [{pct:40,label:'€18.000 de patrimonio',xp:100},{pct:70,label:'€31.500 alcanzados',xp:150},{pct:90,label:'Casi preservado',xp:180}],
   },
   {
     id: 'divorce',
@@ -4279,7 +4279,7 @@ function _triggerScenarioEvent(sc) {
       { q:'Tienes €50.000. ¿Cuál es tu primer movimiento?', opts:[
         { label:'Fondo emergencia (€10k) + invertir el resto en MSCI World', xp:120, effect: s => { s.cash = 10000; s.invested = (s.invested||0) + 40000; } },
         { label:'Todo en inmueble para alquilar', xp:60, effect: s => { s.invested = (s.invested||0) + 50000; } },
-        { label:'Diversifico: €20k ETF, €15k depósito, €15k guardado', xp:90, effect: s => { s.invested = (s.invested||0) + 20000; s.cash = (s.cash||0) - 15000 + 30000; } },
+        { label:'Diversifico: €20k ETF, €15k depósito, €15k guardado', xp:90, effect: s => { s.cash = 15000; s.invested = (s.invested||0) + 20000; } },
       ]},
       { q:'El mercado sube un 25%. Tus amigos te dicen que vendas y te vayas de vacaciones.', opts:[
         { label:'Mantengo. El largo plazo es el plan.', xp:100, effect: s => { s.invested = (s.invested||0) * 1.25; } },
@@ -4298,7 +4298,7 @@ function _triggerScenarioEvent(sc) {
       { q:'Tienes €15.000 y una deuda de €8.000 al 7%. ¿Orden de prioridad?', opts:[
         { label:'Cancelo la deuda primero (garantiza 7% de retorno)', xp:120, effect: s => { const d=s.debts&&s.debts[0]; if(d){d.balance=0;} s.cash=(s.cash||0)-8000; } },
         { label:'Invierto todo en ETFs y pago mínimos de deuda', xp:40, effect: s => { s.invested=(s.invested||0)+15000; } },
-        { label:'Mitad a deuda, mitad a fondo emergencia', xp:90, effect: s => { const d=s.debts&&s.debts[0]; if(d){d.balance=Math.max(0,d.balance-4000);} s.cash=(s.cash||0)-4000; } },
+        { label:'Mitad a deuda, mitad a fondo emergencia', xp:90, effect: s => { const d=s.debts&&s.debts[0]; if(d){d.balance=Math.max(0,d.balance-4000);} s.cash=Math.max(0,(s.cash||0)-4000); } },
       ]},
     ],
   };
@@ -4406,6 +4406,9 @@ function endScenario(won) {
   _activeScenario    = null;
   _scenarioState     = null;
   _scenarioGameState = null;
+  S._lastScenarioEventDay = 0;
+  S._scenarioMilestones   = [];
+  saveState();
 
   const banner = document.getElementById('scenario-banner');
   if (banner) banner.style.display = 'none';
