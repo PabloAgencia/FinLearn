@@ -1216,30 +1216,31 @@ function renderCompoundPanel(stock, currentPrice, shares) {
   const horizons = [10, 20, 30];
   const rows = horizons.map(y => {
     const { nominal, real } = calcAssetProjection(currentValue, stock.annualReturn, y);
+    const gain = nominal - currentValue;
     const mult = (nominal / currentValue).toFixed(1);
     return `
       <div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);width:40px;">${y}a</div>
-        <div style="flex:1;">
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--accent);">€${nominal.toLocaleString('es')}</div>
-          <div style="font-size:10px;color:var(--text2);">Real hoy: €${real.toLocaleString('es')} · ×${mult} tu inversión</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);width:28px;flex-shrink:0;">${y}a</div>
+        <div style="flex:1;min-width:0;overflow:hidden;">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">€${nominal.toLocaleString('es')}</div>
+          <div style="font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Real: €${real.toLocaleString('es')}</div>
         </div>
-        <div style="text-align:right;">
-          <div style="font-size:11px;color:var(--gold);font-family:'DM Mono',monospace;">${(stock.annualReturn*100).toFixed(0)}%/año</div>
-          <div style="font-size:10px;color:var(--text3);">histórico</div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:12px;color:var(--gold);font-weight:700;font-family:'DM Mono',monospace;">+€${gain.toLocaleString('es')}</div>
+          <div style="font-size:10px;color:var(--text3);">×${mult}</div>
         </div>
       </div>`;
   }).join('');
 
   return `
     <div style="background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:12px;padding:12px 14px;margin-bottom:14px;">
-      <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:6px;font-family:'DM Mono',monospace;">
-        📈 PROYECCIÓN INTERÉS COMPUESTO (${stock.annualReturn*100}% histórico)
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.06em;font-family:'DM Mono',monospace;">📈 PROYECCIÓN INTERÉS COMPUESTO</div>
+        <div style="font-size:11px;color:var(--gold);font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0;margin-left:8px;">${(stock.annualReturn*100).toFixed(0)}%/año</div>
       </div>
       ${rows}
       <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.5;">
-        ⚠️ Proyecciones basadas en retorno histórico. El pasado no garantiza el futuro.<br>
-        Valor real deflactado a inflación ${INFLATION_RATE*100}% anual.
+        ⚠️ Proyecciones históricas. El pasado no garantiza el futuro. Inflación ${INFLATION_RATE*100}% deflactada.
         ${stock.historicalNote ? `<br>💡 ${stock.historicalNote}` : ''}
       </div>
     </div>`;
@@ -1316,9 +1317,7 @@ function renderStockList() {
   let filtered = STOCKS.filter(s =>
     GAME.currentStockFilter === 'all'
       ? true
-      : GAME.currentStockFilter === 'commodity'
-        ? s.sector === 'commodity'
-        : s.sector === GAME.currentStockFilter
+      : s.group === GAME.currentStockFilter
   );
   if (GAME.currentStockFilter === 'all') {
     filtered = [

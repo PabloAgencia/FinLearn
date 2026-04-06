@@ -2515,9 +2515,10 @@ function _renderTutStep() {
   if (arr)  arr.style.display = 'none';
   if (card) {
     card.style.position  = 'fixed';
-    card.style.top       = '50%';
+    card.style.top       = window.innerWidth <= 480 ? '46%' : '50%';
     card.style.left      = '50%';
     card.style.transform = 'translate(-50%, -50%)';
+    card.style.bottom    = 'auto';
   }
 
   SFX.xp();
@@ -4029,7 +4030,7 @@ function openScenariosScreen() {
     }
     const alreadyDone = (S.completedScenarios||[]).includes(sc.id);
     return `
-    <div class="scenario-card${isLocked?' sc-locked':''}${alreadyDone?' sc-done':''}" onclick="${isLocked?'':'startScenario(\''+sc.id+'\')'}">
+    <div class="scenario-card${isLocked?' sc-locked':''}${alreadyDone?' sc-done':''}" onclick="${isLocked?'':'openScenarioBriefing(\''+sc.id+'\')'}">
       <div class="sc-header">
         <span class="sc-icon">${sc.icon}</span>
         <div>
@@ -4042,7 +4043,7 @@ function openScenariosScreen() {
       <div class="sc-obj">🎯 ${sc.objective.label}</div>
       ${isLocked ? `<div style="font-size:11px;color:var(--text3);margin-top:8px;">🔒 ${lock.label}</div>` : ''}
       ${relMod && !isLocked ? `<div onclick="event.stopPropagation();openModule(${relMod.id})" style="font-size:11px;color:var(--accent);margin-top:6px;cursor:pointer;">📖 Repasar: ${relMod.title} →</div>` : ''}
-      ${!isLocked && !alreadyDone ? `<button class="sc-start-btn" onclick="event.stopPropagation();startScenario('${sc.id}')">▶ Iniciar reto</button>` : ''}
+      ${!isLocked && !alreadyDone ? `<button class="sc-start-btn" onclick="event.stopPropagation();openScenarioBriefing('${sc.id}')">▶ Ver detalles e iniciar</button>` : ''}
     </div>`;
   }).join('');
 
@@ -4059,10 +4060,75 @@ function openScenariosScreen() {
   modal.style.display = 'flex';
 }
 
+function openScenarioBriefing(scenarioId) {
+  const sc = SCENARIOS.find(s => s.id === scenarioId);
+  if (!sc) return;
+
+  // Cerrar modal de lista
+  const listModal = document.getElementById('m-scenarios');
+  if (listModal) listModal.style.display = 'none';
+
+  const conds = sc.startConditions;
+  const totalDebt = Array.isArray(conds.debts)
+    ? conds.debts.reduce((a, d) => a + (d.amount || d.balance || 0), 0)
+    : 0;
+
+  const condRows = [
+    conds.cash    !== undefined ? `<div class="scb-cond-row"><span class="scb-cond-icon">💰</span><span>Efectivo inicial</span><strong>€${(conds.cash).toLocaleString('es')}</strong></div>` : '',
+    conds.balance !== undefined && conds.balance > 0 ? `<div class="scb-cond-row"><span class="scb-cond-icon">🏦</span><span>Cuenta corriente</span><strong>€${(conds.balance).toLocaleString('es')}</strong></div>` : '',
+    conds.invested !== undefined && conds.invested > 0 ? `<div class="scb-cond-row"><span class="scb-cond-icon">📈</span><span>Cartera invertida</span><strong>€${(conds.invested).toLocaleString('es')}</strong></div>` : '',
+    conds.lifeSalary !== undefined ? `<div class="scb-cond-row"><span class="scb-cond-icon">💼</span><span>Sueldo mensual</span><strong>${conds.lifeSalary > 0 ? '€'+conds.lifeSalary.toLocaleString('es') : 'Sin sueldo fijo'}</strong></div>` : '',
+    totalDebt > 0 ? `<div class="scb-cond-row scb-cond-danger"><span class="scb-cond-icon">💳</span><span>Deuda total</span><strong>−€${totalDebt.toLocaleString('es')}</strong></div>` : '',
+  ].filter(Boolean).join('');
+
+  const patrimonyNet = (conds.cash || 0) + (conds.balance || 0) + (conds.invested || 0) - totalDebt;
+
+  let modal = document.getElementById('m-scenario-briefing');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-scenario-briefing';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal-box scb-box">
+      <button class="modal-close" onclick="document.getElementById('m-scenario-briefing').style.display='none'">✕</button>
+      <div class="scb-top">
+        <div class="scb-big-icon">${sc.icon}</div>
+        <div>
+          <div class="scb-title">${sc.name}</div>
+          <div class="scb-diff">${sc.difficulty}</div>
+        </div>
+      </div>
+      <div class="scb-story">${sc.tagline}</div>
+      <div class="scb-section-label">📋 CONDICIONES INICIALES</div>
+      <div class="scb-conditions">${condRows}
+        <div class="scb-cond-row scb-cond-net" style="margin-top:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:8px;">
+          <span class="scb-cond-icon">⚖️</span><span>Patrimonio neto</span>
+          <strong style="color:${patrimonyNet >= 0 ? 'var(--accent)' : 'var(--danger)'};">€${patrimonyNet.toLocaleString('es')}</strong>
+        </div>
+      </div>
+      <div class="scb-section-label">🎯 OBJETIVO</div>
+      <div class="scb-obj-box">${sc.objective.label}</div>
+      <div class="scb-section-label">💡 LECCIÓN DEL RETO</div>
+      <div class="scb-lesson">${sc.lesson}</div>
+      <div class="scb-reward">+${sc.xpReward} XP al completar el reto</div>
+      <button class="btn btn-primary btn-block scb-start-btn" onclick="document.getElementById('m-scenario-briefing').style.display='none'; startScenario('${sc.id}')">
+        ⚡ ¡Empezar el reto!
+      </button>
+      <button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;" onclick="document.getElementById('m-scenario-briefing').style.display='none'">
+        Cancelar
+      </button>
+    </div>`;
+  modal.style.display = 'flex';
+}
+
 function startScenario(scenarioId) {
   const sc = SCENARIOS.find(s => s.id === scenarioId);
   if (!sc) return;
-  document.getElementById('m-scenarios').style.display = 'none';
+  const listModal = document.getElementById('m-scenarios');
+  if (listModal) listModal.style.display = 'none';
 
   // Save current state snapshot
   _scenarioState    = JSON.parse(JSON.stringify(S));
@@ -4103,14 +4169,19 @@ function startScenario(scenarioId) {
   S.patrimony   = S.cash + S.balance + S.invested;
 
   saveState();
-  updateUIFromState();
 
-  toast(`${sc.icon} Escenario iniciado`, sc.tagline, 't-success');
-  HAPTIC.levelUp();
-  SFX.levelUp();
+  // Navegar al home y refrescar toda la UI para que refleje el nuevo estado
+  if (typeof goTo === 'function') goTo('home');
+  if (typeof refreshUI === 'function') refreshUI();
+  else if (typeof updateUIFromState === 'function') updateUIFromState();
 
-  // Show objective banner
-  _showScenarioBanner(sc);
+  setTimeout(() => {
+    toast(`${sc.icon} Escenario iniciado`, sc.name + ' — ¡Buena suerte!', 't-success');
+    HAPTIC.levelUp();
+    SFX.levelUp();
+    // Show objective banner
+    _showScenarioBanner(sc);
+  }, 300);
 }
 
 function toggleScenarioBanner() {
@@ -6739,9 +6810,10 @@ window.selectMortgageType = selectMortgageType;
 window.updateMortgageCalc = updateMortgageCalc;
 window.confirmMortgage    = confirmMortgage;
 window.showAmortizationTable = showAmortizationTable;
-window.openScenariosScreen = openScenariosScreen;
+window.openScenariosScreen  = openScenariosScreen;
+window.openScenarioBriefing = openScenarioBriefing;
 window.toggleScenarioBanner = toggleScenarioBanner;
-window.startScenario      = startScenario;
+window.startScenario        = startScenario;
 window.endScenario        = endScenario;
 window.renderWhatIfChart  = renderWhatIfChart;
 window.shareWhatIf        = shareWhatIf;

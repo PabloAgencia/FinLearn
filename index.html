@@ -338,8 +338,7 @@
           <div id="nav-shield-wrap" class="nav-pill shield-pill" style="display:none;">🛡️ <span class="pv" id="nav-shields">0</span></div>
           <div class="nav-pill xpill">⚡ <span class="pv" id="nav-xp">0 XP</span></div>
           <div id="game-clock" class="nav-pill" style="font-size:10px;letter-spacing:.02em;">📅 Año 1</div>
-          <button id="game-speed-btn" class="nav-pill" onclick="cycleGameSpeed()" style="cursor:pointer;font-size:10px;font-weight:700;border:1px solid transparent;background:rgba(255,255,255,.06);color:var(--text2);padding:4px 8px;border-radius:20px;transition:all .2s;" title="Cambiar velocidad de juego">⏩ 3×</button>
-          <div id="music-control" class="nav-pill" style="padding:0;background:none;border:none;"></div>
+<div id="music-control" class="nav-pill" style="padding:0;background:none;border:none;"></div>
           <button id="mute-all-btn" class="nav-pill" onclick="toggleMuteAll()" title="Silencio total" style="background:rgba(255,255,255,.06);border:none;padding:4px 8px;border-radius:20px;cursor:pointer;font-size:13px;color:var(--text3);">🔔</button>
           <div id="rpg-multiplier-badge" class="rpg-mult-badge" style="display:none;"><span id="rpg-mult-val">×1.0</span> 🔥</div>
           <button class="nav-pill theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema claro/oscuro" style="background:rgba(255,255,255,.06);border:none;padding:4px 8px;border-radius:20px;cursor:pointer;font-size:13px;color:var(--text3);">🌙</button>
@@ -1307,12 +1306,12 @@
 
         <div class="stocks-tabs">
           <div class="stab active" onclick="filterStocks('all',this)">Todos</div>
-          <div class="stab" onclick="filterStocks('tech',this)">Tecnología</div>
-          <div class="stab" onclick="filterStocks('ibex',this)">IBEX</div>
-          <div class="stab" onclick="filterStocks('usa',this)">EE.UU.</div>
+          <div class="stab" onclick="filterStocks('usa',this)">🇺🇸 EE.UU.</div>
+          <div class="stab" onclick="filterStocks('ibex',this)">🇪🇸 IBEX</div>
+          <div class="stab" onclick="filterStocks('europe',this)">🇪🇺 Europa</div>
           <div class="stab" onclick="filterStocks('etf',this)">ETFs</div>
-          <div class="stab" onclick="filterStocks('commodity',this)">🥇 Materias</div>
           <div class="stab" onclick="filterStocks('crypto',this)">Crypto</div>
+          <div class="stab" onclick="filterStocks('commodity',this)">🥇 Oro</div>
         </div>
         <div id="stock-list"></div>
       </div>
