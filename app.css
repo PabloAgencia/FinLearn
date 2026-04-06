@@ -2594,7 +2594,10 @@ body.focus-mode .lesson-footer {
   .lesson-footer {
     position: fixed;
     bottom: 140px; left: 0; right: 0;
-    background: transparent;
+    background: rgba(6,8,16,0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border);
     pointer-events: none;
     padding: 10px 20px;
     z-index: 90;
@@ -6082,7 +6085,13 @@ a.btn {
   gap: 10px;
   margin-bottom: 10px;
 }
-.fin-row-2 .fin-field { margin-bottom: 0; }
+.fin-row-2 .fin-field { margin-bottom: 0; min-width: 0; overflow: hidden; }
+.fin-row-2 .fin-input-row { min-width: 0; }
+.fin-row-2 .fin-num { min-width: 0; width: 100%; }
+
+@media (max-width: 380px) {
+  .fin-row-2 { grid-template-columns: 1fr; }
+}
 
 .fp-health-row {
   display: flex;
@@ -15195,6 +15204,14 @@ body.light-mode .num-ctrl-wrap input { color: var(--text1) !important; }
 
 /* DCA card — azul */
 .dca-card { border-color: rgba(96,165,250,.4) !important; background: rgba(96,165,250,.06) !important; }
+
+/* ── Quick stats: 2 columnas en pantallas muy estrechas ── */
+@media (max-width: 400px) {
+  .quick-stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .qs-val { font-size: 18px; white-space: normal; overflow: visible; }
+}
 
 /* ── Padding-bottom global para nav inferior (~72px) ── */
 @media (max-width: 640px) {

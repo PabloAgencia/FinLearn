@@ -2459,6 +2459,44 @@ const BOSS_DATA = {
         exp: '"The Millionaire Next Door": la mayoría de millonarios self-made son frugales, disciplinados e invisibles. El lujo visible es anti-riqueza.'
       }
     ]
+  },
+  vivienda: {
+    name: 'El Guardián del Ladrillo',
+    emoji: '🏠',
+    color: '#34d399',
+    intro: 'La vivienda es la mayor decisión financiera de tu vida. Demuestra que sabes lo que haces.',
+    questions: [
+      {
+        q: '¿Cuánto se recomienda tener ahorrado antes de comprar vivienda, además de la entrada?',
+        opts: ['20% de entrada + 10-15% extra para gastos (notaría, impuestos, gestoría)', 'Solo la entrada del 10%', 'Nada extra, el banco lo cubre', '30% de entrada sin gastos adicionales'],
+        correct: 0,
+        exp: 'El banco solo financia hasta el 80%. Necesitas el 20% de entrada + ~10-15% en gastos de compra (ITP/IVA, notaría, registro, gestoría). Sin ese colchón, no compres.'
+      },
+      {
+        q: 'Hipoteca fija vs variable al mismo plazo. ¿Cuándo conviene la variable?',
+        opts: ['Cuando el Euríbor está alto y se espera que baje, y tienes capacidad de absorber subidas', 'Siempre, porque empieza más barata', 'Nunca, la fija siempre es mejor', 'Solo para hipotecas cortas de menos de 10 años'],
+        correct: 0,
+        exp: 'La variable tiene sentido si el Euríbor está en máximos históricos y tienes margen financiero. La fija da certeza. En 2022-2023, quien tenía variable pagó hasta €400/mes más.'
+      },
+      {
+        q: '¿Qué es el ratio precio/alquiler (PER inmobiliario) y cómo se interpreta?',
+        opts: ['Precio de compra / alquiler anual. Por debajo de 20 favorece compra; por encima de 25, alquilar es más eficiente', 'Rentabilidad bruta del alquiler', 'Solo aplica a inversión, no a vivienda habitual', 'El ratio ideal siempre es 15'],
+        correct: 0,
+        exp: 'PER = precio / alquiler anual. Un PER de 20 = tardarás 20 años en recuperar la inversión vía alquiler. Por encima de 25 suele ser más barato alquilar y invertir la diferencia.'
+      },
+      {
+        q: 'Amortización anticipada de hipoteca vs inversión en bolsa. ¿Qué manda la matemática?',
+        opts: ['Si el tipo hipotecario < rentabilidad esperada de bolsa (~7-10%), invertir suele ganar. Con tipo >4%, la decisión se equilibra', 'Siempre amortizar, eliminar deuda es lo primero', 'Siempre invertir, la bolsa siempre sube', 'Depende solo de la edad'],
+        correct: 0,
+        exp: 'Con hipoteca al 2-3% y bolsa al 7-10% histórico, la matemática favorece invertir. Con hipoteca al 4-5%, el diferencial se reduce. La paz mental de no tener deuda también tiene valor real.'
+      },
+      {
+        q: '¿Qué gastos ocultos debes considerar al ser propietario que el inquilino no paga?',
+        opts: ['IBI, comunidad, seguro hogar, derramas, mantenimiento (~1-2% del valor anual) y vacíos hipotecarios', 'Solo el IBI', 'Ninguno si la hipoteca está pagada', 'Solo la comunidad de vecinos'],
+        correct: 0,
+        exp: 'Ser propietario tiene costes invisibles: IBI (~0.5-1.1% valor catastral), comunidad, seguro, mantenimiento y reparaciones. Suma fácilmente €3.000-8.000/año según el inmueble.'
+      }
+    ]
   }
 };
 
