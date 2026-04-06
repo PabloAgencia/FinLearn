@@ -502,7 +502,7 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .proj-widget{
   background:linear-gradient(135deg,rgba(0,229,160,.04),rgba(0,145,255,.04));
   border:1px solid rgba(0,229,160,.15);border-radius:20px;
-  padding:22px;margin-bottom:16px;
+  padding:22px;margin-bottom:16px;overflow:hidden;
 }
 .proj-slider-row{display:flex;align-items:center;gap:12px;margin:12px 0;}
 .proj-slider{
@@ -518,8 +518,8 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .proj-result{
   display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;
 }
-.pr-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
-.pr-val{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent);}
+.pr-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;min-width:0;overflow:hidden;}
+.pr-val{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(15px,4.5vw,20px);color:var(--accent);word-break:break-all;}
 .pr-lab{font-size:11px;color:var(--text2);margin-top:3px;}
 
 /* Invite */
@@ -2590,10 +2590,10 @@ body.focus-mode .lesson-footer {
   body.focus-mode .lesson-footer {
     bottom: 0;
   }
-  .lesson-inner { padding-bottom: 130px; }
+  .lesson-inner { padding-bottom: 210px; }
   .lesson-footer {
     position: fixed;
-    bottom: 68px; left: 0; right: 0;
+    bottom: 140px; left: 0; right: 0;
     background: transparent;
     pointer-events: none;
     padding: 10px 20px;
@@ -3092,7 +3092,9 @@ body.focus-mode .lesson-footer {
 }
 
 /* ── Focus Mode — limpieza de clases al salir ── */
-body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
+@media (min-width: 641px) {
+  body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
+}
 
 
 /* ══════════════════════════════════════════════════════════
@@ -5005,6 +5007,15 @@ body:not(.focus-mode) .lesson-inner { padding-bottom: 0; }
   flex-shrink: 0;
 }
 
+@media (max-width: 430px) {
+  .calc-results { gap: 4px; padding: 12px 8px; }
+  .calc-res-val { font-size: 13px; }
+  .calc-res-big { font-size: 15px; }
+  .calc-res-label { font-size: 9px; letter-spacing: .02em; }
+  .calc-res-arrow { font-size: 11px; }
+  .calc-res-box-accent { padding: 0 6px; }
+}
+
 /* Breakdown bar */
 .calc-breakdown-bar {
   height: 8px;
@@ -5534,10 +5545,13 @@ a.btn {
 .qs-val {
   font-family: 'Syne', sans-serif;
   font-weight: 800;
-  font-size: 20px;
+  font-size: clamp(11px, 4vw, 20px);
   color: var(--text1);
   line-height: 1;
   margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .qs-lab {
   font-size: 10px;
@@ -14064,7 +14078,7 @@ body.light-mode .pers-bar-track { background: rgba(50,40,20,0.1); }
 .prof-certs-pending { font-size: 12px; color: var(--text3); margin-top: 8px; }
 .prof-certs-complete { font-size: 12px; color: var(--green); margin-top: 8px; font-weight: 600; }
 /* Boss grid */
-.prof-boss-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.prof-boss-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; justify-content: center; }
 .prof-boss-item {
   width: 48px; height: 48px;
   background: rgba(255,255,255,0.05);
@@ -15052,7 +15066,7 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
   .mod-desc  { font-size: 11px; }
 
   /* Lección: reducir padding para ganar espacio contenido */
-  .lesson-inner { padding: 14px 14px 120px; }
+  .lesson-inner { padding: 14px 14px 210px; }
   .lesson-title-big { font-size: clamp(18px, 5vw, 24px); }
   .content-block p { font-size: 13.5px; }
 
@@ -15099,7 +15113,7 @@ button, [role="button"], .btn, .mod-card, .mbt-tab, .bn-item,
   .perc-num   { font-size: 34px; }
   .mbt-label  { font-size: .62rem !important; }
   .mbt-tab    { padding: 7px 8px !important; }
-  .lesson-inner { padding: 10px 10px 120px; }
+  .lesson-inner { padding: 10px 10px 210px; }
 }
 
 /* 5. Mejora táctil global: fuente base no inferior a 16px en inputs
@@ -15181,3 +15195,13 @@ body.light-mode .num-ctrl-wrap input { color: var(--text1) !important; }
 
 /* DCA card — azul */
 .dca-card { border-color: rgba(96,165,250,.4) !important; background: rgba(96,165,250,.06) !important; }
+
+/* ── Padding-bottom global para nav inferior (~72px) ── */
+@media (max-width: 640px) {
+  .home-inner  { padding-bottom: 90px; }
+  .prof-inner  { padding-bottom: 90px; }
+  .rank-inner  { padding-bottom: 90px; }
+  .biz-inner   { padding-bottom: 90px; }
+  .tool-body   { padding-bottom: 90px; }
+  .stats-inner { padding-bottom: 100px; }
+}
