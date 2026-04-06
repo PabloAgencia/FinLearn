@@ -1926,7 +1926,7 @@
       <div style="text-align:center;">
         <div class="qty-control" style="justify-content:center;">
           <button class="qty-btn" id="stock-qty-minus" onclick="changeQty(-1)">−</button>
-          <span class="qty-num" id="stock-qty">1</span>
+          <input type="number" class="qty-num qty-input" id="stock-qty" min="1" value="1" oninput="GAME.stockQty=Math.max(1,parseInt(this.value)||1);updateQtyDisplay()">
           <button class="qty-btn" id="stock-qty-plus" onclick="changeQty(1)">+</button>
         </div>
         <div class="qty-total" id="stock-total">Total: €182,50</div>

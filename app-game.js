@@ -195,14 +195,14 @@ function openStockDetail(ticker) {
       var btn = document.getElementById(id);
       if (!btn || btn.dataset.hold) return;
       btn.dataset.hold = '1';
-      var iv, tm, sp = 250;
+      var iv, tm, sp = 400;
       function start() {
         changeQty(dir);
         tm = setTimeout(function go() {
           changeQty(dir);
-          sp = Math.max(150, sp - 15);
+          sp = Math.max(250, sp - 20);
           iv = setTimeout(go, sp);
-        }, 600);
+        }, 800);
       }
       function stop() { clearTimeout(tm); clearTimeout(iv); sp = 250; }
       ['mousedown','touchstart'].forEach(function(e){ btn.addEventListener(e, start, {passive:true}); });

@@ -625,7 +625,7 @@ function toast(title, body, type = 't-success') {
   el.innerHTML = `<div class="toast-t">${title}</div><div class="toast-b">${body}</div>`;
   el.onclick = () => { el.classList.add('out'); setTimeout(() => el.remove(), 300); };
   wrap.appendChild(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 4500);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 2800);
 }
 
 

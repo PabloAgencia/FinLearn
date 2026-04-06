@@ -1463,8 +1463,12 @@ function renderMiniChart(ticker) {
 
 function updateQtyDisplay() {
   if (!GAME.currentStock) return;
-  const price = GAME.stockPrices[GAME.currentStock.ticker] || GAME.currentStock.price;
-  setEl('stock-qty',   GAME.stockQty);
+  const price  = GAME.stockPrices[GAME.currentStock.ticker] || GAME.currentStock.price;
+  const qtyEl  = document.getElementById('stock-qty');
+  if (qtyEl) {
+    if (qtyEl.tagName === 'INPUT') qtyEl.value = GAME.stockQty;
+    else qtyEl.textContent = GAME.stockQty;
+  }
   setEl('stock-total', 'Total: ' + fmtPrice(price * GAME.stockQty));
 }
 
