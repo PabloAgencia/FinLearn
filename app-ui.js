@@ -1363,7 +1363,7 @@ function renderStockCard(s) {
       ${owned ? `<div class="sc-owned">${owned.shares} uds · P&L: ${fmtPnl(owned.shares, owned.avgPrice, price)}</div>` : ''}
     </div>
     <div class="sc-right">
-      <div class="sc-sparkline">${_sparklineSVG(s.ticker, 52, 22)}</div>
+      <div class="sc-sparkline">${_sparklineSVG(s.ticker, 44, 20)}</div>
       <div class="sc-price">${fmtPrice(price)}</div>
       <div class="sc-pct ${up ? 'up' : 'down'}">${up ? '+' : ''}${pct}%</div>
     </div>
