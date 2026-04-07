@@ -145,8 +145,23 @@
               <div class="goal-desc">Un colchón de 3-6 meses</div>
             </div>
           </div>
-          <div class="ob-emoji" style="margin-top:28px;">🧠</div>
-          <div class="ob-title">¿Cuál es tu nivel actual?</div>
+          <button class="btn btn-primary btn-block" id="ob-s1-btn" onclick="obNext(2)" style="opacity:.4;cursor:not-allowed;">
+            Continuar →
+          </button>
+          <p class="ob-legal-note">Al continuar aceptas nuestros <a href="privacy.html" target="_blank">Términos de uso y Política de privacidad</a>. Tus datos nunca salen de tu dispositivo.</p>
+        </div>
+
+        <!-- STEP 2: Name + Avatar -->
+        <div class="ob-step" id="ob-s2">
+          <div class="ob-logo">FinLearn</div>
+          <div class="ob-dots">
+            <div class="ob-dot"></div>
+            <div class="ob-dot active"></div>
+            <div class="ob-dot"></div>
+            <div class="ob-dot"></div>
+          </div>
+          <div class="ob-emoji">🧠</div>
+          <div class="ob-title">¿Cuál es tu nivel financiero?</div>
           <div class="ob-sub">Sin juicios — esto nos ayuda a darte el contenido más útil desde el primer día.</div>
           <div class="ob-level-grid">
             <div class="ob-level-card" id="lvl-zero" onclick="selectInvestorLevel('zero','Empezando desde cero')">
@@ -170,25 +185,7 @@
               <div class="ob-lc-desc">Gestiono mi cartera y busco optimizarla</div>
             </div>
           </div>
-          <button class="btn btn-primary btn-block" id="ob-s1-btn" onclick="obNext(2)" style="opacity:.4;cursor:not-allowed;">
-            Continuar →
-          </button>
-          <p class="ob-legal-note">Al continuar aceptas nuestros <a href="privacy.html" target="_blank">Términos de uso y Política de privacidad</a>. Tus datos nunca salen de tu dispositivo.</p>
-        </div>
-
-        <!-- STEP 2: Name + Avatar -->
-        <div class="ob-step" id="ob-s2">
-          <div class="ob-logo">FinLearn</div>
-          <div class="ob-dots">
-            <div class="ob-dot"></div>
-            <div class="ob-dot active"></div>
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
-          </div>
-          <div class="ob-emoji" id="ob-sel-av">🌱</div>
+          <div class="ob-emoji" id="ob-sel-av" style="margin-top:20px;">🌱</div>
           <div class="ob-title">¿Cómo te llamamos?</div>
           <div class="ob-sub">Elige tu avatar y tu nombre para el ranking.</div>
           <div class="av-grid">
@@ -252,32 +249,8 @@
             </div>
           </div>
 
-          <div class="fin-field" style="margin-top:16px;">
-            <label>APORTACIÓN MENSUAL (€) — <span id="ob-monthly-display">€100</span></label>
-            <div class="ob-slider-wrap">
-              <input type="range" class="ob-slider" id="ob-monthly-slider"
-                min="0" max="2000" step="10" value="100"
-                oninput="_ob_updateMonthlySlider(); _renderProjectionStepFinal();">
-              <div class="ob-slider-ticks">
-                <span>€0</span><span>€500</span><span>€1.000</span><span>€1.500</span><span>€2.000</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="fin-field" style="margin-top:16px;">
-            <label>RENTABILIDAD ESPERADA (%) — <span id="ob-return-display">7%</span></label>
-            <div class="ob-slider-wrap">
-              <input type="range" class="ob-slider" id="ob-return"
-                min="1" max="15" step="0.5" value="7"
-                oninput="document.getElementById('ob-return-display').textContent=this.value+'%'; _renderProjectionStepFinal();">
-              <div class="ob-slider-ticks">
-                <span>1%</span><span>4%</span><span>7%</span><span>11%</span><span>15%</span>
-              </div>
-            </div>
-          </div>
-
           <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="obNext(4)">
-            Ver mi proyección →
+            Ver mi futuro →
           </button>
         </div>
 
@@ -314,8 +287,11 @@
             </div>
           </div>
 
+          <div style="font-size:15px;font-weight:700;margin:16px 0 10px;text-align:center;">¿Cuál es tu situación laboral?</div>
+          <div id="ob-prof-grid" class="ob-prof-grid-simple"></div>
+
           <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="finishOnboarding()">
-            🚀 Empezar mi camino gratis
+            🚀 Empezar FinLearn
           </button>
           <button class="btn btn-ghost btn-block btn-sm" onclick="finishOnboarding()" style="margin-top:8px;">
             Saltar por ahora

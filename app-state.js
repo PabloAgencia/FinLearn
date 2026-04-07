@@ -68,7 +68,7 @@ const DEFAULTS = {
   lastSessionTs: 0,           // timestamp real del último saveState
   lastSessionGameDay: 0,      // gameDay de la última sesión
   debts: [],
-  income: 0, age: 30,
+  income: 0, monthlyIncome: 0, age: 30,
   seenCareerEvents: [],
   lifeSalary: 1800,
   shownYearSummaries: [],
@@ -351,6 +351,7 @@ function loadState() {
     S.balance = Math.max(0, parseFloat(S.balance) || 0);
     S.cash    = Math.max(0, parseFloat(S.cash)    || 0);
     S.invested= Math.max(0, parseFloat(S.invested)|| 0);
+    if (!S.monthlyIncome) S.monthlyIncome = S.lifeSalary || S.income || 0;
     S.monthlyContribution = Math.max(0, parseFloat(S.monthlyContribution) || 200);
     S.patrimony = Math.max(0, parseFloat(S.patrimony) || 0);
 
@@ -478,7 +479,7 @@ function simulateMonthlyGrowth() {
  */
 function calcHealthScore() {
   let score = 0;
-  const income         = S.lifeSalary || S.income || 2000;
+  const income         = S.monthlyIncome || S.lifeSalary || S.income || 2000;
   const monthlyExp     = income * 0.7;
   const emergencyTarget= Math.max(monthlyExp * 3, 3000);
   const debtTotal      = (S.debts || []).reduce((s,d) => s + (d.balance||0), 0);

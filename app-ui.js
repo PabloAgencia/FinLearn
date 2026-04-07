@@ -4079,6 +4079,7 @@ function obNext(step) {
     setTimeout(_ob_initNumericInputs, 50);
   } else if (step === 4) {
     _renderProjectionStepFinal();
+    if (typeof _ob_renderProfessions === 'function') _ob_renderProfessions();
   }
 }
 
@@ -4092,8 +4093,8 @@ function _ob_initNumericInputs() {
 
 function _renderProjectionStepFinal() {
   const savings  = parseFloat(document.getElementById('ob-savings')?.value)       || 0;
-  const monthly  = parseFloat(document.getElementById('ob-monthly-slider')?.value) || 100;
-  const rate     = parseFloat(document.getElementById('ob-return')?.value)          || 7;
+  const monthly  = parseFloat(document.getElementById('ob-monthly-slider')?.value) || Math.round((parseFloat(document.getElementById('ob-income')?.value)||1800) * 0.15);
+  const rate     = 7;
   const debt     = parseFloat(document.getElementById('ob-debt-total')?.value)      || 0;
 
   const patrimony = Math.max(0, savings - debt);
@@ -4201,7 +4202,8 @@ function _updateFinPreviewOnboarding() {
 function finishOnboarding() {
   const savings   = parseFloat(document.getElementById('ob-savings')?.value)    || 0;
   // F24: prefer the monthly slider value (set in ob-s-monthly) over the text input
-  const sliderVal = parseInt(document.getElementById('ob-monthly-slider')?.value, 10);
+  const incomeVal = parseFloat(document.getElementById('ob-income')?.value) || 0;
+  const sliderVal = parseInt(document.getElementById('ob-monthly-slider')?.value, 10) || Math.round(incomeVal * 0.15);
   const monthly   = sliderVal > 0 ? sliderVal
                     : (parseFloat(document.getElementById('ob-monthly')?.value) || 200);
   const ret       = parseFloat(document.getElementById('ob-return')?.value)     || 7;
@@ -4241,6 +4243,7 @@ function finishOnboarding() {
   S.streak              = 1;
   S.xp                  = 50;
   S.income              = finalIncome;
+  S.monthlyIncome       = finalIncome;
   S.age                 = finalAge;
   S.lifeAge             = finalAge;
 

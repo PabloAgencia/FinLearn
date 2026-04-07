@@ -331,9 +331,9 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .ob-wrap{
   min-height:100%;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
-  padding:32px 24px;position:relative;overflow:hidden;
+  padding:32px 24px;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
-.ob-step{display:none;flex-direction:column;width:100%;max-width:460px;animation:fadeUp .4s ease;}
+.ob-step{display:none;flex-direction:column;width:100%;max-width:460px;animation:fadeUp .4s ease;padding-bottom:60px;}
 .ob-step.active{display:flex;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
 
@@ -13154,7 +13154,9 @@ body.light-mode .coach-settings-btn:hover { background: rgba(50,40,20,.1); }
 .tool-modal-inner {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 40px;
 }
 .tool-modal-head {
@@ -15274,3 +15276,11 @@ body.light-mode .num-ctrl-wrap input { color: var(--text1) !important; }
   .tool-body   { padding-bottom: 90px; }
   .stats-inner { padding-bottom: 100px; }
 }
+
+/* ── Onboarding: selección de carrera simplificada ── */
+.ob-prof-grid-simple { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
+.ob-prof-grid-simple .ob-prof-card { padding:10px 8px; text-align:center; background:var(--surface); border:1px solid var(--border); border-radius:12px; cursor:pointer; transition:all .2s; }
+.ob-prof-grid-simple .ob-prof-card.selected { border-color:var(--accent); background:rgba(0,229,160,.08); }
+.ob-prof-grid-simple .ob-pc-icon { font-size:22px; margin-bottom:4px; }
+.ob-prof-grid-simple .ob-pc-title { font-size:11px; font-weight:700; color:var(--text1); }
+.ob-prof-grid-simple .ob-pc-salary { font-size:10px; color:var(--accent); margin-top:2px; }

@@ -1958,7 +1958,7 @@ var BUDGET_CATS = [
 
 var _BUDGET = (function() {
   function _getState() {
-    if (!S._budget) S._budget = { income: S.lifeSalary || S.income || 2000, cats: {}, saved: false };
+    if (!S._budget) S._budget = { income: S.monthlyIncome || S.lifeSalary || S.income || 2000, cats: {}, saved: false };
     // Default values if not set
     BUDGET_CATS.forEach(function(c) {
       if (S._budget.cats[c.id] === undefined) S._budget.cats[c.id] = Math.round(c.bench);
