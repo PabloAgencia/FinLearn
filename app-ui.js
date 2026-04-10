@@ -806,10 +806,6 @@ function _buildModuleCard(m, branchColor) {
     <div class="mod-footer">
       <div class="mod-xp">+${m.xp} XP</div>
       <div class="mod-users">👤 ${m.users}</div>
-      ${!locked ? `<button class="speedrun-btn" title="Modo Speedrun: cronómetro activo"
-        onclick="event.stopPropagation();SPEEDRUN_start(${m.id})">
-        ${(S.speedrunRecords && S.speedrunRecords[m.id]) ? '⚡ Récord: ' + (()=>{const s=S.speedrunRecords[m.id];return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');})() : '⚡ Speedrun'}
-      </button>` : ''}
     </div>
   </div>`;
 }
@@ -1364,7 +1360,7 @@ function renderStockCard(s) {
     </div>
     <div class="sc-right">
       <div class="sc-sparkline">${_sparklineSVG(s.ticker, 44, 20)}</div>
-      <div class="sc-price">${price >= 100 ? '€' + Math.round(price).toLocaleString('es') : fmtPrice(price)}</div>
+      <div class="sc-price">${price >= 1000 ? '€' + Math.round(price).toLocaleString('es') : fmtPrice(price)}</div>
       <div class="sc-pct ${up ? 'up' : 'down'}">${up ? '+' : ''}${pct}%</div>
     </div>
   </div>`;

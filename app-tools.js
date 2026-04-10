@@ -2504,10 +2504,12 @@ function _renderTutStep() {
   if (arr)  arr.style.display = 'none';
   if (card) {
     card.style.position  = 'fixed';
-    card.style.top       = window.innerWidth <= 480 ? '46%' : '50%';
+    card.style.top       = '50%';
     card.style.left      = '50%';
-    card.style.transform = 'translate(-50%, -50%)';
+    card.style.right     = 'auto';
     card.style.bottom    = 'auto';
+    card.style.margin    = '0';
+    card.style.transform = 'translate(-50%, -50%)';
   }
 
   SFX.xp();
