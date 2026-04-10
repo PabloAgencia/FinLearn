@@ -2451,32 +2451,19 @@ function _hideSplash() {
 ══════════════════════════════════════════════════════════════════ */
 const TUTORIAL_STEPS = [
   {
-    icon: '💚',
-    title: 'Tu salud financiera',
-    desc: 'Este indicador mide tu situación económica global: ahorros, deuda, inversiones y hábitos. Sube completando módulos e invirtiendo con cabeza.',
-    target: 'health-score-num',
-    pos: 'below',
-  },
-  {
     icon: '🎓',
-    title: 'Módulos de aprendizaje',
-    desc: 'Cada módulo que completas te da XP real y conocimiento financiero que cambia cómo juegas. Empieza por \"Interés Compuesto\": 5 minutos que valen miles de euros.',
-    target: 'modules-grid',
-    pos: 'above',
+    title: '¡Bienvenido a FinLearn!',
+    desc: 'Aprende finanzas reales completando módulos cortos. Cada módulo te da XP y conocimiento que puedes aplicar hoy mismo. Empieza por "Interés Compuesto" — son 5 minutos que valen miles de euros.',
   },
   {
     icon: '📈',
-    title: 'Invierte en la bolsa',
-    desc: 'Compra ETFs, acciones y activos. Los precios se mueven en tiempo real y los dividendos llegan cada trimestre automáticamente. Tu capital trabaja mientras juegas.',
-    target: 'bn-portfolio',
-    pos: 'above',
+    title: 'Tu simulador financiero',
+    desc: 'Invierte en bolsa, gestiona negocios y simula decisiones de vida — todo con dinero virtual. El simulador arranca con tu situación real para que las proyecciones tengan sentido.',
   },
   {
     icon: '🏆',
-    title: 'Completa misiones',
-    desc: 'Las misiones diarias y semanales te dan XP y recompensas en efectivo. Son el motor de tu progresión. ¡Consigue tu primera misión hoy!',
-    target: 'missions-card',
-    pos: 'below',
+    title: 'Gana XP y sube de nivel',
+    desc: 'Cada módulo completado, inversión realizada y misión cumplida te da XP. Sube de nivel, desbloquea carreras y derrota bosses al completar ramas enteras.',
   },
 ];
 
@@ -2485,6 +2472,8 @@ let _tutStep = 0;
 function startTutorial() {
   if (S.hasSeenTutorial) return;
   _tutStep = 0;
+  S.hasSeenTutorial = true;
+  saveState();
   document.getElementById('tutorial-overlay').style.display = 'block';
   _renderTutStep();
 }

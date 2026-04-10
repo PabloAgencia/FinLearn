@@ -1364,7 +1364,7 @@ function renderStockCard(s) {
     </div>
     <div class="sc-right">
       <div class="sc-sparkline">${_sparklineSVG(s.ticker, 44, 20)}</div>
-      <div class="sc-price">${fmtPrice(price)}</div>
+      <div class="sc-price">${price >= 100 ? '€' + Math.round(price).toLocaleString('es') : fmtPrice(price)}</div>
       <div class="sc-pct ${up ? 'up' : 'down'}">${up ? '+' : ''}${pct}%</div>
     </div>
   </div>`;
