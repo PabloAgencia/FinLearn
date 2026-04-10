@@ -5873,6 +5873,7 @@ const AI_COACH = (() => {
             '<div class="coach-modal-sub">' + (_getApiKey() ? '🟢 IA activa · respuestas reales' : '⚪ Modo análisis local · <a href="#" onclick="AI_COACH.openSettings()" style="color:var(--accent);">Activar IA real →</a>') + '</div>' +
           '</div>' +
           '<button class="coach-settings-btn" onclick="AI_COACH.openSettings()" title="Configurar IA">⚙️</button>' +
+          '<button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;flex-shrink:0;" onclick="document.getElementById(\'m-coach\').style.display=\'none\'">✕</button>' +
         '</div>' +
 
         // Stats bar
