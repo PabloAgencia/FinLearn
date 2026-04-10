@@ -2547,7 +2547,7 @@ function BOSS_renderIntro(branchId) {
         <div class="boss-rules">
           <div class="boss-rule">⏱️ 45 segundos por pregunta</div>
           <div class="boss-rule">5 preguntas difíciles</div>
-          <div class="boss-rule">3/5 correctas → cofre legendario 🏆</div>
+          <div class="boss-rule">5/5 correctas → cofre legendario 🏆</div>
         </div>
         <button class="btn btn-boss" onclick="BOSS_startQuiz('${branchId}')">⚔️ ¡Comenzar batalla!</button>
         <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="BOSS_close()">No estoy listo</button>
@@ -2655,7 +2655,7 @@ function BOSS_showResult() {
   const boss = BOSS_DATA[_bossState.branchId];
   const score = _bossState.score;
   const total = boss.questions.length;
-  const won = score >= 3;
+  const won = score >= 5;
   const modal = document.getElementById('boss-modal');
   if (!modal) return;
 
