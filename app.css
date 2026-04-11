@@ -495,6 +495,8 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .mod-desc{font-size:12px;color:var(--text2);margin-bottom:10px;line-height:1.45;}
 .mod-pbar{margin-bottom:8px;}
 .mod-footer{display:flex;align-items:center;justify-content:flex-start;gap:10px;}
+.mod-speedrun-btn{margin-left:auto;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);border-radius:6px;padding:2px 6px;font-size:12px;cursor:pointer;color:var(--gold);line-height:1.4;flex-shrink:0;}
+.mod-speedrun-btn:active{transform:scale(.92);}
 .mod-xp{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);}
 .mod-users{font-size:11px;color:var(--text3);}
 
