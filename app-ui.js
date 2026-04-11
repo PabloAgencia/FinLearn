@@ -4462,8 +4462,6 @@ function completeModule() {
     S.streak        = Math.max(1, S.streak);
     // F34: trackear XP ganado para reto de tipo 'xp'
     if (typeof F34_onXPGained === 'function') F34_onXPGained(xpGain);
-    S.patrimony    += 500;
-    S.invested     += 200;
     if (typeof recalcPatrimony === 'function') recalcPatrimony();
     if (hasMultiplier) toast('🚀 ¡Multiplicador x2 activo!', '+' + xpGain + ' XP (doble)', 't-success');
 
