@@ -117,6 +117,28 @@ async function sbInit() {
 }
 
 // ── MODAL DE AUTH ─────────────────────────────────────────────────
+function sbHandleAccountBtn() {
+  const user = getSBUser();
+  if (!user) { sbShowAuthModal('login'); return; }
+  // Ya logueado — mostrar mini menú
+  let menu = document.getElementById('sb-account-menu');
+  if (menu) { menu.remove(); return; }
+  menu = document.createElement('div');
+  menu.id = 'sb-account-menu';
+  menu.style.cssText = 'position:fixed;top:60px;right:16px;z-index:9999;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.4);';
+  menu.innerHTML = `
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px;word-break:break-all;">✅ ${user.email}</div>
+    <button onclick="sbSignOut().then(()=>{location.reload();})"
+      style="width:100%;padding:8px;border-radius:8px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444;font-size:13px;cursor:pointer;font-weight:600;">
+      Cerrar sesión
+    </button>`;
+  document.body.appendChild(menu);
+  setTimeout(() => document.addEventListener('click', function h(e) {
+    if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener('click', h); }
+  }), 100);
+}
+window.sbHandleAccountBtn = sbHandleAccountBtn;
+
 function sbShowAuthModal(mode = 'login') {
   let modal = document.getElementById('m-auth');
   if (!modal) {
