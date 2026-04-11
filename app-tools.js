@@ -195,7 +195,7 @@ function initApp() {
     document.getElementById('bottom-nav')?.classList?.remove('hidden');
     renderHomeScreen();
     setTimeout(_hideSplash, 400);
-    if (!S.hasSeenTutorial) setTimeout(startTutorial, 1800);
+    if (!localStorage.getItem('fl_tutorial_done')) setTimeout(startTutorial, 1800);
   } else {
     showScreen('s-onboard');
   }
@@ -2470,7 +2470,8 @@ const TUTORIAL_STEPS = [
 let _tutStep = 0;
 
 function startTutorial() {
-  if (S.hasSeenTutorial) return;
+  if (S.hasSeenTutorial || localStorage.getItem('fl_tutorial_done')) return;
+  localStorage.setItem('fl_tutorial_done', '1');
   _tutStep = 0;
   S.hasSeenTutorial = true;
   saveState();
@@ -2529,6 +2530,7 @@ function skipTutorial() {
 function endTutorial() {
   document.getElementById('tutorial-overlay').style.display = 'none';
   S.hasSeenTutorial = true;
+  localStorage.setItem('fl_tutorial_done', '1');
   saveState();
   // Encourage first action
   setTimeout(() => toast('🎯 Primer objetivo', 'Completa 3 módulos y haz tu primera inversión', 't-success'), 500);

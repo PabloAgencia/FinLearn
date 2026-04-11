@@ -6568,7 +6568,11 @@ a.btn {
 }
 .tut-card {
   position: fixed;
-  width: min(340px, 90vw);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(340px, 88vw);
+  margin: 0;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -6649,7 +6653,7 @@ a.btn {
 }
 @media (max-width: 480px) {
   .tut-card {
-    width: 92vw !important;
+    width: min(340px, 88vw);
     padding: 20px 16px 16px !important;
     max-height: 72vh;
     overflow-y: auto;
