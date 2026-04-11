@@ -4305,7 +4305,7 @@ function finishOnboarding() {
   toast('🎉 ¡Bienvenido a FinLearn!', `Hola ${S.userName}, empezamos${careerMsg} 🚀`, 't-success');
   confetti();
 
-  setTimeout(() => { try { window.GR_openRegister?.(); } catch (e) { } }, 3000);
+  setTimeout(() => { if (typeof sbShowAuthModal === 'function' && typeof getSBUser === 'function' && !getSBUser()) { sbShowAuthModal('register'); } }, 3000);
 }
 
 
