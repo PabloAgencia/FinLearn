@@ -806,6 +806,7 @@ function _buildModuleCard(m, branchColor) {
     <div class="mod-footer">
       <div class="mod-xp">+${m.xp} XP</div>
       <div class="mod-users">👤 ${m.users}</div>
+      ${done ? `<button class="mod-speedrun-btn" onclick="event.stopPropagation();SPEEDRUN_start(${m.id})" title="Modo speedrun">⚡</button>` : ''}
     </div>
   </div>`;
 }
