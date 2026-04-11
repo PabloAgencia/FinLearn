@@ -297,15 +297,19 @@ const AppState = {
  */
 function saveState() {
   try {
-    S.maxStreak = Math.max(S.maxStreak||0, S.streak||0); // track historical max
+    S.maxStreak = Math.max(S.maxStreak||0, S.streak||0);
     S.lastSessionTs        = Date.now();
-    S.lastSeen             = Date.now(); // F43 offline earnings
+    S.lastSeen             = Date.now();
     S.lastSessionGameDay   = S.gameDay || 0;
     S.lastSessionPatrimony = Math.round(S.patrimony || 0);
     const toSave = { ...S };
-    delete toSave.currentMod;                            // no serializar el objeto módulo
-    toSave.currentModId = S.currentMod ? S.currentMod.id : null; // guardar solo el id
+    delete toSave.currentMod;
+    toSave.currentModId = S.currentMod ? S.currentMod.id : null;
     localStorage.setItem(LS_KEY, JSON.stringify(toSave));
+    // Sync to cloud if logged in (fire and forget)
+    if (typeof sbSaveState === 'function' && typeof getSBUser === 'function' && getSBUser()) {
+      sbSaveState().catch(e => console.warn('[SB] sync error:', e));
+    }
   } catch (e) { console.warn('saveState error:', e); }
 }
 

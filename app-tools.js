@@ -133,7 +133,32 @@ function _initAmbient() {
 const _appStartTime = Date.now();
 function initApp() {
   _showSplash();
+  // Intentar sesión Supabase primero; si hay usuario logado, cargar desde la nube
+  if (typeof sbInit === 'function') {
+    sbInit().then(async hasSession => {
+      let hasState = false;
+      if (hasSession) {
+        hasState = await sbLoadState();
+        // Si no había estado en la nube pero sí local, subir el local
+        if (!hasState) {
+          hasState = loadState();
+          if (hasState && typeof sbSaveState === 'function') sbSaveState();
+        }
+      } else {
+        hasState = loadState();
+      }
+      _initAppWithState(hasState);
+    }).catch(() => {
+      const hasState = loadState();
+      _initAppWithState(hasState);
+    });
+    return;
+  }
   const hasState = loadState();
+  _initAppWithState(hasState);
+}
+
+function _initAppWithState(hasState) {
 
   // ── Inicializar precios de stocks desde datos estáticos ─────────────
   STOCKS.forEach(s => {
