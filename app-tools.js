@@ -948,12 +948,12 @@ window._firstPathDismiss = function() {
    día 30: +2000 XP + badge | día 100: evento único
 ══════════════════════════════════════════════════════════════════ */
 const STREAK_MILESTONES = [
-  { day: 3,   xp: 100,  cash: 0,    shield: 0, label: '🔥 ¡Racha de 3 días!',   msg: 'Empiezas a crear el hábito. +100 XP.' },
-  { day: 7,   xp: 200,  cash: 500,  shield: 1, label: '🛡️ ¡Semana completa!',   msg: 'Una semana sin fallo. +€500 y un Escudo de Racha.' },
-  { day: 14,  xp: 500,  cash: 0,    shield: 1, label: '🏆 ¡Dos semanas!',       msg: '14 días constante. Eres del top 15%. +500 XP y un escudo.' },
-  { day: 30,  xp: 2000, cash: 1000, shield: 2, label: '💎 ¡Racha de 30 días!',  msg: 'Un mes sin fallar. Top 5% global. +2000 XP, €1000 y 2 escudos.' },
-  { day: 100, xp: 5000, cash: 5000, shield: 2, label: '👑 ¡100 días seguidos!', msg: 'Leyenda absoluta. +5000 XP, €5000 y 2 escudos.' },
-  { day: 365, xp:15000, cash:20000, shield: 3, label: '🌟 ¡Un año sin fallar!', msg: 'Eres una inspiración. +15.000 XP, €20.000 y 3 escudos. Estatus LEYENDA permanente.' },
+  { day: 3,   xp: 75,   cash: 0,    shield: 0, label: '🔥 ¡Racha de 3 días!',   msg: 'Empiezas a crear el hábito. +75 XP.' },
+  { day: 7,   xp: 150,  cash: 300,  shield: 1, label: '🛡️ ¡Semana completa!',   msg: 'Una semana sin fallo. +150 XP, €300 y un Escudo de Racha.' },
+  { day: 14,  xp: 300,  cash: 0,    shield: 1, label: '🏆 ¡Dos semanas!',       msg: '14 días constante. Eres del top 15%. +300 XP y un escudo.' },
+  { day: 30,  xp: 500,  cash: 500,  shield: 2, label: '💎 ¡Racha de 30 días!',  msg: 'Un mes sin fallar. Top 5% global. +500 XP, €500 y 2 escudos.' },
+  { day: 100, xp: 1500, cash: 2000, shield: 2, label: '👑 ¡100 días seguidos!', msg: 'Leyenda absoluta. +1.500 XP, €2.000 y 2 escudos.' },
+  { day: 365, xp: 5000, cash: 8000, shield: 3, label: '🌟 ¡Un año sin fallar!', msg: 'Eres una inspiración. +5.000 XP, €8.000 y 3 escudos. Estatus LEYENDA permanente.' },
 ];
 
 function _checkStreakMilestones(streak) {
@@ -3903,7 +3903,7 @@ const SCENARIOS = [
         { name:'Deuda familiar',    amount:15000, rate:0,  minPayment:300 },
       ]},
     objective: { type:'net_worth', target: 10000, label:'Patrimonio neto positivo de €10.000', gameDays: 5*365 },
-    xpReward: 1500,
+    xpReward: 400,
     relatedTag: 'DEUDA',
     lesson: 'La deuda no es el fin del mundo. Con el método correcto, el orden importa más que los ingresos.',
     milestones: [{pct:30,label:'Deuda por debajo de €35.000',xp:120},{pct:60,label:'Deuda a la mitad',xp:180},{pct:85,label:'Casi libre de deudas',xp:250}],
@@ -3917,7 +3917,7 @@ const SCENARIOS = [
     startConditions: { cash: 5000, balance: 2000, invested: 0, lifeSalary: 2200,
       monthlyContribution: 400 },
     objective: { type:'invested', target: 300000, label:'€300.000 invertidos', gameDays: 15*365 },
-    xpReward: 2000,
+    xpReward: 500,
     relatedTag: 'FIRE',
     lesson: 'Con una tasa de ahorro del 40%+ y retornos compuestos, la jubilación anticipada es matemáticamente posible.',
     milestones: [{pct:25,label:'Primeros €75.000 invertidos',xp:150},{pct:55,label:'Más de la mitad del camino',xp:200},{pct:80,label:'FIRE a la vista',xp:300}],
@@ -3930,7 +3930,7 @@ const SCENARIOS = [
     difficulty: '🟠 Medio',
     startConditions: { cash: 3000, balance: 5000, invested: 16000, lifeSalary: 2800 },
     objective: { type:'patrimony_recover', target: 40000, label:'Recuperar €40.000 de patrimonio (partiste de €21.000 tras el crash)', gameDays: 3*365 },
-    xpReward: 1200,
+    xpReward: 350,
     relatedTag: 'INVERSIÓN',
     lesson: 'El S&P 500 tardó 5 años en recuperar el crash de 2008. Quienes mantuvieron triplicaron en 10 años.',
     milestones: [{pct:40,label:'Superada la primera caída',xp:100},{pct:65,label:'Recuperando terreno',xp:150},{pct:85,label:'Casi recuperado',xp:200}],
@@ -3943,7 +3943,7 @@ const SCENARIOS = [
     difficulty: '🟢 Normal',
     startConditions: { cash: 0, balance: 0, invested: 0, lifeSalary: 1800 },
     objective: { type:'patrimony', target: 500000, label:'€500.000 de patrimonio', gameDays: 30*365 },
-    xpReward: 2500,
+    xpReward: 600,
     relatedTag: 'AHORRO',
     lesson: 'El tiempo es el activo más valioso. Empezar con nada a los 25 y ser millonario a los 55 es estadísticamente normal con DCA.',
     milestones: [{pct:10,label:'Primeros €50.000',xp:150},{pct:40,label:'€200.000 acumulados',xp:250},{pct:75,label:'El millón está cerca',xp:400}],
@@ -3957,7 +3957,7 @@ const SCENARIOS = [
     startConditions: { cash: 20000, balance: 0, invested: 0, lifeSalary: 0,
       career: 'entrepreneur' },
     objective: { type:'biz_income', target: 5000, label:'€5.000/mes de ingresos de negocios', gameDays: 5*365 },
-    xpReward: 2000,
+    xpReward: 500,
     relatedTag: 'EMPRENDIMIENTO',
     lesson: 'El emprendedor apuesta todo al principio. El riesgo es real, pero la asimetría del retorno también.',
     milestones: [{pct:30,label:'€1.500/mes de negocios',xp:150},{pct:60,label:'€3.000/mes de negocios',xp:250},{pct:85,label:'Casi independiente',xp:350}],
@@ -3970,7 +3970,7 @@ const SCENARIOS = [
     difficulty: '🟡 Difícil',
     startConditions: { cash: 50000, balance: 0, invested: 0, lifeSalary: 2200 },
     objective: { type:'patrimony', target: 120000, label:'€120.000 de patrimonio en 3 años', gameDays: 3*365 },
-    xpReward: 1800,
+    xpReward: 450,
     relatedTag: 'INVERSIÓN',
     lesson: 'El dinero inesperado suele perderse en 3 años. La disciplina de invertirlo inmediatamente marca la diferencia.',
     milestones: [{pct:30,label:'€36.000 de patrimonio',xp:120},{pct:60,label:'€72.000 alcanzados',xp:180},{pct:85,label:'Casi en el objetivo',xp:220}],
@@ -3983,7 +3983,7 @@ const SCENARIOS = [
     difficulty: '🟠 Medio',
     startConditions: { cash: 8000, balance: 0, invested: 5000, lifeSalary: 2500 },
     objective: { type:'patrimony', target: 45000, label:'€45.000 de patrimonio preservado en 2 años', gameDays: 2*365 },
-    xpReward: 1400,
+    xpReward: 380,
     relatedTag: 'INVERSIÓN',
     lesson: 'En 2022, el cash perdió un 10% de poder adquisitivo. El MSCI World cayó un 18% pero el oro subió un 12%.',
     milestones: [{pct:40,label:'€18.000 de patrimonio',xp:100},{pct:70,label:'€31.500 alcanzados',xp:150},{pct:90,label:'Casi preservado',xp:180}],
@@ -3997,7 +3997,7 @@ const SCENARIOS = [
     startConditions: { cash: 15000, balance: 0, invested: 0, lifeSalary: 2000,
       debts: [{ name:'Préstamo personal', amount:8000, rate:7, minPayment:180 }] },
     objective: { type:'patrimony', target: 60000, label:'€60.000 de patrimonio en 5 años', gameDays: 5*365 },
-    xpReward: 2200,
+    xpReward: 550,
     relatedTag: 'AHORRO',
     lesson: 'Reconstruir desde cero con 35-45 años es posible. La clave: eliminar deuda primero, automatizar ahorro después.',
     milestones: [{pct:25,label:'Deuda cancelada',xp:150},{pct:55,label:'€33.000 reconstruidos',xp:200},{pct:85,label:'Casi en el objetivo',xp:280}],
@@ -7229,13 +7229,13 @@ function _rotateMissions(week) {
     if (done >= 14 && !S._mw_perfect_weeks?.includes(S._mw_week)) {
       if (!S._mw_perfect_weeks) S._mw_perfect_weeks = [];
       S._mw_perfect_weeks.push(S._mw_week);
-      S.xp += 1000;
-      setTimeout(() => _showMissionPopup({ icon:'👑', title:'¡Semana Perfecta! 14/14', xp: 1000 }), 800);
+      S.xp += 400;
+      setTimeout(() => _showMissionPopup({ icon:'👑', title:'¡Semana Perfecta! 14/14', xp: 400 }), 800);
     } else if (done >= 10 && !S._mw_ten_weeks?.includes(S._mw_week)) {
       if (!S._mw_ten_weeks) S._mw_ten_weeks = [];
       S._mw_ten_weeks.push(S._mw_week);
-      S.xp += 500;
-      setTimeout(() => _showMissionPopup({ icon:'🏅', title:'10+ Misiones — Bonus', xp: 500 }), 800);
+      S.xp += 200;
+      setTimeout(() => _showMissionPopup({ icon:'🏅', title:'10+ Misiones — Bonus', xp: 200 }), 800);
     }
   }
 

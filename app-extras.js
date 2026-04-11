@@ -2662,7 +2662,7 @@ function BOSS_showResult() {
   if (won && !(S.bossBeaten||[]).includes(_bossState.branchId)) {
     if (!S.bossBeaten) S.bossBeaten = [];
     S.bossBeaten.push(_bossState.branchId);
-    S.xp += 500;
+    S.xp += 300;
     if (!S.chestsAvailable) S.chestsAvailable = [];
     S.chestsAvailable.push({ type: 'legendary', earnedAt: Date.now() });
     saveState();
@@ -2685,7 +2685,7 @@ function BOSS_showResult() {
           ? '¡Increíble! Has demostrado dominar ' + boss.name + '. Un cofre legendario te espera.'
           : 'Falta poco. Repasa los módulos y vuelve a intentarlo.'}
         </div>
-        ${won ? '<div class="boss-reward-badge">+500 XP · 🏆 Cofre Legendario</div>' : ''}
+        ${won ? '<div class="boss-reward-badge">+300 XP · 🏆 Cofre Legendario</div>' : ''}
         <div class="boss-result-btns">
           ${won ? '' : `<button class="btn btn-boss" onclick="BOSS_open('${_bossState.branchId}')">🔄 Reintentar</button>`}
           <button class="btn ${won ? 'btn-boss' : 'btn-ghost btn-sm'}" onclick="BOSS_close()">
