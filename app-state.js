@@ -70,7 +70,6 @@ const DEFAULTS = {
   debts: [],
   income: 0, monthlyIncome: 0, age: 30,
   seenCareerEvents: [],
-  lifeSalary: 1800,
   shownYearSummaries: [],
   gameSpeedMult: 3,
   hasSeenTutorial: false,
@@ -125,8 +124,6 @@ const DEFAULTS = {
   totalDividends: 0,
   /* ── Simulador de negocios ── */
   businesses: {},    // { bizId: { level, purchasePrice, totalRevenue, upgrades:[] } }
-  /* ── Inflación ── */
-  gameYear: 0,       // años de juego para calcular erosión inflacionaria
   /* ── Simulador de vida ── */
   lifeAge: 25,
   lifeEvents: [],
@@ -134,7 +131,7 @@ const DEFAULTS = {
   lifeExpenses: { rent: 700, food: 300, transport: 100, leisure: 200, other: 150 },
   lifeHappiness: 70,
   /* ── Sistema de carrera ── */
-  career: 'junior',       // 'junior' | 'senior' | 'entrepreneur'
+  career: 'intern',       // 'intern' | 'junior' | 'specialist' | 'senior' | 'director' | 'clevel' | 'entrepreneur' | 'investor'
   careerChanges: [],       // historial: [{from, to, age, gameYear}]
   /* ── Historial de patrimonio ── */
   patrimonyHistory: [],    // [{gameYear, value}] — snapshot anual
