@@ -125,7 +125,7 @@ function sbHandleAccountBtn() {
   if (menu) { menu.remove(); return; }
   menu = document.createElement('div');
   menu.id = 'sb-account-menu';
-  menu.style.cssText = 'position:fixed;top:60px;right:16px;z-index:9999;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.4);';
+  menu.style.cssText = 'position:fixed;top:60px;right:16px;z-index:9999;background:#0d1220;border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:12px 16px;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,.8);';
   menu.innerHTML = `
     <div style="font-size:12px;color:var(--text2);margin-bottom:8px;word-break:break-all;">✅ ${user.email}</div>
     <button onclick="sbSignOut().then(()=>{location.reload();})"
