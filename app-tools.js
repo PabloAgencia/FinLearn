@@ -1063,7 +1063,7 @@ function _tickGameDay() {
   // ── Crecimiento diario del patrimonio ──────────────────────
   const dailyReturn = (S.expectedReturn / 100 / 365) * S.invested;
   S.invested  += dailyReturn;
-  S.patrimony  = (S.cash || 0) + (S.balance || 0) + S.invested;
+  recalcPatrimony();
 
   // ── Hipotecas (cada 30 días de juego) ──────────────────────
   if (S.gameDay % 30 === 0) {
@@ -4159,7 +4159,7 @@ function startScenario(scenarioId) {
   S.lifeSalary  = conds.lifeSalary ?? 1800;
   if (conds.career) S.career = conds.career;
   S.yearBizIncome = 0;
-  S.patrimony   = S.cash + S.balance + S.invested;
+  recalcPatrimony();
 
   saveState();
 
