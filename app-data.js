@@ -4803,23 +4803,39 @@ const IDENTITY_STAGES = [
 ];
 
 /* ── P4-B: Títulos de nivel por XP acumulado ─────────────────────── */
+const LEVEL_XP_THRESHOLDS = (function() {
+  // XP necesario para pasar de nivel N al N+1
+  // Empieza en 200 XP y crece progresivamente hasta ~12.000 XP en los últimos niveles
+  function xpForLevel(n) {
+    return Math.round(200 * Math.pow(1 + (n - 1) * 0.13, 1.5) / 25) * 25;
+  }
+  const t = [0]; // t[0]=0 significa que el nivel 1 empieza en 0 XP acumulado
+  for (let i = 1; i <= 50; i++) t.push(t[i - 1] + xpForLevel(i));
+  return t;
+})();
+
 const LEVEL_TITLES = [
-  { idx:0, minXP:0,     title:'Aprendiz Financiero',     icon:'🌱', color:'#94a3b8',
-    desc:'El camino comienza aquí. Cada experto fue una vez principiante.' },
-  { idx:1, minXP:200,   title:'Ahorrador Consciente',    icon:'💰', color:'#4ade80',
-    desc:'Has descubierto la primera regla: gastar menos de lo que ganas.' },
-  { idx:2, minXP:500,   title:'Inversor Novato',         icon:'📈', color:'#60a5fa',
-    desc:'Tu dinero empieza a trabajar para ti. El interés compuesto ya te conoce.' },
-  { idx:3, minXP:1000,  title:'Analista en Prácticas',   icon:'🔍', color:'#c084fc',
-    desc:'Lees balances, entiendes ratios. Te separas del inversor promedio.' },
-  { idx:4, minXP:2000,  title:'Gestor de Patrimonio',    icon:'💼', color:'#fb923c',
-    desc:'Construyes riqueza con estrategia. El largo plazo es tu ventaja.' },
-  { idx:5, minXP:3500,  title:'Estratega Financiero',    icon:'♟️', color:'#fbbf24',
-    desc:'Piensas en sistemas, no en eventos. La volatilidad es tu aliada.' },
-  { idx:6, minXP:6000,  title:'Director de Inversiones', icon:'🏛️', color:'#f87171',
-    desc:'Pocos llegan aquí. Tu criterio vale más que cualquier consejo.' },
-  { idx:7, minXP:10000, title:'Maestro FinLearn',        icon:'🏆', color:'#00e5a0',
-    desc:'Cumbre alcanzada. Eres referente financiero. El 1% del 1%.' },
+  { idx:0,  minXP:0,      title:'Aprendiz Financiero',    icon:'🌱', color:'#94a3b8', desc:'El camino comienza aquí. Cada experto fue una vez principiante.' },
+  { idx:1,  minXP:500,    title:'Ahorrador Consciente',   icon:'💰', color:'#4ade80', desc:'Primera regla: gastar menos de lo que ganas.' },
+  { idx:2,  minXP:1200,   title:'Gestor de Gastos',       icon:'📋', color:'#6ee7b7', desc:'Controlas tu dinero, no al revés.' },
+  { idx:3,  minXP:2200,   title:'Inversor Novato',        icon:'📈', color:'#60a5fa', desc:'Tu dinero empieza a trabajar para ti.' },
+  { idx:4,  minXP:3500,   title:'Cazador de Intereses',   icon:'🎯', color:'#818cf8', desc:'El interés compuesto ya es tu aliado.' },
+  { idx:5,  minXP:5200,   title:'Analista en Prácticas',  icon:'🔍', color:'#c084fc', desc:'Lees balances, entiendes ratios.' },
+  { idx:6,  minXP:7500,   title:'Estratega de Cartera',   icon:'♟️', color:'#e879f9', desc:'Diversificas con criterio propio.' },
+  { idx:7,  minXP:10500,  title:'Gestor de Patrimonio',   icon:'💼', color:'#fb923c', desc:'Construyes riqueza con estrategia.' },
+  { idx:8,  minXP:14500,  title:'Experto en ETFs',        icon:'🏦', color:'#fbbf24', desc:'Indexado, diversificado, imparable.' },
+  { idx:9,  minXP:20000,  title:'Analista Financiero',    icon:'📊', color:'#f87171', desc:'Tu análisis supera al inversor medio.' },
+  { idx:10, minXP:27000,  title:'Estratega Financiero',   icon:'🧠', color:'#00e5a0', desc:'Piensas en sistemas, no en eventos.' },
+  { idx:11, minXP:36000,  title:'Especialista en Riesgo', icon:'⚖️', color:'#38bdf8', desc:'Calculas el riesgo antes de actuar.' },
+  { idx:12, minXP:47000,  title:'Inversor de Valor',      icon:'💎', color:'#a78bfa', desc:'Compras valor, no precio.' },
+  { idx:13, minXP:61000,  title:'Maestro del Ahorro',     icon:'🏆', color:'#fcd34d', desc:'Tu tasa de ahorro es tu superpoder.' },
+  { idx:14, minXP:78000,  title:'Director de Inversiones',icon:'🏛️', color:'#f472b6', desc:'Pocos llegan aquí. Tu criterio manda.' },
+  { idx:15, minXP:99000,  title:'Arquitecto Financiero',  icon:'🔭', color:'#34d399', desc:'Diseñas carteras que duran décadas.' },
+  { idx:16, minXP:125000, title:'Gurú de los Mercados',   icon:'🌍', color:'#fb7185', desc:'Los mercados no te sorprenden.' },
+  { idx:17, minXP:157000, title:'Magnate en Construcción',icon:'🏗️', color:'#a3e635', desc:'Tu patrimonio crece sin parar.' },
+  { idx:18, minXP:196000, title:'Inversor Elite',         icon:'⚡', color:'#22d3ee', desc:'Top 5% de usuarios de FinLearn.' },
+  { idx:19, minXP:243000, title:'Leyenda Financiera',     icon:'🌟', color:'#fbbf24', desc:'Tu nombre ya es referente.' },
+  { idx:20, minXP:300000, title:'Maestro FinLearn',       icon:'👑', color:'#ff6b35', desc:'Cumbre alcanzada. El 1% del 1%.' },
 ];
 
 const EXAM_QUESTION_POOL = [

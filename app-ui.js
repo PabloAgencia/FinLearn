@@ -266,14 +266,18 @@ function updateUIFromState() {
   setEl('cert-rank',  'Top ' + (100 - percData.pct) + '%');
 
   // ── Level bar in home hero ─────────────────────────────────────────
-  const xpPerLevel = 500;
-  const xpInLevel  = S.xp % xpPerLevel;
-  const xpPct      = Math.round((xpInLevel / xpPerLevel) * 100);
-  const xpToNext   = xpPerLevel - xpInLevel;
-  const fillEl     = document.getElementById('xp-level-fill');
+  const _lvl = Math.min((S.level || 1), 50);
+  const _xpThis  = (typeof LEVEL_XP_THRESHOLDS !== 'undefined') ? (LEVEL_XP_THRESHOLDS[_lvl - 1] || 0) : (_lvl - 1) * 500;
+  const _xpNext  = (typeof LEVEL_XP_THRESHOLDS !== 'undefined') ? (LEVEL_XP_THRESHOLDS[_lvl] || LEVEL_XP_THRESHOLDS[LEVEL_XP_THRESHOLDS.length - 1]) : _lvl * 500;
+  const _xpInLvl = Math.max(0, S.xp - _xpThis);
+  const _xpRange = Math.max(1, _xpNext - _xpThis);
+  const xpPct    = Math.round((_xpInLvl / _xpRange) * 100);
+  const xpToNext = Math.max(0, _xpNext - S.xp);
+  const fillEl   = document.getElementById('xp-level-fill');
   if (fillEl) fillEl.style.width = xpPct + '%';
-  setEl('home-level-lbl',  'Lv.' + S.level + '→' + (S.level + 1));
-  setEl('home-xp-to-next', xpToNext.toLocaleString('es') + ' XP para subir · ');
+  const isMax = _lvl >= 50;
+  setEl('home-level-lbl',  isMax ? 'Lv.50 MAX' : 'Lv.' + _lvl + '→' + (_lvl + 1));
+  setEl('home-xp-to-next', isMax ? '¡Nivel máximo! · ' : xpToNext.toLocaleString('es') + ' XP para subir · ');
   // P4-B: mostrar título de rango en home hero
   const homeRankEl = document.getElementById('home-rank-title');
   if (homeRankEl) {
@@ -372,13 +376,17 @@ function refreshUI() {
   if (gtPct) gtPct.textContent = pct + '%';
 
   // ── 3. XP bar + level (home hero) ─────────────────────────────────
-  const xpPerLevel = 500;
-  const xpInLevel  = S.xp % xpPerLevel;
-  const xpPct      = Math.round((xpInLevel / xpPerLevel) * 100);
-  const xpFill     = document.getElementById('xp-level-fill');
-  if (xpFill) xpFill.style.width = xpPct + '%';
-  setEl('home-xp-to-next', (xpPerLevel - xpInLevel).toLocaleString('es') + ' XP para subir · ');
-  setEl('home-level-lbl',  'Lv.' + S.level + '→' + (S.level + 1));
+  const _lvl2 = Math.min((S.level || 1), 50);
+  const _xpThis2  = (typeof LEVEL_XP_THRESHOLDS !== 'undefined') ? (LEVEL_XP_THRESHOLDS[_lvl2 - 1] || 0) : (_lvl2 - 1) * 500;
+  const _xpNext2  = (typeof LEVEL_XP_THRESHOLDS !== 'undefined') ? (LEVEL_XP_THRESHOLDS[_lvl2] || LEVEL_XP_THRESHOLDS[LEVEL_XP_THRESHOLDS.length - 1]) : _lvl2 * 500;
+  const _xpInLvl2 = Math.max(0, S.xp - _xpThis2);
+  const _xpRange2 = Math.max(1, _xpNext2 - _xpThis2);
+  const xpPct2    = Math.round((_xpInLvl2 / _xpRange2) * 100);
+  const xpFill    = document.getElementById('xp-level-fill');
+  if (xpFill) xpFill.style.width = xpPct2 + '%';
+  const isMax2 = _lvl2 >= 50;
+  setEl('home-xp-to-next', isMax2 ? '¡Nivel máximo! · ' : Math.max(0, _xpNext2 - S.xp).toLocaleString('es') + ' XP para subir · ');
+  setEl('home-level-lbl',  isMax2 ? 'Lv.50 MAX' : 'Lv.' + _lvl2 + '→' + (_lvl2 + 1));
   setEl('nav-xp',          S.xp.toLocaleString('es') + ' XP');
   if (typeof F33_updateNavStreak === 'function') F33_updateNavStreak(); else setEl('nav-streak', S.streak);
   setEl('lb-num',          S.level);
@@ -413,13 +421,17 @@ function syncAllData() {
   if (gtPct) gtPct.textContent = pct + '%';
 
   // ── 3. Perfil: módulos completados + barra XP ───────────────────────
-  const xpPerLevel = 500;
-  const xpInLevel  = S.xp % xpPerLevel;
-  const xpPct      = Math.round((xpInLevel / xpPerLevel) * 100);
-  const xpFill     = document.getElementById('xp-level-fill');
+  const _lvl3 = Math.min((S.level || 1), 50);
+  const _xpThis3  = (typeof LEVEL_XP_THRESHOLDS !== 'undefined') ? (LEVEL_XP_THRESHOLDS[_lvl3 - 1] || 0) : (_lvl3 - 1) * 500;
+  const _xpNext3  = (typeof LEVEL_XP_THRESHOLDS !== 'undefined') ? (LEVEL_XP_THRESHOLDS[_lvl3] || LEVEL_XP_THRESHOLDS[LEVEL_XP_THRESHOLDS.length - 1]) : _lvl3 * 500;
+  const _xpInLvl3 = Math.max(0, S.xp - _xpThis3);
+  const _xpRange3 = Math.max(1, _xpNext3 - _xpThis3);
+  const xpPct     = Math.round((_xpInLvl3 / _xpRange3) * 100);
+  const xpFill    = document.getElementById('xp-level-fill');
   if (xpFill) xpFill.style.width = xpPct + '%';
-  setEl('home-xp-to-next', (xpPerLevel - xpInLevel).toLocaleString('es') + ' XP para subir · ');
-  setEl('home-level-lbl',  'Lv.' + S.level + '→' + (S.level + 1));
+  const isMax3 = _lvl3 >= 50;
+  setEl('home-xp-to-next', isMax3 ? '¡Nivel máximo! · ' : Math.max(0, _xpNext3 - S.xp).toLocaleString('es') + ' XP para subir · ');
+  setEl('home-level-lbl',  isMax3 ? 'Lv.50 MAX' : 'Lv.' + _lvl3 + '→' + (_lvl3 + 1));
   setEl('nav-xp',          S.xp.toLocaleString('es') + ' XP');
   if (typeof F33_updateNavStreak === 'function') F33_updateNavStreak(); else setEl('nav-streak', S.streak);
   setEl('lb-num',          S.level);
@@ -4465,13 +4477,21 @@ function completeModule() {
     if (typeof recalcPatrimony === 'function') recalcPatrimony();
     if (hasMultiplier) toast('🚀 ¡Multiplicador x2 activo!', '+' + xpGain + ' XP (doble)', 't-success');
 
-    // Subir de nivel automáticamente
-    const newLevel = Math.floor(S.xp / 500) + 1;
+    // Subir de nivel automáticamente (sistema progresivo 50 niveles)
+    let newLevel = 1;
+    if (typeof LEVEL_XP_THRESHOLDS !== 'undefined') {
+      for (let i = LEVEL_XP_THRESHOLDS.length - 1; i >= 1; i--) {
+        if (S.xp >= LEVEL_XP_THRESHOLDS[i]) { newLevel = i + 1; break; }
+      }
+      newLevel = Math.min(newLevel, 50);
+    } else {
+      newLevel = Math.floor(S.xp / 500) + 1;
+    }
     if (newLevel > S.level) {
       S.level = newLevel;
-      SFX.levelUp();
+      SFX.levelUp && SFX.levelUp();
       checkAchievements();
-      toast('🎊 ¡Subiste al nivel ' + newLevel + '!', 'Sigues avanzando 🚀', 't-success');
+      _showLevelUpScreen(newLevel);
     }
     // P4-B: comprobar si se ha desbloqueado nuevo título de rango
     checkTitleUpgrade();
@@ -4539,6 +4559,48 @@ function completeModule() {
       }
     }, 100);
   }
+}
+
+function _showLevelUpScreen(level) {
+  const rankTitle = typeof getLevelTitle === 'function' ? getLevelTitle(S.xp) : { icon:'⭐', title:'Nivel ' + level, color:'#00e5a0', desc:'' };
+  const chestReward = _getLevelChest(level);
+  let overlay = document.getElementById('level-up-overlay');
+  if (!overlay) { overlay = document.createElement('div'); overlay.id = 'level-up-overlay'; document.body.appendChild(overlay); }
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);animation:fadeInFast .25s ease;';
+  overlay.innerHTML = `
+    <div style="text-align:center;padding:32px 24px;max-width:340px;width:100%;animation:levelUpPop .5s cubic-bezier(.34,1.56,.64,1) both;">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.15em;color:var(--text3);margin-bottom:16px;">NIVEL DESBLOQUEADO</div>
+      <div style="font-size:88px;line-height:1;margin-bottom:8px;filter:drop-shadow(0 0 24px ${rankTitle.color});">${rankTitle.icon}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;">${level}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${rankTitle.color};margin-bottom:6px;">${rankTitle.title}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5;">${rankTitle.desc || ''}</div>
+      ${chestReward ? `<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;text-align:left;">
+        <span style="font-size:32px;">${chestReward.icon}</span>
+        <div><div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.08em;">RECOMPENSA DE NIVEL</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;">Cofre ${chestReward.label}</div></div>
+      </div>` : ''}
+      <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();"
+        style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">
+        ¡Seguir subiendo! 🚀
+      </button>
+    </div>`;
+  if (typeof confetti === 'function') {
+    confetti({ particleCount: 140, spread: 80, origin: { y: 0.5 }, colors: [rankTitle.color, '#ffffff', '#fbbf24'] });
+    setTimeout(() => confetti({ particleCount: 70, spread: 130, origin: { y: 0.35 }, colors: [rankTitle.color, '#fff'] }), 350);
+  }
+  setTimeout(() => {
+    const el = document.getElementById('level-up-overlay');
+    if (el) { el.style.animation = 'fadeOutFast .3s ease forwards'; setTimeout(() => { el.remove(); if(typeof F44_render==='function') F44_render(); }, 300); }
+  }, 5000);
+  if (chestReward && typeof F44_earnChest === 'function') F44_earnChest(chestReward.type);
+}
+
+function _getLevelChest(level) {
+  const special = { 5:'gold', 10:'legendary', 15:'gold', 20:'legendary', 25:'legendary', 30:'legendary', 35:'legendary', 40:'legendary', 45:'legendary', 50:'legendary' };
+  const icons   = { bronze:'📦', silver:'🥈', gold:'🏅', legendary:'👑' };
+  const labels  = { bronze:'Bronce', silver:'Plata', gold:'Oro', legendary:'Legendario' };
+  const type    = special[level] || (level % 3 === 0 ? 'gold' : level % 2 === 0 ? 'silver' : 'bronze');
+  return { type, icon: icons[type], label: labels[type] };
 }
 
 /** goToCertificate — Cierra el modal de celebración y va a la pantalla de certificado. */

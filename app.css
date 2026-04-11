@@ -15303,3 +15303,11 @@ body.light-mode .num-ctrl-wrap input { color: var(--text1) !important; }
 .ob-prof-grid-simple .ob-pc-icon { font-size:22px; margin-bottom:4px; }
 .ob-prof-grid-simple .ob-pc-title { font-size:11px; font-weight:700; color:var(--text1); }
 .ob-prof-grid-simple .ob-pc-salary { font-size:10px; color:var(--accent); margin-top:2px; }
+
+@keyframes levelUpPop {
+  0%   { transform: scale(.55) translateY(40px); opacity: 0; }
+  65%  { transform: scale(1.05) translateY(-6px); opacity: 1; }
+  100% { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+@keyframes fadeInFast  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOutFast { from { opacity: 1; } to { opacity: 0; } }
