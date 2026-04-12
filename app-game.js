@@ -745,37 +745,48 @@ function SAAS_selectPlan(plan) {
  * SAAS_startPayment — Inicia el flujo de pago simulado.
  * Muestra pantalla de loading con mensajes rotativos y finaliza con éxito tras 3s.
  */
-function SAAS_startPayment() {
-  const label   = _saasPlan === 'annual' ? 'Elite Anual · 65€/año' : 'Elite Mensual · 9€/mes';
+async function SAAS_startPayment() {
+  const isAnnual = _saasPlan === 'annual';
+  const priceId  = isAnnual
+    ? 'price_1TLWFZQn1UY1PTsHHL5W0XCU'
+    : 'price_1TLSi1Qn1UY1PTsHdQ5YOmX5';
+
   document.getElementById('saas-step-plan')?.style?.setProperty('display', 'none');
   const loading = document.getElementById('saas-step-loading');
   if (loading) loading.style.display = 'block';
 
   const msgs = [
     'Conectando con pasarela de pago segura...',
-    'Verificando identidad (3D Secure)...',
-    'Confirmando suscripción...',
+    'Redirigiendo a Stripe...',
+    'Preparando checkout...',
   ];
   let mi = 0;
   const iv = setInterval(() => { setEl('saas-loading-msg', msgs[mi] || msgs[0]); mi++; }, 900);
 
-  setTimeout(() => {
+  try {
+    const user    = typeof getSBUser === 'function' ? getSBUser() : null;
+    const res     = await fetch('/api/stripe-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        priceId,
+        userId:    user?.id    || '',
+        userEmail: user?.email || '',
+      }),
+    });
+    const data = await res.json();
     clearInterval(iv);
-    loading.style.display = 'none';
-    const success = document.getElementById('saas-step-success');
-    if (success) success.style.display = 'block';
-    setEl('saas-plan-name', label);
-    const nextYear = new Date(); nextYear.setFullYear(nextYear.getFullYear() + 1);
-    setEl('saas-next-bill', nextYear.toLocaleDateString('es'));
-    try {
-      localStorage.setItem(PREMIUM_KEY, '1');
-      S._premium = '1';
-      // Sincronizar con Supabase si hay sesión activa
-      if (typeof sbSetPremium === 'function' && typeof getSBUser === 'function' && getSBUser()) {
-        sbSetPremium(true);
-      }
-    } catch (e) { }
-  }, 3000);
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'No URL');
+    }
+  } catch(e) {
+    clearInterval(iv);
+    if (loading) loading.style.display = 'none';
+    document.getElementById('saas-step-plan')?.style?.removeProperty('display');
+    toast('❌ Error al conectar con el pago', 'Inténtalo de nuevo.', 't-error');
+  }
 }
 
 /** SAAS_confirmSuccess — Cierra el modal de pago y resetea el estado visual del modal. */
