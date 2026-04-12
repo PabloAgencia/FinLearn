@@ -260,7 +260,7 @@ function _initAppWithState(hasState) {
   // P4-C: Misiones semanales
   initWeeklyMissions();
 
-  console.log('[FinLearn] App iniciada. Estado:', { userName: S.userName, xp: S.xp, streak: S.streak });
+  // App iniciada
   _initAmbient();
 }
 
