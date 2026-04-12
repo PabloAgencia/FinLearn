@@ -9179,6 +9179,7 @@ function F29_applyReward(reward) {
   } else if (reward.type === 'badge') {
     if (!Array.isArray(S.surpriseBadges)) S.surpriseBadges = [];
     S.surpriseBadges.push(reward.title);
+    if (S.surpriseBadges.length > 200) S.surpriseBadges = S.surpriseBadges.slice(-200);
     saveState();
   }
 }
@@ -10361,6 +10362,7 @@ function F34_claim() {
   if (!Array.isArray(S.surpriseBadges)) S.surpriseBadges = [];
   const today = F34_todayKey();
   S.surpriseBadges.push(`🎯 Reto ${today}`);
+  if (S.surpriseBadges.length > 200) S.surpriseBadges = S.surpriseBadges.slice(-200);
   saveState();
 
   if (typeof checkAchievements === 'function') checkAchievements();
@@ -10736,6 +10738,7 @@ function F42_answer(chosen) {
     S.xp += xpGain;
     spawnXP('+' + xpGain + ' XP');
     saveState();
+    if (typeof checkAchievements === 'function') checkAchievements();
     SFX.correct && SFX.correct();
     if (fbEl) fbEl.innerHTML = `<div class="f42-fb-ok">✅ ¡Correcto! +${xpGain} XP<br><small>${problem.exp}</small></div>`;
     setTimeout(F42_render, 1400);

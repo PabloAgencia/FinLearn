@@ -973,12 +973,7 @@ function M3_getOrCreateCode() {
 }
 
 function M3_addFriend(code) {
-  if (!code || code.length !== 6) { toast('❌ Código inválido', 'Introduce un código de 6 caracteres.', 't-error'); return; }
-  if (code === S.friendCode) { toast('❌ Tu propio código', 'No puedes añadirte a ti mismo.', 't-error'); return; }
-  S.friendStreak = 1; // inicio de racha compartida
-  saveState();
-  M3_render();
-  toast('🤝 ¡Amigo añadido!', 'Racha compartida iniciada. ¡Los dos debéis jugar hoy!', 't-success');
+  toast('🔜 Próximamente', 'La función de amigos llegará en la próxima versión. ¡Mantente al tanto!', 't-success');
 }
 
 function M3_render() {

@@ -30,7 +30,7 @@ function renderFinancialProfile() {
   setEl('fpg-20y', fmt(fv20));
 
   const bar = document.getElementById('fpcard-bar');
-  if (bar) bar.style.width = Math.min(parseFloat(indepPct)*5, 100) + '%';
+  if (bar) bar.style.width = Math.min(parseFloat(indepPct), 100) + '%';
 
   const healthScore = calcHealthScore();
   const healthLevel = getHealthLevel(healthScore);
@@ -741,7 +741,7 @@ function renderLessonNav() {
     pills.innerHTML = MODULES.map(m => {
       const done     = S.completedMods.includes(m.id);
       const isActive = m.id === mod.id;
-      const locked   = m.id > 0 && !S.completedMods.includes(m.id - 1) && !done;
+      const locked   = !done && !_isModUnlockedByBranch(m.id);
       const cls      = isActive ? 'active' : done ? 'done' : locked ? 'lmb-locked' : '';
       const title    = (done ? '✓ ' : locked ? '🔒 ' : '') + m.title;
       const style    = locked ? 'opacity:.4;cursor:not-allowed;' : '';
@@ -922,12 +922,17 @@ function toggleModulesExpand() {
 
 function renderStep() {
   const mod = S.currentMod;
+  if (!mod || !mod.steps) return;
   const step = mod.steps[S.step];
+  if (!step) return;
   const total = mod.steps.length;
   const pct = Math.round((S.step / Math.max(total-1,1)) * 100);
-  document.getElementById('lesson-prog').style.width = pct + '%';
-  document.getElementById('lesson-step-lbl').textContent = S.step + '/' + (total-1);
-  document.getElementById('lf-xp-val').textContent = '+' + mod.xp + ' XP';
+  const progEl = document.getElementById('lesson-prog');
+  if (progEl) progEl.style.width = pct + '%';
+  const stepLbl = document.getElementById('lesson-step-lbl');
+  if (stepLbl) stepLbl.textContent = S.step + '/' + (total-1);
+  const xpVal = document.getElementById('lf-xp-val');
+  if (xpVal) xpVal.textContent = '+' + mod.xp + ' XP';
 
   const nextBtn = document.getElementById('lesson-next-btn');
   nextBtn.disabled = false; nextBtn.style.opacity = '1';
