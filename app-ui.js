@@ -2160,8 +2160,6 @@ function renderHomeScreen() {
   renderModules();
   renderHomeRank();
   // renderChallengeMembers(); — chal-members removed from home
-  if (typeof F31_renderBadges === 'function') F31_renderBadges('f31-profile-badges');
-  if (typeof F32_render === 'function') F32_render('f32-profile-league');
   renderHealthScore();
   renderFinancialProfile();
   renderTemporalProgress();
@@ -2173,7 +2171,6 @@ function renderHomeScreen() {
   const dcaStreakEl = document.getElementById('dca-streak-nav');
   if (dcaStreakEl) dcaStreakEl.textContent = S.streak || 0;
   if (typeof renderMissionsCard === 'function') renderMissionsCard();
-  if (typeof F44_render === 'function') F44_render();
   // F24: personalized hero message + suggested module badge
   _f24_renderHeroMsg();
   _f24_highlightSuggestedModule();
@@ -2186,7 +2183,7 @@ function renderHomeScreen() {
   if (typeof F30_render === 'function') F30_render();
   // F31: Badges de Identidad
   if (typeof F31_renderBadges === 'function') F31_renderBadges('f31-home-badges');
-  // F32: Ligas Semanales
+  // F32: Ligas Semanales (una sola llamada)
   if (typeof F32_render === 'function') F32_render();
   // F33: Streak Identity — banner Earn Back
   if (typeof F33_renderBanner === 'function') F33_renderBanner();

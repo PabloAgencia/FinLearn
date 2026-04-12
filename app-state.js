@@ -357,7 +357,7 @@ function loadState() {
     // ── Sanitización de números (convierte strings a números si el tipo se corrompió) ──
     S.xp      = Math.max(0, parseInt(S.xp)       || 0);
     S.streak  = Math.max(0, parseInt(S.streak)    || 0);
-  S.gameSpeedMult = S.gameSpeedMult || 1;
+    S.gameSpeedMult = S.gameSpeedMult || 3;
     S.level   = Math.max(1, parseInt(S.level)     || 1);
     S.balance = Math.max(0, parseFloat(S.balance) || 0);
     S.cash    = Math.max(0, parseFloat(S.cash)    || 0);
