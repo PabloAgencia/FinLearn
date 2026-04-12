@@ -253,6 +253,23 @@ function _initAppWithState(hasState) {
 
   // F43: Rentabilidad pasiva offline
   if (typeof F43_checkOfflineEarnings === 'function') setTimeout(F43_checkOfflineEarnings, 1200);
+  // Stripe: detectar retorno con premium activado
+  const _stripeParams = new URLSearchParams(window.location.search);
+  if (_stripeParams.get('premium') === '1') {
+    try {
+      localStorage.setItem(PREMIUM_KEY, '1');
+      S._premium = '1';
+      if (typeof sbSetPremium === 'function' && typeof getSBUser === 'function' && getSBUser()) {
+        sbSetPremium(true);
+      }
+      saveState();
+      history.replaceState({}, '', window.location.pathname);
+      setTimeout(() => {
+        toast('👑 ¡Bienvenido a Premium!', 'Todas las funciones están desbloqueadas.', 't-success');
+        if (typeof confetti === 'function') { confetti(); setTimeout(confetti, 400); }
+      }, 1500);
+    } catch(e) {}
+  }
   // F47: Dilema semanal (lunes)
   if (typeof F47_checkShow === 'function') setTimeout(F47_checkShow, 2000);
   // F48: Snapshot semanal update
