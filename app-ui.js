@@ -237,7 +237,7 @@ function updateUIFromState() {
   setEl('prof-xp-total',     S.xp.toLocaleString('es'));
   setEl('prof-streak-val',   '🔥' + S.streak);
   setEl('prof-modules-count', S.completedMods.length);
-  setEl('prof-friends-count', 0); // sin backend aún; muestra 0 honesto
+  // prof-friends-count: feature pendiente de backend
 
   // ── Goal tracker ───────────────────────────────────────────────────
   setEl('gt-goal-text',  S.goalLabel);
@@ -4149,10 +4149,10 @@ function _updateFinPreviewOnboarding() {
   const age       = parseFloat(document.getElementById('ob-age')?.value)        || 30;
 
   const netWorth = savings - debtTotal;
-  setEl('fp-today', fmtPrice(netWorth));
-  setEl('fp-10y',   fmtPrice(calcCompound(Math.max(0, netWorth), monthly, ret, 10)));
-  setEl('fp-20y',   fmtPrice(calcCompound(Math.max(0, netWorth), monthly, ret, 20)));
-  setEl('fp-30y',   fmtPrice(calcCompound(Math.max(0, netWorth), monthly, ret, 30)));
+  setEl('fp-today-final', fmtPrice(netWorth));
+  setEl('fp-10y-final',   fmtPrice(calcCompound(Math.max(0, netWorth), monthly, ret, 10)));
+  setEl('fp-20y-final',   fmtPrice(calcCompound(Math.max(0, netWorth), monthly, ret, 20)));
+  setEl('fp-30y-final',   fmtPrice(calcCompound(Math.max(0, netWorth), monthly, ret, 30)));
 
   // ── Live health score ────────────────────────────────────────
   let score = 0;

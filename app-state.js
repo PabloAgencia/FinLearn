@@ -216,6 +216,15 @@ const DEFAULTS = {
   totalStudyMinutes: 0,        // minutos acumulados de estudio (estimado: 8 min/módulo)
   /* ── Blog / Guías ── */
   readGuides: [],              // IDs de artículos leídos ['guide_ahorro', ...]
+  /* ── Campos internos (no mostrar al usuario) ── */
+  _budget: null,
+  _totalSells: 0,
+  lastSessionPatrimony: 0,
+  xpMultiplierExpiry: 0,
+  _mw_week: -1,
+  _mw_missions: [],
+  _mw_perfect_weeks: [],
+  _mw_ten_weeks: [],
 };
 
 
