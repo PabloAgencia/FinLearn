@@ -4685,7 +4685,7 @@ function answerQuiz(chosen) {
   if (isCorrect) {
     SFX.correct();
     HAPTIC.success();
-    const _xpGain = Math.round(30 * _cMult * (S.xpMultiplier || 1));
+    const _xpGain = Math.round(20 * _cMult * (S.xpMultiplier || 1));
     S.xp += _xpGain;
     spawnXP('+' + _xpGain + ' XP' + (_cMult > 1 ? ' ×' + _cMult : ''));
     setTimeout(() => _quizBurst('qo-' + correctIdx), 60);
