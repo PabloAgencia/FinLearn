@@ -908,7 +908,8 @@ function M2_checkPrestige() {
 }
 
 function _calcFirePct() {
-  const target = ((S.monthlyContribution || 200) * 12) * 25;
+  const monthlyExpenses = Math.round((S.lifeSalary || S.monthlyIncome || 1800) * 0.7);
+  const target = monthlyExpenses * 12 * 25;
   return target > 0 ? Math.min(100, Math.round(((S.patrimony || 0) / target) * 100)) : 0;
 }
 
