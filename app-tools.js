@@ -4011,6 +4011,7 @@ let _scenarioGameState = null;
 let _scenarioStartDay  = 0;
 
 function openScenariosScreen() {
+  if (!isPremium()) { PM_showPaywall('scenarios'); return; }
   let modal = document.getElementById('m-scenarios');
   if (!modal) {
     modal = document.createElement('div');
@@ -5873,6 +5874,7 @@ const AI_COACH = (() => {
   }
 
   function askQuestion() {
+    if (!isPremium()) { PM_showPaywall('coach'); return; }
     let modal = document.getElementById('m-coach');
     if (!modal) {
       modal = document.createElement('div');

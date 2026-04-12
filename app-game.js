@@ -707,8 +707,18 @@ function upgradeToPremium() {
 
 /** PM_showPaywall — Muestra el modal de paywall. trigger es el origen (unused por ahora). */
 function PM_showPaywall(trigger) {
-  setEl('pm-paywall-title', 'Desbloquea tu crecimiento financiero');
-  setEl('pm-paywall-sub',   'Accede al plan Premium y multiplica tu progreso.');
+  const msgs = {
+    'f25':       { title:'Rastrea tu patrimonio real', sub:'Conecta tus activos y deudas reales para ver tu situación financiera exacta.' },
+    'f27':       { title:'Tu plan de acción personalizado', sub:'Pasos concretos adaptados a tu situación real para avanzar más rápido.' },
+    'scenarios': { title:'Retos de Escenario', sub:'Simulaciones inmersivas con situaciones financieras reales. Aprende haciendo.' },
+    'coach':     { title:'FinAI Coach personal', sub:'Tu coach financiero con IA que conoce tu situación exacta y te da consejos reales.' },
+    'projection':{ title:'Proyecciones a 20 y 30 años', sub:'Ve exactamente a dónde llegarás si mantienes tu ritmo actual de ahorro.' },
+    'chest':     { title:'Cofres Premium garantizados', sub:'Cofres Oro y Legendario en cada nivel especial. Recompensas mucho mejores.' },
+    'premium_feature': { title:'Función Premium', sub:'Desbloquea todas las herramientas reales de FinLearn.' },
+  };
+  const m = msgs[trigger] || msgs['premium_feature'];
+  setEl('pm-paywall-title', m.title);
+  setEl('pm-paywall-sub',   m.sub);
   openModal('m-paywall');
 }
 

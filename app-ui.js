@@ -2300,6 +2300,7 @@ function _f24_highlightSuggestedModule() {
 
 /** Abre el modal y precarga valores guardados si existen. */
 function F25_open() {
+  if (!isPremium()) { PM_showPaywall('f25'); return; }
   openModal('m-real-patrimony');
   F25_tab('assets');
   F25_preload();
@@ -2961,6 +2962,19 @@ function F27_generate() {
  * Solo visible si el usuario tiene userName (ha hecho onboarding).
  */
 function F27_render() {
+  if (!isPremium()) {
+    const el = document.getElementById('f27-action-plan');
+    if (el) {
+      el.style.display = 'block';
+      el.innerHTML = `<div style="padding:16px;text-align:center;background:var(--surface);border-radius:16px;border:1px solid var(--border);">
+        <div style="font-size:28px;margin-bottom:8px;">🗺️</div>
+        <div style="font-weight:700;font-size:15px;color:var(--text1);margin-bottom:4px;">Plan de Acción Personalizado</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">Pasos concretos según tu situación real.</div>
+        <button class="btn btn-primary btn-sm" onclick="PM_showPaywall('f27')">✦ Desbloquear con Premium</button>
+      </div>`;
+    }
+    return;
+  }
   const card = document.getElementById('f27-action-plan');
   if (!card) return;
 
@@ -4596,11 +4610,24 @@ function _showLevelUpScreen(level) {
 }
 
 function _getLevelChest(level) {
-  const special = { 5:'gold', 10:'legendary', 15:'gold', 20:'legendary', 25:'legendary', 30:'legendary', 35:'legendary', 40:'legendary', 45:'legendary', 50:'legendary' };
-  const icons   = { bronze:'📦', silver:'🥈', gold:'🏅', legendary:'👑' };
-  const labels  = { bronze:'Bronce', silver:'Plata', gold:'Oro', legendary:'Legendario' };
-  const type    = special[level] || (level % 3 === 0 ? 'gold' : level % 2 === 0 ? 'silver' : 'bronze');
-  return { type, icon: icons[type], label: labels[type] };
+  const icons  = { bronze:'📦', silver:'🥈', gold:'🏅', legendary:'👑' };
+  const labels = { bronze:'Bronce', silver:'Plata', gold:'Oro', legendary:'Legendario' };
+
+  if (isPremium()) {
+    // Premium: cofres especiales en niveles clave, oro/plata entre medias
+    const special = { 5:'gold', 10:'legendary', 15:'gold', 20:'legendary', 25:'legendary', 30:'legendary', 35:'legendary', 40:'legendary', 45:'legendary', 50:'legendary' };
+    const type = special[level] || (level % 3 === 0 ? 'gold' : level % 2 === 0 ? 'silver' : 'bronze');
+    return { type, icon: icons[type], label: labels[type] };
+  } else {
+    // Gratis: bronce casi siempre, plata muy raro, oro rarísimo, nunca legendario
+    const rand = Math.random();
+    let type;
+    if (level % 10 === 0 && rand < 0.3)      type = 'gold';    // 30% en nivel ×10
+    else if (level % 5 === 0 && rand < 0.25)  type = 'silver';  // 25% en nivel ×5
+    else if (rand < 0.08)                     type = 'silver';  // 8% resto
+    else                                      type = 'bronze';  // siempre bronce por defecto
+    return { type, icon: icons[type], label: labels[type] };
+  }
 }
 
 /** goToCertificate — Cierra el modal de celebración y va a la pantalla de certificado. */

@@ -184,14 +184,20 @@ function F44_render() {
 
 function F44_onModuleComplete() {
   const completed = (S.completedMods || []).length;
-  // Cofre bronce cada 5 módulos
-  if (completed % 5 === 0 && completed > 0) F44_earnChest('bronze');
-  // Cofre plata cada 10 módulos (y en múltiplos de 10, ya que 10 es múltiplo de 5, no añadir los dos)
-  if (completed % 10 === 0 && completed > 0) { F44_earnChest('silver'); return; }
-  // Cofre oro cada 25 módulos
-  if (completed % 25 === 0 && completed > 0) F44_earnChest('gold');
-  // Racha múltiplo de 7 → plata
-  if ((S.streak || 0) > 0 && (S.streak || 0) % 7 === 0) F44_earnChest('silver');
+  const prem = isPremium();
+
+  if (prem) {
+    // Premium: cofres mejores y más frecuentes
+    if (completed % 5 === 0 && completed > 0)  F44_earnChest('bronze');
+    if (completed % 10 === 0 && completed > 0) { F44_earnChest('silver'); return; }
+    if (completed % 25 === 0 && completed > 0)  F44_earnChest('gold');
+    if ((S.streak||0) > 0 && (S.streak||0) % 7 === 0) F44_earnChest('silver');
+  } else {
+    // Gratis: bronce cada 5, plata cada 20, oro casi nunca
+    if (completed % 20 === 0 && completed > 0) { F44_earnChest('silver'); return; }
+    if (completed % 5 === 0 && completed > 0)   F44_earnChest('bronze');
+    // Sin cofres por racha en plan gratis
+  }
 }
 
 window.F44_earnChest   = F44_earnChest;
