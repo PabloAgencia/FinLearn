@@ -693,6 +693,9 @@ function GR_skipRegister() {
 
 /** isPremium — Devuelve true si el usuario tiene premium activo. */
 function isPremium() {
+  // Primero comprueba S._premium (sincronizado desde Supabase al cargar)
+  if (typeof S !== 'undefined' && S._premium === '1') return true;
+  // Fallback a localStorage para usuarios sin cuenta
   try { return localStorage.getItem(PREMIUM_KEY) === '1'; } catch (e) { return false; }
 }
 
@@ -754,7 +757,14 @@ function SAAS_startPayment() {
     setEl('saas-plan-name', label);
     const nextYear = new Date(); nextYear.setFullYear(nextYear.getFullYear() + 1);
     setEl('saas-next-bill', nextYear.toLocaleDateString('es'));
-    try { localStorage.setItem(PREMIUM_KEY, '1'); } catch (e) { }
+    try {
+      localStorage.setItem(PREMIUM_KEY, '1');
+      S._premium = '1';
+      // Sincronizar con Supabase si hay sesión activa
+      if (typeof sbSetPremium === 'function' && typeof getSBUser === 'function' && getSBUser()) {
+        sbSetPremium(true);
+      }
+    } catch (e) { }
   }, 3000);
 }
 

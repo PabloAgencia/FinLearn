@@ -219,6 +219,7 @@ const DEFAULTS = {
   /* ── Campos internos (no mostrar al usuario) ── */
   _budget: null,
   _totalSells: 0,
+  _premium: '0',
   lastSessionPatrimony: 0,
   xpMultiplierExpiry: 0,
   _mw_week: -1,

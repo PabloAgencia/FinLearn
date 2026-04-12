@@ -208,6 +208,47 @@ async function sbHandleAuth(mode) {
   }
 }
 
+// ── PREMIUM SYNC ──────────────────────────────────────────────────
+
+// Guarda el estado premium en Supabase (dentro de user_state)
+async function sbSetPremium(isPrem) {
+  if (!_sbUser) return;
+  try {
+    await getSB()
+      .from('user_state')
+      .upsert({ user_id: _sbUser.id, state: { ...((await sbGetStateRaw()) || {}), _premium: isPrem ? '1' : '0' }, updated_at: new Date().toISOString() },
+               { onConflict: 'user_id' });
+  } catch(e) { console.warn('[SB] setPremium error:', e); }
+}
+
+// Lee el estado premium desde Supabase
+async function sbGetPremium() {
+  if (!_sbUser) return false;
+  try {
+    const { data } = await getSB()
+      .from('user_state')
+      .select('state')
+      .eq('user_id', _sbUser.id)
+      .single();
+    return data?.state?._premium === '1';
+  } catch(e) { return false; }
+}
+
+// Helper interno para leer el state actual sin parsear todo
+async function sbGetStateRaw() {
+  try {
+    const { data } = await getSB()
+      .from('user_state')
+      .select('state')
+      .eq('user_id', _sbUser.id)
+      .single();
+    return data?.state || {};
+  } catch(e) { return {}; }
+}
+
+window.sbSetPremium  = sbSetPremium;
+window.sbGetPremium  = sbGetPremium;
+
 window.sbShowAuthModal  = sbShowAuthModal;
 window.sbHandleAuth     = sbHandleAuth;
 window.sbSignInGoogle   = sbSignInGoogle;
