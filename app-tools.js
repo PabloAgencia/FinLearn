@@ -220,7 +220,6 @@ function _initAppWithState(hasState) {
     document.getElementById('bottom-nav')?.classList?.remove('hidden');
     renderHomeScreen();
     setTimeout(_hideSplash, 400);
-    if (!localStorage.getItem('fl_tutorial_done')) setTimeout(startTutorial, 1800);
   } else {
     showScreen('s-onboard');
   }
@@ -253,6 +252,12 @@ function _initAppWithState(hasState) {
 
   // F43: Rentabilidad pasiva offline
   if (typeof F43_checkOfflineEarnings === 'function') setTimeout(F43_checkOfflineEarnings, 1200);
+  // Stripe: detectar cancelación de pago
+  const _cancelledParam = new URLSearchParams(window.location.search);
+  if (_cancelledParam.get('cancelled') === '1') {
+    history.replaceState({}, '', window.location.pathname);
+    setTimeout(() => toast('💳 Pago cancelado', 'Puedes intentarlo cuando quieras.', 't-warn'), 1000);
+  }
   // Stripe: detectar retorno con premium activado
   const _stripeParams = new URLSearchParams(window.location.search);
   if (_stripeParams.get('premium') === '1') {
