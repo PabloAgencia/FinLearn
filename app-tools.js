@@ -4913,6 +4913,37 @@ const AI_COACH = (() => {
   async function fetchFinAIResponse(userQuestion, staticFallback) {
     const FINAI_API_KEY      = _getApiKey();
     const FINAI_API_PROVIDER = _getApiProvider();
+
+    // Si no hay key propia pero es premium, usar endpoint propio
+    if (!FINAI_API_KEY && isPremium()) {
+      try {
+        if (!navigator.onLine) return '📵 Sin conexión. El FinAI Coach no está disponible offline.';
+        const context = 'Nombre: ' + (S.userName||'Explorador')
+          + ' | Nivel: ' + (S.level||1)
+          + ' | XP: ' + (S.xp||0)
+          + ' | Racha: ' + (S.streak||0) + 'd'
+          + ' | Módulos: ' + (S.completedMods||[]).length
+          + ' | Cash: €' + Math.round(S.cash||0)
+          + ' | Patrimonio: €' + Math.round(S.patrimony||0)
+          + ' | Carrera: ' + (S.career||'junior');
+        const res = await fetch('/api/coach', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: userQuestion, context }),
+          signal: AbortSignal.timeout(10000),
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        if (data.text) {
+          _coachHistory.push({ q: userQuestion.slice(0,120), a: data.text });
+          if (_coachHistory.length > 6) _coachHistory.shift();
+          return data.text;
+        }
+      } catch(e) {
+        return staticFallback || 'El coach no está disponible ahora mismo. Inténtalo de nuevo.';
+      }
+    }
+
     if (!FINAI_API_KEY) return staticFallback;
 
     // Construir contexto financiero del jugador
