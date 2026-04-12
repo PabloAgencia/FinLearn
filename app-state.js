@@ -338,7 +338,7 @@ function loadState() {
 
     // ── Sanitización de arrays (protege contra corrupción de localStorage) ──
     if (!Array.isArray(S.completedMods)) S.completedMods = [];
-    // Solo IDs válidos de módulos 0-19
+    // Solo IDs numéricos válidos
     S.completedMods = S.completedMods.filter(id => typeof id === 'number' && id >= 0 && id <= 999);
     if (!Array.isArray(S.viralMilestones)) S.viralMilestones = [];
     if (!Array.isArray(S.lifeEvents))      S.lifeEvents      = [];
@@ -355,6 +355,14 @@ function loadState() {
     if (!S.monthlyIncome) S.monthlyIncome = S.lifeSalary || S.income || 0;
     S.monthlyContribution = Math.max(0, parseFloat(S.monthlyContribution) || 200);
     S.patrimony = Math.max(0, parseFloat(S.patrimony) || 0);
+    // Recalcular nivel desde XP con el sistema progresivo
+    if (typeof LEVEL_XP_THRESHOLDS !== 'undefined' && LEVEL_XP_THRESHOLDS.length > 1) {
+      let recalcLevel = 1;
+      for (let i = LEVEL_XP_THRESHOLDS.length - 1; i >= 1; i--) {
+        if (S.xp >= LEVEL_XP_THRESHOLDS[i]) { recalcLevel = i + 1; break; }
+      }
+      S.level = Math.min(Math.max(1, recalcLevel), 50);
+    }
 
     // ── MIGRACIÓN: saves antiguos tienen dinero en S.balance pero S.cash era 5000 default.
     //    Si el save tenía S.balance > 0 y S.cash es el valor default (5000), 
