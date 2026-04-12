@@ -3984,7 +3984,7 @@ function _ob_updateMonthlySlider() {
   else if (val < 500) insight = '🔥 Excelente base. Estás en el top 20% de inversores habituales.';
   else if (val < 1000)insight = '🚀 Con esta aportación alcanzas la libertad financiera antes de los 55.';
   else                insight = '👑 Nivel élite. Alcanzarás la independencia financiera mucho antes.';
-  setEl('ob-mp-insight', insight);
+  // ob-mp-insight: elemento eliminado del onboarding
 
   // Pre-configurar S.monthlyContribution en tiempo real para que el paso 3 use el valor
   S.monthlyContribution = val;
