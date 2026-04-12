@@ -253,8 +253,7 @@ function _initAppWithState(hasState) {
   // F43: Rentabilidad pasiva offline
   if (typeof F43_checkOfflineEarnings === 'function') setTimeout(F43_checkOfflineEarnings, 1200);
   // Stripe: detectar cancelación de pago
-  const _cancelledParam = new URLSearchParams(window.location.search);
-  if (_cancelledParam.get('cancelled') === '1') {
+  if (new URLSearchParams(window.location.search).get('cancelled') === '1') {
     history.replaceState({}, '', window.location.pathname);
     setTimeout(() => toast('💳 Pago cancelado', 'Puedes intentarlo cuando quieras.', 't-warn'), 1000);
   }
