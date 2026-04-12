@@ -1123,7 +1123,8 @@ function _tickGameDay() {
     const monthlySalary  = calcMonthlySalary();
     const career         = getCurrentCareer();
     const lifestyleCost  = career.lifestyleExtra || 0;
-    const livingCost     = (S.income > 0 ? S.income * 0.5 : 1000); // 50% de ingresos en gastos de vida
+    const monthlyInc     = S.lifeSalary || S.monthlyIncome || S.income || 1800;
+    const livingCost     = Math.round(monthlyInc * 0.5); // 50% de ingresos en gastos de vida
     const totalExpenses  = Math.round(lifestyleCost + livingCost);
     const netSalary      = Math.max(0, monthlySalary - totalExpenses);
     if (monthlySalary > 0) {
@@ -4392,7 +4393,6 @@ function _checkScenarioCompletion() {
     endScenario(true);
   } else if (failed) {
     toast(`💀 Escenario fallado`, `No alcanzaste el objetivo a tiempo. +100 XP por intentarlo.`, 't-danger');
-    S.xp += 100;
     endScenario(false);
   }
 }
@@ -4401,10 +4401,15 @@ function endScenario(won) {
   if (!_activeScenario) return;
   const sc = _activeScenario;
 
+  // Calcular XP total ganado durante el escenario (milestones + victoria/derrota)
+  const _preScenarioXP  = _scenarioState ? (_scenarioState.xp || 0) : (S.xp || 0);
+  const _milestoneXP    = Math.max(0, (S.xp || 0) - _preScenarioXP);
+  const _wonScenario    = won;
+  const _xpReward       = won ? sc.xpReward : 100; // 100 XP consolación si falla
+  const _scenarioId     = sc.id;
+  const _totalXPGained  = _milestoneXP + _xpReward;
+
   if (won) {
-    S.xp += sc.xpReward;
-    if (!Array.isArray(S.completedScenarios)) S.completedScenarios = [];
-    S.completedScenarios.push(sc.id);
     confetti(); setTimeout(confetti, 400); setTimeout(confetti, 800);
     HAPTIC.levelUp(); SFX.levelUp();
     toast(`🏆 ¡Escenario completado!`, `${sc.name} · +${sc.xpReward} XP · "${sc.lesson}"`, 't-success');
@@ -4413,14 +4418,21 @@ function endScenario(won) {
   // Restore original state (full isolation restore)
   if (_scenarioState) {
     Object.assign(S, _scenarioState);
-    // Also restore portfolio/mortgages/businesses that were overwritten
     S.portfolio  = _scenarioState.portfolio  || {};
     S.mortgages  = _scenarioState.mortgages  || [];
     S.businesses = _scenarioState.businesses || [];
     S.debts      = _scenarioState.debts      || [];
-    saveState();
-    updateUIFromState();
   }
+
+  // Aplicar TODO el XP ganado DESPUÉS del restore para que no se pierda
+  S.xp = (S.xp || 0) + _totalXPGained;
+  if (_wonScenario) {
+    if (!Array.isArray(S.completedScenarios)) S.completedScenarios = [];
+    if (!S.completedScenarios.includes(_scenarioId)) S.completedScenarios.push(_scenarioId);
+  }
+
+  saveState();
+  updateUIFromState();
   _activeScenario    = null;
   _scenarioState     = null;
   _scenarioGameState = null;
