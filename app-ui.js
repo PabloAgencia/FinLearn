@@ -3964,19 +3964,18 @@ function _ob_updateMonthlySlider() {
   if (display) display.textContent = '€' + val.toLocaleString('es-ES');
 
   if (val === 0) {
-    setEl('ob-mp-10y', '—');
-    setEl('ob-mp-20y', '—');
-    setEl('ob-mp-30y', '—');
-    setEl('ob-mp-insight', 'Puedes empezar con 0€ y aumentar cuando puedas.');
+    setEl('fp-10y-final', '—');
+    setEl('fp-20y-final', '—');
+    setEl('fp-30y-final', '—');
     return;
   }
 
   const p10 = Math.round(calcCompound(0, val, 8, 10));
   const p20 = Math.round(calcCompound(0, val, 8, 20));
   const p30 = Math.round(calcCompound(0, val, 8, 30));
-  setEl('ob-mp-10y', fmtPrice(p10));
-  setEl('ob-mp-20y', fmtPrice(p20));
-  setEl('ob-mp-30y', fmtPrice(p30));
+  setEl('fp-10y-final', fmtPrice(p10));
+  setEl('fp-20y-final', fmtPrice(p20));
+  setEl('fp-30y-final', fmtPrice(p30));
 
   // Insight contextual según importe
   let insight = '';
