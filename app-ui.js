@@ -4486,7 +4486,6 @@ function completeModule() {
     if (newLevel > S.level) {
       S.level = newLevel;
       SFX.levelUp && SFX.levelUp();
-      checkAchievements();
       _showLevelUpScreen(newLevel);
     }
     // P4-B: comprobar si se ha desbloqueado nuevo título de rango
@@ -4659,6 +4658,12 @@ function answerQuiz(chosen) {
   const mod  = S.currentMod;
   const step = mod?.steps[S.step];
   if (!step || step.type !== 'quiz') return;
+  // F46: si no hay corazones, mostrar modal y bloquear
+  if (typeof F46_regenHearts === 'function') F46_regenHearts();
+  if (typeof S.hearts !== 'undefined' && S.hearts <= 0) {
+    if (typeof _f46_noHeartsModal === 'function') _f46_noHeartsModal();
+    return;
+  }
   S.quizAnswered = true;
 
   const correctIdx = step.opts.findIndex(o => o.ok);
