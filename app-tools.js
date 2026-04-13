@@ -1059,16 +1059,19 @@ window.renderStreakBadges = renderStreakBadges;
 
 function checkDailyLogin() {
   if (!S.userName) return;
-  const today = new Date().toISOString().slice(0, 10);
+  const now = Date.now();
+  const last = S.lastLoginTimestamp || 0;
+  const hoursSince = (now - last) / 3600000;
 
-  // Already shown today
-  if (S.lastLoginDate === today) {
+  // Already shown in last 24h
+  if (last > 0 && hoursSince < 24) {
     _updateShieldUI();
     return;
   }
 
-  S.loginDayCount  = (S.loginDayCount  || 0) + 1;
-  S.lastLoginDate  = today;
+  S.loginDayCount       = (S.loginDayCount || 0) + 1;
+  S.lastLoginTimestamp  = now;
+  S.lastLoginDate       = new Date().toISOString().slice(0, 10); // mantener para compatibilidad
   if (!Array.isArray(S.claimedDays)) S.claimedDays = [];
 
   // Streak milestone check
