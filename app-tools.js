@@ -271,6 +271,7 @@ function _initAppWithState(hasState) {
       setTimeout(() => {
         toast('👑 ¡Bienvenido a Premium!', 'Todas las funciones están desbloqueadas.', 't-success');
         if (typeof confetti === 'function') { confetti(); setTimeout(confetti, 400); }
+        if (typeof renderHomeScreen === 'function') renderHomeScreen();
       }, 1500);
     } catch(e) {}
   }
