@@ -4464,7 +4464,7 @@ const ACHIEVEMENTS = [
     check: s => s.completedMods.length >= 15 },
   { id:'mods_all',     i:'🏆', n:'Maestro financiero',
     desc:'Completa todos los módulos disponibles.',
-    cat:'learn',  reward:{xp:2000, cash:5000},
+    cat:'learn',  reward:{xp:400, cash:1000},
     check: s => s.completedMods.length >= 30 },
 
   /* ── Racha ──────────────────────────────────────────────── */
@@ -4486,7 +4486,7 @@ const ACHIEVEMENTS = [
     check: s => s.streak >= 30 },
   { id:'streak_60',    i:'💫', n:'Dos meses sin parar',
     desc:'60 días consecutivos. Solo el 0.1% llega aquí.',
-    cat:'streak', reward:{xp:1200, cash:2000},
+    cat:'streak', reward:{xp:300, cash:600},
     check: s => s.streak >= 60 },
 
   /* ── XP / Nivel ─────────────────────────────────────────── */
@@ -4508,7 +4508,7 @@ const ACHIEVEMENTS = [
     check: s => (s.xp||0) >= 10000 },
   { id:'xp_25k',       i:'🌟', n:'Leyenda viva',
     desc:'25.000 XP — solo el 1% llega aquí.',
-    cat:'xp',     reward:{xp:1500, cash:3000},
+    cat:'xp',     reward:{xp:300, cash:800},
     check: s => (s.xp||0) >= 25000 },
 
   /* ── Inversión ──────────────────────────────────────────── */
@@ -4530,11 +4530,11 @@ const ACHIEVEMENTS = [
     check: s => (s.cash||0) + (s.invested||0) >= 10000 },
   { id:'portfolio_50k',i:'🚀', n:'Cartera €50k',
     desc:'Patrimonio total supera €50.000.',
-    cat:'invest', reward:{xp:2500, cash:5000},
+    cat:'invest', reward:{xp:400, cash:1000},
     check: s => (s.cash||0) + (s.invested||0) >= 50000 },
   { id:'portfolio_100k',i:'🦁', n:'Cartera €100k',
     desc:'Seis cifras — el sueño de muchos, la realidad de pocos.',
-    cat:'invest', reward:{xp:6000, cash:10000},
+    cat:'invest', reward:{xp:800, cash:2000},
     check: s => (s.cash||0) + (s.invested||0) >= 100000 },
   { id:'full_diversify',i:'🌐', n:'Cartera diversificada',
     desc:'5 activos distintos en cartera simultáneamente.',
@@ -4550,11 +4550,11 @@ const ACHIEVEMENTS = [
     check: s => (s.totalDividends||0) >= 100 },
   { id:'div_1000',     i:'🏦', n:'€1.000 en dividendos',
     desc:'€1.000 acumulados — la cartera ya trabaja para ti.',
-    cat:'invest', reward:{xp:2000, cash:2000},
+    cat:'invest', reward:{xp:300, cash:400},
     check: s => (s.totalDividends||0) >= 1000 },
   { id:'beat_bogle',   i:'🤖', n:'Mejor que Bogle-Bot',
     desc:'Superaste el patrimonio del bot indexado.',
-    cat:'invest', reward:{xp:2000, cash:5000},
+    cat:'invest', reward:{xp:400, cash:1000},
     check: s => (s.patrimony||0) > (SHADOW_INVESTORS.find(b=>b.id==='bogle')?.patrimony||99999) },
 
   /* ── Negocios ───────────────────────────────────────────── */
@@ -4568,15 +4568,15 @@ const ACHIEVEMENTS = [
     check: s => Object.keys(s.businesses||{}).length >= 2 },
   { id:'biz_3',        i:'🏙️', n:'Imperio',
     desc:'Opera 3 negocios simultáneos.',
-    cat:'biz',    reward:{xp:1200, cash:2000},
+    cat:'biz',    reward:{xp:250, cash:500},
     check: s => Object.keys(s.businesses||{}).length >= 3 },
   { id:'biz_income_10k',i:'🤑', n:'Flujo de caja',
     desc:'Genera €10.000 acumulados en ingresos de negocios.',
-    cat:'biz',    reward:{xp:1500, cash:3000},
+    cat:'biz',    reward:{xp:300, cash:600},
     check: s => Object.values(s.businesses||{}).reduce((a,b)=>a+(b.totalRevenue||0),0) >= 10000 },
   { id:'biz_income_50k',i:'👑', n:'Magnate',
     desc:'€50.000 acumulados en negocios — máquina de ingresos.',
-    cat:'biz',    reward:{xp:4000, cash:8000},
+    cat:'biz',    reward:{xp:700, cash:1500},
     check: s => Object.values(s.businesses||{}).reduce((a,b)=>a+(b.totalRevenue||0),0) >= 50000 },
 
   /* ── Tiempo de juego ────────────────────────────────────── */
@@ -4590,11 +4590,11 @@ const ACHIEVEMENTS = [
     check: s => (s.gameDay||0) >= 90 },
   { id:'day_365',      i:'🌟', n:'Un año simulado',
     desc:'Completa un año completo de juego.',
-    cat:'time',   reward:{xp:3000, cash:5000},
+    cat:'time',   reward:{xp:500, cash:1000},
     check: s => (s.gameDay||0) >= 365 },
   { id:'day_730',      i:'🎂', n:'Dos años',
     desc:'Dos años de juego — inversión a largo plazo.',
-    cat:'time',   reward:{xp:6000, cash:10000},
+    cat:'time',   reward:{xp:1000, cash:2000},
     check: s => (s.gameDay||0) >= 730 },
 
   /* ── Vida financiera ────────────────────────────────────── */
@@ -4604,11 +4604,11 @@ const ACHIEVEMENTS = [
     check: s => (s.balance||0) >= 10000 },
   { id:'homeowner',    i:'🏠', n:'Propietario',
     desc:'Has pagado tu primera hipoteca completamente.',
-    cat:'life',   reward:{xp:1500, cash:2000},
+    cat:'life',   reward:{xp:300, cash:400},
     check: s => (s.mortgages||[]).some(m => m.paid) },
   { id:'debt_free',    i:'🔓', n:'Libre de Deudas',
     desc:'Cero deudas y cero hipotecas — libertad total.',
-    cat:'life',   reward:{xp:2000, cash:3000},
+    cat:'life',   reward:{xp:400, cash:700},
     check: s => (s.debts||[]).length === 0 && (s.mortgages||[]).filter(m=>!m.paid).length === 0 && ((s._hadDebts||false) || (s._hadMortgages||false)) },
 
   /* ── Comportamental ─────────────────────────────────────── */
@@ -4618,7 +4618,7 @@ const ACHIEVEMENTS = [
     check: s => (s.paperHandsCount||0) >= 1 },
   { id:'diamond_hands',i:'💎', n:'Manos de Diamante',
     desc:'Mantuviste durante 2 crisis de mercado sin vender.',
-    cat:'invest', reward:{xp:1500, cash:2000},
+    cat:'invest', reward:{xp:300, cash:500},
     check: s => (s.crisesSurvived||0) >= 2 },
   { id:'crisis_buyer', i:'🛒', n:'Comprador en Pánico',
     desc:'Compraste activos durante una crisis de mercado.',
