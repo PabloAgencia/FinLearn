@@ -125,8 +125,12 @@ function _initAmbient() {
 
   // Pause when tab hidden (performance)
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) cancelAnimationFrame(raf);
-    else tick();
+    if (document.hidden) {
+      cancelAnimationFrame(raf);
+      if (typeof MUSIC !== 'undefined' && MUSIC.stop) MUSIC.stop();
+    } else {
+      tick();
+    }
   });
 }
 
@@ -1563,6 +1567,7 @@ function addDebt() {
   if (!payment || payment <= 0){ toast('⚠️', 'El pago mínimo debe ser mayor que 0', 't-warn'); return; }
 
   if (!Array.isArray(S.debts)) S.debts = [];
+  S._hadDebts = true;
   S.debts.push({
     id:         Date.now(),
     name,
@@ -3637,6 +3642,7 @@ function applyForMortgage(propertyValue, downPayment, years, type) {
 
   S.cash      = (S.cash || 0) - downPayment;
   if (!Array.isArray(S.mortgages)) S.mortgages = [];
+  S._hadMortgages = true;
   S.mortgages.push(mortgage);
   S.xp += 200;
   saveState();

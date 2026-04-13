@@ -4609,7 +4609,7 @@ const ACHIEVEMENTS = [
   { id:'debt_free',    i:'🔓', n:'Libre de Deudas',
     desc:'Cero deudas y cero hipotecas — libertad total.',
     cat:'life',   reward:{xp:2000, cash:3000},
-    check: s => (s.debts||[]).length === 0 && (s.mortgages||[]).filter(m=>!m.paid).length === 0 },
+    check: s => (s.debts||[]).length === 0 && (s.mortgages||[]).filter(m=>!m.paid).length === 0 && ((s._hadDebts||false) || (s._hadMortgages||false)) },
 
   /* ── Comportamental ─────────────────────────────────────── */
   { id:'paper_hands',  i:'🧻', n:'Manos de Papel',
