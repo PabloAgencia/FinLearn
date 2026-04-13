@@ -1,7 +1,5 @@
 {
-  "functions": {
-    "api/stripe-webhook.js": {
-      "bodyParser": false
-    }
+  "api": {
+    "bodyParser": false
   }
 }
