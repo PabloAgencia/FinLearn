@@ -4235,10 +4235,19 @@ function finishOnboarding() {
   const debtTotal = parseFloat(document.getElementById('ob-debt-total')?.value) || 0;
   const age       = parseFloat(document.getElementById('ob-age')?.value)        || 30;
 
-  // ── Carrera elegida en onboarding ─────────────────────────────
-  const chosenCareer = _ob_selected_career
-    ? CAREERS.find(c => c.id === _ob_selected_career)
+  // ── Carrera asignada según ingreso real introducido ────────────
+  // Si el usuario introdujo un ingreso, asignar carrera coherente automáticamente
+  const _autoCareer = income > 0
+    ? (income < 900  ? 'intern'
+     : income < 1600 ? 'junior'
+     : income < 2500 ? 'specialist'
+     : income < 4000 ? 'senior'
+     : income < 8000 ? 'director'
+     : 'entrepreneur')
     : null;
+  const chosenCareer = _autoCareer
+    ? CAREERS.find(c => c.id === _autoCareer)
+    : (_ob_selected_career ? CAREERS.find(c => c.id === _ob_selected_career) : null);
 
   // ── Estado financiero coherente con la carrera ─────────────────
   // S.cash = ahorros reales del usuario (o estimación por carrera si no puso nada)
