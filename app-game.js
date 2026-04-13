@@ -792,6 +792,9 @@ async function SAAS_startPayment() {
 /** SAAS_confirmSuccess — Cierra el modal de pago y resetea el estado visual del modal. */
 function SAAS_confirmSuccess() {
   closeModal('m-premium-saas');
+  if (isPremium() && typeof renderHomeScreen === 'function') {
+    setTimeout(renderHomeScreen, 300);
+  }
   document.getElementById('saas-step-plan')?.style?.setProperty('display', 'block');
   document.getElementById('saas-step-loading')?.style?.setProperty('display', 'none');
   document.getElementById('saas-step-success')?.style?.setProperty('display', 'none');
