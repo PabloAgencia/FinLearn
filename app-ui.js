@@ -4888,6 +4888,64 @@ function renderIncomePanel() {
 
 window.renderIncomePanel = renderIncomePanel;
 
+function showXPPanel() {
+  const xp = S.xp || 0;
+  const level = S.level || 1;
+  const thresholds = typeof LEVEL_XP_THRESHOLDS !== 'undefined' ? LEVEL_XP_THRESHOLDS : [];
+  const xpThis = thresholds[level - 1] || 0;
+  const xpNext = thresholds[level] || (xpThis + 1000);
+  const xpInLevel = xp - xpThis;
+  const xpNeeded = xpNext - xpThis;
+  const pct = Math.min(100, Math.round((xpInLevel / xpNeeded) * 100));
+  const rank = typeof getLevelTitle === 'function' ? getLevelTitle(xp) : { icon:'⭐', title:'Nivel ' + level, color:'#00e5a0', desc:'' };
+  const nextLevels = [];
+  for (let i = level; i <= Math.min(level + 4, 50); i++) {
+    const chest = _getLevelChest(i + 1);
+    nextLevels.push({ level: i + 1, chest });
+  }
+  let modal = document.getElementById('m-xp-panel');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-xp-panel';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:360px;padding:24px;">
+      <button class="modal-close" onclick="closeModal('m-xp-panel')">✕</button>
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:56px;line-height:1;margin-bottom:8px;filter:drop-shadow(0 0 16px ${rank.color});">${rank.icon}</div>
+        <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#fff;">Nivel ${level}</div>
+        <div style="font-size:13px;color:${rank.color};font-weight:700;margin-top:4px;">${rank.title}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">${rank.desc}</div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px;">
+          <span>⚡ ${xp.toLocaleString('es')} XP total</span>
+          <span>${xpInLevel.toLocaleString('es')} / ${xpNeeded.toLocaleString('es')} XP</span>
+        </div>
+        <div style="height:10px;background:var(--border2);border-radius:99px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${rank.color},#fff8);border-radius:99px;transition:width .6s ease;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;text-align:right;">Faltan ${(xpNeeded - xpInLevel).toLocaleString('es')} XP para nivel ${level + 1}</div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;letter-spacing:.08em;">PRÓXIMAS RECOMPENSAS</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${nextLevels.map(n => `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
+            <div style="font-size:22px;">${n.chest.icon}</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--text1);">Nivel ${n.level}</div>
+              <div style="font-size:11px;color:var(--text3);">Cofre ${n.chest.label}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  openModal('m-xp-panel');
+}
+window.showXPPanel = showXPPanel;
+
 
 /* ══════════════════════════════════════════════════════════════════
    GUIDES — Artículos de lectura libre (sin quiz, sin XP)
