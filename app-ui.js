@@ -1876,7 +1876,7 @@ function renderLifeScreen() {
   // Monthly net
   const income = (S.lifeSalary||1800) +
     Object.keys(S.businesses||{}).reduce((acc,id)=>acc+(calcBizRevenue(id)-(BUSINESSES.find(b=>b.id===id)?.monthlyExpenses||0)),0);
-  const exp = Object.values(S.lifeExpenses||{rent:700,food:300,transport:100,leisure:200,other:150}).reduce((a,b)=>a+b,0) +
+  const exp = Object.values(S.lifeExpenses||{rent:0,food:0,transport:0,leisure:0,other:0}).reduce((a,b)=>a+b,0) +
     (S.monthlyContribution||0);
   const net = income - exp;
   setEl('ls-monthly-net', (net>=0?'+':'')+'€'+Math.round(net));
@@ -1895,7 +1895,7 @@ function renderLifeMonthlyFlow(income, expenses) {
   if(!el) return;
   const sal = S.lifeSalary||1800;
   const bizNet = Object.keys(S.businesses||{}).reduce((acc,id)=>acc+(calcBizRevenue(id)-(BUSINESSES.find(b=>b.id===id)?.monthlyExpenses||0)),0);
-  const expObj = S.lifeExpenses||{rent:700,food:300,transport:100,leisure:200,other:150};
+  const expObj = S.lifeExpenses||{rent:0,food:0,transport:0,leisure:0,other:0};
   const totalExp = Object.values(expObj).reduce((a,b)=>a+b,0)+(S.monthlyContribution||0);
   const rows = [
     {icon:'💼',label:'Sueldo neto',amount:sal,type:'in'},
@@ -4120,6 +4120,19 @@ function _renderProjectionStepFinal() {
   const monthly  = parseFloat(document.getElementById('ob-monthly-slider')?.value) || Math.round((parseFloat(document.getElementById('ob-income')?.value)||1800) * 0.15);
   const rate     = 7;
   const debt     = parseFloat(document.getElementById('ob-debt-total')?.value)      || 0;
+  const income   = parseFloat(document.getElementById('ob-income')?.value)          || 0;
+
+  // Mostrar carrera asignada automáticamente
+  const autoCareerEl = document.getElementById('ob-career-auto');
+  if (autoCareerEl && income > 0) {
+    const careerId = income < 900 ? 'intern' : income < 1600 ? 'junior' : income < 2500 ? 'specialist' : income < 4000 ? 'senior' : income < 8000 ? 'director' : 'entrepreneur';
+    const careerData = { intern:{icon:'🎓',label:'Becario'}, junior:{icon:'🌱',label:'Junior / Empleado'}, specialist:{icon:'🔧',label:'Especialista'}, senior:{icon:'💼',label:'Senior / Manager'}, director:{icon:'🏛️',label:'Director / VP'}, entrepreneur:{icon:'🚀',label:'Emprendedor'} };
+    const cd = careerData[careerId] || careerData.junior;
+    document.getElementById('ob-career-icon').textContent = cd.icon;
+    document.getElementById('ob-career-label').textContent = cd.label;
+    document.getElementById('ob-career-salary').textContent = `€${income.toLocaleString('es')}/mes según tus ingresos`;
+    autoCareerEl.style.display = 'block';
+  }
 
   const patrimony = Math.max(0, savings - debt);
   const result10  = calcCompound(patrimony, monthly, rate, 10);
