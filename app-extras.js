@@ -772,6 +772,9 @@ function F47_choose(choice, idx) {
 
   S.lastDilemma = { week: _f47_weekKey(), answered: true, choice };
   saveState();
+  // Refrescar UI para mostrar cambios en sueldo/patrimonio
+  if (typeof recalcPatrimony === 'function') recalcPatrimony();
+  if (typeof updateUIFromState === 'function') setTimeout(updateUIFromState, 100);
 
   // Mostrar consecuencia
   const modal = document.getElementById('m-f47-dilemma');
