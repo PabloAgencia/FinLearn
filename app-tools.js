@@ -124,12 +124,21 @@ function _initAmbient() {
   tick();
 
   // Pause when tab hidden (performance)
+  let _wasMusicPlaying = false;
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       cancelAnimationFrame(raf);
-      if (typeof MUSIC !== 'undefined' && MUSIC.stop) MUSIC.stop();
+      if (typeof MUSIC !== 'undefined' && MUSIC.isPlaying && MUSIC.isPlaying()) {
+        _wasMusicPlaying = true;
+        MUSIC.stop();
+      } else {
+        _wasMusicPlaying = false;
+      }
     } else {
       tick();
+      if (_wasMusicPlaying && typeof MUSIC !== 'undefined' && MUSIC.start) {
+        setTimeout(() => MUSIC.start(), 300);
+      }
     }
   });
 }
@@ -2389,6 +2398,10 @@ const MUSIC = (() => {
     _renderMusicBtn();
   }
 
+  function isPlaying() {
+    return _playing;
+  }
+
   function toggle() {
     _playing ? stop() : start();
   }
@@ -2446,7 +2459,7 @@ const MUSIC = (() => {
     if (c.state === 'suspended') c.resume().catch(() => {});
   }
 
-  return { start, stop, toggle, setVolume, getVolume: () => _volume, init() {
+  return { start, stop, toggle, setVolume, isPlaying, getVolume: () => _volume, init() {
     // Use passive touch handlers for performance on mobile
     document.addEventListener('click',      _autoStart,    { once: true, passive: true });
     document.addEventListener('touchstart', _autoStart,    { once: true, passive: true });
