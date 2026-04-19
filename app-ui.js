@@ -4112,8 +4112,17 @@ function obNext(step) {
   } else if (step === 4) {
     _renderProjectionStepFinal();
     if (typeof _ob_renderProfessions === 'function') _ob_renderProfessions();
+  } else if (step === 5) {
+    // Paso final: hora de recordatorio
   }
 }
+
+function _obSelectTime(hour) {
+  document.querySelectorAll('.ob-time-btn').forEach(b => b.classList.remove('selected'));
+  event.target.classList.add('selected');
+  S._reminderHour = hour;
+}
+window._obSelectTime = _obSelectTime;
 
 function _ob_initNumericInputs() {
   if (typeof makeNumericControl !== 'function') return;
@@ -4336,18 +4345,21 @@ function finishOnboarding() {
   }
   S.onboardingDone = true;
   if (!S.joinDate) S.joinDate = Date.now();
-  // Pedir permiso de notificaciones con mensaje emocional
-  if (typeof NOTIFS !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+  // Pedir permiso de notificaciones si el usuario eligió una hora
+  if (S._reminderHour !== undefined && S._reminderHour >= 0 && typeof NOTIFS !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
     setTimeout(() => {
-      if (confirm('🔔 ¿Quieres que te recordemos tu lección diaria de 1 minuto?\n\nSin spam. Solo si estás a punto de perder tu racha.')) {
-        NOTIFS.requestPermission().then(ok => {
-          if (ok) {
-            const H23 = 23 * 60 * 60 * 1000;
-            NOTIFS.schedule(H23, '🔥 Tu racha te espera', 'Solo 1 minuto para no perderla.', 'streak-day1');
-          }
-        });
-      }
-    }, 3500);
+      NOTIFS.requestPermission().then(ok => {
+        if (ok) {
+          // Calcular ms hasta la hora elegida de mañana
+          const now = new Date();
+          const target = new Date();
+          target.setHours(S._reminderHour, 0, 0, 0);
+          if (target <= now) target.setDate(target.getDate() + 1);
+          const ms = target.getTime() - now.getTime();
+          NOTIFS.schedule(ms, '🔥 Tu lección de 1 minuto', 'Completa tu acción diaria para mantener la racha.', 'streak-daily');
+        }
+      });
+    }, 1000);
   }
   S.finLevel = S.investorLevel || S.finLevel || 'zero';
 

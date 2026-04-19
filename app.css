@@ -13280,6 +13280,29 @@ body.light-mode .coach-settings-btn:hover { background: rgba(50,40,20,.1); }
 }
 .tool-calc-btn { width: 100%; margin-top: 16px; }
 
+.ob-time-btn {
+  background: linear-gradient(135deg, rgba(245,166,35,.08), rgba(245,166,35,.02));
+  border: 1px solid rgba(245,166,35,.2);
+  color: var(--text1);
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all .2s;
+}
+.ob-time-btn:hover, .ob-time-btn:active {
+  background: linear-gradient(135deg, rgba(245,166,35,.18), rgba(245,166,35,.08));
+  transform: translateX(3px);
+  border-color: #f5a623;
+}
+.ob-time-btn.selected {
+  background: linear-gradient(135deg, #f5a623, #f5c842);
+  color: #0a0c14;
+  border-color: #f5a623;
+}
+
 .lesson-footer {
   padding: 14px 16px 18px;
   background: linear-gradient(180deg, rgba(6,8,16,0) 0%, rgba(6,8,16,.95) 30%, rgba(6,8,16,1) 100%);

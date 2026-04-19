@@ -300,11 +300,33 @@
             <div id="ob-career-salary" style="font-size:12px;color:var(--text3);margin-top:2px;">Calculado según tus ingresos reales</div>
           </div>
 
+          <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="obNext(5)">
+            Siguiente →
+          </button>
+        </div>
+
+        <div class="ob-step" id="ob-s5">
+          <div class="ob-logo">FinLearn</div>
+          <div class="ob-dots">
+            <div class="ob-dot"></div>
+            <div class="ob-dot"></div>
+            <div class="ob-dot"></div>
+            <div class="ob-dot"></div>
+            <div class="ob-dot active"></div>
+          </div>
+          <div class="ob-emoji">⏰</div>
+          <div class="ob-title">¿A qué hora te recordamos?</div>
+          <div class="ob-sub">Solo una notificación al día. Solo si estás a punto de perder tu racha.</div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:20px;">
+            <button class="ob-time-btn" onclick="_obSelectTime(8)">🌅 Por la mañana · 8:00</button>
+            <button class="ob-time-btn" onclick="_obSelectTime(14)">☀️ Al mediodía · 14:00</button>
+            <button class="ob-time-btn" onclick="_obSelectTime(20)">🌙 Por la noche · 20:00</button>
+            <button class="ob-time-btn" onclick="_obSelectTime(-1)" style="background:transparent;border:1px solid var(--border2);">Sin recordatorios</button>
+          </div>
+
           <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="finishOnboarding()">
             🚀 Empezar FinLearn
-          </button>
-          <button class="btn btn-ghost btn-block btn-sm" onclick="finishOnboarding()" style="margin-top:8px;">
-            Saltar por ahora
           </button>
         </div>
       </div>
