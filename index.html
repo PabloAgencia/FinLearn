@@ -750,8 +750,14 @@
       <div class="lesson-inner" id="lesson-content"></div>
 
       <div class="lesson-footer">
-        <div class="lf-xp">Ganarás <strong id="lf-xp-val">+150 XP</strong></div>
-        <button class="btn btn-primary" id="lesson-next-btn" onclick="lessonNext()">Siguiente →</button>
+        <div class="lf-prog-wrap">
+          <div class="lf-prog-info">
+            <span class="lf-step-lbl">Paso <strong id="lf-step-num">0</strong>/<span id="lf-step-total">0</span></span>
+            <span class="lf-xp">⚡ <strong id="lf-xp-val">+150 XP</strong> al completar</span>
+          </div>
+          <div class="lf-prog-bar"><div class="lf-prog-fill" id="lf-prog-fill" style="width:0%;"></div></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="lesson-next-btn" onclick="lessonNext()">Siguiente →</button>
       </div>
     </div>
 

@@ -926,11 +926,17 @@ function renderStep() {
   const step = mod.steps[S.step];
   if (!step) return;
   const total = mod.steps.length;
-  const pct = Math.round((S.step / Math.max(total-1,1)) * 100);
+  const pct = Math.round(((S.step + 1) / total) * 100);
   const progEl = document.getElementById('lesson-prog');
   if (progEl) progEl.style.width = pct + '%';
+  const progFill = document.getElementById('lf-prog-fill');
+  if (progFill) progFill.style.width = pct + '%';
   const stepLbl = document.getElementById('lesson-step-lbl');
   if (stepLbl) stepLbl.textContent = S.step + '/' + (total-1);
+  const stepNum = document.getElementById('lf-step-num');
+  if (stepNum) stepNum.textContent = (S.step + 1);
+  const stepTotal = document.getElementById('lf-step-total');
+  if (stepTotal) stepTotal.textContent = total;
   const xpVal = document.getElementById('lf-xp-val');
   if (xpVal) xpVal.textContent = '+' + mod.xp + ' XP';
 
@@ -4443,6 +4449,13 @@ function startModule(id) {
 function lessonNext() {
   if (!S.currentMod) { goTo('home'); return; }
   const steps = S.currentMod.steps || [];
+  const currentStep = steps[S.step];
+
+  // Si estamos en un quiz sin responder, no avanzar
+  if (currentStep && currentStep.type === 'quiz' && !S.quizAnswered) {
+    toast('⚠️ Responde primero', 'Selecciona una opción para continuar.', 't-warn');
+    return;
+  }
 
   if (S.step < steps.length - 1) {
     S.step++;
@@ -4453,8 +4466,35 @@ function lessonNext() {
     const prog = document.getElementById('lesson-prog');
     if (prog) prog.style.width = `${((S.step + 1) / steps.length) * 100}%`;
   } else {
-    completeModule();
+    // Al completar, si hubo fallos mostrar resumen antes
+    const stats = S.currentMod._quizStats;
+    if (stats && stats.wrong > 0) {
+      _showModuleSummary(stats);
+    } else {
+      completeModule();
+    }
   }
+}
+
+function _showModuleSummary(stats) {
+  const total = stats.correct + stats.wrong;
+  const pct = Math.round((stats.correct / total) * 100);
+  let modal = document.getElementById('m-module-summary');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-module-summary';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:360px;padding:28px 24px;text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">${pct >= 80 ? '🎯' : pct >= 60 ? '💪' : '📚'}</div>
+      <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#f5a623;margin-bottom:4px;">${stats.correct} de ${total} correctas</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">${pct >= 80 ? '¡Excelente! Dominas el tema.' : pct >= 60 ? 'Buen trabajo. Repasa los quizzes fallados para afianzar.' : 'Sigue practicando. La repetición es clave.'}</div>
+      <button class="btn btn-primary btn-block" onclick="document.getElementById('m-module-summary').classList.remove('active');completeModule();" style="margin-bottom:8px;">Completar módulo</button>
+      <button class="btn btn-ghost btn-sm btn-block" onclick="document.getElementById('m-module-summary').classList.remove('active');S.step=0;S.quizAnswered=false;S.currentMod._quizStats={correct:0,wrong:0,wrongSteps:[]};renderStep();">🔄 Repetir módulo</button>
+    </div>`;
+  modal.classList.add('active');
 }
 
 /** lessonPrev — Retrocede al paso anterior de la lección. */
@@ -4737,6 +4777,15 @@ function answerQuiz(chosen) {
   }
 
   const _cMult = _comboHit(isCorrect);
+  // Trackear aciertos/fallos del módulo
+  if (!S.currentMod._quizStats) S.currentMod._quizStats = { correct: 0, wrong: 0, wrongSteps: [] };
+  if (isCorrect) S.currentMod._quizStats.correct++;
+  else {
+    S.currentMod._quizStats.wrong++;
+    if (!S.currentMod._quizStats.wrongSteps.includes(S.step)) {
+      S.currentMod._quizStats.wrongSteps.push(S.step);
+    }
+  }
   if (isCorrect) {
     SFX.correct();
     HAPTIC.success();
