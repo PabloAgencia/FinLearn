@@ -1725,6 +1725,14 @@ function renderPodium() {
   const hs    = [58, 75, 44];
   const el = document.getElementById('podium');
   if (!el) return;
+  const weeklyXP = Math.max(0, (S.xp || 0) - (S.leagueWeekXPBase || 0));
+  if (weeklyXP === 0 && (S.completedMods || []).length === 0) {
+    el.innerHTML = `<div style="padding:24px;text-align:center;background:var(--surface);border-radius:16px;border:1px dashed var(--border);">
+      <div style="font-size:36px;margin-bottom:8px;opacity:.5;">🏆</div>
+      <div style="font-size:13px;color:var(--text2);">Completa tu primer módulo para aparecer en el ranking.</div>
+    </div>`;
+    return;
+  }
   el.innerHTML = order.map((r, i) => r ? `
     <div class="pd-slot ${cls[i]}">
       <div class="pd-name">${r.n.split(' ')[0]}</div>
@@ -2167,6 +2175,9 @@ function safeGoHome() {
  */
 function renderHomeScreen() {
   AMBIENT.init();
+  // Ocultar splash/skeleton si sigue visible
+  const splash = document.getElementById('app-splash');
+  if (splash) splash.style.display = 'none';
   updateUIFromState();
   renderModules();
   renderHomeRank();

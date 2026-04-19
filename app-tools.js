@@ -4959,6 +4959,8 @@ const AI_COACH = (() => {
     const FINAI_API_PROVIDER = _getApiProvider();
 
     // Si no hay key propia pero es premium, usar endpoint propio
+    // Usuario gratis: retorna fallback inmediato sin error
+    if (!FINAI_API_KEY && !isPremium()) return staticFallback;
     if (!FINAI_API_KEY && isPremium()) {
       try {
         if (!navigator.onLine) return '📵 Sin conexión. El FinAI Coach no está disponible offline.';

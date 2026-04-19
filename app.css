@@ -16,7 +16,7 @@
   --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
   /* ── Accentos ── */
   --accent:#00e5a0; --accent2:#0091ff; --accent3:#ff6b35; --accent4:#a855f7;
-  --gold:#fbbf24;
+  --gold:#f5a623;
   /* ── Semáforo financiero (nuevo) ── */
   --gain:#00ff88;        /* verde neón — ganancias */
   --loss:#ff4b5c;        /* rojo vibrante — pérdidas */
@@ -205,7 +205,7 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .tag-blue{background:rgba(0,145,255,.1);color:var(--accent2);border:1px solid rgba(0,145,255,.2);}
 .tag-orange{background:rgba(255,107,53,.1);color:var(--accent3);border:1px solid rgba(255,107,53,.2);}
 .tag-purple{background:rgba(168,85,247,.1);color:var(--accent4);border:1px solid rgba(168,85,247,.2);}
-.tag-gold{background:rgba(251,191,36,.1);color:var(--gold);border:1px solid rgba(251,191,36,.2);}
+.tag-gold{background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.2);}
 .tag-red{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);}
 
 /* Card */
@@ -8676,7 +8676,7 @@ body.light-mode .coach-cta-btn {
 .fin-ticker-float {
   position: absolute;
   font-size: 11px;
-  font-family: 'Syne', monospace;
+  font-family: 'Syne', sans-serif;
   font-weight: 700;
   opacity: 0;
   letter-spacing: .04em;
