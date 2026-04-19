@@ -4130,8 +4130,9 @@ function obNext(step) {
 
 function _obSelectTime(hour) {
   document.querySelectorAll('.ob-time-btn').forEach(b => b.classList.remove('selected'));
-  event.target.classList.add('selected');
+  if (event && event.target) event.target.classList.add('selected');
   S._reminderHour = hour;
+  saveState();
 }
 window._obSelectTime = _obSelectTime;
 
@@ -4357,20 +4358,20 @@ function finishOnboarding() {
   S.onboardingDone = true;
   if (!S.joinDate) S.joinDate = Date.now();
   // Pedir permiso de notificaciones si el usuario eligió una hora
-  if (S._reminderHour !== undefined && S._reminderHour >= 0 && typeof NOTIFS !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+  if (typeof S._reminderHour === 'number' && S._reminderHour >= 0 && typeof NOTIFS !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
     setTimeout(() => {
       NOTIFS.requestPermission().then(ok => {
         if (ok) {
-          // Calcular ms hasta la hora elegida de mañana
           const now = new Date();
           const target = new Date();
           target.setHours(S._reminderHour, 0, 0, 0);
           if (target <= now) target.setDate(target.getDate() + 1);
           const ms = target.getTime() - now.getTime();
           NOTIFS.schedule(ms, '🔥 Tu lección de 1 minuto', 'Completa tu acción diaria para mantener la racha.', 'streak-daily');
+          toast('🔔 Recordatorio activado', 'Te avisaremos a las ' + S._reminderHour + ':00', 't-success');
         }
       });
-    }, 1000);
+    }, 800);
   }
   S.finLevel = S.investorLevel || S.finLevel || 'zero';
 
