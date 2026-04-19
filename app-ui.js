@@ -2223,6 +2223,7 @@ function renderHomeScreen() {
   // SEASONAL: banner de evento activo
   if (typeof SEA_render === 'function') { try { SEA_render(); } catch(e) { console.warn('[SEA]', e); } }
   renderIncomePanel();
+  _renderStreakDangerBanner();
 }
 
 /**
@@ -4334,6 +4335,19 @@ function finishOnboarding() {
   }
   S.onboardingDone = true;
   if (!S.joinDate) S.joinDate = Date.now();
+  // Pedir permiso de notificaciones con mensaje emocional
+  if (typeof NOTIFS !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
+    setTimeout(() => {
+      if (confirm('🔔 ¿Quieres que te recordemos tu lección diaria de 1 minuto?\n\nSin spam. Solo si estás a punto de perder tu racha.')) {
+        NOTIFS.requestPermission().then(ok => {
+          if (ok) {
+            const H23 = 23 * 60 * 60 * 1000;
+            NOTIFS.schedule(H23, '🔥 Tu racha te espera', 'Solo 1 minuto para no perderla.', 'streak-day1');
+          }
+        });
+      }
+    }, 3500);
+  }
   S.finLevel = S.investorLevel || S.finLevel || 'zero';
 
   // Entrada inicial en el ledger
@@ -4599,6 +4613,12 @@ function completeModule() {
   SFX.moduleComplete();
   if ((S.completedMods || []).length === 1) NOTIFS.onFirstModule();
   else if (NOTIFS._granted) NOTIFS.scheduleStreakReminder();
+  // Mensaje emocional de vuelta al día siguiente
+  setTimeout(() => {
+    const hour = new Date().getHours();
+    const msg = hour < 12 ? 'Nos vemos mañana por la mañana 🌅' : hour < 20 ? 'Nos vemos mañana a esta hora ⏰' : 'Nos vemos mañana 🌙';
+    toast('💪 ¡Lección completada!', msg, 't-success');
+  }, 2500);
   confetti();
   emojiConfetti();
   spawnXP('+' + _xpGainDisplay + ' XP');
@@ -5007,6 +5027,34 @@ function showXPPanel() {
   openModal('m-xp-panel');
 }
 window.showXPPanel = showXPPanel;
+
+function _renderStreakDangerBanner() {
+  if (!S.userName || S.dcaDone || (S.streak || 0) < 2) return;
+  const now = new Date();
+  const hoursLeft = 24 - now.getHours() - (now.getMinutes() / 60);
+  if (hoursLeft > 4) return;
+
+  let banner = document.getElementById('streak-danger-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'streak-danger-banner';
+    banner.style.cssText = 'position:fixed;top:62px;left:8px;right:8px;z-index:900;background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 8px 24px rgba(220,38,38,.4);animation:pulse 2s ease-in-out infinite;cursor:pointer;display:flex;align-items:center;gap:12px;';
+    banner.onclick = () => {
+      document.getElementById('dca-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      banner.remove();
+    };
+    document.body.appendChild(banner);
+  }
+  const hrs = Math.floor(hoursLeft);
+  const mins = Math.floor((hoursLeft - hrs) * 60);
+  banner.innerHTML = `
+    <div style="font-size:22px;">🔥</div>
+    <div style="flex:1;">
+      <div style="font-weight:800;font-size:13px;">¡Racha de ${S.streak} días en peligro!</div>
+      <div style="font-size:11px;opacity:.9;">Quedan ${hrs}h ${mins}m para completar tu acción diaria</div>
+    </div>
+    <div style="font-size:14px;">→</div>`;
+}
 
 
 /* ══════════════════════════════════════════════════════════════════

@@ -1052,6 +1052,9 @@ function M3_addFriend(code) {
 function M3_render() {
   const el = document.getElementById('m3-friend-streak');
   if (!el) return;
+  // Feature temporalmente oculta hasta que tenga backend real
+  el.style.display = 'none';
+  return;
   const code = M3_getOrCreateCode();
   const fs   = S.friendStreak || 0;
   el.innerHTML = `
