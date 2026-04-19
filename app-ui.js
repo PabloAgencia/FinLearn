@@ -2223,6 +2223,7 @@ function renderHomeScreen() {
   // SEASONAL: banner de evento activo
   if (typeof SEA_render === 'function') { try { SEA_render(); } catch(e) { console.warn('[SEA]', e); } }
   renderIncomePanel();
+  _renderStreakRepairBanner();
   _renderStreakDangerBanner();
 }
 
@@ -5027,6 +5028,45 @@ function showXPPanel() {
   openModal('m-xp-panel');
 }
 window.showXPPanel = showXPPanel;
+
+function _renderStreakRepairBanner() {
+  if (!S.userName || !S.streakBrokeAt) return;
+  const hoursSinceBreak = (Date.now() - S.streakBrokeAt) / 3600000;
+  if (hoursSinceBreak > 48 || (S.maxStreak || 0) < 3) {
+    if (hoursSinceBreak > 48) { S.streakBrokeAt = null; saveState(); }
+    return;
+  }
+  const hoursLeft = Math.round(48 - hoursSinceBreak);
+  const repairCost = Math.min(500, Math.round((S.maxStreak || 0) * 20));
+  let banner = document.getElementById('streak-repair-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'streak-repair-banner';
+    banner.style.cssText = 'margin:12px 16px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:14px 16px;border-radius:14px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 16px rgba(124,58,237,.3);';
+    const homeScreen = document.getElementById('s-home');
+    if (homeScreen) homeScreen.insertBefore(banner, homeScreen.firstChild.nextSibling);
+  }
+  banner.innerHTML = `
+    <div style="font-size:28px;">💜</div>
+    <div style="flex:1;">
+      <div style="font-weight:800;font-size:14px;">Recupera tu racha de ${S.maxStreak} días</div>
+      <div style="font-size:11px;opacity:.9;">${hoursLeft}h restantes · ${repairCost} XP</div>
+    </div>
+    <button onclick="_repairStreak(${repairCost})" style="background:#fff;color:#7c3aed;border:none;padding:8px 14px;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;">Pagar</button>`;
+}
+
+function _repairStreak(cost) {
+  if ((S.xp || 0) < cost) { toast('❌ XP insuficiente', `Necesitas ${cost} XP`, 't-error'); return; }
+  S.xp -= cost;
+  S.streak = S.maxStreak || 0;
+  S.streakBrokeAt = null;
+  saveState();
+  document.getElementById('streak-repair-banner')?.remove();
+  toast('💜 ¡Racha recuperada!', `Tu racha de ${S.streak} días vuelve.`, 't-success');
+  if (typeof confetti === 'function') confetti();
+  if (typeof updateUIFromState === 'function') updateUIFromState();
+}
+window._repairStreak = _repairStreak;
 
 function _renderStreakDangerBanner() {
   if (!S.userName || S.dcaDone || (S.streak || 0) < 2) return;

@@ -4984,7 +4984,8 @@ const AI_COACH = (() => {
           return data.text;
         }
       } catch(e) {
-        return staticFallback || 'El coach no está disponible ahora mismo. Inténtalo de nuevo.';
+        if (!navigator.onLine) return '📵 Sin conexión. Vuelve cuando tengas internet.';
+        return '⚠️ El coach está sobrecargado ahora mismo. Inténtalo en 30 segundos.';
       }
     }
 
