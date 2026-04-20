@@ -7070,6 +7070,11 @@ function tickMissionTool(toolId) {
 }
 window.tickMissionTool = tickMissionTool;
 
+function _addGroupXP(amount) {
+  S._groupXP = (S._groupXP || 0) + (amount || 0);
+}
+window._addGroupXP = _addGroupXP;
+
 window.CHART              = CHART;
 
 
