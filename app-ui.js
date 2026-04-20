@@ -1298,9 +1298,9 @@ function renderCareerCard() {
           €${salary.toLocaleString('es')}/mes neto
         </div>
       </div>
-      <button class="btn btn-sm btn-secondary" onclick="openCareerModal()" style="font-size:11px;padding:6px 12px;">
-        Cambiar →
-      </button>
+      <div style="font-size:10px;color:var(--text3);font-style:italic;">
+        Según tus ingresos
+      </div>
     </div>
 
     <!-- Level progression bar -->
@@ -3646,7 +3646,7 @@ function answerDCA(chosen, correct, explanation) {
 
   const isCorrect = chosen === correct;
   const _dcaMult  = _comboHit(isCorrect);
-  const xpGained  = isCorrect ? Math.round(80 * _dcaMult) : 30;
+  const xpGained  = isCorrect ? Math.round(80 * _dcaMult) : 0;
 
   S.xp           += xpGained;
   S.totalXPtoday += xpGained;
@@ -3662,8 +3662,8 @@ function answerDCA(chosen, correct, explanation) {
     document.getElementById('dca-not-done')?.style?.setProperty('display', 'none');
     const done = document.getElementById('dca-done');
     if (done) done.style.display = 'block';
-    setEl('dca-done-msg', isCorrect ? '¡Correcto! 🎯' : '¡Completado! Sigue aprendiendo.');
-    setEl('dca-done-sub', `Has ganado +${xpGained} XP · Racha: 🔥${S.streak}`);
+    setEl('dca-done-msg', isCorrect ? '¡Correcto! 🎯' : '❌ Respuesta incorrecta');
+    setEl('dca-done-sub', isCorrect ? `Has ganado +${xpGained} XP · Racha: 🔥${S.streak}` : `Sin XP hoy. Vuelve mañana y acierta para +80 XP y mantener tu racha.`);
     spawnXP('+' + xpGained + ' XP');
     if (isCorrect) toast('🎯 ¡Correcto!', '+' + xpGained + ' XP ganados', 't-success');
   }, 900);
@@ -4505,7 +4505,7 @@ function lessonNext() {
     const prog = document.getElementById('lesson-prog');
     if (prog) prog.style.width = `${((S.step + 1) / steps.length) * 100}%`;
   } else {
-    // Al completar, si hubo fallos mostrar resumen antes
+    // Al completar, si hubo fallos mostrar resumen antes (sin dejar completar)
     const stats = S.currentMod._quizStats;
     if (stats && stats.wrong > 0) {
       _showModuleSummary(stats);
@@ -4515,9 +4515,16 @@ function lessonNext() {
   }
 }
 
+function _closeModuleSummary() {
+  const m = document.getElementById('m-module-summary');
+  if (m) m.classList.remove('active');
+}
+window._closeModuleSummary = _closeModuleSummary;
+
 function _showModuleSummary(stats) {
   const total = stats.correct + stats.wrong;
   const pct = Math.round((stats.correct / total) * 100);
+  const passed = pct >= 80;
   let modal = document.getElementById('m-module-summary');
   if (!modal) {
     modal = document.createElement('div');
@@ -4526,15 +4533,29 @@ function _showModuleSummary(stats) {
     document.body.appendChild(modal);
   }
   modal.innerHTML = `
-    <div class="modal-box" style="max-width:360px;padding:28px 24px;text-align:center;">
-      <div style="font-size:48px;margin-bottom:12px;">${pct >= 80 ? '🎯' : pct >= 60 ? '💪' : '📚'}</div>
+    <div class="modal-box" style="max-width:360px;padding:28px 24px;text-align:center;position:relative;">
+      <button onclick="_closeModuleSummary();goTo('home');" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;line-height:1;">✕</button>
+      <div style="font-size:48px;margin-bottom:12px;">${passed ? '🎯' : pct >= 60 ? '💪' : '📚'}</div>
       <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#f5a623;margin-bottom:4px;">${stats.correct} de ${total} correctas</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">${pct >= 80 ? '¡Excelente! Dominas el tema.' : pct >= 60 ? 'Buen trabajo. Repasa los quizzes fallados para afianzar.' : 'Sigue practicando. La repetición es clave.'}</div>
-      <button class="btn btn-primary btn-block" onclick="document.getElementById('m-module-summary').classList.remove('active');completeModule();" style="margin-bottom:8px;">Completar módulo</button>
-      <button class="btn btn-ghost btn-sm btn-block" onclick="document.getElementById('m-module-summary').classList.remove('active');S.step=0;S.quizAnswered=false;S.currentMod._quizStats={correct:0,wrong:0,wrongSteps:[]};renderStep();">🔄 Repetir módulo</button>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">${passed ? '¡Excelente! Dominas el tema.' : pct >= 60 ? 'Casi lo tienes. Repite para aprobarlo con 80% o más.' : 'Necesitas repetir el módulo. La repetición es clave para afianzar.'}</div>
+      ${passed ? `<button class="btn btn-primary btn-block" onclick="_closeModuleSummary();completeModule();" style="margin-bottom:8px;">✓ Completar módulo</button>` : ''}
+      <button class="btn ${passed ? 'btn-ghost btn-sm' : 'btn-primary'} btn-block" onclick="_retryModule()">🔄 Repetir módulo</button>
+      <button class="btn btn-ghost btn-sm btn-block" onclick="_closeModuleSummary();goTo('home');" style="margin-top:8px;">← Volver al inicio</button>
     </div>`;
   modal.classList.add('active');
 }
+
+function _retryModule() {
+  _closeModuleSummary();
+  if (!S.currentMod) { goTo('home'); return; }
+  S.step = 0;
+  S.quizAnswered = false;
+  S.currentMod._quizStats = { correct: 0, wrong: 0, wrongSteps: [] };
+  saveState();
+  renderStep();
+  renderLessonNav();
+}
+window._retryModule = _retryModule;
 
 /** lessonPrev — Retrocede al paso anterior de la lección. */
 function lessonPrev() {
