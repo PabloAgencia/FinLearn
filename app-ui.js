@@ -2236,6 +2236,16 @@ function renderHomeScreen() {
   renderIncomePanel();
   _renderStreakRepairBanner();
   _renderStreakDangerBanner();
+  if (!document.getElementById('challenge-card')) {
+    const cardWrap = document.createElement('div');
+    cardWrap.id = 'challenge-card';
+    cardWrap.style.cssText = 'margin:12px 16px;';
+    const homeScreen = document.getElementById('s-home');
+    const insertBefore = homeScreen?.querySelector('.dca-card, #dca-card');
+    if (homeScreen && insertBefore) homeScreen.insertBefore(cardWrap, insertBefore);
+    else if (homeScreen) homeScreen.appendChild(cardWrap);
+  }
+  if (typeof _renderGroupMissionEpic === 'function') _renderGroupMissionEpic();
 }
 
 /**

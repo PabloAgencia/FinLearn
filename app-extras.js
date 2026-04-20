@@ -3675,3 +3675,41 @@ window.SEA_render      = SEA_render;
 window.SEA_openDetail  = SEA_openDetail;
 window.SEA_claimReward = SEA_claimReward;
 window.SEA_getXPMult   = SEA_getXPMult;
+
+function _renderGroupMissionEpic() {
+  const el = document.getElementById('challenge-card') || document.getElementById('group-mission-card');
+  if (!el) return;
+  const S_ = window.S || {};
+  const goal = 100000;
+  const progress = Math.min(goal, (S_._groupXP || 0) + (S_.xp || 0));
+  const pct = Math.round((progress / goal) * 100);
+  const daysLeft = 7 - (new Date().getDay());
+  const msg = pct < 25 ? '🌱 Está comenzando. Tu XP suma al equipo.'
+            : pct < 50 ? '🔥 ¡Vamos por buen camino! Cada módulo cuenta.'
+            : pct < 75 ? '⚡ Más de la mitad. El objetivo está cerca.'
+            : pct < 100 ? '🎯 ¡A por el último empujón! Faltan pocas horas.'
+            : '🏆 ¡META CONSEGUIDA! Todos ganan recompensa grupal.';
+  el.innerHTML = `
+    <div style="padding:18px 20px;background:linear-gradient(135deg,rgba(108,99,255,.12),rgba(245,166,35,.08));border:1px solid rgba(108,99,255,.2);border-radius:18px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-20px;right:-20px;font-size:80px;opacity:.08;">🌍</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;position:relative;">
+        <div style="font-size:22px;">🌍</div>
+        <div style="flex:1;">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--text1);">Misión Global de la Semana</div>
+          <div style="font-size:11px;color:var(--text2);">${daysLeft} días restantes · Objetivo colectivo</div>
+        </div>
+        <div style="background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);padding:4px 10px;border-radius:99px;font-size:10px;font-weight:800;color:#f5a623;">+500 XP</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:6px;">
+        <span>${progress.toLocaleString('es')} XP</span>
+        <span style="font-weight:700;color:var(--text1);">${goal.toLocaleString('es')} XP</span>
+      </div>
+      <div style="height:12px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden;position:relative;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#6c63ff,#f5a623);border-radius:99px;transition:width .6s;box-shadow:0 0 12px rgba(245,166,35,.4);position:relative;">
+          ${pct > 5 ? `<div style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:10px;font-weight:800;color:#000;">${pct}%</div>` : ''}
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--text2);text-align:center;font-style:italic;">${msg}</div>
+    </div>`;
+}
+window._renderGroupMissionEpic = _renderGroupMissionEpic;
