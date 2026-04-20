@@ -5123,7 +5123,7 @@ function _renderStreakDangerBanner() {
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'streak-danger-banner';
-    banner.style.cssText = 'position:fixed;top:62px;left:8px;right:8px;z-index:900;background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 8px 24px rgba(220,38,38,.4);animation:pulse 2s ease-in-out infinite;cursor:pointer;display:flex;align-items:center;gap:12px;';
+    banner.style.cssText = 'position:fixed;top:calc(64px + env(safe-area-inset-top, 0px));left:8px;right:8px;z-index:900;background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;padding:12px 16px;border-radius:14px;box-shadow:0 8px 24px rgba(220,38,38,.4);animation:pulse 2s ease-in-out infinite;cursor:pointer;display:flex;align-items:center;gap:12px;';
     banner.onclick = () => {
       document.getElementById('dca-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       banner.remove();

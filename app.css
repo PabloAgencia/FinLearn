@@ -12671,7 +12671,16 @@ body.light-mode .f42-opt { background: #f1f5f9; }
 /* ══════════════════════════════════════════════════════════════════
    F45 — MARKET EVENT BANNER
 ══════════════════════════════════════════════════════════════════ */
-#f45-market-banner { position: fixed; top: 56px; left: 0; right: 0; z-index: 1200; }
+#f45-market-banner {
+  position: fixed;
+  top: calc(64px + env(safe-area-inset-top, 0px));
+  left: 8px;
+  right: 8px;
+  z-index: 1200;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+}
 .f45-banner { padding: 12px 16px; color: #fff; }
 .f45-banner-boom   { background: linear-gradient(135deg,#065f46,#059669); }
 .f45-banner-crash  { background: linear-gradient(135deg,#7f1d1d,#dc2626); }
@@ -13186,9 +13195,12 @@ body.light-mode .coach-settings-btn:hover { background: rgba(50,40,20,.1); }
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(6,8,16,0.92);
-  backdrop-filter: blur(2px);
+  background: rgba(6,8,16,0.96);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   overflow-y: auto;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .tool-modal-overlay.active { display: block; }
 .tool-modal-inner {
@@ -13280,6 +13292,24 @@ body.light-mode .coach-settings-btn:hover { background: rgba(50,40,20,.1); }
 }
 .tool-calc-btn { width: 100%; margin-top: 16px; }
 
+.screen#s-lesson {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+#s-lesson .lesson-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+#s-lesson .lesson-inner {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
 .ob-time-btn {
   background: linear-gradient(135deg, rgba(245,166,35,.08), rgba(245,166,35,.02));
   border: 1px solid rgba(245,166,35,.2);
@@ -13304,13 +13334,21 @@ body.light-mode .coach-settings-btn:hover { background: rgba(50,40,20,.1); }
 }
 
 .lesson-footer {
-  padding: 14px 16px 18px;
-  background: linear-gradient(180deg, rgba(6,8,16,0) 0%, rgba(6,8,16,.95) 30%, rgba(6,8,16,1) 100%);
-  border-top: 1px solid rgba(255,255,255,.06);
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+  background: rgba(6,8,16,.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(245,166,35,.12);
+  z-index: 100;
+  margin-top: auto;
 }
 body.light-mode .lesson-footer {
-  background: linear-gradient(180deg, rgba(255,252,245,0) 0%, rgba(255,252,245,.95) 30%, rgba(255,252,245,1) 100%) !important;
-  border-top-color: rgba(183,124,0,.12) !important;
+  background: rgba(255,252,245,.98) !important;
+  border-top-color: rgba(183,124,0,.2) !important;
 }
 .lf-prog-wrap { margin-bottom: 12px; }
 .lf-prog-info {
@@ -15399,3 +15437,44 @@ body.light-mode .num-ctrl-wrap input { color: var(--text1) !important; }
 }
 @keyframes fadeInFast  { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeOutFast { from { opacity: 1; } to { opacity: 0; } }
+
+.tool-modal-head {
+  position: sticky;
+  top: 0;
+  background: rgba(6,8,16,0.98);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(245,166,35,.12);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tool-modal-head h3 {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text1);
+  flex: 1;
+}
+.tool-back {
+  background: rgba(245,166,35,.1);
+  border: 1px solid rgba(245,166,35,.2);
+  color: #f5a623;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+body.light-mode .tool-modal-head {
+  background: rgba(255,252,245,.98) !important;
+  border-bottom-color: rgba(183,124,0,.15) !important;
+}
+body.light-mode .tool-back {
+  background: rgba(183,124,0,.1) !important;
+  border-color: rgba(183,124,0,.25) !important;
+  color: #b77c00 !important;
+}
