@@ -144,6 +144,7 @@ function _initAmbient() {
 }
 
 const _appStartTime = Date.now();
+setInterval(() => { if (typeof _renderGameClock === 'function') _renderGameClock(); }, 1000);
 function initApp() {
   _showSplash();
   // Intentar sesión Supabase primero; si hay usuario logado, cargar desde la nube
@@ -1117,6 +1118,20 @@ function checkDailyLogin() {
 ══════════════════════════════════════════════════════════════════ */
 
 const GAME_DAY_MS = 5 * 60 * 1000; // 5 minutos reales = 1 día de juego
+
+function _renderGameClock() {
+  const el = document.getElementById('game-clock-pill');
+  if (!el) return;
+  const speed = S.gameSpeedMult || 3;
+  const daysToPayday = 30 - ((S.gameDay || 0) % 30);
+  // 1 día de juego = 8 segundos reales con speed=3 (ajustar según tu lógica real)
+  const secPerDay = 24 / speed;
+  const totalSec = Math.round(daysToPayday * secPerDay);
+  const mins = Math.floor(totalSec / 60);
+  const secs = totalSec % 60;
+  el.textContent = `📅 ${daysToPayday}d · ${mins}m${secs > 0 ? ' ' + secs + 's' : ''} al cobro`;
+}
+window._renderGameClock = _renderGameClock;
 
 function _tickGameDay() {
   if (!S.userName) return; // solo si hay usuario

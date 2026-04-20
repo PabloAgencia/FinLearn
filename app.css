@@ -78,6 +78,9 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
   font-family:'Instrument Sans',sans-serif;letter-spacing:.02em;
 }
 .bn-item.active{color:var(--accent);}
+.screen#s-home {
+  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+}
 .bn-item:active{transform:scale(0.9);}
 .bn-icon{font-size:22px;line-height:1;}
 
@@ -15511,4 +15514,46 @@ body.light-mode .tool-back {
   background: rgba(183,124,0,.1) !important;
   border-color: rgba(183,124,0,.25) !important;
   color: #b77c00 !important;
+}
+
+/* Budget donut fix */
+.budget-donut-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.budget-donut-wrap svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  display: block;
+}
+.budget-donut-wrap svg circle {
+  fill: none;
+  stroke-width: 18;
+  stroke-linecap: butt;
+  transform-origin: center;
+}
+.budget-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  margin-top: 16px;
+}
+.budget-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.budget-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
