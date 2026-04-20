@@ -7059,6 +7059,17 @@ window.goToFact           = goToFact;
 window.answerQuiz         = answerQuiz;
 window.answerExamQuestion = answerExamQuestion;
 window.takeLifeEvent      = takeLifeEvent;
+
+function tickMissionTool(toolId) {
+  if (!_mw.tools_list) _mw.tools_list = [];
+  if (!_mw.tools_list.includes(toolId)) {
+    _mw.tools_list.push(toolId);
+    _mw.tools_used = _mw.tools_list.length;
+    if (typeof _saveMissionWeek === 'function') _saveMissionWeek();
+  }
+}
+window.tickMissionTool = tickMissionTool;
+
 window.CHART              = CHART;
 
 
@@ -7292,6 +7303,67 @@ const MISSION_POOL = [
     desc:'Acumula 600 XP en esta semana',
     type:'xp_week', goal:600, xp:400,
   },
+  /* NUEVAS — mayor variedad y profundidad */
+  {
+    id:'m_dca_streak', icon:'🔥', diff:'medium',
+    title:'Racha perfecta 5 días',
+    desc:'Acierta la pregunta del día 5 días seguidos',
+    type:'dca_correct', goal:5, xp:200,
+  },
+  {
+    id:'m_learn_hard', icon:'🎯', diff:'hard',
+    title:'Dominio total',
+    desc:'Completa 5 módulos con 100% de aciertos (sin fallar ningún quiz)',
+    type:'modules_perfect', goal:5, xp:400,
+  },
+  {
+    id:'m_budget', icon:'📊', diff:'medium',
+    title:'Presupuesto mensual',
+    desc:'Define tu presupuesto mensual completo en la pantalla de vida',
+    type:'budget_set', goal:1, xp:120,
+  },
+  {
+    id:'m_dilemma', icon:'⚖️', diff:'medium',
+    title:'Dilema semanal',
+    desc:'Responde al dilema financiero de la semana',
+    type:'dilemma', goal:1, xp:100,
+  },
+  {
+    id:'m_tools_3', icon:'🛠️', diff:'medium',
+    title:'Explora las herramientas',
+    desc:'Usa 3 calculadoras distintas (IRPF, interés compuesto, etc.)',
+    type:'tools_used', goal:3, xp:150,
+  },
+  {
+    id:'m_invest_1k', icon:'💼', diff:'hard',
+    title:'Primera gran inversión',
+    desc:'Invierte un total de €1.000 en bolsa simulada',
+    type:'invested_amount', goal:1000, xp:300,
+  },
+  {
+    id:'m_diversify_3', icon:'🌍', diff:'hard',
+    title:'Cartera diversificada',
+    desc:'Ten posiciones activas en al menos 3 acciones distintas',
+    type:'stocks_held', goal:3, xp:250,
+  },
+  {
+    id:'m_biz_1', icon:'🏪', diff:'medium',
+    title:'Primer negocio',
+    desc:'Compra tu primer negocio para ingresos pasivos',
+    type:'biz_owned', goal:1, xp:180,
+  },
+  {
+    id:'m_coach', icon:'🤖', diff:'easy',
+    title:'Habla con el Coach',
+    desc:'Haz una pregunta al FinAI Coach',
+    type:'coach_used', goal:1, xp:80,
+  },
+  {
+    id:'m_savings_rate', icon:'💰', diff:'hard',
+    title:'Tasa de ahorro >20%',
+    desc:'Alcanza una tasa de ahorro mensual superior al 20%',
+    type:'savings_rate', goal:20, xp:350,
+  },
 ];
 
 /* ── Estado auxiliar de misiones (no persistido en S para no romper nada) */
@@ -7348,7 +7420,7 @@ function _rotateMissions(week) {
 
   S._mw_week        = week;
   S._mw_real_start  = _nowHours(); // marca de tiempo real para desbloqueo
-  _mw = { buys:0, sells:0, modules:0, dca:0, dca_correct:0, biz:0,
+  _mw = { buys:0, sells:0, modules:0, dca:0, dca_correct:0, biz:0, modules_perfect:0, budget_set:0, dilemma:0, tools_used:0, coach_used:0, tools_list:[],
           visited_portfolio:false, visited_business:false,
           xp_start: S.xp || 0 };
 
@@ -7375,9 +7447,18 @@ function checkMissions() {
 
     let prog = 0;
     switch (m.type) {
-      case 'modules':          prog = _mw.modules;                         break;
+      case 'modules':          prog = _mw.modules; if (S.currentMod && (!S.currentMod._quizStats || S.currentMod._quizStats.wrong === 0)) _mw.modules_perfect++; break;
       case 'dca':              prog = _mw.dca;                             break;
       case 'dca_correct':      prog = _mw.dca_correct;                     break;
+      case 'modules_perfect':  prog = _mw.modules_perfect;                 break;
+      case 'budget_set':       prog = _mw.budget_set;                      break;
+      case 'dilemma':          prog = _mw.dilemma;                         break;
+      case 'tools_used':       prog = _mw.tools_used;                      break;
+      case 'coach_used':       prog = _mw.coach_used;                      break;
+      case 'invested_amount':  prog = Math.min(S.totalInvested || 0, mission.goal); break;
+      case 'stocks_held':      prog = Object.keys(S.portfolio || {}).filter(t => (S.portfolio[t]?.qty || 0) > 0).length; break;
+      case 'biz_owned':        prog = Object.keys(S.businesses || {}).length; break;
+      case 'savings_rate':     prog = (S.lifeSalary||0) > 0 ? Math.round(((S.monthlyContribution||0)/(S.lifeSalary||1))*100) : 0; break;
       case 'buys':             prog = _mw.buys;                            break;
       case 'sells':            prog = _mw.sells;                           break;
       case 'biz_acquired':     prog = _mw.biz;                             break;
