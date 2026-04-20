@@ -1824,12 +1824,44 @@ function T5_open() {
           </div>
         </div>
         <div id="t5-stats" class="t5-stats"></div>
-        <canvas id="t5-chart" height="220" style="margin-top:16px"></canvas>
+        <canvas id="t5-chart" height="220" style="margin-top:16px;max-width:100%;"></canvas>
+        <div id="t5-quote" style="margin-top:20px;padding:16px 18px;background:linear-gradient(135deg,rgba(245,166,35,.08),rgba(245,166,35,.02));border:1px solid rgba(245,166,35,.15);border-radius:14px;text-align:center;font-size:13px;color:var(--text1);font-style:italic;line-height:1.5;min-height:54px;"></div>
       </div>
     </div>
   `;
   modal.classList.add('active');
   T5_update();
+  _t5RotateQuote();
+}
+
+const _T5_QUOTES = [
+  '"El interés compuesto es la octava maravilla del mundo. Quien lo entiende, lo gana. Quien no, lo paga." — Albert Einstein',
+  '"Alguien está sentado a la sombra hoy porque alguien plantó un árbol hace mucho tiempo." — Warren Buffett',
+  '"El tiempo es el amigo del negocio maravilloso." — Warren Buffett',
+  '"El primer millón es el más difícil. Los siguientes llegan solos por el interés compuesto."',
+  '"No es lo que ganas, es lo que conservas e inviertes lo que te hace rico."',
+  '"€200/mes al 7% durante 30 años son €245.000. Empezar hoy vale más que 10 años de decidir."',
+  '"Si no sabes cómo ganar dinero mientras duermes, trabajarás hasta que mueras." — Warren Buffett',
+  '"La paciencia es el secreto. La impaciencia, el enemigo número uno del inversor."',
+  '"Una acción que sube un 20% al año durante 10 años se multiplica por 6, no por 3."',
+  '"La rueda del interés compuesto gira lento al principio y se vuelve imparable al final."',
+];
+
+function _t5RotateQuote() {
+  const el = document.getElementById('t5-quote');
+  if (!el) return;
+  let idx = Math.floor(Math.random() * _T5_QUOTES.length);
+  el.textContent = _T5_QUOTES[idx];
+  if (window._t5QuoteTimer) clearInterval(window._t5QuoteTimer);
+  window._t5QuoteTimer = setInterval(() => {
+    if (!document.getElementById('t5-quote')) { clearInterval(window._t5QuoteTimer); return; }
+    idx = (idx + 1) % _T5_QUOTES.length;
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.textContent = _T5_QUOTES[idx];
+      el.style.opacity = '1';
+    }, 300);
+  }, 7000);
 }
 
 function T5_update() {
@@ -1860,14 +1892,25 @@ function T5_update() {
   const totalInt = final - totalInv;
   const x = totalInt / Math.max(1, totalInv);
 
+  const multiplier = final / Math.max(1, totalInv);
   const stats = document.getElementById('t5-stats');
   if (stats) stats.innerHTML = `
-    <div class="t5-stat-grid">
-      <div class="t5-stat"><span>Capital final</span><strong style="color:var(--green)">${_fmt(final)}€</strong></div>
-      <div class="t5-stat"><span>Total aportado</span><strong>${_fmt(totalInv)}€</strong></div>
-      <div class="t5-stat"><span>Intereses generados</span><strong style="color:#6c63ff">${_fmt(totalInt)}€</strong></div>
-      <div class="t5-stat"><span>Multiplicador</span><strong>×${(final / Math.max(1, totalInv)).toFixed(1)}</strong></div>
-    </div>
+      <div class="t5-stat-box">
+        <div class="t5-stat-val">${_fmt(Math.round(final))}€</div>
+        <div class="t5-stat-lbl">Total final</div>
+      </div>
+      <div class="t5-stat-box">
+        <div class="t5-stat-val">${_fmt(Math.round(totalInv))}€</div>
+        <div class="t5-stat-lbl">Aportado</div>
+      </div>
+      <div class="t5-stat-box">
+        <div class="t5-stat-val" style="color:#4ade80;">${_fmt(Math.round(totalInt))}€</div>
+        <div class="t5-stat-lbl">Intereses</div>
+      </div>
+      <div class="t5-stat-box">
+        <div class="t5-stat-val">x${multiplier.toFixed(1)}</div>
+        <div class="t5-stat-lbl">Multiplicador</div>
+      </div>
   `;
 
   if (typeof Chart === 'undefined') return;
