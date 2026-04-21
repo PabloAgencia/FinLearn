@@ -9150,7 +9150,7 @@ window.F27_openModule = F27_openModule;
 const F28_BRANCHES = [
   {
     id: 'fundamentos', label: 'Fundamentos', emoji: '🏗️', color: '#00e5a0',
-    mods: [0, 11, 29, 39, 57, 70, 75, 103, 105, 108, 114, 116, 122, 129, 131, 132, 133, 134, 135]
+    mods: [0, 11, 29, 39, 57, 70, 75, 103, 105, 108, 114, 116, 122, 129, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140]
   },
   {
     id: 'inversion', label: 'Inversión', emoji: '📈', color: '#60a5fa',
