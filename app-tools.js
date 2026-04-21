@@ -9158,7 +9158,7 @@ const F28_BRANCHES = [
   },
   {
     id: 'deuda', label: 'Deuda & Riesgo', emoji: '🔄', color: '#fb923c',
-    mods: [3, 14, 25, 31, 37, 41, 55, 120]
+    mods: [3, 14, 25, 31, 37, 41, 55, 120, 150, 151, 152, 153, 154, 155, 156, 157]
   },
   {
     id: 'fiscalidad', label: 'Fiscalidad', emoji: '🧾', color: '#fbbf24',
