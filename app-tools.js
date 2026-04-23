@@ -9162,7 +9162,7 @@ const F28_BRANCHES = [
   },
   {
     id: 'fiscalidad', label: 'Fiscalidad', emoji: '🧾', color: '#fbbf24',
-    mods: [4, 9, 21, 28, 38, 42, 49, 51, 60, 68, 83, 91, 94, 100, 110, 119, 126]
+    mods: [4, 9, 21, 28, 38, 42, 51, 60, 68, 83, 91, 94, 100, 110, 119, 126, 172, 173, 174]
   },
   {
     id: 'psicologia', label: 'Psicología', emoji: '🧠', color: '#c084fc',
