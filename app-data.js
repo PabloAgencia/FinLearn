@@ -6287,6 +6287,39 @@ const EXAM_QUESTION_POOL = [
     ]},
 ];
 
+const WEEKLY_ACTIONS = [
+  { id:'wa_cancel_sub', icon:'✂️', title:'Cancela 1 suscripción que no uses', desc:'Abre tus suscripciones activas (Netflix, Spotify, gym, cloud...) y cancela la que menos uses este mes.', xp:120, savingEst:15 },
+  { id:'wa_negotiate_mobile', icon:'📱', title:'Negocia tu factura del móvil', desc:'Llama a tu compañía y pide descuento por fidelidad. El 70% de peticiones consiguen 5-15€/mes de descuento.', xp:150, savingEst:10 },
+  { id:'wa_cirbe_check', icon:'🏦', title:'Consulta tu CIRBE gratis', desc:'Entra en la sede del Banco de España con tu DNI electrónico y revisa qué préstamos figuran a tu nombre.', xp:100, savingEst:0 },
+  { id:'wa_asnef_check', icon:'🔍', title:'Consulta si estás en ASNEF', desc:'Pide por escrito a ASNEF qué datos tienen sobre ti. Si hay algún error, exige corrección.', xp:100, savingEst:0 },
+  { id:'wa_auto_transfer', icon:'🤖', title:'Activa transferencia automática de ahorro', desc:'Programa una transferencia automática el día del cobro al ahorro. Empieza con €50 si no puedes más.', xp:150, savingEst:50 },
+  { id:'wa_audit_insurance', icon:'🛡️', title:'Compara tu seguro de coche', desc:'Compara tu seguro actual en Rastreator o Acierto. Muchos ahorran €100-300 al año cambiando.', xp:130, savingEst:15 },
+  { id:'wa_compare_power', icon:'💡', title:'Compara tu factura de luz', desc:'Entra en el comparador de la CNMC y compara tu tarifa de luz. Pasar a tarifa regulada PVPC suele ahorrar €10-30/mes.', xp:130, savingEst:20 },
+  { id:'wa_check_revolving', icon:'💳', title:'Revisa si tienes tarjeta revolving', desc:'Mira el contrato de tus tarjetas. Si el TAE supera el 20% y pagas cuota fija, probablemente sea revolving. Cancélala.', xp:150, savingEst:40 },
+  { id:'wa_budget_3cat', icon:'📊', title:'Categoriza tus gastos del último mes', desc:'Mira el extracto bancario y clasifica tus gastos en 3 grupos: fijos, variables y ocio. Encontrarás fugas.', xp:120, savingEst:30 },
+  { id:'wa_unsub_amazon', icon:'📦', title:'Audita tus compras recurrentes', desc:'Revisa Amazon, iTunes/Play Store y bancos. Cancela cualquier suscripción que no recuerdes haber activado.', xp:110, savingEst:20 },
+  { id:'wa_open_broker', icon:'📈', title:'Abre cuenta en un broker con bajas comisiones', desc:'DEGIRO, MyInvestor, IBKR... compara y abre una cuenta (aún sin ingresar dinero). Elimina la fricción futura.', xp:140, savingEst:0 },
+  { id:'wa_auto_invest', icon:'🎯', title:'Programa tu primera aportación mensual', desc:'Automatiza una aportación mensual a un fondo indexado. Empieza con €50 si no puedes más. El hábito vale más que la cantidad.', xp:180, savingEst:0 },
+  { id:'wa_mortgage_review', icon:'🏠', title:'Revisa las condiciones de tu hipoteca', desc:'Abre tu escritura hipotecaria. Anota: tipo (fijo/variable), diferencial y comisiones. Compara con ofertas actuales.', xp:130, savingEst:0 },
+  { id:'wa_will_check', icon:'📜', title:'Revisa si tienes testamento', desc:'Ir al notario cuesta €40 y evita meses de problemas a tu familia. Si tienes patrimonio o hijos, es obligación.', xp:100, savingEst:0 },
+  { id:'wa_declutter_app', icon:'🗑️', title:'Elimina apps que te hacen gastar', desc:'Desinstala de tu móvil las apps de compra compulsiva (Amazon, Shein, Wallapop compras, delivery). Reduces compras impulsivas.', xp:110, savingEst:25 },
+  { id:'wa_check_noms', icon:'📄', title:'Revisa tu última nómina', desc:'Abre tu nómina. ¿Entiendes todos los conceptos? Identifica base de cotización y retención IRPF.', xp:100, savingEst:0 },
+  { id:'wa_compare_bank', icon:'🏦', title:'Compara comisiones de tu banco', desc:'Revisa qué pagas al banco este año en mantenimiento y comisiones. Si supera €80, hay alternativas gratuitas.', xp:120, savingEst:10 },
+  { id:'wa_small_debt', icon:'💰', title:'Paga la deuda más pequeña que tengas', desc:'Si tienes varias deudas, liquida la más pequeña entera con lo que puedas. Victoria rápida que motiva.', xp:150, savingEst:0 },
+  { id:'wa_irpf_sim', icon:'🧾', title:'Simula tu declaración de la renta', desc:'Usa el simulador oficial de Hacienda o uno comercial. Descubre deducciones que no aprovechabas.', xp:130, savingEst:100 },
+  { id:'wa_emergency_start', icon:'🚨', title:'Transfiere €100 al fondo de emergencia', desc:'Abre una cuenta remunerada y mete €100. El inicio es lo más difícil. Empieza hoy.', xp:140, savingEst:0 },
+  { id:'wa_one_noexp', icon:'🚫', title:'Hoy: día sin gastos variables', desc:'24 horas sin gastar en nada que no sea obligatorio. Ni cafés, ni delivery, ni compras. Reinicia el hábito.', xp:100, savingEst:15 },
+  { id:'wa_meal_prep', icon:'🍱', title:'Prepara tu comida 3 días esta semana', desc:'Cada comida en casa en vez de fuera ahorra €8-12. Tres días = €25-35 extra cada semana.', xp:100, savingEst:30 },
+  { id:'wa_books_finance', icon:'📚', title:'Empieza un libro financiero clásico', desc:'Elige uno: "Padre Rico Padre Pobre", "El Hombre Más Rico de Babilonia", "Your Money or Your Life". Biblioteca pública.', xp:100, savingEst:0 },
+  { id:'wa_track_day', icon:'✏️', title:'Apunta cada euro que gastes hoy', desc:'Durante un día entero, anota cada compra. Verás tu comportamiento real, no el percibido.', xp:110, savingEst:15 },
+  { id:'wa_salary_goal', icon:'🎯', title:'Define tu objetivo de sueldo en 3 años', desc:'Pon un número concreto. Ej: "quiero cobrar €2.800 netos/mes el 1/1/2028". Escríbelo en tu móvil.', xp:100, savingEst:0 },
+  { id:'wa_side_hustle', icon:'💼', title:'Lista 3 ideas de ingreso extra', desc:'Escribe 3 formas concretas de generar €100-300 extra al mes con tus skills actuales. Sin filtrar.', xp:110, savingEst:0 },
+  { id:'wa_networth_calc', icon:'📊', title:'Calcula tu patrimonio neto real', desc:'Suma todo lo que tienes (cuentas + inversiones + casa). Resta todo lo que debes. Ese número es tu punto de partida.', xp:130, savingEst:0 },
+  { id:'wa_subscription_audit', icon:'🔍', title:'Lista TODAS tus suscripciones activas', desc:'Haz una lista exhaustiva: streaming, apps, gym, nube, juegos, revistas. Calcula el total mensual. Te sorprenderás.', xp:120, savingEst:25 },
+  { id:'wa_price_compare_week', icon:'🛒', title:'Compara precios antes de cualquier compra >€30', desc:'Durante 7 días, ANTES de comprar algo de más de €30, compara en Google Shopping o Idealo. Mínimo 2 tiendas.', xp:110, savingEst:20 },
+  { id:'wa_freelance_stripe', icon:'💳', title:'Revisa comisiones de pago que pagas', desc:'Si eres autónomo o cobras por plataformas (PayPal, Stripe, Bizum Pro), suma comisiones del último mes. Negocia o cambia.', xp:120, savingEst:15 },
+];
+
 // Fix: los módulos 108-130 quedaron dentro de EXAM_QUESTION_POOL por error.
 // Los extraemos a MODULES y limpiamos EXAM_QUESTION_POOL.
 (function() {

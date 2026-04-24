@@ -2246,6 +2246,7 @@ function renderHomeScreen() {
     else if (homeScreen) homeScreen.appendChild(cardWrap);
   }
   if (typeof _renderGroupMissionEpic === 'function') _renderGroupMissionEpic();
+  _renderWeeklyActionCard();
 }
 
 /**
@@ -5083,6 +5084,46 @@ function showXPPanel() {
   openModal('m-xp-panel');
 }
 window.showXPPanel = showXPPanel;
+
+function _renderWeeklyActionCard() {
+  const action = typeof getCurrentWeeklyAction === 'function' ? getCurrentWeeklyAction() : null;
+  if (!action) return;
+  const done = S._currentWeeklyAction && S._currentWeeklyAction.done;
+  let el = document.getElementById('weekly-action-card');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'weekly-action-card';
+    el.style.cssText = 'margin:12px 16px;';
+    const homeScreen = document.getElementById('s-home');
+    const dcaCard = document.getElementById('dca-card');
+    if (homeScreen && dcaCard) homeScreen.insertBefore(el, dcaCard);
+    else if (homeScreen) homeScreen.appendChild(el);
+  }
+  if (done) {
+    el.innerHTML = `
+      <div style="padding:16px 18px;background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,229,160,.04));border:1px solid rgba(0,229,160,.25);border-radius:16px;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:28px;">✓</div>
+        <div style="flex:1;">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#00e5a0;">Acción completada esta semana</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px;">${action.title}</div>
+        </div>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div style="padding:18px 20px;background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(245,166,35,.04));border:1px solid rgba(245,166,35,.3);border-radius:18px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-12px;right:-12px;font-size:70px;opacity:.08;">${action.icon}</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;position:relative;">
+          <div style="font-size:11px;font-weight:800;color:#f5a623;letter-spacing:.1em;">🎯 ACCIÓN DE LA SEMANA</div>
+          <div style="background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);padding:3px 8px;border-radius:99px;font-size:10px;font-weight:800;color:#f5a623;margin-left:auto;">+${action.xp} XP</div>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:var(--text1);line-height:1.25;margin-bottom:6px;position:relative;">${action.icon} ${action.title}</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.45;margin-bottom:14px;position:relative;">${action.desc}</div>
+        ${action.savingEst > 0 ? `<div style="font-size:11px;color:#00e5a0;font-weight:700;margin-bottom:12px;">💰 Ahorro estimado: €${action.savingEst}/mes</div>` : ''}
+        <button onclick="completeWeeklyAction()" style="width:100%;background:linear-gradient(90deg,#f5a623,#f5c842);border:none;color:#0a0c14;padding:12px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;box-shadow:0 4px 12px rgba(245,166,35,.3);">✓ He completado esta acción</button>
+      </div>`;
+  }
+}
+window._renderWeeklyActionCard = _renderWeeklyActionCard;
 
 function _renderStreakRepairBanner() {
   if (!S.userName || !S.streakBrokeAt) return;

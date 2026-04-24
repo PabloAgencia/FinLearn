@@ -7070,6 +7070,54 @@ function tickMissionTool(toolId) {
 }
 window.tickMissionTool = tickMissionTool;
 
+function _getWeekKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  // Semana ISO aproximada
+  const start = new Date(year, 0, 1);
+  const days = Math.floor((now - start) / 86400000);
+  const week = Math.ceil((days + start.getDay() + 1) / 7);
+  return `${year}-W${week}`;
+}
+
+function getCurrentWeeklyAction() {
+  if (typeof WEEKLY_ACTIONS === 'undefined' || !WEEKLY_ACTIONS.length) return null;
+  const weekKey = _getWeekKey();
+  if (!S._currentWeeklyAction || S._currentWeeklyAction.week !== weekKey) {
+    // Asignar nueva acción: excluir las ya completadas recientemente
+    const completed = S._completedActions || [];
+    const available = WEEKLY_ACTIONS.filter(a => !completed.includes(a.id));
+    const pool = available.length > 0 ? available : WEEKLY_ACTIONS;
+    const action = pool[Math.floor(Math.random() * pool.length)];
+    S._currentWeeklyAction = { week: weekKey, id: action.id, done: false, startedAt: Date.now() };
+    saveState();
+  }
+  return WEEKLY_ACTIONS.find(a => a.id === S._currentWeeklyAction.id);
+}
+
+function completeWeeklyAction() {
+  if (!S._currentWeeklyAction || S._currentWeeklyAction.done) return;
+  const action = WEEKLY_ACTIONS.find(a => a.id === S._currentWeeklyAction.id);
+  if (!action) return;
+  S._currentWeeklyAction.done = true;
+  S._currentWeeklyAction.completedAt = Date.now();
+  if (!S._completedActions) S._completedActions = [];
+  S._completedActions.push(action.id);
+  if (S._completedActions.length > 50) S._completedActions = S._completedActions.slice(-50);
+  S.xp = (S.xp || 0) + action.xp;
+  if (!S._totalRealSavings) S._totalRealSavings = 0;
+  S._totalRealSavings += (action.savingEst || 0);
+  S._realActionsCount = (S._realActionsCount || 0) + 1;
+  saveState();
+  if (typeof spawnXPv2 === 'function') spawnXPv2(`+${action.xp} XP`, 'Acción real');
+  if (typeof confetti === 'function') confetti();
+  toast('🎯 ¡Acción completada!', action.savingEst > 0 ? `Ahorro estimado: €${action.savingEst}/mes` : '¡Bien hecho!', 't-success');
+  if (typeof renderHomeScreen === 'function') setTimeout(renderHomeScreen, 400);
+}
+
+window.getCurrentWeeklyAction = getCurrentWeeklyAction;
+window.completeWeeklyAction = completeWeeklyAction;
+
 function _addGroupXP(amount) {
   S._groupXP = (S._groupXP || 0) + (amount || 0);
 }
