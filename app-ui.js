@@ -2132,6 +2132,7 @@ function goTo(screen) {
   if (screen === 'lifestyle') { setTimeout(renderLifestyleComparator, 60); }
   if (screen === 'tools')     { if (typeof renderToolsScreen === 'function') renderToolsScreen(); }
   if (screen === 'guides')    { if (typeof renderGuidesScreen === 'function') renderGuidesScreen(); }
+  if (screen === 'realmoney') { if (typeof _rmLoad === 'function') _rmLoad(); }
 }
 
 /**
@@ -5163,6 +5164,79 @@ function _repairStreak(cost) {
   if (typeof updateUIFromState === 'function') updateUIFromState();
 }
 window._repairStreak = _repairStreak;
+
+function _rmUpdate() {
+  const get = id => parseFloat(document.getElementById(id)?.value) || 0;
+  const inc = get('rm-income');
+  const exp = get('rm-exp-home') + get('rm-exp-food') + get('rm-exp-transport') + get('rm-exp-fun') + get('rm-exp-other');
+  const savings = Math.max(0, inc - exp);
+  const pct = inc > 0 ? Math.round((savings / inc) * 100) : 0;
+  const valEl = document.getElementById('rm-savings-val');
+  const pctEl = document.getElementById('rm-savings-pct');
+  if (valEl) valEl.textContent = '€' + savings.toLocaleString('es');
+  if (pctEl) {
+    if (inc === 0) pctEl.textContent = 'Introduce tus datos para empezar';
+    else if (savings === 0 && exp > inc) pctEl.textContent = '⚠️ Gastas más de lo que ingresas';
+    else pctEl.textContent = `Tasa de ahorro: ${pct}% · ${pct >= 20 ? '🔥 Excelente' : pct >= 10 ? '✓ Correcto' : '⚠️ Mejora'}`;
+  }
+  // Mostrar comparación con mes anterior si existe
+  const last = S._realMoneyHistory && S._realMoneyHistory.length > 0 ? S._realMoneyHistory[S._realMoneyHistory.length - 1] : null;
+  const compEl = document.getElementById('rm-comparison');
+  const compText = document.getElementById('rm-compare-text');
+  if (last && inc > 0 && compEl && compText) {
+    const diff = savings - last.savings;
+    if (diff > 0) compText.innerHTML = `📈 Ahorras <strong style="color:#00e5a0;">€${diff.toLocaleString('es')} más</strong> que el mes pasado`;
+    else if (diff < 0) compText.innerHTML = `📉 Ahorras <strong style="color:#ef4444;">€${Math.abs(diff).toLocaleString('es')} menos</strong> que el mes pasado`;
+    else compText.textContent = 'Mismo ahorro que el mes pasado';
+    compEl.style.display = 'block';
+  }
+}
+
+function _rmSaveMonth() {
+  const get = id => parseFloat(document.getElementById(id)?.value) || 0;
+  const inc = get('rm-income');
+  if (inc === 0) { toast('⚠️ Falta información', 'Introduce al menos tus ingresos.', 't-warn'); return; }
+  const exp = {
+    home: get('rm-exp-home'),
+    food: get('rm-exp-food'),
+    transport: get('rm-exp-transport'),
+    fun: get('rm-exp-fun'),
+    other: get('rm-exp-other')
+  };
+  const totalExp = Object.values(exp).reduce((a,b) => a+b, 0);
+  const savings = Math.max(0, inc - totalExp);
+  const month = new Date().toISOString().slice(0, 7);
+  if (!S._realMoneyHistory) S._realMoneyHistory = [];
+  const existingIdx = S._realMoneyHistory.findIndex(h => h.month === month);
+  const entry = { month, income: inc, expenses: exp, totalExpenses: totalExp, savings, savedAt: Date.now() };
+  if (existingIdx >= 0) S._realMoneyHistory[existingIdx] = entry;
+  else S._realMoneyHistory.push(entry);
+  S._realMoneyTotal = S._realMoneyHistory.reduce((a,h) => a + h.savings, 0);
+  saveState();
+  toast('✓ Mes guardado', `Ahorro total acumulado: €${S._realMoneyTotal.toLocaleString('es')}`, 't-success');
+  // XP por usar el tracker real
+  if (existingIdx < 0) {
+    S.xp = (S.xp || 0) + 50;
+    spawnXPv2('+50 XP', 'Mi Dinero Real');
+    saveState();
+  }
+}
+
+function _rmLoad() {
+  if (!S._realMoneyHistory || S._realMoneyHistory.length === 0) { _rmUpdate(); return; }
+  const last = S._realMoneyHistory[S._realMoneyHistory.length - 1];
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  set('rm-income', last.income);
+  set('rm-exp-home', last.expenses.home);
+  set('rm-exp-food', last.expenses.food);
+  set('rm-exp-transport', last.expenses.transport);
+  set('rm-exp-fun', last.expenses.fun);
+  set('rm-exp-other', last.expenses.other);
+  _rmUpdate();
+}
+window._rmUpdate = _rmUpdate;
+window._rmSaveMonth = _rmSaveMonth;
+window._rmLoad = _rmLoad;
 
 function _renderStreakDangerBanner() {
   if (!S.userName || S.dcaDone || (S.streak || 0) < 2) return;

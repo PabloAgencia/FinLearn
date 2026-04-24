@@ -1215,6 +1215,44 @@
     <!-- ══════════════════════════════════════
          SCREEN: PORTFOLIO (STOCK MARKET)
     ══════════════════════════════════════ -->
+    <div class="screen" id="s-realmoney">
+      <div class="nav">
+        <button class="nav-back" onclick="goTo('home')">←</button>
+        <div class="nav-title">Mi Dinero Real</div>
+        <div></div>
+      </div>
+      <div class="sc-body">
+        <div style="background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(245,166,35,.04));border:1px solid rgba(0,229,160,.15);border-radius:16px;padding:18px;margin-bottom:16px;">
+          <div style="font-size:11px;color:var(--text2);letter-spacing:.08em;margin-bottom:6px;">TU AHORRO ESTE MES</div>
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#00e5a0;" id="rm-savings-val">€0</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="rm-savings-pct">Introduce tus datos para empezar</div>
+        </div>
+
+        <div style="background:var(--surface);border-radius:16px;padding:18px;margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text1);margin-bottom:14px;">💰 INGRESOS NETOS DEL MES</div>
+          <input type="number" id="rm-income" placeholder="Ej: 1800" style="width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text1);font-size:16px;" oninput="_rmUpdate()">
+        </div>
+
+        <div style="background:var(--surface);border-radius:16px;padding:18px;margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text1);margin-bottom:14px;">🧾 GASTOS REALES DEL MES</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🏠 Vivienda (alquiler, hipoteca, suministros)</label><input type="number" id="rm-exp-home" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
+            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🛒 Comida y supermercado</label><input type="number" id="rm-exp-food" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
+            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🚗 Transporte</label><input type="number" id="rm-exp-transport" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
+            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🎉 Ocio y restaurantes</label><input type="number" id="rm-exp-fun" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
+            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">📱 Suscripciones y otros</label><input type="number" id="rm-exp-other" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
+          </div>
+        </div>
+
+        <div id="rm-comparison" style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(108,99,255,.02));border:1px solid rgba(108,99,255,.2);border-radius:16px;padding:16px;margin-bottom:16px;display:none;">
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">VS. MES ANTERIOR</div>
+          <div id="rm-compare-text" style="font-size:14px;color:var(--text1);font-weight:600;"></div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="_rmSaveMonth()">✓ Guardar mes actual</button>
+      </div>
+    </div>
+
     <div class="screen" id="s-portfolio">
       <div class="top-nav">
         <div class="logo">📈 Bolsa</div>
