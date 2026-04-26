@@ -144,7 +144,11 @@ function _initAmbient() {
 }
 
 const _appStartTime = Date.now();
-setInterval(() => { if (typeof _renderGameClock === 'function') _renderGameClock(); }, 1000);
+setInterval(() => {
+  if (document.hidden) return;
+  if (!document.getElementById('game-clock-pill')) return;
+  if (typeof _renderGameClock === 'function') _renderGameClock();
+}, 5000);
 function initApp() {
   _showSplash();
   // Intentar sesión Supabase primero; si hay usuario logado, cargar desde la nube

@@ -2086,6 +2086,7 @@ function goTo(screen) {
     lifestyle: 's-lifestyle',
     tools:     's-tools',
     guides:    's-guides',
+    realmoney: 's-realmoney',
   };
   const id = map[screen] || screen;
   document.querySelectorAll('.modal-overlay').forEach(m => {
@@ -5097,12 +5098,16 @@ function _renderWeeklyActionCard() {
     el.id = 'weekly-action-card';
     el.style.cssText = 'margin:12px 16px;';
     const homeScreen = document.getElementById('s-home');
-    // Posición: justo después del header del home, antes que cualquier card
+    // Posición: después de realmoney-card, antes del dca-card
     const realMoneyCard = document.getElementById('home-realmoney-card');
     const dcaCard = document.getElementById('dca-card');
-    const target = realMoneyCard || dcaCard;
-    if (homeScreen && target) homeScreen.insertBefore(el, target);
-    else if (homeScreen) homeScreen.appendChild(el);
+    if (homeScreen && realMoneyCard && realMoneyCard.nextSibling) {
+      homeScreen.insertBefore(el, realMoneyCard.nextSibling);
+    } else if (homeScreen && dcaCard) {
+      homeScreen.insertBefore(el, dcaCard);
+    } else if (homeScreen) {
+      homeScreen.appendChild(el);
+    }
   }
   if (done) {
     el.innerHTML = `
@@ -5296,7 +5301,7 @@ function _rmSaveMonth() {
   // XP por usar el tracker real
   if (existingIdx < 0) {
     S.xp = (S.xp || 0) + 50;
-    spawnXPv2('+50 XP', 'Mi Dinero Real');
+    if (typeof spawnXPv2 === 'function') spawnXPv2('+50 XP', 'Mi Dinero Real');
     saveState();
   }
 }
