@@ -708,12 +708,12 @@ function upgradeToPremium() {
 /** PM_showPaywall — Muestra el modal de paywall. trigger es el origen (unused por ahora). */
 function PM_showPaywall(trigger) {
   const msgs = {
-    'f25':       { title:'Rastrea tu patrimonio real', sub:'Conecta tus activos y deudas reales para ver tu situación financiera exacta.' },
-    'f27':       { title:'Tu plan de acción personalizado', sub:'Pasos concretos adaptados a tu situación real para avanzar más rápido.' },
-    'scenarios': { title:'Retos de Escenario', sub:'Simulaciones inmersivas con situaciones financieras reales. Aprende haciendo.' },
-    'coach':     { title:'FinAI Coach personal', sub:'Tu coach financiero con IA que conoce tu situación exacta y te da consejos reales.' },
-    'projection':{ title:'Proyecciones a 20 y 30 años', sub:'Ve exactamente a dónde llegarás si mantienes tu ritmo actual de ahorro.' },
-    'chest':     { title:'Cofres Premium garantizados', sub:'Cofres Oro y Legendario en cada nivel especial. Recompensas mucho mejores.' },
+    'f25':       { title:'Análisis automático de tus gastos', sub:'Detecta fugas en tu presupuesto y recibe sugerencias reales sobre tus números.' },
+    'f27':       { title:'Plan de acción sobre tu dinero real', sub:'Pasos concretos adaptados a tus ingresos y gastos reales para avanzar más rápido.' },
+    'scenarios': { title:'Recordatorios inteligentes', sub:'Renueva seguros, compara tarifas y no pierdas dinero por descuido.' },
+    'coach':     { title:'Coach FinAI sobre tus números reales', sub:'Tu coach financiero con IA analiza TUS datos y te da consejos personalizados.' },
+    'projection':{ title:'Plan de ahorro personalizado mensual', sub:'Un plan de ahorro adaptado a tus ingresos reales, revisado cada mes.' },
+    'chest':     { title:'Detector de fugas en tu presupuesto', sub:'Identifica gastos invisibles y patrones que te cuestan dinero sin que lo notes.' },
     'premium_feature': { title:'Función Premium', sub:'Desbloquea todas las herramientas reales de FinLearn.' },
   };
   const m = msgs[trigger] || msgs['premium_feature'];
