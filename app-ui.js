@@ -5164,6 +5164,47 @@ function _renderRealMoneyHomeCard() {
 }
 window._renderRealMoneyHomeCard = _renderRealMoneyHomeCard;
 
+function _openLab() {
+  let modal = document.getElementById('m-lab');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-lab';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+  const items = [
+    { icon:'📈', label:'Simulador de Bolsa', desc:'Practica invertir con dinero virtual', action:"closeModal('m-lab');goTo('portfolio')" },
+    { icon:'🌍', label:'Simulador de Vida', desc:'Gestiona ingresos, gastos y eventos', action:"closeModal('m-lab');goTo('life')" },
+    { icon:'🏪', label:'Negocios', desc:'Compra negocios para ingresos pasivos', action:"closeModal('m-lab');goTo('business')" },
+    { icon:'⚔️', label:'Boss Battles', desc:'Retos al final de cada rama', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{const b=document.querySelector('.boss-battle-card');if(b)b.scrollIntoView({behavior:'smooth'});},300)" },
+    { icon:'🎯', label:'Escenarios de Reto', desc:'Crisis de mercado simuladas (premium)', action:"closeModal('m-lab');if(typeof openScenariosScreen==='function')openScenariosScreen();" },
+    { icon:'🌐', label:'Misión Grupal', desc:'Objetivo colectivo semanal', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{if(typeof _renderGroupMissionEpic==='function'){const c=document.getElementById('challenge-card');if(!c){const w=document.createElement('div');w.id='challenge-card';w.style.cssText='margin:12px 16px;';document.getElementById('s-home').appendChild(w);}_renderGroupMissionEpic();const c2=document.getElementById('challenge-card');if(c2)c2.scrollIntoView({behavior:'smooth'});}},300)" },
+  ];
+  modal.innerHTML = `
+    <div class="modal-box" style="max-width:420px;padding:24px 20px;max-height:85vh;overflow-y:auto;">
+      <button class="modal-close" onclick="closeModal('m-lab')" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;">✕</button>
+      <div style="text-align:center;margin-bottom:6px;">
+        <div style="font-size:36px;margin-bottom:6px;">🧪</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text1);">Laboratorio</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px;">Practica con simuladores y retos</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;">
+        ${items.map(it => `
+          <button onclick="${it.action}" style="background:linear-gradient(135deg,rgba(245,166,35,.06),rgba(245,166,35,.01));border:1px solid rgba(245,166,35,.18);padding:14px 16px;border-radius:14px;display:flex;align-items:center;gap:14px;cursor:pointer;text-align:left;color:var(--text1);">
+            <div style="font-size:26px;">${it.icon}</div>
+            <div style="flex:1;">
+              <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:#f5a623;">${it.label}</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:2px;">${it.desc}</div>
+            </div>
+            <div style="font-size:18px;color:#f5a623;opacity:.6;">→</div>
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+  modal.classList.add('active');
+}
+window._openLab = _openLab;
+
 function _renderStreakRepairBanner() {
   if (!S.userName || !S.streakBrokeAt) return;
   const hoursSinceBreak = (Date.now() - S.streakBrokeAt) / 3600000;
