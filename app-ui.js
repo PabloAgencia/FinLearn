@@ -2246,8 +2246,9 @@ function renderHomeScreen() {
     if (homeScreen && insertBefore) homeScreen.insertBefore(cardWrap, insertBefore);
     else if (homeScreen) homeScreen.appendChild(cardWrap);
   }
-  if (typeof _renderGroupMissionEpic === 'function') _renderGroupMissionEpic();
+  _renderRealMoneyHomeCard();
   _renderWeeklyActionCard();
+  // misión grupal pasa a Laboratorio
 }
 
 /**
@@ -5096,8 +5097,11 @@ function _renderWeeklyActionCard() {
     el.id = 'weekly-action-card';
     el.style.cssText = 'margin:12px 16px;';
     const homeScreen = document.getElementById('s-home');
+    // Posición: justo después del header del home, antes que cualquier card
+    const realMoneyCard = document.getElementById('home-realmoney-card');
     const dcaCard = document.getElementById('dca-card');
-    if (homeScreen && dcaCard) homeScreen.insertBefore(el, dcaCard);
+    const target = realMoneyCard || dcaCard;
+    if (homeScreen && target) homeScreen.insertBefore(el, target);
     else if (homeScreen) homeScreen.appendChild(el);
   }
   if (done) {
@@ -5125,6 +5129,40 @@ function _renderWeeklyActionCard() {
   }
 }
 window._renderWeeklyActionCard = _renderWeeklyActionCard;
+
+function _renderRealMoneyHomeCard() {
+  const total = S._totalRealSavings || 0;
+  const actions = S._realActionsCount || 0;
+  let el = document.getElementById('home-realmoney-card');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'home-realmoney-card';
+    el.style.cssText = 'margin:12px 16px;';
+    const homeScreen = document.getElementById('s-home');
+    const dcaCard = document.getElementById('dca-card');
+    if (homeScreen && dcaCard) homeScreen.insertBefore(el, dcaCard);
+    else if (homeScreen) homeScreen.appendChild(el);
+  }
+  if (total === 0 && actions === 0) {
+    el.innerHTML = `
+      <div onclick="goTo('realmoney')" style="cursor:pointer;padding:18px 20px;background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,229,160,.02));border:1px solid rgba(0,229,160,.2);border-radius:16px;display:flex;align-items:center;gap:12px;">
+        <div style="font-size:28px;">💰</div>
+        <div style="flex:1;">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#00e5a0;">Empieza a trackear tu dinero real</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px;">Introduce tus ingresos y gastos del mes →</div>
+        </div>
+      </div>`;
+  } else {
+    el.innerHTML = `
+      <div onclick="goTo('realmoney')" style="cursor:pointer;padding:18px 20px;background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,229,160,.04));border:1px solid rgba(0,229,160,.3);border-radius:16px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-15px;right:-15px;font-size:80px;opacity:.06;">💰</div>
+        <div style="font-size:11px;color:var(--text2);letter-spacing:.08em;margin-bottom:6px;position-relative;">AHORRADO GRACIAS A FINLEARN</div>
+        <div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:#00e5a0;line-height:1;position:relative;">€${total.toLocaleString('es')}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:6px;position:relative;">${actions} ${actions === 1 ? 'acción real completada' : 'acciones reales completadas'} →</div>
+      </div>`;
+  }
+}
+window._renderRealMoneyHomeCard = _renderRealMoneyHomeCard;
 
 function _renderStreakRepairBanner() {
   if (!S.userName || !S.streakBrokeAt) return;
