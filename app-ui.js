@@ -4555,7 +4555,7 @@ function _showModuleSummary(stats) {
       <button class="btn ${passed ? 'btn-ghost btn-sm' : 'btn-primary'} btn-block" onclick="_retryModule()">🔄 Repetir módulo</button>
       <button class="btn btn-ghost btn-sm btn-block" onclick="_closeModuleSummary();goTo('home');" style="margin-top:8px;">← Volver al inicio</button>
     </div>`;
-  modal.classList.add('active');
+  modal.style.display = 'flex';
 }
 
 function _retryModule() {
@@ -5201,7 +5201,7 @@ function _openLab() {
         `).join('')}
       </div>
     </div>`;
-  modal.classList.add('active');
+  modal.style.display = 'flex';
 }
 window._openLab = _openLab;
 
