@@ -2527,8 +2527,10 @@ function _showSplash() {
 function _hideSplash() {
   const splash = document.getElementById('app-splash');
   if (!splash) return;
+  splash.style.pointerEvents = 'none';
+  splash.style.opacity = '0';
+  splash.style.display = 'none';
   splash.classList.add('splash-out');
-  setTimeout(() => { splash.style.display = 'none'; }, 600);
 }
 
 
