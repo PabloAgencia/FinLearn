@@ -2248,12 +2248,7 @@ function renderHomeScreen() {
     cardWrap.id = 'challenge-card';
     cardWrap.style.cssText = 'margin:12px 16px;';
     const homeScreen = document.getElementById('s-home');
-    if (homeScreen) {
-      const refEl = homeScreen?.querySelector('.dca-card, #dca-card');
-      const anchor = (refEl && refEl.parentNode === homeScreen) ? refEl : null;
-      if (anchor) homeScreen.insertBefore(cardWrap, anchor);
-      else homeScreen.appendChild(cardWrap);
-    }
+    if (homeScreen) homeScreen.appendChild(cardWrap);
   }
   _renderRealMoneyHomeCard();
   _renderWeeklyActionCard();
