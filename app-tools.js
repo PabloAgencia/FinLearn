@@ -1,3 +1,24 @@
+/* ══ GLOBAL ERROR SAFETY NET ══════════════════════════════════════
+   Si una función de render falla, no debe romper toda la app.
+   Captura errores no manejados y oculta el splash de emergencia.
+═══════════════════════════════════════════════════════════════════ */
+window.addEventListener('error', function(e) {
+  console.warn('[FinLearn] Error capturado:', e.message, 'en', e.filename + ':' + e.lineno);
+  var s = document.getElementById('app-splash');
+  if (s && s.style.display !== 'none') {
+    s.classList.add('splash-out');
+    setTimeout(function() { s.style.display = 'none'; }, 600);
+  }
+});
+window.addEventListener('unhandledrejection', function(e) {
+  console.warn('[FinLearn] Promise rechazada:', e.reason);
+  var s = document.getElementById('app-splash');
+  if (s && s.style.display !== 'none') {
+    s.classList.add('splash-out');
+    setTimeout(function() { s.style.display = 'none'; }, 600);
+  }
+});
+
 // ═══ INIT + WINDOW BRIDGE ═══
 
 /* ══ AMBIENT BACKGROUND ══════════════════════════════════════════ */

@@ -35,22 +35,30 @@
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js', { scope: './' })
-        .then(r => {
-          console.log('[SW] Registered, scope:', r.scope);
-          // Forzar actualización inmediata si hay nuevo SW esperando
-          if (r.waiting) r.waiting.postMessage({ type: 'SKIP_WAITING' });
-          r.addEventListener('updatefound', () => {
-            const newWorker = r.installing;
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('[SW] Nueva versión disponible');
+        .then(reg => {
+          console.log('[SW] Registered, scope:', reg.scope);
+          if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (nw) {
+              nw.addEventListener('statechange', () => {
+                if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('[SW] Nueva versión instalada — activando');
+                  nw.postMessage({ type: 'SKIP_WAITING' });
                 }
               });
             }
           });
+          reg.update();
         })
         .catch(e => console.warn('[SW] Registration failed:', e));
+
+      let _swRefreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (_swRefreshing) return;
+        _swRefreshing = true;
+        window.location.reload();
+      });
     });
   }
 </script>
@@ -58,8 +66,8 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <!-- Nuestros estilos -->
-<link rel="stylesheet" href="app.css">
-<link rel="stylesheet" href="app-extra.css">
+<link rel="stylesheet" href="app.css?v=2.0.0">
+<link rel="stylesheet" href="app-extra.css?v=2.0.0">
 </head>
 <body>
 
@@ -2490,13 +2498,13 @@
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <!-- Módulos ES — el navegador resuelve el grafo de imports automáticamente -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app-data.js"></script>
-<script src="app-state.js"></script>
-<script src="app-supabase.js"></script>
-<script src="app-ui.js"></script>
-<script src="app-game.js"></script>
-<script src="app-tools.js"></script>
-<script src="app-extras.js"></script>
+<script src="app-data.js?v=2.0.0"></script>
+<script src="app-state.js?v=2.0.0"></script>
+<script src="app-supabase.js?v=2.0.0"></script>
+<script src="app-ui.js?v=2.0.0"></script>
+<script src="app-game.js?v=2.0.0"></script>
+<script src="app-tools.js?v=2.0.0"></script>
+<script src="app-extras.js?v=2.0.0"></script>
 
 
 <!-- ══ MODAL: CAREER ══ -->
