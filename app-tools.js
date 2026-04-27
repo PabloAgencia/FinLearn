@@ -240,6 +240,7 @@ function _initAppWithState(hasState) {
     setTimeout(_hideSplash, 400);
   } else {
     showScreen('s-onboard');
+    setTimeout(_hideSplash, 600);
   }
 
   // Iniciar timers
