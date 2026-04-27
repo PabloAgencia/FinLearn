@@ -2248,9 +2248,12 @@ function renderHomeScreen() {
     cardWrap.id = 'challenge-card';
     cardWrap.style.cssText = 'margin:12px 16px;';
     const homeScreen = document.getElementById('s-home');
-    const insertBefore = homeScreen?.querySelector('.dca-card, #dca-card');
-    if (homeScreen && insertBefore) homeScreen.insertBefore(cardWrap, insertBefore);
-    else if (homeScreen) homeScreen.appendChild(cardWrap);
+    if (homeScreen) {
+      const refEl = homeScreen?.querySelector('.dca-card, #dca-card');
+      const anchor = (refEl && refEl.parentNode === homeScreen) ? refEl : null;
+      if (anchor) homeScreen.insertBefore(cardWrap, anchor);
+      else homeScreen.appendChild(cardWrap);
+    }
   }
   _renderRealMoneyHomeCard();
   _renderWeeklyActionCard();
