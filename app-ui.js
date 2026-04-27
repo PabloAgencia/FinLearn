@@ -2133,7 +2133,12 @@ function goTo(screen) {
   if (screen === 'lifestyle') { setTimeout(renderLifestyleComparator, 60); }
   if (screen === 'tools')     { if (typeof renderToolsScreen === 'function') renderToolsScreen(); }
   if (screen === 'guides')    { if (typeof renderGuidesScreen === 'function') renderGuidesScreen(); }
-  if (screen === 'realmoney') { if (typeof _rmLoad === 'function') _rmLoad(); }
+  if (screen === 'realmoney') {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('s-realmoney');
+    if (el) el.classList.add('active');
+    if (typeof _rmLoad === 'function') _rmLoad();
+  }
 }
 
 /**
@@ -5178,12 +5183,13 @@ function _openLab() {
     document.body.appendChild(modal);
   }
   const items = [
+    { icon:'🔧', label:'Calculadoras y Herramientas', desc:'IRPF, hipoteca, FIRE, interés compuesto', action:"closeModal('m-lab');goTo('tools')" },
     { icon:'📈', label:'Simulador de Bolsa', desc:'Practica invertir con dinero virtual', action:"closeModal('m-lab');goTo('portfolio')" },
     { icon:'🌍', label:'Simulador de Vida', desc:'Gestiona ingresos, gastos y eventos', action:"closeModal('m-lab');goTo('life')" },
     { icon:'🏪', label:'Negocios', desc:'Compra negocios para ingresos pasivos', action:"closeModal('m-lab');goTo('business')" },
-    { icon:'⚔️', label:'Boss Battles', desc:'Retos al final de cada rama', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{const b=document.querySelector('.boss-battle-card');if(b)b.scrollIntoView({behavior:'smooth'});},300)" },
-    { icon:'🎯', label:'Escenarios de Reto', desc:'Crisis de mercado simuladas (premium)', action:"closeModal('m-lab');if(typeof openScenariosScreen==='function')openScenariosScreen();" },
-    { icon:'🌐', label:'Misión Grupal', desc:'Objetivo colectivo semanal', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{if(typeof _renderGroupMissionEpic==='function'){const c=document.getElementById('challenge-card');if(!c){const w=document.createElement('div');w.id='challenge-card';w.style.cssText='margin:12px 16px;';document.getElementById('s-home').appendChild(w);}_renderGroupMissionEpic();const c2=document.getElementById('challenge-card');if(c2)c2.scrollIntoView({behavior:'smooth'});}},300)" },
+    { icon:'⚔️', label:'Boss Battles', desc:'Retos al final de cada rama (al 60% completada)', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{const b=document.querySelector('.boss-battle-card');if(b){b.scrollIntoView({behavior:'smooth'});}else{toast('⚔️ Aún no disponible','Completa al 60% una rama del curso para desbloquearlo.','t-warn');}},400)" },
+    { icon:'🎯', label:'Escenarios de Reto', desc:'Crisis de mercado simuladas (premium)', action:"closeModal('m-lab');if(typeof openScenariosScreen==='function'){openScenariosScreen();}else if(typeof PM_showPaywall==='function'){PM_showPaywall('scenarios');}else{toast('🎯 Próximamente','Escenarios de reto en construcción.','t-info');}" },
+    { icon:'🌐', label:'Misión Grupal', desc:'Objetivo colectivo semanal', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{let c=document.getElementById('challenge-card');if(!c){c=document.createElement('div');c.id='challenge-card';c.style.cssText='margin:12px 16px;';document.getElementById('s-home').appendChild(c);}if(typeof _renderGroupMissionEpic==='function')_renderGroupMissionEpic();c.scrollIntoView({behavior:'smooth'});},400)" },
   ];
   modal.innerHTML = `
     <div class="modal-box" style="max-width:420px;padding:24px 20px;max-height:85vh;overflow-y:auto;">

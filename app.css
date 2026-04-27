@@ -49,10 +49,11 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 /* Screens container */
 #screens{flex:1;overflow:hidden;position:relative;z-index:1;}
 .screen{
-  position:absolute;inset:0;overflow-y:scroll;overflow-x:hidden;
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
   display:none;
   background:transparent;
   -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
   scrollbar-width:thin;scrollbar-color:var(--surface2) transparent;
   z-index:1;
 }
@@ -78,8 +79,17 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
   font-family:'Instrument Sans',sans-serif;letter-spacing:.02em;
 }
 .bn-item.active{color:var(--accent);}
-.screen#s-home {
-  padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+.screen#s-home,
+.screen#s-realmoney,
+.screen#s-guides,
+.screen#s-tools,
+.screen#s-life,
+.screen#s-business,
+.screen#s-portfolio,
+.screen#s-profile,
+.screen#s-rank,
+.screen#s-stats {
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
 }
 .bn-item:active{transform:scale(0.9);}
 .bn-icon{font-size:22px;line-height:1;}
@@ -333,8 +343,12 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 
 .ob-wrap{
   min-height:100%;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:32px 24px;position:relative;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  align-items:center;justify-content:flex-start;
+  padding:32px 24px 80px;position:relative;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+}
+.ob-step{
+  margin-top:auto;
+  margin-bottom:auto;
 }
 .ob-step{display:none;flex-direction:column;width:100%;max-width:460px;animation:fadeUp .4s ease;padding-bottom:40px;min-height:auto;}
 .ob-step.active{display:flex;}
