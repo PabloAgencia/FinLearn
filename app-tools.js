@@ -186,10 +186,12 @@ function initApp() {
       } else {
         hasState = loadState();
       }
-      _initAppWithState(hasState);
+      try { _initAppWithState(hasState); } catch(e) { console.warn('[FinLearn] init error:', e); _hideSplash(); }
     }).catch(() => {
-      const hasState = loadState();
-      _initAppWithState(hasState);
+      try {
+        const hasState = loadState();
+        _initAppWithState(hasState);
+      } catch(e) { console.warn('[FinLearn] init fallback error:', e); _hideSplash(); }
     });
     return;
   }
@@ -257,7 +259,7 @@ function _initAppWithState(hasState) {
   if (hasState && S.userName) {
     showScreen('s-home');
     document.getElementById('bottom-nav')?.classList?.remove('hidden');
-    renderHomeScreen();
+    try { renderHomeScreen(); } catch(e) { console.warn('[FinLearn] renderHomeScreen error:', e); }
     setTimeout(_hideSplash, 400);
   } else {
     showScreen('s-onboard');
