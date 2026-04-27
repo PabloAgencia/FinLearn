@@ -638,6 +638,9 @@ function closeModal(id) {
    También puede cerrarse con clic antes.
 ══════════════════════════════════════════════════════════════════ */
 function toast(title, body, type = 't-success') {
+  if (typeof title !== 'string') title = String(title || '');
+  if (typeof body !== 'string') body = String(body || '');
+  if (typeof type !== 'string') type = 't-success';
   const wrap = document.getElementById('toast-wrap');
   if (!wrap) return;
   const el = document.createElement('div');

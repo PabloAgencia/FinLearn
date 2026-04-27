@@ -5141,6 +5141,7 @@ function _renderWeeklyActionCard() {
 window._renderWeeklyActionCard = _renderWeeklyActionCard;
 
 function _renderRealMoneyHomeCard() {
+  if (!S.userName || !S.onboardingDone) return;
   const total = S._totalRealSavings || 0;
   const actions = S._realActionsCount || 0;
   let el = document.getElementById('home-realmoney-card');
@@ -5187,7 +5188,7 @@ function _openLab() {
     { icon:'📈', label:'Simulador de Bolsa', desc:'Practica invertir con dinero virtual', action:"closeModal('m-lab');goTo('portfolio')" },
     { icon:'🌍', label:'Simulador de Vida', desc:'Gestiona ingresos, gastos y eventos', action:"closeModal('m-lab');goTo('life')" },
     { icon:'🏪', label:'Negocios', desc:'Compra negocios para ingresos pasivos', action:"closeModal('m-lab');goTo('business')" },
-    { icon:'⚔️', label:'Boss Battles', desc:'Retos al final de cada rama (al 60% completada)', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{const b=document.querySelector('.boss-battle-card');if(b){b.scrollIntoView({behavior:'smooth'});}else{toast('⚔️ Aún no disponible','Completa al 60% una rama del curso para desbloquearlo.','t-warn');}},400)" },
+    { icon:'⚔️', label:'Boss Battles', desc:'Retos al final de cada rama (al 60% completada)', action:"closeModal('m-lab');setTimeout(()=>{if(typeof BOSS_DATA!=='undefined'&&typeof BOSS_open==='function'){const beaten=S.bossBeaten||[];const available=Object.keys(BOSS_DATA).find(id=>!beaten.includes(id));if(available){BOSS_open(available);}else{toast('🏆 Todos vencidos','Has derrotado a todos los bosses disponibles.','t-success');}}else{toast('⚔️ Aún no disponible','Completa al 60% una rama del curso para desbloquearlo.','t-warn');}},300)" },
     { icon:'🎯', label:'Escenarios de Reto', desc:'Crisis de mercado simuladas (premium)', action:"closeModal('m-lab');if(typeof openScenariosScreen==='function'){openScenariosScreen();}else if(typeof PM_showPaywall==='function'){PM_showPaywall('scenarios');}else{toast('🎯 Próximamente','Escenarios de reto en construcción.','t-info');}" },
     { icon:'🌐', label:'Misión Grupal', desc:'Objetivo colectivo semanal', action:"closeModal('m-lab');goTo('home');setTimeout(()=>{let c=document.getElementById('challenge-card');if(!c){c=document.createElement('div');c.id='challenge-card';c.style.cssText='margin:12px 16px;';document.getElementById('s-home').appendChild(c);}if(typeof _renderGroupMissionEpic==='function')_renderGroupMissionEpic();c.scrollIntoView({behavior:'smooth'});},400)" },
   ];

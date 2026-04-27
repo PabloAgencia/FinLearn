@@ -1126,6 +1126,8 @@ const GAME_DAY_MS = 5 * 60 * 1000; // 5 minutos reales = 1 día de juego
 function _renderGameClock() {
   const el = document.getElementById('game-clock-pill');
   if (!el) return;
+  if (!S.userName || !S.onboardingDone) { el.style.display = 'none'; return; }
+  el.style.display = '';
   const speed = S.gameSpeedMult || 3;
   const daysToPayday = 30 - ((S.gameDay || 0) % 30);
   // 1 día de juego = 8 segundos reales con speed=3 (ajustar según tu lógica real)
