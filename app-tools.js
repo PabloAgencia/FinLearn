@@ -7137,13 +7137,30 @@ window.CHART              = CHART;
    28. AUTO-ARRANQUE
 ══════════════════════════════════════════════════════════════════ */
 
+function _runPostInit() {
+  checkSecretAchievements();
+  _trackPatrimonyPeak();
+  setTimeout(renderPortfolioDonut, 80);
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initApp);
+  document.addEventListener('DOMContentLoaded', function() {
+    initApp();
+    _runPostInit();
+  });
 } else {
   initApp();
+  _runPostInit();
 }
-  checkSecretAchievements();
-  _trackPatrimonyPeak(); setTimeout(renderPortfolioDonut, 80);
+
+// Safety net: ocultar splash pase lo que pase, máximo 5s
+setTimeout(function() {
+  var s = document.getElementById('app-splash');
+  if (s && s.style.display !== 'none') {
+    s.classList.add('splash-out');
+    setTimeout(function() { s.style.display = 'none'; }, 600);
+  }
+}, 5000);
 
 /* ── P8-A: Online / Offline banner ────────────────────────────── */
 (function() {
