@@ -5101,16 +5101,7 @@ function _renderWeeklyActionCard() {
     el.id = 'weekly-action-card';
     el.style.cssText = 'margin:12px 16px;';
     const homeScreen = document.getElementById('s-home');
-    // Posición: después de realmoney-card, antes del dca-card
-    const realMoneyCard = document.getElementById('home-realmoney-card');
-    const dcaCard = document.getElementById('dca-card');
-    if (homeScreen && realMoneyCard && realMoneyCard.nextSibling) {
-      homeScreen.insertBefore(el, realMoneyCard.nextSibling);
-    } else if (homeScreen && dcaCard) {
-      homeScreen.insertBefore(el, dcaCard);
-    } else if (homeScreen) {
-      homeScreen.appendChild(el);
-    }
+    if (homeScreen) homeScreen.appendChild(el);
   }
   if (done) {
     el.innerHTML = `
@@ -5149,8 +5140,7 @@ function _renderRealMoneyHomeCard() {
     el.style.cssText = 'margin:12px 16px;';
     const homeScreen = document.getElementById('s-home');
     const dcaCard = document.getElementById('dca-card');
-    if (homeScreen && dcaCard) homeScreen.insertBefore(el, dcaCard);
-    else if (homeScreen) homeScreen.appendChild(el);
+    if (homeScreen) homeScreen.appendChild(el);
   }
   if (total === 0 && actions === 0) {
     el.innerHTML = `
