@@ -25,7 +25,7 @@ export async function onRequest({ request, env }) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,6 +41,13 @@ export async function onRequest({ request, env }) {
     );
 
     const data = await response.json();
+    if (!response.ok) {
+      const errMsg = data.error?.message || JSON.stringify(data);
+      return new Response(JSON.stringify({ text: `Error Gemini: ${errMsg}` }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude generar una respuesta.';
     return new Response(JSON.stringify({ text }), {
       status: 200,
