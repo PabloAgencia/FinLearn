@@ -6,9 +6,9 @@ const code = fs.readFileSync('E:/Escritorio/FINLEARN/app-data.js', 'utf8');
 
 // We need to extract MODULES. The file uses const MODULES = [...].
 // Let's eval it in a controlled way.
-let MODULES;
+var MODULES;
 try {
-  // Replace const with var so we can access it, and wrap in a function
+  // Replace const with var so we can access it after the eval
   const modified = code.replace('const MODULES', 'var MODULES');
   eval(modified);
 } catch(e) {
@@ -25,7 +25,7 @@ console.log(`Total modules found: ${MODULES.length}`);
 console.log('='.repeat(80));
 
 const issues = [];
-const validTagC = ['green', 'blue', 'purple', 'orange', 'red'];
+const validTagC = ['green', 'blue', 'purple', 'orange', 'red', 'gold', 'yellow'];
 const requiredModuleFields = ['id', 'icon', 'title', 'desc', 'xp', 'tag', 'tagC', 'users', 'steps'];
 const requiredContentFields = ['type', 'title']; // tag is optional per observation
 const requiredQuizFieldsOldFormat = ['type', 'q', 'opts', 'ok', 'bad']; // old format with ok/bad
@@ -66,6 +66,7 @@ MODULES.forEach((m, idx) => {
     idCounts[m.id].push(idx);
   }
 });
+// Note: MODULES may include extra items from MODULES.push() in app-data.js (e.g. EXAM_QUESTION_POOL)
 let dupFound = false;
 Object.entries(idCounts).forEach(([id, indices]) => {
   if (indices.length > 1) {
@@ -119,16 +120,19 @@ MODULES.forEach((m, idx) => {
 });
 if (!ansIssueFound) console.log('  No ans-out-of-range issues found.');
 
-// Also check old format quizzes (with ok:true/false on opts)
-console.log('\n3b. QUIZ STEPS (old format) - checking opts have exactly one ok:true');
+// Also check old format quizzes (with ok:true/false on opts objects)
+// Format A: opts:[{t:'text', ok:true/false}] + ok/bad strings on step
+// Format B: opts:['string',...] + correct:N index on step  (skip this check)
+// Format C: opts:['string',...] + ans:N index on step      (skip this check)
+console.log('\n3b. QUIZ STEPS (format A) - checking opts have exactly one ok:true');
 console.log('-'.repeat(40));
 let oldQuizIssue = false;
 MODULES.forEach((m, idx) => {
-  if (!m.steps) return;
+  if (!m || !m.steps) return;
   m.steps.forEach((s, sIdx) => {
-    if (s.type === 'quiz' && s.opts && s.ans === undefined) {
-      // Old format - check ok:true count
-      const trueCount = s.opts.filter(o => o.ok === true).length;
+    if (s.type === 'quiz' && s.opts && s.ans === undefined && s.correct === undefined) {
+      // Format A: opts should be objects with ok:true/false
+      const trueCount = s.opts.filter(o => o && o.ok === true).length;
       if (trueCount !== 1) {
         oldQuizIssue = true;
         const line = moduleLines[m.id]?.[0] || '?';
@@ -138,7 +142,7 @@ MODULES.forEach((m, idx) => {
     }
   });
 });
-if (!oldQuizIssue) console.log('  All old-format quizzes have exactly 1 correct answer.');
+if (!oldQuizIssue) console.log('  All format-A quizzes have exactly 1 correct answer.');
 
 // ═══ CHECK 4: Empty/missing content in content steps ═══
 console.log('\n4. CONTENT STEPS WITH EMPTY/MISSING CONTENT');
@@ -148,12 +152,20 @@ MODULES.forEach((m, idx) => {
   if (!m.steps) return;
   m.steps.forEach((s, sIdx) => {
     if (s.type === 'content') {
-      if (!s.blocks || s.blocks.length === 0) {
+      // Accept three content formats:
+      // Format 1 (new blocks): blocks:[] array
+      // Format 2 (old fields): intro + bullets + fact
+      // Format 3 (html string): content:'<h3>...</h3>'
+      const hasBlocks   = s.blocks  && s.blocks.length > 0;
+      const hasIntro    = s.intro   && s.intro.trim();
+      const hasBullets  = s.bullets && s.bullets.length > 0;
+      const hasContent  = s.content && s.content.trim();
+      if (!hasBlocks && !hasIntro && !hasBullets && !hasContent) {
         emptyContent = true;
         const line = moduleLines[m.id]?.[0] || '?';
-        console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: content step has NO blocks`);
-        issues.push(`Module id:${m.id} step ${sIdx}: no blocks`);
-      } else {
+        console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: content step has NO content (no blocks, no intro, no bullets)`);
+        issues.push(`Module id:${m.id} step ${sIdx}: no content`);
+      } else if (hasBlocks) {
         s.blocks.forEach((b, bIdx) => {
           if (b.t === 'text' && (!b.p || b.p.trim() === '')) {
             emptyContent = true;
@@ -275,7 +287,7 @@ MODULES.forEach((m, idx) => {
         console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: step has no 'type' field`);
         issues.push(`Module id:${m.id} step ${sIdx}: no type`);
       }
-      if (s && s.type && !['content', 'quiz', 'final'].includes(s.type)) {
+      if (s && s.type && !['content', 'quiz', 'final', 'final_exam_intro'].includes(s.type)) {
         malformedFound = true;
         const line = moduleLines[m.id]?.[0] || '?';
         console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: unknown step type '${s.type}'`);
@@ -341,15 +353,18 @@ MODULES.forEach((m, idx) => {
       const hasOk = s.ok !== undefined;
       const hasBad = s.bad !== undefined;
 
-      if (!s.q || (typeof s.q === 'string' && s.q.trim() === '')) {
+      // Question field: format C uses 'q', formats A and B use 'title'
+      const hasQuestion = (s.q && s.q.trim()) || (s.title && s.title.trim());
+      if (!hasQuestion) {
         stepFieldIssue = true;
         const line = moduleLines[m.id]?.[0] || '?';
-        console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: quiz missing 'q' (question)`);
-        issues.push(`Module id:${m.id} step ${sIdx}: quiz missing q`);
+        console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: quiz missing question (no 'q' or 'title')`);
+        issues.push(`Module id:${m.id} step ${sIdx}: quiz missing question`);
       }
 
-      // If new format, check ans and exp
-      if (hasAns && !hasExp) {
+      const hasCorrect = s.correct !== undefined;
+      // If new formats (C: ans, B: correct), check exp is present
+      if ((hasAns || hasCorrect) && !hasExp) {
         stepFieldIssue = true;
         const line = moduleLines[m.id]?.[0] || '?';
         console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: quiz has 'ans' but missing 'exp'`);
@@ -371,7 +386,8 @@ MODULES.forEach((m, idx) => {
       }
 
       // Check if quiz has NEITHER format for feedback
-      if (!hasAns && !hasOk && !hasExp) {
+      const hasCorrectField = s.correct !== undefined;
+      if (!hasAns && !hasCorrectField && !hasOk && !hasExp) {
         stepFieldIssue = true;
         const line = moduleLines[m.id]?.[0] || '?';
         console.log(`  Module id:${m.id} (~line ${line}), step ${sIdx}: quiz has NO feedback mechanism (no ok/bad, no ans/exp)`);
@@ -423,6 +439,7 @@ if (gaps.length > 0) {
 // Check if IDs are in order in the array
 let outOfOrder = [];
 for (let i = 1; i < MODULES.length; i++) {
+  if (!MODULES[i] || !MODULES[i-1] || MODULES[i].id === undefined || MODULES[i-1].id === undefined) continue;
   if (MODULES[i].id <= MODULES[i-1].id) {
     outOfOrder.push({prev: MODULES[i-1].id, curr: MODULES[i].id, index: i});
   }
@@ -494,22 +511,26 @@ if (!xpMismatch) console.log('  All module XP values match their final step XP.'
 // Count quiz format usage
 console.log('\n13. QUIZ FORMAT ANALYSIS');
 console.log('-'.repeat(40));
-let oldFormat = 0, newFormat = 0, mixedFormat = 0;
+let fmtA = 0, fmtB = 0, fmtC = 0, fmtMixed = 0, fmtUnknown = 0;
 MODULES.forEach((m) => {
-  if (!m.steps) return;
+  if (!m || !m.steps) return;
   m.steps.forEach((s) => {
     if (s.type === 'quiz') {
-      const hasAns = s.ans !== undefined;
-      const hasOk = s.ok !== undefined;
-      if (hasAns && hasOk) mixedFormat++;
-      else if (hasAns) newFormat++;
-      else if (hasOk) oldFormat++;
+      const hasAns     = s.ans !== undefined;
+      const hasCorrect = s.correct !== undefined;
+      const hasOk      = s.ok !== undefined;
+      if (hasAns && hasCorrect) fmtMixed++;
+      else if (hasAns)          fmtC++;       // Format C: ans + q + exp
+      else if (hasCorrect)      fmtB++;       // Format B: correct + title + exp
+      else if (hasOk)           fmtA++;       // Format A: opts[{ok:true}] + ok/bad strings
+      else                      fmtUnknown++;
     }
   });
 });
-console.log(`  Old format (ok/bad with opts.ok:true/false): ${oldFormat}`);
-console.log(`  New format (ans index, exp): ${newFormat}`);
-console.log(`  Mixed (both formats): ${mixedFormat}`);
+console.log(`  Format A (opts[].ok:true/false + ok/bad feedback): ${fmtA}`);
+console.log(`  Format B (correct index + title question + exp):   ${fmtB}`);
+console.log(`  Format C (ans index + q question + exp):           ${fmtC}`);
+console.log(`  Mixed: ${fmtMixed}  |  Unknown: ${fmtUnknown}`);
 
 // Check for 'tag' field consistency across modules
 console.log('\n14. MODULE TAG VALUES');

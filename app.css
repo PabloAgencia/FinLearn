@@ -219,6 +219,7 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .tag-orange{background:rgba(255,107,53,.1);color:var(--accent3);border:1px solid rgba(255,107,53,.2);}
 .tag-purple{background:rgba(168,85,247,.1);color:var(--accent4);border:1px solid rgba(168,85,247,.2);}
 .tag-gold{background:rgba(245,166,35,.1);color:var(--gold);border:1px solid rgba(245,166,35,.2);}
+.tag-yellow{background:rgba(250,204,21,.1);color:#facc15;border:1px solid rgba(250,204,21,.2);}
 .tag-red{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);}
 
 /* Card */

@@ -61,7 +61,7 @@ refreshUI()
 
 ## Module structure (for adding new modules)
 
-Next free ID is 131+. Each module:
+Next free ID is 175 (IDs 0–174 are in use). Each module:
 ```js
 {
   id: N,
@@ -70,7 +70,7 @@ Next free ID is 131+. Each module:
   desc: 'One-line subtitle',
   xp: 100,
   tag: 'CATEGORY',
-  tagC: 'green',   // green | blue | purple | orange | red
+  tagC: 'green',   // green | blue | purple | orange | red | gold | yellow
   users: '12.400',
   steps: [
     { type: 'content', tag: '📖 M131', title: 'Title', content: '<h3>…</h3><p>…</p>' },
@@ -99,3 +99,7 @@ Next free ID is 131+. Each module:
 3. `grid.style.display` not managed explicitly → fixed
 4. `xpPerLevel = 1500` → changed to 1200
 5. `updateProgressText` used `MODULES.length` → now filters by `typeof id`
+6. API keys (Stripe, Gemini) were hardcoded → moved to `process.env` variables
+7. `tag-yellow` CSS class was missing → added to app.css
+8. `openFinAIConfig()` used `finlearn_api_key` → unified to `finai_api_key`
+9. `analyze-modules.js` crashed with `let MODULES` conflict → changed to `var MODULES`

@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe('sk_test_51TLSb4Qn1UY1PTsHCH9mT7XXakNhg2wfDM1nu5zXPPtVzq4vrvlC9hjlDdsFdIHfFPxF6VwPsig8IRv8Cz32w92r009OzeWFs0');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const supabase = createClient(
   'https://qurxeuqoprcjstipvfcb.supabase.co',

@@ -1,0 +1,30 @@
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+
+/app-data.js
+  Cache-Control: no-cache, must-revalidate
+
+/app-state.js
+  Cache-Control: no-cache, must-revalidate
+
+/app-supabase.js
+  Cache-Control: no-cache, must-revalidate
+
+/app-ui.js
+  Cache-Control: no-cache, must-revalidate
+
+/app-game.js
+  Cache-Control: no-cache, must-revalidate
+
+/app-tools.js
+  Cache-Control: no-cache, must-revalidate
+
+/app-extras.js
+  Cache-Control: no-cache, must-revalidate
+
+/app.css
+  Cache-Control: no-cache, must-revalidate
+
+/app-extra.css
+  Cache-Control: no-cache, must-revalidate

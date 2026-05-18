@@ -6562,7 +6562,7 @@ const DUEL = (() => {
 
 /* ── FinAI API Key Configuration ─────────────────────────── */
 function openFinAIConfig() {
-  const current = localStorage.getItem('finlearn_api_key') || '';
+  const current = localStorage.getItem('finai_api_key') || '';
   let modal = document.getElementById('m-finai-config');
   if (!modal) {
     modal = document.createElement('div');
@@ -6607,7 +6607,7 @@ function saveFinAIKey() {
       '<span style="color:var(--danger);">❌ La key debe empezar por sk-ant-...</span>';
     return;
   }
-  localStorage.setItem('finlearn_api_key', key);
+  localStorage.setItem('finai_api_key', key);
   document.getElementById('finai-test-result').innerHTML =
     '<span style="color:var(--accent);">✅ Key guardada. Probando conexión...</span>';
   // Test the key
@@ -6621,7 +6621,7 @@ function saveFinAIKey() {
 }
 
 function clearFinAIKey() {
-  localStorage.removeItem('finlearn_api_key');
+  localStorage.removeItem('finai_api_key');
   document.getElementById('m-finai-config').style.display = 'none';
   toast('🔑 Key eliminada', 'FinAI desactivado', 't-social');
 }

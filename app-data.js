@@ -557,7 +557,7 @@ const MODULES = [
   {
     id:8, icon:'₿', title:'Criptomonedas: Fundamentos',
     desc:'Entiende la blockchain sin el hype ni el miedo irracional',
-    xp:24, tag:'CRYPTO', tagC:'orange', users:'22.100',
+    xp:24, tag:'CRIPTO', tagC:'orange', users:'22.100',
     steps:[
       {type:'content', tag:'₿ Módulo 8', title:'Bitcoin, Blockchain y el Sistema Financiero del Futuro',
         intro:'Las criptomonedas son el activo más volátil, más controvertido y menos comprendido de la historia financiera moderna. En 2020, Bitcoin valía 5.000$. En 2021 llegó a 68.000$. En 2022 cayó a 16.000$. En 2024 superó de nuevo los 100.000$. Antes de invertir un solo euro, necesitas entender QUÉ es, POR QUÉ existe y cuáles son sus riesgos REALES.',
@@ -5486,7 +5486,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M116 — FUNDAMENTOS ─────────────────────────────────── */
-  { id:116, title:'La Regla del 72: Dobla tu Dinero sin Calculadora',
+  { id:116, icon:'🔢', title:'La Regla del 72: Dobla tu Dinero sin Calculadora',
+    desc:'El truco matemático de 500 años que te dice en segundos cuándo se dobla cualquier inversión.',
     xp:18, tag:'FUNDAMENTOS', tagC:'green', users:'18.400',
     steps:[
       { type:'content', tag:'🔢 M116', title:'La Regla del 72: Dobla tu Dinero sin Calculadora',
@@ -5513,7 +5514,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M117 — INVERSIÓN ───────────────────────────────────── */
-  { id:117, title:'Cómo Leer el Precio de un Fondo: NAV, TER y Comisiones Reales',
+  { id:117, icon:'📋', title:'Cómo Leer el Precio de un Fondo: NAV, TER y Comisiones Reales',
+    desc:'NAV, TER y KIID: los tres números que determinan si un fondo es barato o te está robando en silencio.',
     xp:22, tag:'INVERSIÓN', tagC:'blue', users:'14.200',
     steps:[
       { type:'content', tag:'📋 M117', title:'Cómo Leer el Precio de un Fondo: NAV, TER y Comisiones Reales',
@@ -5540,7 +5542,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M118 — PSICOLOGÍA ──────────────────────────────────── */
-  { id:118, title:'El Efecto Dotación: Por Qué no Vendemos lo que Deberíamos',
+  { id:118, icon:'🏷️', title:'El Efecto Dotación: Por Qué no Vendemos lo que Deberíamos',
+    desc:'Por qué valoramos el doble lo que ya tenemos y cómo ese sesgo destruye tus decisiones financieras.',
     xp:20, tag:'PSICOLOGÍA', tagC:'purple', users:'16.800',
     steps:[
       { type:'content', tag:'🧠 M118', title:'El Efecto Dotación: Por Qué no Vendemos lo que Deberíamos',
@@ -5567,7 +5570,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M119 — FISCALIDAD ──────────────────────────────────── */
-  { id:119, title:'Modelo 720: El Formulario que Todo Inversor Internacional Debe Conocer',
+  { id:119, icon:'🌍', title:'Modelo 720: El Formulario que Todo Inversor Internacional Debe Conocer',
+    desc:'Si tienes más de €50.000 en activos fuera de España, Hacienda ya lo sabe. Lo que nadie te explica.',
     xp:24, tag:'FISCALIDAD', tagC:'yellow', users:'9.600',
     steps:[
       { type:'content', tag:'📋 M119', title:'Modelo 720: El Formulario que Todo Inversor Internacional Debe Conocer',
@@ -5594,7 +5598,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M120 — DEUDA ───────────────────────────────────────── */
-  { id:120, title:'Refinanciación de Deuda: Cuándo y Cómo Hacerlo Bien',
+  { id:120, icon:'🔄', title:'Refinanciación de Deuda: Cuándo y Cómo Hacerlo Bien',
+    desc:'Cuándo tiene sentido sustituir una deuda cara por una barata y el cálculo exacto que determina si compensa.',
     xp:22, tag:'DEUDA', tagC:'orange', users:'12.400',
     steps:[
       { type:'content', tag:'🔄 M120', title:'Refinanciación de Deuda: Cuándo y Cómo Hacerlo Bien',
@@ -5621,7 +5626,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M121 — AVANZADO ────────────────────────────────────── */
-  { id:121, title:'Dollar Cost Averaging vs. Lump Sum: ¿Cuál Gana?',
+  { id:121, icon:'📊', title:'Dollar Cost Averaging vs. Lump Sum: ¿Cuál Gana?',
+    desc:'¿Todo de golpe o poco a poco? La ciencia tiene una respuesta clara, pero con un matiz psicológico crucial.',
     xp:24, tag:'AVANZADO', tagC:'red', users:'19.200',
     steps:[
       { type:'content', tag:'📊 M121', title:'Dollar Cost Averaging vs. Lump Sum: ¿Cuál Gana?',
@@ -5648,7 +5654,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M122 — FUNDAMENTOS ─────────────────────────────────── */
-  { id:122, title:'El Balance Personal: Tu Foto Financiera en 10 Minutos',
+  { id:122, icon:'📸', title:'El Balance Personal: Tu Foto Financiera en 10 Minutos',
+    desc:'Activos menos pasivos igual a libertad. La métrica más honesta de tu salud financiera real.',
     xp:18, tag:'FUNDAMENTOS', tagC:'green', users:'21.600',
     steps:[
       { type:'content', tag:'📸 M122', title:'El Balance Personal: Tu Foto Financiera en 10 Minutos',
@@ -5675,7 +5682,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M123 — INVERSIÓN ───────────────────────────────────── */
-  { id:123, title:'Bonos: El Activo que Todo Inversor Ignora (Y No Debería)',
+  { id:123, icon:'💎', title:'Bonos: El Activo que Todo Inversor Ignora (Y No Debería)',
+    desc:'El activo aburrido que estabiliza carteras. Por qué los bonos no son optativos, son necesarios.',
     xp:22, tag:'INVERSIÓN', tagC:'blue', users:'11.800',
     steps:[
       { type:'content', tag:'💎 M123', title:'Bonos: El Activo que Todo Inversor Ignora (Y No Debería)',
@@ -5702,7 +5710,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M124 — PSICOLOGÍA ──────────────────────────────────── */
-  { id:124, title:'Contabilidad Mental: El Truco que Hace que Gastes de Más',
+  { id:124, icon:'🧠', title:'Contabilidad Mental: El Truco que Hace que Gastes de Más',
+    desc:'Por qué gastas más fácil el dinero inesperado y cómo el origen del dinero distorsiona tus decisiones.',
     xp:20, tag:'PSICOLOGÍA', tagC:'purple', users:'17.400',
     steps:[
       { type:'content', tag:'🧠 M124', title:'Contabilidad Mental: El Truco que Hace que Gastes de Más',
@@ -5729,7 +5738,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M125 — AVANZADO ────────────────────────────────────── */
-  { id:125, title:'Factor Investing: Smart Beta y los Factores que Baten al Mercado',
+  { id:125, icon:'🔬', title:'Factor Investing: Smart Beta y los Factores que Baten al Mercado',
+    desc:'Los cinco factores Nobel que explican el 95% de los retornos. Smart Beta sin el marketing vacío.',
     xp:28, tag:'AVANZADO', tagC:'red', users:'8.200',
     steps:[
       { type:'content', tag:'🔬 M125', title:'Factor Investing: Smart Beta y los Factores que Baten al Mercado',
@@ -5756,7 +5766,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M126 — FISCALIDAD ──────────────────────────────────── */
-  { id:126, title:'Plusvalías del Muerto: Planificación Patrimonial Básica',
+  { id:126, icon:'🏛️', title:'Plusvalías del Muerto: Planificación Patrimonial Básica',
+    desc:'La ventaja fiscal de la herencia que puede ahorrarle a tu familia decenas de miles de euros en IRPF.',
     xp:26, tag:'FISCALIDAD', tagC:'yellow', users:'7.800',
     steps:[
       { type:'content', tag:'🏛️ M126', title:'Plusvalías del Muerto: Planificación Patrimonial Básica',
@@ -5783,7 +5794,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M127 — INVERSIÓN ───────────────────────────────────── */
-  { id:127, title:'Rebalanceo de Cartera: El Mantenimiento que Nadie Hace',
+  { id:127, icon:'⚖️', title:'Rebalanceo de Cartera: El Mantenimiento que Nadie Hace',
+    desc:'El ajuste anual que la mayoría ignora y que mejora sistemáticamente los retornos ajustados por riesgo.',
     xp:22, tag:'INVERSIÓN', tagC:'blue', users:'13.400',
     steps:[
       { type:'content', tag:'⚖️ M127', title:'Rebalanceo de Cartera: El Mantenimiento que Nadie Hace',
@@ -5810,7 +5822,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M128 — AVANZADO ────────────────────────────────────── */
-  { id:128, title:'Cómo Invertir en Empresas Pequeñas (Small Caps) con Bajo Riesgo',
+  { id:128, icon:'🔭', title:'Cómo Invertir en Empresas Pequeñas (Small Caps) con Bajo Riesgo',
+    desc:'Las small caps tienen la prima histórica más alta. Cómo capturarla sin el riesgo de elegirlas a mano.',
     xp:26, tag:'AVANZADO', tagC:'red', users:'10.200',
     steps:[
       { type:'content', tag:'🔭 M128', title:'Cómo Invertir en Empresas Pequeñas (Small Caps) con Bajo Riesgo',
@@ -5837,7 +5850,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M129 — FUNDAMENTOS ─────────────────────────────────── */
-  { id:129, title:'Automatiza tus Finanzas: El Sistema de los Ricos Sin Esfuerzo',
+  { id:129, icon:'⚙️', title:'Automatiza tus Finanzas: El Sistema de los Ricos Sin Esfuerzo',
+    desc:'Configura una vez y funciona para siempre. El sistema que elimina la fuerza de voluntad de la ecuación.',
     xp:18, tag:'FUNDAMENTOS', tagC:'green', users:'24.800',
     steps:[
       { type:'content', tag:'⚙️ M129', title:'Automatiza tus Finanzas: El Sistema de los Ricos Sin Esfuerzo',
@@ -5864,7 +5878,8 @@ const EXAM_QUESTION_POOL = [
     ]},
 
   /* ── M130 — PSICOLOGÍA ──────────────────────────────────── */
-  { id:130, title:'El Poder del No: Cómo Decir No al Gasto Que No te Acerca a tus Metas',
+  { id:130, icon:'🚫', title:'El Poder del No: Cómo Decir No al Gasto Que No te Acerca a tus Metas',
+    desc:'Cada "no" a un gasto innecesario es un "sí" a tu libertad financiera. Sin culpa, con criterio.',
     xp:20, tag:'PSICOLOGÍA', tagC:'purple', users:'22.000',
     steps:[
       { type:'content', tag:'🧠 M130', title:'El Poder del No: Cómo Decir No al Gasto Que No te Acerca a tus Metas',
