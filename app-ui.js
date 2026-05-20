@@ -2042,6 +2042,48 @@ function showXPMilestone(milestone) {
 }
 
 
+/* ── Streak Milestones ──────────────────────────────────────── */
+var _STREAK_MILESTONES = [
+  { days: 3,   xp: 50,   emoji: '🔥', title: '¡3 días seguidos!', msg: 'El hábito empieza aquí. El 70% no llega al día 3.' },
+  { days: 7,   xp: 100,  emoji: '🦅', title: '¡Una semana de racha!', msg: 'Estás en el top 30% de usuarios. La constancia es tu ventaja.' },
+  { days: 14,  xp: 200,  emoji: '💎', title: '¡14 días imparables!', msg: 'Dos semanas. Solo el 15% llega aquí. Tu cerebro ya está cambiando.' },
+  { days: 30,  xp: 500,  emoji: '👑', title: '¡Un mes de racha!', msg: 'TOP 5%. Un mes de educación financiera diaria. Eres diferente.' },
+  { days: 100, xp: 1000, emoji: '🌟', title: '¡100 DÍAS DE RACHA!', msg: 'Legendario. Menos del 1% llega aquí. Tu futuro financiero ya es diferente.' },
+];
+
+function _checkStreakMilestone(streak) {
+  var milestones = S.streakMilestonesGiven || [];
+  var hit = null;
+  for (var i = 0; i < _STREAK_MILESTONES.length; i++) {
+    var m = _STREAK_MILESTONES[i];
+    if (streak === m.days && milestones.indexOf(m.days) === -1) { hit = m; break; }
+  }
+  if (!hit) return;
+  milestones.push(hit.days);
+  S.streakMilestonesGiven = milestones;
+  S.xp = (S.xp || 0) + hit.xp;
+  setTimeout(function() { _showStreakMilestone(hit); }, 1200);
+}
+
+function _showStreakMilestone(m) {
+  SFX.levelUp && SFX.levelUp();
+  confetti && confetti();
+  var el = document.createElement('div');
+  el.id = 'streak-milestone-overlay';
+  el.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(6,8,16,.92);backdrop-filter:blur(8px);animation:fadeInFast .25s ease;';
+  el.innerHTML =
+    '<div style="text-align:center;padding:32px 24px;max-width:340px;">' +
+      '<div style="font-size:80px;margin-bottom:16px;animation:celPop .5s cubic-bezier(.34,1.56,.64,1);">' + m.emoji + '</div>' +
+      '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:28px;color:#fff;margin-bottom:8px;">' + m.title + '</div>' +
+      '<div style="font-size:15px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:20px;">' + m.msg + '</div>' +
+      '<div style="display:inline-block;background:rgba(0,229,160,.15);border:1px solid var(--accent);border-radius:20px;padding:8px 20px;font-size:15px;font-weight:700;color:var(--accent);margin-bottom:28px;">+' + m.xp + ' XP de recompensa 🔥' + m.days + '</div>' +
+      '<br><button onclick="document.getElementById(\'streak-milestone-overlay\').remove();" style="background:var(--accent);color:#000;border:none;border-radius:12px;padding:14px 40px;font-size:16px;font-weight:800;cursor:pointer;font-family:\'Syne\',sans-serif;">¡A por más! →</button>' +
+    '</div>';
+  document.body.appendChild(el);
+  el.addEventListener('click', function(e) { if (e.target === el) el.remove(); });
+}
+window._checkStreakMilestone = _checkStreakMilestone;
+
 /* ── Identidad & Perfil ───────────────────────────────────── */
 
 
@@ -3739,7 +3781,10 @@ function answerDCA(chosen, correct, explanation) {
   S.dcaDone       = true;
   S.dcaDate       = new Date().toISOString().slice(0, 10);
   // Racha: sube solo si aciertas; si fallas, mantiene el valor actual (nunca fuerza a 1)
-  if (isCorrect) S.streak = (S.streak || 0) + 1;
+  if (isCorrect) {
+    S.streak = (S.streak || 0) + 1;
+    _checkStreakMilestone(S.streak);
+  }
   S.maxStreak = Math.max(S.maxStreak || 0, S.streak || 0);
   saveState();
   updateDCALock(true);

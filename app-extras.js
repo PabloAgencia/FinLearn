@@ -1089,7 +1089,7 @@ window.M3_render          = M3_render;
 /* ══════════════════════════════════════════════════════════════════
    PRIORIDAD 1 — HERRAMIENTAS REALES
    ─────────────────────────────────────────────────────────────────
-   T1  Simulador IRPF 2024
+   T1  Simulador IRPF 2025
    T2  Calculadora Hipoteca vs Alquiler
    T3  Proyector FIRE interactivo (Chart.js)
    T4  Simulador Bola de Nieve de Deudas
@@ -1112,7 +1112,7 @@ function renderToolsScreen() {
       <button class="tool-card" onclick="openTool('irpf')">
         <span class="tool-icon">🧾</span>
         <div class="tool-info">
-          <div class="tool-name">Simulador IRPF 2024</div>
+          <div class="tool-name">Simulador IRPF 2025</div>
           <div class="tool-desc">Calcula tu cuota y tipo efectivo</div>
         </div>
         <span class="tool-arrow">›</span>
@@ -1165,12 +1165,20 @@ function renderToolsScreen() {
         </div>
         <span class="tool-arrow">›</span>
       </button>
+      <button class="tool-card" onclick="openTool('dca')">
+        <span class="tool-icon">📆</span>
+        <div class="tool-info">
+          <div class="tool-name">DCA vs Lump Sum</div>
+          <div class="tool-desc">¿Invertir poco a poco o todo de golpe?</div>
+        </div>
+        <span class="tool-arrow">›</span>
+      </button>
     </div>
   `;
 }
 
 function openTool(id) {
-  const fns = { irpf: T1_open, hipoteca: T2_open, fire: T3_open, snowball: T4_open, compound: T5_open, networth: T6_open, simhipoteca: T7_open };
+  const fns = { irpf: T1_open, hipoteca: T2_open, fire: T3_open, snowball: T4_open, compound: T5_open, networth: T6_open, simhipoteca: T7_open, dca: T8_open };
   if (fns[id]) {
     fns[id]();
     // P4-C: registrar herramienta usada (tracker de herramientas únicas esta semana)
@@ -1179,7 +1187,7 @@ function openTool(id) {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   T1 — SIMULADOR IRPF 2024
+   T1 — SIMULADOR IRPF 2025
    Tramos estatales + autonómicos (media). Sin API, puro cálculo.
 ───────────────────────────────────────────────────────────────── */
 function T1_open() {
@@ -1189,7 +1197,7 @@ function T1_open() {
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
         <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
-        <h3>🧾 Simulador IRPF 2024</h3>
+        <h3>🧾 Simulador IRPF 2025</h3>
       </div>
       <div class="tool-body">
         <div class="tool-section">
@@ -1241,7 +1249,7 @@ function T1_calc() {
     const family   = parseInt(document.getElementById('t1-family')?.value)   || 0;
     const caAdj    = parseFloat(document.getElementById('t1-ca')?.value)     || 0;
 
-    // Reducción por rendimientos del trabajo (Art.20 LIRPF 2024)
+    // Reducción por rendimientos del trabajo (Art.20 LIRPF 2025)
     let redTrabajo = 0;
     const netSalary = salary - pp;
     if (netSalary <= 13115)      redTrabajo = 5565;
@@ -2345,6 +2353,93 @@ function T7_svgBar(loan, interest, costs) {
   </div>`;
 }
 window.T7_open = T7_open; window.T7_calc = T7_calc;
+
+/* ══════════════════════════════════════════════════════════════════
+   T8 — CALCULADORA DCA vs LUMP SUM
+   Compara invertir de golpe vs. mensualmente (DCA)
+══════════════════════════════════════════════════════════════════ */
+function T8_open() {
+  const modal = document.getElementById('tool-modal');
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="tool-modal-inner">
+      <div class="tool-modal-head">
+        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <h3>📆 DCA vs Inversión Única</h3>
+      </div>
+      <div class="tool-body">
+        <div class="tool-section">
+          <label class="tool-label">Capital total a invertir (€)</label>
+          <input id="t8-capital" class="tool-input" type="number" placeholder="12000" value="12000" oninput="T8_calc()">
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Rentabilidad anual esperada (%)</label>
+          <input id="t8-rate" class="tool-input" type="number" placeholder="7" value="7" step="0.5" oninput="T8_calc()">
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Horizonte temporal (años)</label>
+          <input id="t8-years" class="tool-input" type="number" placeholder="10" value="10" min="1" max="40" oninput="T8_calc()">
+        </div>
+        <div id="t8-result" style="margin-top:16px;"></div>
+        <div style="margin-top:14px;padding:12px 16px;background:var(--bg2);border-radius:12px;border-left:3px solid var(--accent2);">
+          <div style="font-size:11px;color:var(--accent2);font-weight:600;margin-bottom:4px;">💡 ¿CUÁNDO USAR CADA ESTRATEGIA?</div>
+          <p style="font-size:13px;color:var(--text2);margin:0;line-height:1.6;">
+            <strong>DCA:</strong> Mercados volátiles, capital que llega en mensualidades, reduce el impacto emocional.<br>
+            <strong>Lump sum:</strong> Capital ya disponible, mercados alcistas, estadísticamente gana al DCA en 2/3 de los casos históricos.
+          </p>
+        </div>
+      </div>
+    </div>`;
+  T8_calc();
+}
+
+function T8_calc() {
+  try {
+    const capital = parseFloat(document.getElementById('t8-capital')?.value) || 12000;
+    const rate    = (parseFloat(document.getElementById('t8-rate')?.value) || 7) / 100;
+    const years   = parseInt(document.getElementById('t8-years')?.value) || 10;
+    const months  = years * 12;
+    const monthly = capital / months;
+    const monthlyRate = rate / 12;
+
+    // Lump sum: capital invertido de golpe al inicio
+    const lumpSum = capital * Math.pow(1 + rate, years);
+
+    // DCA: aportaciones mensuales iguales
+    const dca = monthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+
+    const diff = lumpSum - dca;
+    const winner = diff > 0 ? 'Lump Sum' : 'DCA';
+    const winColor = diff > 0 ? 'var(--accent)' : 'var(--accent2)';
+    const fmt = v => Math.round(v).toLocaleString('es');
+
+    const res = document.getElementById('t8-result');
+    if (!res) return;
+    res.innerHTML = `
+      <div class="t1-result-grid">
+        <div class="t1-stat">
+          <div class="t1-stat-label">Lump Sum (todo al inicio)</div>
+          <div class="t1-stat-val" style="color:var(--accent);">${fmt(lumpSum)}€</div>
+        </div>
+        <div class="t1-stat">
+          <div class="t1-stat-label">DCA (${fmt(monthly)}€/mes)</div>
+          <div class="t1-stat-val" style="color:var(--accent2);">${fmt(dca)}€</div>
+        </div>
+        <div class="t1-stat">
+          <div class="t1-stat-label">Diferencia</div>
+          <div class="t1-stat-val" style="color:${winColor};">${diff > 0 ? '+' : ''}${fmt(diff)}€</div>
+        </div>
+        <div class="t1-stat">
+          <div class="t1-stat-label">Ganador histórico</div>
+          <div class="t1-stat-val" style="color:${winColor};">${winner}</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;text-align:center;font-size:12px;color:var(--text3);">
+        Capital invertido: ${fmt(capital)}€ · ${years} años · ${rate*100}% anual
+      </div>`;
+  } catch(e) {}
+}
+window.T8_open = T8_open; window.T8_calc = T8_calc;
 
 /* ══════════════════════════════════════════════════════════════════
    PRIORIDAD 2A — BOSS BATTLES
