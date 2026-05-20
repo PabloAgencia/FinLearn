@@ -1189,6 +1189,19 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .fp-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);font-weight:500;}
 .fp-val.big{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--gold);}
 
+/* ══ ONBOARDING STEP 4 — PROJECTION FINAL ══ */
+.fin-preview-final{
+  background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);
+  border-radius:16px;padding:16px 20px;margin:16px 0;
+}
+.fp-final-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.fp-final-row:last-child{border:none;padding-top:12px;}
+.fp-final-label{font-size:13px;color:var(--text2);}
+.fp-final-val{font-family:'DM Mono',monospace;font-size:14px;color:var(--text1);font-weight:600;}
+.fp-final-val.accent{color:var(--accent);}
+.fp-final-val.big{font-size:18px;font-weight:700;}
+.fp-final-val.gold{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--gold);text-shadow:0 0 20px rgba(255,193,7,.3);}
+
 /* ══ FINANCIAL PROFILE CARD (realistic) ══ */
 .finprofile-card{
   background:var(--surface);border:1px solid var(--border);border-radius:20px;

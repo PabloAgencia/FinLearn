@@ -2569,17 +2569,22 @@ const TUTORIAL_STEPS = [
   {
     icon: '🎓',
     title: '¡Bienvenido a FinLearn!',
-    desc: 'Aprende finanzas reales completando módulos cortos. Cada módulo te da XP y conocimiento que puedes aplicar hoy mismo. Empieza por "Interés Compuesto" — son 5 minutos que valen miles de euros.',
+    desc: 'Aprende finanzas reales en módulos de 5 minutos. Cada módulo te da XP y conocimiento que puedes aplicar hoy mismo. La constancia es lo único que marca la diferencia.',
+  },
+  {
+    icon: '🔥',
+    title: 'Mantén tu racha',
+    desc: 'Completa al menos un módulo cada día para mantener tu racha activa. Las rachas desbloquean recompensas especiales y te ayudan a construir el hábito que más enriquece.',
   },
   {
     icon: '📈',
-    title: 'Tu simulador financiero',
-    desc: 'Invierte en bolsa, gestiona negocios y simula decisiones de vida — todo con dinero virtual. El simulador arranca con tu situación real para que las proyecciones tengan sentido.',
+    title: 'Simula decisiones reales',
+    desc: 'Invierte en bolsa, gestiona negocios y simula crisis financieras — todo con dinero virtual. El simulador usa tu situación real para que las proyecciones tengan sentido.',
   },
   {
-    icon: '🏆',
-    title: 'Gana XP y sube de nivel',
-    desc: 'Cada módulo completado, inversión realizada y misión cumplida te da XP. Sube de nivel, desbloquea carreras y derrota bosses al completar ramas enteras.',
+    icon: '🚀',
+    title: '¡Tu primera lección!',
+    desc: 'Hemos elegido el módulo perfecto para empezar según tu objetivo. Toca "¡Vamos!" para lanzarte — son solo 5 minutos y cuando acabes sabrás algo que la mayoría no sabe.',
   },
 ];
 
@@ -2604,7 +2609,7 @@ function _renderTutStep() {
   setEl('tut-desc',  step.desc);
 
   const nextBtn = document.getElementById('tut-next-btn');
-  if (nextBtn) nextBtn.textContent = _tutStep === TUTORIAL_STEPS.length - 1 ? '¡Empezar! 🚀' : 'Siguiente →';
+  if (nextBtn) nextBtn.textContent = _tutStep === TUTORIAL_STEPS.length - 1 ? '¡Vamos a por ello! 🚀' : 'Siguiente →';
 
   // Dots
   const dots = document.getElementById('tut-dots');
@@ -2648,8 +2653,12 @@ function endTutorial() {
   S.hasSeenTutorial = true;
   localStorage.setItem('fl_tutorial_done', '1');
   saveState();
-  // Encourage first action
-  setTimeout(() => toast('🎯 Primer objetivo', 'Completa 3 módulos y haz tu primera inversión', 't-success'), 500);
+  // Auto-launch first recommended module
+  setTimeout(() => {
+    const modId = (S.suggestedModuleId !== undefined && S.suggestedModuleId !== null) ? S.suggestedModuleId : 0;
+    toast('🎯 ¡Tu primera lección te espera!', 'Empieza ahora — son solo 5 minutos 🚀', 't-success');
+    setTimeout(() => { if (typeof startModule === 'function') startModule(modId); }, 600);
+  }, 400);
 }
 
 

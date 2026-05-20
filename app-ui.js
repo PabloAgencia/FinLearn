@@ -4303,7 +4303,32 @@ function _renderProjectionStepFinal() {
   set('fp-today-final', patrimony);
   set('fp-10y-final',   result10);
   set('fp-20y-final',   result20);
-  set('fp-30y-final',   result30);
+
+  // 30y number: count-up for wow effect
+  const el30 = document.getElementById('fp-30y-final');
+  if (el30) {
+    const target = Math.round(result30);
+    const start  = parseInt(el30.dataset.prev || '0', 10);
+    el30.dataset.prev = target;
+    let frame = 0;
+    const frames = 40;
+    const tick = () => {
+      frame++;
+      const pct = frame / frames;
+      const eased = 1 - Math.pow(1 - pct, 3);
+      el30.textContent = fmtPrice(Math.round(start + (target - start) * eased));
+      if (frame < frames) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // Motivational context line below projection
+  const motivEl = document.getElementById('ob-proj-motivation');
+  if (motivEl && result30 > 0) {
+    const monthly = parseFloat(document.getElementById('ob-monthly-slider')?.value) || Math.round((income || 1800) * 0.15);
+    motivEl.textContent = `Ahorrando solo ${fmtPrice(monthly)}/mes, el interés compuesto hace el resto. Eso es libertad financiera.`;
+    motivEl.style.display = 'block';
+  }
 }
 
 /**
@@ -4530,7 +4555,11 @@ function finishOnboarding() {
   toast('🎉 ¡Bienvenido a FinLearn!', `Hola ${S.userName}, empezamos${careerMsg} 🚀`, 't-success');
   confetti();
 
-  setTimeout(() => { if (typeof sbShowAuthModal === 'function' && typeof getSBUser === 'function' && !getSBUser()) { sbShowAuthModal('register'); } }, 3000);
+  // Start tutorial 1.5s after confetti so user can see the home screen first
+  setTimeout(() => { if (typeof startTutorial === 'function') startTutorial(); }, 1500);
+
+  // Auth modal after tutorial would have finished (~20s)
+  setTimeout(() => { if (typeof sbShowAuthModal === 'function' && typeof getSBUser === 'function' && !getSBUser()) { sbShowAuthModal('register'); } }, 20000);
 }
 
 
