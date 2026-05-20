@@ -4872,6 +4872,32 @@ function completeModule() {
     }
   }
 
+  // Real action injection based on module tag/branch
+  var _celRa = document.getElementById('cel-real-action');
+  var _celRaText = document.getElementById('cel-ra-text');
+  var _celRaBtn = document.getElementById('cel-ra-btn');
+  if (_celRa && _celRaText && typeof MODULE_REAL_ACTIONS_MAP !== 'undefined') {
+    var _raEntry = null;
+    var _modTag = ((mod.tag || '').replace(/[^\wÀ-ɏ]/g, ' ').trim().toUpperCase());
+    for (var _rk in MODULE_REAL_ACTIONS_MAP) {
+      if (_modTag.indexOf(_rk.toUpperCase()) !== -1) { _raEntry = MODULE_REAL_ACTIONS_MAP[_rk]; break; }
+    }
+    if (!_raEntry && typeof F28_BRANCHES !== 'undefined') {
+      for (var _fb = 0; _fb < F28_BRANCHES.length; _fb++) {
+        if (F28_BRANCHES[_fb].mods.indexOf(mod.id) !== -1) {
+          _raEntry = MODULE_REAL_ACTIONS_MAP[F28_BRANCHES[_fb].id] || MODULE_REAL_ACTIONS_MAP['fundamentos'];
+          break;
+        }
+      }
+    }
+    if (!_raEntry) _raEntry = MODULE_REAL_ACTIONS_MAP['fundamentos'];
+    _celRaText.textContent = _raEntry.emoji + ' ' + _raEntry.action;
+    _celRa.style.display = 'block';
+    if (_celRaBtn) { _celRaBtn.disabled = false; _celRaBtn.textContent = '✅ Ya lo hice · +25 XP'; _celRaBtn.style.opacity = '1'; }
+  } else if (_celRa) {
+    _celRa.style.display = 'none';
+  }
+
   openModal('m-cel');
   SFX.moduleComplete();
   if ((S.completedMods || []).length === 1) NOTIFS.onFirstModule();
@@ -5299,9 +5325,11 @@ function _renderWeeklyActionCard() {
   if (!el) {
     el = document.createElement('div');
     el.id = 'weekly-action-card';
-    el.style.cssText = 'margin:12px 16px;';
+    el.style.cssText = 'margin:0 0 12px;';
+    const area = document.getElementById('home-actions-area');
     const homeScreen = document.getElementById('s-home');
-    if (homeScreen) homeScreen.appendChild(el);
+    if (area) area.appendChild(el);
+    else if (homeScreen) homeScreen.appendChild(el);
   }
   if (done) {
     el.innerHTML = `
@@ -5337,10 +5365,11 @@ function _renderRealMoneyHomeCard() {
   if (!el) {
     el = document.createElement('div');
     el.id = 'home-realmoney-card';
-    el.style.cssText = 'margin:12px 16px;';
+    el.style.cssText = 'margin:0 0 12px;';
+    const area = document.getElementById('home-actions-area');
     const homeScreen = document.getElementById('s-home');
-    const dcaCard = document.getElementById('dca-card');
-    if (homeScreen) homeScreen.appendChild(el);
+    if (area) area.insertBefore(el, area.firstChild);
+    else if (homeScreen) homeScreen.appendChild(el);
   }
   if (total === 0 && actions === 0) {
     el.innerHTML = `
@@ -5362,6 +5391,23 @@ function _renderRealMoneyHomeCard() {
   }
 }
 window._renderRealMoneyHomeCard = _renderRealMoneyHomeCard;
+
+function _celRaMarkDone() {
+  var _celRa = document.getElementById('cel-real-action');
+  var _celRaBtn = document.getElementById('cel-ra-btn');
+  if (_celRaBtn) { _celRaBtn.disabled = true; _celRaBtn.style.opacity = '0.5'; }
+  S._realActionsCount = (S._realActionsCount || 0) + 1;
+  S.xp = (S.xp || 0) + 25;
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(25);
+  saveState();
+  if (_celRa) {
+    _celRa.innerHTML = '<div style="text-align:center;padding:10px 0;"><div style="font-size:26px;margin-bottom:4px;">✅</div><div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:14px;color:#00e5a0;">¡Acción real completada! +25 XP</div><div style="font-size:11px;color:var(--text3);margin-top:3px;">Estas acciones construyen tu futuro financiero.</div></div>';
+  }
+  if (typeof spawnXPv2 === 'function') spawnXPv2('+25 XP', 'Acción real');
+  if (typeof confetti === 'function') confetti();
+  if (typeof _renderRealMoneyHomeCard === 'function') setTimeout(_renderRealMoneyHomeCard, 300);
+}
+window._celRaMarkDone = _celRaMarkDone;
 
 function _openLab() {
   let modal = document.getElementById('m-lab');

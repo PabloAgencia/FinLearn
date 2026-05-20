@@ -6908,6 +6908,31 @@ const EXAM_QUESTION_POOL = [
 
 ];
 
+const MODULE_REAL_ACTIONS_MAP = {
+  'FUNDAMENTAL':  { emoji:'💡', action:'Esta semana calcula tu tasa de ahorro: (ingresos − gastos) ÷ ingresos × 100. Si es menor del 10%, ponlo como objetivo este mes.' },
+  'INVERSIÓN':    { emoji:'📊', action:'Entra en MyInvestor.es o DEGIRO y calcula cuánto crecería €100/mes a 7% anual durante 20 años. Solo para verlo real.' },
+  'PSICOLOGÍA':   { emoji:'🧠', action:'Antes de tu próxima compra mayor de €30, espera 48 horas. Anota si sigues queriéndola. Es el truco más barato para ahorrar.' },
+  'MENTALIDAD':   { emoji:'🧘', action:'Identifica un gasto recurrente que haces por inercia, no por satisfacción real. ¿Podrías reducirlo o eliminarlo este mes?' },
+  'DEUDA':        { emoji:'✂️', action:'Lista tus deudas actuales con su tipo de interés. Ordénalas de mayor a menor TAE. Eso es tu orden de ataque correcto.' },
+  'ECONOMÍA':     { emoji:'📈', action:'Configura una alerta de precio en Google Finance para un activo o índice que quieras seguir de cerca.' },
+  'FISCALIDAD':   { emoji:'🧾', action:'Abre tu última nómina. Comprueba tu porcentaje de retención IRPF. ¿Es correcto para tu tramo de ingresos anuales?' },
+  'VIVIENDA':     { emoji:'🏠', action:'Calcula tu ratio hipoteca/ingresos: cuota mensual ÷ ingresos netos × 100. Por encima del 30% hay riesgo. ¿Dónde estás tú?' },
+  'INMOBILIARIO': { emoji:'🏗️', action:'Calcula el PER de un inmueble que conozcas: precio de compra ÷ alquiler anual bruto. Por encima de 20 años, la rentabilidad es baja.' },
+  'PRESUPUESTO':  { emoji:'📋', action:'Abre el extracto bancario del mes pasado y clasifica tus gastos en: fijos, variables y ocio. Encontrarás fugas que no sabías que tenías.' },
+  'FIRE':         { emoji:'🏝️', action:'Calcula tu número FIRE: gastos anuales × 25. Ese es el patrimonio que necesitas para vivir de tus inversiones. ¿Cuánto te falta?' },
+  'CRIPTO':       { emoji:'₿', action:'Si decides invertir en cripto, fija una regla antes: nunca más del 5% de tu cartera y solo capital que puedas perder íntegro.' },
+  'PROTECCIÓN':   { emoji:'🛡️', action:'Revisa qué seguros tienes activos. ¿Pagas alguno duplicado? ¿Te falta alguno crítico (hogar, vida, incapacidad)?' },
+  'AVANZADO':     { emoji:'🚀', action:'Revisa si tu cartera tiene exposición a al menos 3 zonas geográficas distintas. La diversificación geográfica reduce el riesgo sistémico.' },
+  'RETO FINAL':   { emoji:'🏆', action:'Escribe 3 decisiones financieras concretas que vas a implementar este mes basadas en lo que has aprendido hoy.' },
+  'fundamentos':  { emoji:'💡', action:'Esta semana calcula tu tasa de ahorro: (ingresos − gastos) ÷ ingresos × 100. Si es menor del 10%, ponlo como objetivo este mes.' },
+  'inversion':    { emoji:'📊', action:'Entra en MyInvestor.es o DEGIRO y calcula cuánto crecería €100/mes a 7% anual durante 20 años. Solo para verlo real.' },
+  'deuda':        { emoji:'✂️', action:'Lista tus deudas actuales con su tipo de interés. Ordénalas de mayor a menor TAE. Eso es tu orden de ataque correcto.' },
+  'fiscalidad':   { emoji:'🧾', action:'Abre tu última nómina. Comprueba tu porcentaje de retención IRPF. ¿Es correcto para tu tramo de ingresos anuales?' },
+  'psicologia':   { emoji:'🧠', action:'Antes de tu próxima compra mayor de €30, espera 48 horas. Anota si sigues queriéndola. Es el truco más barato para ahorrar.' },
+  'avanzado':     { emoji:'🚀', action:'Revisa si tu cartera tiene exposición a al menos 3 zonas geográficas distintas. La diversificación geográfica reduce el riesgo sistémico.' },
+  'vivienda':     { emoji:'🏠', action:'Calcula tu ratio hipoteca/ingresos: cuota mensual ÷ ingresos netos × 100. Por encima del 30% hay riesgo. ¿Dónde estás tú?' },
+};
+
 const WEEKLY_ACTIONS = [
   { id:'wa_cancel_sub', icon:'✂️', title:'Cancela 1 suscripción que no uses', desc:'Abre tus suscripciones activas (Netflix, Spotify, gym, cloud...) y cancela la que menos uses este mes.', xp:120, savingEst:15 },
   { id:'wa_negotiate_mobile', icon:'📱', title:'Negocia tu factura del móvil', desc:'Llama a tu compañía y pide descuento por fidelidad. El 70% de peticiones consiguen 5-15€/mes de descuento.', xp:150, savingEst:10 },

@@ -413,6 +413,9 @@
         <!-- CTA "Continúa aprendiendo" ──────────────────────── -->
         <div id="home-continue-cta" style="display:none;" class="mb16"></div>
 
+        <!-- REAL ACTIONS AREA (weekly action + real money) ─── -->
+        <div id="home-actions-area"></div>
+
         <!-- ① MÓDULOS — primera sección ────────────────────── -->
         <div class="card modules-section-card">
           <div class="sec-head mb12">
@@ -1807,6 +1810,14 @@
       <div class="cel-stat"><div class="cel-val" id="cel-rank">Top —%</div><div class="cel-lab">Global</div></div>
     </div>
     <div id="cel-quiz-stats" style="display:none;text-align:center;margin-bottom:12px;"></div>
+    <div id="cel-real-action" style="display:none;margin:0 0 12px;padding:14px 16px;background:linear-gradient(135deg,rgba(245,166,35,.1),rgba(245,166,35,.03));border:1px solid rgba(245,166,35,.3);border-radius:14px;">
+      <div style="font-size:10px;color:#f5a623;font-weight:800;letter-spacing:.1em;margin-bottom:7px;">🎯 APLÍCALO AHORA</div>
+      <div id="cel-ra-text" style="font-size:13px;color:var(--text1);line-height:1.55;margin-bottom:10px;"></div>
+      <div style="display:flex;gap:8px;">
+        <button id="cel-ra-btn" onclick="_celRaMarkDone()" style="flex:1;padding:10px;background:linear-gradient(90deg,#f5a623,#f5c842);border:none;color:#0a0c14;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;">✅ Ya lo hice · +25 XP</button>
+        <button onclick="document.getElementById('cel-real-action').style.display='none'" style="padding:10px 14px;background:transparent;border:1px solid var(--border2);color:var(--text3);border-radius:10px;font-size:11px;cursor:pointer;white-space:nowrap;">Más tarde</button>
+      </div>
+    </div>
     <button id="cel-next-mod-btn" class="btn btn-primary btn-block mb8" style="display:none;" onclick="">⚡ Siguiente módulo →</button>
     <button class="btn btn-cert btn-block mb8" id="btn-gen-cert" style="display:none;" onclick="DynCert.generate()">
       <span>📜 Generar Certificado Oficial</span>

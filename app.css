@@ -1189,6 +1189,12 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .fp-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--accent);font-weight:500;}
 .fp-val.big{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--gold);}
 
+/* ══ HOME ACTIONS AREA ══ */
+#home-actions-area {
+  padding: 0 16px;
+  margin-bottom: 4px;
+}
+
 /* ══ ONBOARDING STEP 4 — PROJECTION FINAL ══ */
 .fin-preview-final{
   background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);
