@@ -602,9 +602,10 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .lesson-title-big{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(22px,5vw,28px);line-height:1.2;margin:10px 0;}
 .lesson-intro{font-size:15px;color:var(--text2);line-height:1.7;}
 
-.content-block{margin-bottom:20px;}
-.content-block h3{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;margin-bottom:8px;}
-.content-block p{font-size:14px;color:var(--text2);line-height:1.72;margin-bottom:8px;}
+.content-block{margin-bottom:24px;}
+.content-block h3{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:10px;color:var(--text1);}
+.content-block p{font-size:15px;color:var(--text2);line-height:1.78;margin-bottom:10px;}
+.content-block p strong{color:var(--text1);}
 
 .hl-box{
   padding:15px 18px;border-radius:12px;margin:14px 0;
@@ -615,7 +616,8 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .hl-box .hl-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:.08em;margin-bottom:5px;}
 .hl-box.warn .hl-label{color:var(--accent3);}
 .hl-box.info .hl-label{color:var(--accent2);}
-.hl-box p{color:var(--text2);font-size:13px;line-height:1.65;margin:0;}
+.hl-box p{color:var(--text2);font-size:14px;line-height:1.7;margin:0;}
+.hl-box p strong{color:var(--text1);}
 
 .formula-box{
   background:var(--bg2);border:1px solid var(--border);border-radius:12px;
@@ -626,8 +628,8 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 
 .stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0;}
 .sbox{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
-.sbox-val{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent);}
-.sbox-lab{font-size:10px;color:var(--text3);margin-top:3px;}
+.sbox-val{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--accent);}
+.sbox-lab{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4;}
 
 .quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin:20px 0;}
 .quiz-q{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;margin-bottom:16px;line-height:1.4;}
@@ -793,6 +795,8 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 /* Celebration */
 .cel-emoji{font-size:60px;text-align:center;margin-bottom:14px;animation:celPop .5s cubic-bezier(.34,1.56,.64,1);}
 @keyframes celPop{from{transform:scale(0);}to{transform:scale(1);}}
+@keyframes celFloat{from{transform:translateY(0) scale(1);}to{transform:translateY(-8px) scale(1.07);}}
+@keyframes ctaPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.18);}50%{box-shadow:0 0 0 7px rgba(0,229,160,0);}}
 .cel-stats{display:flex;justify-content:center;gap:20px;margin:16px 0;}
 .cel-stat{text-align:center;}
 .cel-val{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--accent);}

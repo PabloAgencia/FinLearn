@@ -422,6 +422,9 @@
         <!-- M1 — DOBLE XP BANNER ───────────────────────────── -->
         <div id="m1-dxp-banner" style="display:none;" class="mb8"></div>
 
+        <!-- CTA "Continúa aprendiendo" ──────────────────────── -->
+        <div id="home-continue-cta" style="display:none;" class="mb16"></div>
+
         <!-- ① MÓDULOS — primera sección ────────────────────── -->
         <div class="card modules-section-card">
           <div class="sec-head mb12">
@@ -1807,20 +1810,20 @@
 <div class="modal-bg" id="m-cel">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('m-cel')">✕</button>
-    <div class="cel-emoji" id="cel-emoji">⚡</div>
+    <div id="cel-emoji" style="font-size:90px;text-align:center;margin-bottom:10px;animation:celPop .5s cubic-bezier(.34,1.56,.64,1),celFloat 3s ease-in-out 0.5s infinite alternate;">⚡</div>
     <div class="h2 text-center mb4" id="cel-title">¡Módulo completado!</div>
-    <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:16px;" id="cel-desc">Estás avanzando hacia tu libertad financiera.</div>
+    <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:12px;" id="cel-desc">Estás avanzando hacia tu libertad financiera.</div>
     <div class="cel-stats" id="cel-stats">
       <div class="cel-stat"><div class="cel-val" id="cel-xp">+150 XP</div><div class="cel-lab">Ganados</div></div>
       <div class="cel-stat"><div class="cel-val" id="cel-streak">🔥0</div><div class="cel-lab">Racha</div></div>
       <div class="cel-stat"><div class="cel-val" id="cel-rank">Top —%</div><div class="cel-lab">Global</div></div>
     </div>
-    <button class="btn btn-primary btn-block mb8" onclick="goToCertificate()">🏆 Ver mi certificado</button>
+    <div id="cel-quiz-stats" style="display:none;text-align:center;margin-bottom:12px;"></div>
+    <button id="cel-next-mod-btn" class="btn btn-primary btn-block mb8" style="display:none;" onclick="">⚡ Siguiente módulo →</button>
     <button class="btn btn-cert btn-block mb8" id="btn-gen-cert" style="display:none;" onclick="DynCert.generate()">
       <span>📜 Generar Certificado Oficial</span>
       <span class="btn-cert-shine"></span>
     </button>
-    <!-- F26: Compartir tarjeta -->
     <button class="btn btn-share-card btn-block mb8" id="cel-share-btn" style="display:none;" onclick="">
       📸 Compartir mi logro
     </button>
@@ -1828,6 +1831,7 @@
       <button class="btn btn-tw btn-sm" style="flex:1;" onclick="quickShare('twitter')">🐦 X/Twitter</button>
       <button class="btn btn-wa btn-sm" style="flex:1;" onclick="quickShare('whatsapp')">💬 WhatsApp</button>
     </div>
+    <button class="btn btn-ghost btn-block btn-sm mb4" onclick="goToCertificate()">🏆 Ver mi certificado</button>
     <button class="btn btn-ghost btn-block btn-sm" onclick="closeModal('m-cel');goTo('home')">Seguir aprendiendo</button>
   </div>
 </div>

@@ -6300,6 +6300,317 @@ const EXAM_QUESTION_POOL = [
       { type:'quiz', tag:'🧠 TEST', q:'Vendes un ETF con -€2.000 de pérdida y compras otro ETF similar (mismo índice, distinto emisor) a los 10 días. ¿Es deducible la pérdida?', opts:['No, aplica la regla de los 2 meses','Sí, porque el producto es distinto aunque el subyacente sea similar','Solo el 50%','Depende de Hacienda'], ans:1, exp:'La regla de los 2 meses aplica cuando recompras valores "homogéneos" (mismo ISIN o valores idénticos). Distintos ETFs del mismo índice son productos distintos: la pérdida es deducible.' },
       { type:'final', xp:130, msg:'Revisa tu cartera en diciembre. Tax loss harvesting bien ejecutado ahorra cientos de euros al año.' },
     ]},
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MÓDULO 175 — La Regla del 50/30/20: Presupuesto Sin Esfuerzo
+  ═══════════════════════════════════════════════════════════════════ */
+  {
+    id: 175, icon: '💰', title: 'La Regla del 50/30/20: Presupuesto Sin Esfuerzo',
+    desc: 'El sistema de presupuesto más simple y efectivo para ordenar tus finanzas',
+    xp: 25, tag: 'FUNDAMENTOS', tagC: '#00e5a0',
+    steps: [
+
+      {type:'content', title:'Cómo Funciona la Regla del 50/30/20',
+        blocks:[
+          {t:'text', h:'El sistema que usaba Elizabeth Warren',
+            p:'La <strong>regla del 50/30/20</strong> fue popularizada por la senadora y profesora de Harvard Elizabeth Warren en su libro "All Your Worth". La idea es brutalmente simple: divides tu ingreso neto en tres bloques porcentuales fijos. Sin hojas de cálculo complicadas, sin apps de seguimiento obsesivo. Solo tres números que, si respetas, te garantizan un avance financiero real.'},
+          {t:'text', h:'Los tres bloques con sueldo de 2.000€ netos',
+            p:'Con un sueldo neto de <strong>2.000€/mes</strong> (sueldo medio en España en 2025): el <strong>50% son 1.000€</strong> para necesidades (alquiler, comida, suministros, transporte al trabajo, seguro médico), el <strong>30% son 600€</strong> para deseos (restaurantes, viajes, suscripciones, ropa no esencial), y el <strong>20% son 400€</strong> para ahorro e inversión. Esos 400€ al mes durante 20 años al 7% generan <strong>208.000€</strong>.'},
+          {t:'stats', items:[
+            {v:'50%', l:'Necesidades: alquiler, comida, luz, transporte, seguros obligatorios'},
+            {v:'30%', l:'Deseos: ocio, restaurantes, viajes, Netflix, ropa no esencial'},
+            {v:'20%', l:'Ahorro/inversión: fondo de emergencia, ETFs, plan de pensiones'},
+          ]},
+          {t:'hl', s:'', label:'QUÉ ES NECESIDAD VS DESEO',
+            p:'Esta es la frontera más discutida de la regla. El <strong>alquiler es necesidad</strong>; el piso de 1.200€ cuando podrías vivir en uno de 800€ no lo es del todo. Netflix de 18€ es deseo. <strong>Internet es necesidad</strong> si trabajas desde casa. El gimnasio básico puede ser necesidad si es tu única actividad física. La regla no es rígida — es un marco. Lo que sí está claro: si tus necesidades superan el 50%, tienes un problema de gasto fijo que resolver.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'María cobra 2.400€ netos al mes. Según la regla 50/30/20, ¿cuánto debería destinar al ahorro e inversión cada mes?',
+        opts:[
+          {t:'€400 (20% de 2.000€)', ok:false},
+          {t:'€480 (20% de 2.400€)', ok:true},
+          {t:'€600 (30% de 2.000€)', ok:false},
+          {t:'€240 (10% de 2.400€)', ok:false},
+        ],
+        ok:'¡Correcto! El 20% siempre se aplica sobre el ingreso neto real. 2.400 × 0,20 = 480€. Si María invierte esos 480€/mes al 7% durante 25 años, acumula 384.000€. El porcentaje es fijo, la base cambia con el sueldo.',
+        bad:'La respuesta es 480€. La regla se aplica sobre el ingreso neto real de cada mes: 2.400 × 20% = 480€. Un error frecuente es aplicarla sobre un sueldo "redondo" diferente al real. Calcula siempre sobre lo que entra en tu cuenta.',
+      },
+
+      {type:'content', title:'Adaptar la Regla a Tu Situación Real',
+        blocks:[
+          {t:'text', h:'¿Qué pasa si tus necesidades superan el 50%?',
+            p:'En ciudades como Madrid o Barcelona, el alquiler solo puede comerse el 40-50% del sueldo. Si estás en esa situación, la regla se ajusta: primero ataca los gastos fijos más caros (¿puedes cambiar de piso?, ¿de ciudad?), y mientras, preserva el porcentaje de ahorro aunque sea al 10%. <strong>Ahorrar el 10% es infinitamente mejor que no ahorrar nada</strong> esperando llegar al 20%.'},
+          {t:'hl', s:'info', label:'💡 EL TRUCO DEL PAGO AUTOMÁTICO',
+            p:'El día que cobras, programa una <strong>transferencia automática del 20%</strong> hacia una cuenta separada de ahorro/inversión. Así el dinero "desaparece" antes de que puedas gastarlo. Este sistema, llamado "págate a ti primero", elimina la fricción de decidir cada mes cuánto ahorrar. Lo que no ves, no lo gastas. Lo aplican el 87% de las personas con patrimonio neto positivo.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Carlos tiene estas salidas mensuales: alquiler 700€, comida 300€, suministros 100€, gimnasio 40€, streaming 25€, salidas 200€, ropa 150€, ahorro 200€. Su sueldo neto es 1.800€. ¿Sigue la regla 50/30/20?',
+        opts:[
+          {t:'Sí, está perfectamente equilibrado', ok:false},
+          {t:'No, el bloque de ahorro es insuficiente: debería ser 360€', ok:true},
+          {t:'No, los deseos superan el 30% permitido', ok:false},
+          {t:'No, las necesidades superan el 50%', ok:false},
+        ],
+        ok:'Exacto. El 20% de 1.800€ son 360€ de ahorro, pero Carlos solo ahorra 200€ (11%). Sus necesidades: 700+300+100 = 1.100€ (61%, por encima del 50%). Tiene dos problemas: gastos fijos altos Y ahorro insuficiente. Prioridad: reducir el gasto fijo.',
+        bad:'El fallo está en el ahorro: 20% de 1.800€ = 360€, pero Carlos ahorra 200€. Además, sus necesidades (1.100€) suponen el 61% del sueldo, superando el límite del 50%. Para cumplir la regla necesita reducir gastos fijos o aumentar ingresos.',
+      },
+
+      {type:'final', xp:25, msg:'Ya tienes el sistema de presupuesto más poderoso y simple. Empieza calculando tus tres bloques este mes.'},
+    ],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MÓDULO 176 — Euríbor: Por Qué Sube Tu Hipoteca
+  ═══════════════════════════════════════════════════════════════════ */
+  {
+    id: 176, icon: '🏦', title: 'Euríbor: Por Qué Sube Tu Hipoteca',
+    desc: 'El índice que mueve millones de hipotecas en España y cómo afecta a la tuya',
+    xp: 28, tag: 'VIVIENDA', tagC: '#34d399',
+    steps: [
+
+      {type:'content', title:'Qué Es el Euríbor y Quién Lo Controla',
+        blocks:[
+          {t:'text', h:'El termómetro del dinero en Europa',
+            p:'El <strong>Euríbor (Euro Interbank Offered Rate)</strong> es el tipo de interés al que los grandes bancos europeos se prestan dinero entre sí a distintos plazos. El más relevante para hipotecas es el <strong>Euríbor a 12 meses</strong>. No lo fija el BCE directamente — lo publica el EMMI (European Money Markets Institute) cada día hábil calculando la media de las ofertas de los principales bancos de la eurozona.'},
+          {t:'text', h:'La palanca del BCE: los tipos de interés oficiales',
+            p:'El <strong>Banco Central Europeo (BCE)</strong> fija el "tipo de facilidad de depósito", que es el interés al que paga a los bancos por guardar dinero. Cuando el BCE sube tipos (como hizo entre 2022 y 2023, de 0% a 4,5%), prestar dinero entre bancos se encarece y el Euríbor sube en paralelo. Cuando baja tipos (como en 2024-2025, hasta el 2,5%), el Euríbor también cae. El Euríbor es básicamente la sombra de la política monetaria del BCE.'},
+          {t:'stats', items:[
+            {v:'0,00%', l:'Euríbor en enero 2022 — hipotecas baratas históricas'},
+            {v:'4,16%', l:'Euríbor en octubre 2023 — máximo en 15 años'},
+            {v:'~2,4%', l:'Euríbor aproximado en mayo 2025 — tras bajadas del BCE'},
+          ]},
+          {t:'hl', s:'', label:'CÓMO AFECTA A TU CUOTA MENSUAL',
+            p:'Una <strong>hipoteca variable de 200.000€ a 25 años</strong> con diferencial de Euríbor + 0,89%: con Euríbor al 0% la cuota era ~840€/mes. Con Euríbor al 4,16%, la cuota subió a ~1.190€/mes — <strong>350€ más al mes, 4.200€ más al año</strong>. Con Euríbor al 2,4% la cuota es ~1.040€/mes. Cada punto porcentual del Euríbor mueve la cuota aproximadamente 90-100€/mes en una hipoteca de este tamaño.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Tienes una hipoteca variable de 200.000€ a 25 años con Euríbor + 0,89%. En tu revisión anual el Euríbor ha subido de 2,40% a 3,40%. ¿Cuánto sube aproximadamente tu cuota mensual?',
+        opts:[
+          {t:'Unos 20-30€/mes más', ok:false},
+          {t:'Unos 90-100€/mes más', ok:true},
+          {t:'Unos 200€/mes más', ok:false},
+          {t:'La cuota no cambia hasta que termina el plazo', ok:false},
+        ],
+        ok:'Correcto. En una hipoteca de 200.000€ a 25 años, cada punto porcentual de subida del Euríbor equivale a aproximadamente 90-100€/mes de incremento en la cuota. Subida de 1 punto: de ~1.040€ a ~1.130€/mes. Es un impacto real y acumulado que conviene tener previsto.',
+        bad:'La respuesta es unos 90-100€ más al mes. Las hipotecas variables de este tamaño se mueven en esa horquilla por cada punto porcentual de cambio en el Euríbor. Subirá de aproximadamente 1.040€ a 1.130€/mes. La revisión anual aplica el nuevo Euríbor al capital pendiente restante.',
+      },
+
+      {type:'content', title:'Hipoteca Fija vs Variable: El Análisis Real',
+        blocks:[
+          {t:'text', h:'Cuándo conviene cada tipo',
+            p:'La <strong>hipoteca fija</strong> te protege de subidas del Euríbor pero suele tener un tipo inicial más alto (en 2025, entre 2,8% y 3,5%). La <strong>hipoteca variable</strong> arranca más baja (Euríbor + 0,5-1%) pero asumes el riesgo de que el Euríbor suba. La clave es tu perfil: si no podrías pagar 300-400€ más al mes si el Euríbor volviera al 4%, la fija es la opción correcta aunque sea más cara en escenario base.'},
+          {t:'hl', s:'info', label:'💡 LA REVISIÓN ANUAL: CÓMO LEERLA',
+            p:'Cuando tu banco te manda la carta de revisión anual, el nuevo tipo se calcula como: <strong>Euríbor del mes de revisión + tu diferencial</strong>. Si tu diferencial es 0,89% y el Euríbor en tu mes de revisión está al 2,40%, tu nuevo tipo es 3,29% TIN. El banco aplica ese tipo al capital pendiente (no al original) y recalcula la cuota para los próximos 12 meses. Guarda la carta — tienes 30 días para negociar si no estás de acuerdo.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'El BCE baja sus tipos de interés del 3% al 2,5%. ¿Qué efecto cabe esperar en el Euríbor a 12 meses en las semanas siguientes?',
+        opts:[
+          {t:'El Euríbor sube porque los bancos piden más por prestarse dinero', ok:false},
+          {t:'El Euríbor baja, porque el coste del dinero interbancario se abarata', ok:true},
+          {t:'El Euríbor no cambia, solo lo mueve la inflación', ok:false},
+          {t:'El Euríbor sube porque hay menos liquidez en el sistema', ok:false},
+        ],
+        ok:'Correcto. El Euríbor sigue de cerca las decisiones del BCE. Cuando el BCE baja tipos, los bancos pueden financiarse más barato y el tipo al que se prestan entre sí (Euríbor) también cae. No es instantáneo — suele tardar días o semanas en reflejarse — pero la dirección es siempre la misma.',
+        bad:'Cuando el BCE baja tipos, el Euríbor baja. El BCE controla el precio del dinero en la economía: si bajar tipos abarata la financiación para los bancos, estos también se prestan entre sí más barato, y eso es exactamente lo que mide el Euríbor.',
+      },
+
+      {type:'final', xp:28, msg:'Ahora entiendes por qué sube o baja tu hipoteca y qué mirar en la carta de revisión anual.'},
+    ],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MÓDULO 177 — Inflación: El Enemigo Silencioso
+  ═══════════════════════════════════════════════════════════════════ */
+  {
+    id: 177, icon: '📉', title: 'Inflación: El Enemigo Silencioso',
+    desc: 'Cómo el IPC destruye tu poder adquisitivo sin que lo notes, y qué hacer',
+    xp: 25, tag: 'FUNDAMENTOS', tagC: '#00e5a0',
+    steps: [
+
+      {type:'content', title:'Qué Es la Inflación y Cómo la Mide el IPC',
+        blocks:[
+          {t:'text', h:'El precio de la cesta de la compra del Estado',
+            p:'La <strong>inflación</strong> es la subida generalizada y sostenida del nivel de precios. El INE (Instituto Nacional de Estadística) la mide a través del <strong>IPC (Índice de Precios al Consumo)</strong>, que rastrea mensualmente el coste de una cesta de 479 productos y servicios que representa el gasto típico de un hogar español: comida, ropa, transporte, vivienda, ocio, salud. Cuando el IPC sube un 3%, esa cesta cuesta un 3% más que hace un año.'},
+          {t:'text', h:'Los datos recientes en España',
+            p:'España vivió una inflación del <strong>8,7% en 2022</strong> — la más alta en 40 años — impulsada por la energía y los alimentos tras la invasión de Ucrania. En 2023 bajó al 3,5% y en 2024 se estabilizó alrededor del 2,8%. El objetivo del BCE es mantener la inflación en torno al <strong>2% anual</strong>. Parece poco, pero a ese ritmo los precios se doblan en 36 años (Regla del 72: 72÷2=36).'},
+          {t:'stats', items:[
+            {v:'8,7%', l:'Inflación en España en 2022 — la más alta desde 1984'},
+            {v:'2,8%', l:'Inflación media estimada en España en 2024'},
+            {v:'36 años', l:'Tiempo para que los precios se dupliquen al 2% anual (R72)'},
+          ]},
+          {t:'hl', s:'warn', label:'EL COSTE REAL DE DEJAR DINERO EN CUENTA CORRIENTE',
+            p:'Si tienes <strong>10.000€ en cuenta corriente al 0% de interés</strong> con una inflación del 3%, al cabo de un año tu dinero sigue siendo 10.000€ nominales — pero solo puede comprar lo equivalente a <strong>9.709€ de hoy</strong>. Pierdes 291€ de poder adquisitivo sin hacer nada, sin moverlo. En 10 años a ese ritmo, tu poder de compra habrá caído a <strong>7.374€</strong> (el 73% del valor original). El "no perder" en una cuenta sin interés es en realidad perder con certeza.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Tienes 20.000€ en una cuenta corriente al 0% de interés. La inflación es del 3% anual. ¿Cuánto poder adquisitivo pierdes en términos reales durante ese año?',
+        opts:[
+          {t:'Cero, el dinero sigue siendo 20.000€', ok:false},
+          {t:'Unos 600€ de poder adquisitivo real', ok:true},
+          {t:'Unos 200€, porque la inflación solo afecta a los préstamos', ok:false},
+          {t:'Unos 3.000€, porque pierdes el 15% en 5 años', ok:false},
+        ],
+        ok:'Correcto. 20.000 × 3% = 600€ de poder adquisitivo perdido ese año. Tu cuenta dice 20.000€ pero solo puedes comprar lo equivalente a 19.400€ del año anterior. Este es el coste silencioso e invisible de no invertir el dinero que no necesitas a corto plazo.',
+        bad:'La respuesta es 600€. Con inflación del 3%: 20.000 × 0,03 = 600€ de pérdida de poder adquisitivo en un año. El dinero nominalmente sigue ahí, pero compra menos. Si esto se repite 10 años, pierdes el 26% del poder de compra total.',
+      },
+
+      {type:'content', title:'Cómo Proteger Tu Dinero de la Inflación',
+        blocks:[
+          {t:'text', h:'La tasa de interés real: el número que importa',
+            p:'La <strong>tasa de interés real</strong> es la diferencia entre el rendimiento nominal de tu inversión y la inflación: si tu depósito paga el 3% TAE y la inflación es del 3%, tu tasa real es <strong>0%</strong> — no ganas ni pierdes poder adquisitivo. Solo cuando el rendimiento supera la inflación creces en términos reales. Un ETF global con rendimiento histórico del 7-8% anual, frente a inflación del 2-3%, ofrece una tasa real del 4-5%: eso sí es crecer.'},
+          {t:'hl', s:'info', label:'💡 QUÉ ACTIVOS BATEN HISTÓRICAMENTE A LA INFLACIÓN',
+            p:'Los activos que históricamente han superado la inflación en España: <strong>renta variable (acciones/ETFs)</strong> — 6-9% nominal histórico; <strong>inmuebles</strong> — 3-5% nominal en zonas urbanas; <strong>TIPS (bonos indexados a inflación)</strong> — rendimiento real garantizado positivo; <strong>depósitos bancarios</strong> — solo baten la inflación cuando los tipos de interés son altos. Las <strong>cuentas corrientes al 0%</strong> y el efectivo bajo el colchón son los únicos activos que garantizan perder contra la inflación.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Un depósito bancario paga el 2,5% TAE. La inflación actual es del 3,2%. ¿Cuál es la tasa de interés real de ese depósito?',
+        opts:[
+          {t:'+2,5% real, porque el interés nominal es positivo', ok:false},
+          {t:'-0,7% real, estás perdiendo poder adquisitivo', ok:true},
+          {t:'+5,7% real (suma de ambas tasas)', ok:false},
+          {t:'0% real, se neutralizan exactamente', ok:false},
+        ],
+        ok:'Correcto. Tasa real = tipo nominal − inflación = 2,5% − 3,2% = −0,7%. Aunque el depósito paga intereses positivos, no compensan la inflación. Tu dinero crece en términos nominales pero pierde poder de compra real. Es mejor que el 0%, pero sigue siendo insuficiente en un entorno de inflación alta.',
+        bad:'La tasa real es 2,5% − 3,2% = −0,7%. Esto significa que aunque el depósito te paga intereses, la inflación los supera: cada año pierdes 0,7% de poder adquisitivo real. Para no perder contra la inflación, necesitas rendimientos superiores a ella.',
+      },
+
+      {type:'final', xp:25, msg:'La inflación es silenciosa pero medible. Ahora sabes calcular cuánto te cuesta no invertir.'},
+    ],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MÓDULO 178 — Diversificación: No Pongas Todos los Huevos en la Misma Cesta
+  ═══════════════════════════════════════════════════════════════════ */
+  {
+    id: 178, icon: '🧺', title: 'Diversificación: No Pongas Todos los Huevos en la Misma Cesta',
+    desc: 'La única estrategia gratuita para reducir riesgo sin sacrificar rentabilidad',
+    xp: 30, tag: 'INVERSIÓN', tagC: '#60a5fa',
+    steps: [
+
+      {type:'content', title:'Por Qué Diversificar Reduce el Riesgo sin Coste',
+        blocks:[
+          {t:'text', h:'Correlación: el concepto que lo explica todo',
+            p:'Dos activos con <strong>correlación +1</strong> se mueven exactamente igual: si uno cae un 10%, el otro también. Con <strong>correlación −1</strong>, cuando uno cae el otro sube. Con <strong>correlación 0</strong>, se mueven de forma independiente. Combinar activos con correlación baja o negativa reduce la volatilidad de la cartera sin reducir su rendimiento esperado — eso es exactamente lo que hace la diversificación. Harry Markowitz ganó el Nobel de Economía (1990) por demostrar esto matemáticamente.'},
+          {t:'text', h:'Diversificación geográfica y por tipo de activo',
+            p:'Meter todo en empresas españolas es apostar por el 0,7% de la economía mundial. Un <strong>ETF global MSCI World</strong> da exposición a más de 1.500 empresas de 23 países desarrollados en un solo producto. La <strong>diversificación por activos</strong> — combinar acciones con bonos, por ejemplo — reduce la volatilidad porque cuando la renta variable cae (crisis bursátil), los bonos de gobierno suelen subir porque los inversores buscan refugio.'},
+          {t:'stats', items:[
+            {v:'1.500+', l:'Empresas en un ETF MSCI World — en un solo producto'},
+            {v:'−0,3', l:'Correlación histórica aproximada entre acciones y bonos soberanos'},
+            {v:'0,7%', l:'Peso de España en la economía mundial — diversificar es imprescindible'},
+          ]},
+          {t:'hl', s:'', label:'EL PORTFOLIO 80/20: RENTABILIDAD CON AMORTIGUADOR',
+            p:'Un portfolio clásico para inversor con horizonte largo es <strong>80% acciones globales (ETF MSCI World) + 20% bonos de gobierno (ETF Aggregate)</strong>. Históricamente (1970-2024): rendimiento anual ~8,5%, máxima caída en crisis del −35% (vs −55% en cartera 100% acciones). El bono no es para ganar más — es para poder aguantar las caídas sin vender en pánico. La diversificación es el único "free lunch" en finanzas.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Tienes todo tu dinero invertido en acciones de Inditex. Un amigo te sugiere mover parte a un ETF MSCI World. ¿Qué ventaja concreta consigues?',
+        opts:[
+          {t:'Una rentabilidad garantizada más alta', ok:false},
+          {t:'Menor riesgo específico de empresa sin reducir rentabilidad esperada', ok:true},
+          {t:'Pagar menos impuestos al vender', ok:false},
+          {t:'Mayor liquidez, ya que los ETFs son más fáciles de vender', ok:false},
+        ],
+        ok:'Correcto. Al diversificar eliminas el riesgo específico de empresa (que Inditex tenga un escándalo, que cambie la moda, que un competidor la destruya). Ese riesgo específico no te paga ninguna prima de rentabilidad extra — lo asumes gratis. Diversificar lo elimina sin coste en términos de rendimiento esperado.',
+        bad:'La respuesta es menor riesgo específico sin reducir rentabilidad esperada. Concentrar en una empresa añade riesgo que el mercado no remunera. Si Inditex quiebra, pierdes todo. Si diversificas en 1.500 empresas, el fallo de una apenas te afecta. La rentabilidad esperada es similar, el riesgo mucho menor.',
+      },
+
+      {type:'content', title:'Cómo Diversificar en la Práctica con Poco Dinero',
+        blocks:[
+          {t:'text', h:'Un ETF global ya es diversificación real',
+            p:'No necesitas comprar 30 acciones distintas para diversificar. Un único <strong>ETF indexado al MSCI World</strong> (como el iShares Core MSCI World o el Vanguard FTSE All-World) te da exposición a más de 1.500 empresas de todo el mundo con una comisión anual de 0,12-0,22%. Para una cartera completa, añadir un ETF de bonos y quizás un ETF de mercados emergentes (10-15%) es suficiente para la mayoría de inversores particulares.'},
+          {t:'hl', s:'info', label:'💡 LA DIVERSIFICACIÓN QUE NO DIVERSIFICA',
+            p:'Tener 5 fondos diferentes de grandes empresas europeas <strong>no diversifica</strong>: tienen correlación altísima y caen juntos en las mismas crisis. Diversificación real implica activos con comportamientos distintos: acciones de distintas geografías, bonos, quizás una pequeña posición en materias primas. También existe el <strong>sesgo doméstico</strong> (home bias): los españoles invierten demasiado en Ibex 35, que en crisis sectoriales locales sufre más. El mundo es más grande que España.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Un inversor tiene: 40% en acciones españolas (Ibex 35), 40% en acciones europeas y 20% en bonos alemanes. ¿Cuál es el principal riesgo no diversificado de esta cartera?',
+        opts:[
+          {t:'Tiene demasiados bonos, debería ser solo acciones', ok:false},
+          {t:'Concentración geográfica en Europa: falta exposición global (EE. UU., Asia, emergentes)', ok:true},
+          {t:'Demasiada diversificación, complica la gestión innecesariamente', ok:false},
+          {t:'Los bonos alemanes y las acciones españolas tienen correlación negativa, lo que destruye rentabilidad', ok:false},
+        ],
+        ok:'Correcto. Esta cartera tiene un fuerte sesgo europeo: Europa representa ~15% del PIB mundial. Si Europa entra en recesión severa, toda la parte de renta variable cae a la vez. La diversificación real requiere exposición a EE. UU. (60% del MSCI World), Asia y mercados emergentes. Un ETF MSCI World resolvería esto automáticamente.',
+        bad:'El problema es la concentración geográfica en Europa. Si hubiera una crisis específicamente europea (y las hay: deuda soberana 2011-2012, crisis energética 2022), ambos bloques de renta variable caerían simultáneamente. Añadir un ETF global que incluya EE. UU. y Asia reduciría significativamente ese riesgo.',
+      },
+
+      {type:'final', xp:30, msg:'La diversificación es gratuita y reduce el riesgo real. Un ETF global es el punto de partida perfecto.'},
+    ],
+  },
+
+  /* ═══════════════════════════════════════════════════════════════════
+     MÓDULO 179 — El Poder del DCA: Invierte sin Pensar en el Mercado
+  ═══════════════════════════════════════════════════════════════════ */
+  {
+    id: 179, icon: '📆', title: 'El Poder del DCA: Invierte sin Pensar en el Mercado',
+    desc: 'La estrategia que elimina el market timing y convierte la volatilidad en aliada',
+    xp: 30, tag: 'INVERSIÓN', tagC: '#60a5fa',
+    steps: [
+
+      {type:'content', title:'Qué Es el DCA y Por Qué Funciona',
+        blocks:[
+          {t:'text', h:'Dollar Cost Averaging: la mecánica simple',
+            p:'El <strong>DCA (Dollar Cost Averaging)</strong> o promediación del coste consiste en invertir una cantidad fija y periódica independientemente del precio del mercado. Inviertes 200€ cada mes el día 1, suba o baje la bolsa. Cuando el mercado está bajo, tus 200€ compran más participaciones. Cuando está alto, compran menos. El resultado a largo plazo es que el <strong>precio medio de compra</strong> de tus participaciones siempre es inferior al precio promedio del mercado en ese período.'},
+          {t:'text', h:'Por qué elimina el problema del market timing',
+            p:'El <strong>market timing</strong> —intentar comprar en mínimos y vender en máximos— es estadísticamente imposible de hacer de forma consistente, incluso para los profesionales. Estudios de Vanguard muestran que el inversor medio que intenta hacer timing obtiene entre <strong>1,5% y 2% anual menos</strong> que quien simplemente invierte de forma sistemática. El DCA elimina la ecuación emocional: no tienes que decidir si es buen momento porque siempre lo es.'},
+          {t:'stats', items:[
+            {v:'−1,5%', l:'Rentabilidad anual que pierde el inversor medio por intentar hacer timing (Vanguard)'},
+            {v:'200€/mes', l:'Aportación mensual durante 10 años al 7%: resultado final ~34.600€'},
+            {v:'24.000€', l:'Total aportado en 10 años (200€×12×10) — el resto son intereses compuestos'},
+          ]},
+          {t:'hl', s:'', label:'DCA vs INVERSIÓN DE GOLPE: ¿CUÁL GANA?',
+            p:'Matemáticamente, si el mercado sube de forma continua, <strong>invertir todo de golpe (lump sum)</strong> gana al DCA porque más capital trabaja más tiempo. Vanguard analizó datos históricos y concluyó que lump sum bate al DCA en el <strong>67% de los casos</strong> con horizonte de 10 años. Pero el 33% restante (mercado lateral o bajista al principio) el DCA gana. La razón real para usar DCA no es matemática: es <strong>psicológica y práctica</strong>. La mayoría no tiene 24.000€ para invertir de golpe — los gana mes a mes.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'En enero inviertes 200€ en un ETF a 100€/participación (2 participaciones). En febrero el ETF cae a 80€ y vuelves a invertir 200€ (2,5 participaciones). En marzo sube a 120€ y vuelves a invertir 200€ (1,67 participaciones). ¿Cuál es tu precio medio de compra por participación?',
+        opts:[
+          {t:'100€ (precio del primer mes)', ok:false},
+          {t:'Unos 95,2€ (precio medio ponderado real)', ok:true},
+          {t:'100€ (media simple de 100+80+120÷3)', ok:false},
+          {t:'80€ (el precio mínimo alcanzado)', ok:false},
+        ],
+        ok:'Correcto. Total invertido: 600€. Total participaciones: 2 + 2,5 + 1,67 = 6,17. Precio medio real: 600 ÷ 6,17 = 97,2€. Es inferior a la media aritmética de precios (100€). Cuando compraste en el mes barato (80€) adquiriste más participaciones, lo que arrastra el promedio hacia abajo. Esto es exactamente la ventaja del DCA.',
+        bad:'El precio medio real es 600€ ÷ 6,17 participaciones = 97,2€. Menor que la media aritmética de precios (100€). Cuando el precio cae, tus 200€ fijos compran más unidades, lo que reduce el coste medio. Es la mecánica clave del DCA: compras más barato en promedio que el precio promedio del período.',
+      },
+
+      {type:'content', title:'Cómo Implementar el DCA en España',
+        blocks:[
+          {t:'text', h:'La automatización como clave del éxito',
+            p:'El DCA funciona cuando se <strong>automatiza completamente</strong>. La mayoría de brokers españoles (MyInvestor, DEGIRO, Indexa Capital, inbestMe) permiten programar aportaciones periódicas automáticas a fondos indexados o ETFs. El día que decides hacerlo manual — "este mes espero que baje un poco" — has roto la estrategia y vuelves al market timing. La potencia del DCA viene de su automaticidad: no piensas, no dudas, no te emocionas.'},
+          {t:'hl', s:'info', label:'💡 DCA DURANTE 10 AÑOS VS INVERSIÓN ÚNICA',
+            p:'Escenario: <strong>200€/mes durante 10 años al 7% anual</strong> → resultado: ~34.600€ sobre 24.000€ aportados. Escenario alternativo: <strong>24.000€ invertidos de golpe</strong> al inicio al 7% → resultado: ~47.200€. La inversión única gana 12.600€ más en este escenario de mercado alcista. Pero si el mercado cae un 40% el primer año, la inversión única pierde 9.600€ de entrada; el DCA apenas lo nota porque sigue comprando barato. Para quien genera ingresos mensualmente, el DCA es la única opción real — y es excelente.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Pedro tiene 12.000€ ahorrados y decide invertirlos en un ETF global durante 12 meses con DCA (1.000€/mes). Ana invierte sus 12.000€ de golpe en enero. El mercado cae un 30% en marzo y no se recupera hasta diciembre. ¿Quién tiene mejor resultado a final de año?',
+        opts:[
+          {t:'Ana, porque invirtió antes de la caída y se recuperó entera', ok:false},
+          {t:'Pedro, porque el DCA le permitió comprar barato durante la caída', ok:true},
+          {t:'Empatan, ya que ambos invierten el mismo capital total', ok:false},
+          {t:'Depende de la fecha exacta de la recuperación', ok:false},
+        ],
+        ok:'Correcto. Ana invirtió los 12.000€ justo antes de una caída del 30% — en marzo valían 8.400€. Pedro siguió comprando durante la caída a precios baratos: sus participaciones de marzo a noviembre tienen un coste muy inferior al de Ana. Al recuperarse el mercado en diciembre, Pedro sale con mejor precio medio de compra y mayor rentabilidad.',
+        bad:'Pedro sale mejor parado. Ana invirtió todo antes de la caída y sufrió el −30% sobre los 12.000€ completos. Pedro, al comprar de forma escalonada, adquirió la mayoría de sus participaciones a precios reducidos durante la caída. Al recuperarse el mercado, el precio medio de Pedro es inferior al de Ana, y su rentabilidad final mayor.',
+      },
+
+      {type:'final', xp:30, msg:'El DCA convierte la volatilidad en tu aliada. Automatiza una aportación mensual y deja que el tiempo haga el trabajo.'},
+    ],
+  },
+
 ];
 
 const WEEKLY_ACTIONS = [

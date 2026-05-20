@@ -2279,7 +2279,50 @@ function renderHomeScreen() {
   _renderRealMoneyHomeCard();
   _renderWeeklyActionCard();
   // misión grupal pasa a Laboratorio
+  renderHomeCTA();
 }
+
+function renderHomeCTA() {
+  var el = document.getElementById('home-continue-cta');
+  if (!el) return;
+  var completed = S.completedMods || [];
+  if (completed.length === 0) { el.style.display = 'none'; return; }
+  var targetId = null;
+  if (S.suggestedModuleId != null && completed.indexOf(S.suggestedModuleId) === -1) {
+    targetId = S.suggestedModuleId;
+  }
+  if (targetId === null && typeof MODULES !== 'undefined') {
+    for (var i = 0; i < MODULES.length; i++) {
+      var m = MODULES[i];
+      if (m && typeof m.id === 'number' && completed.indexOf(m.id) === -1) { targetId = m.id; break; }
+    }
+  }
+  if (targetId === null) { el.style.display = 'none'; return; }
+  var mod = null;
+  if (typeof MODULES !== 'undefined') {
+    for (var j = 0; j < MODULES.length; j++) {
+      if (MODULES[j] && MODULES[j].id === targetId) { mod = MODULES[j]; break; }
+    }
+  }
+  if (!mod) { el.style.display = 'none'; return; }
+  var isSuggested = (targetId === S.suggestedModuleId);
+  var ctaLabel = isSuggested ? 'Módulo recomendado para ti' : 'Continúa donde lo dejaste';
+  el.style.display = 'block';
+  el.innerHTML = '<button onclick="startModule(' + targetId + ')" style="' +
+    'display:flex;align-items:center;gap:12px;width:100%;' +
+    'background:linear-gradient(135deg,var(--bg2) 0%,rgba(0,229,160,0.08) 100%);' +
+    'border:1.5px solid var(--accent);border-radius:16px;padding:14px 16px;' +
+    'cursor:pointer;text-align:left;position:relative;overflow:hidden;' +
+    'animation:ctaPulse 2.4s ease-in-out infinite;">' +
+    '<div style="font-size:36px;flex-shrink:0;line-height:1;">' + mod.icon + '</div>' +
+    '<div style="flex:1;min-width:0;">' +
+      '<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;">' + ctaLabel + '</div>' +
+      '<div style="font-size:15px;font-weight:800;color:var(--text1);font-family:\'Syne\',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + mod.title + '</div>' +
+    '</div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0;">Continuar →</div>' +
+  '</button>';
+}
+window.renderHomeCTA = renderHomeCTA;
 
 /**
  * renderProfileScreen — Renderiza la pantalla de perfil.
@@ -4699,6 +4742,64 @@ function completeModule() {
   setEl('cel-title',  '¡' + mod.title + ' completado!');
   setEl('cel-xp',     '+' + _xpGainDisplay + ' XP');
   setEl('cel-streak', '🔥' + S.streak);
+
+  // ── Quiz stats en modal de celebración ──────────────────────────
+  var celQs = document.getElementById('cel-quiz-stats');
+  if (celQs) {
+    var qs = S.currentMod && S.currentMod._quizStats;
+    if (qs && (qs.correct + qs.wrong) > 0) {
+      var _total = qs.correct + qs.wrong;
+      var _pct   = Math.round((qs.correct / _total) * 100);
+      var _qColor = _pct === 100 ? 'var(--accent)' : _pct >= 80 ? '#60a5fa' : '#fb923c';
+      var _qIcon  = _pct === 100 ? '🏆' : _pct >= 80 ? '✓' : '📚';
+      celQs.style.display = 'block';
+      celQs.innerHTML = '<span style="display:inline-block;background:var(--bg2);border:1px solid ' + _qColor + ';border-radius:20px;padding:5px 14px;font-size:13px;font-weight:700;color:' + _qColor + ';">' +
+        _qIcon + ' ' + qs.correct + '/' + _total + ' correctas (' + _pct + '%)</span>';
+    } else {
+      celQs.style.display = 'none';
+    }
+  }
+
+  // ── Botón "Siguiente módulo" ─────────────────────────────────────
+  var celNextBtn = document.getElementById('cel-next-mod-btn');
+  if (celNextBtn) {
+    var _nextModId = null;
+    var _completedArr = S.completedMods || [];
+    if (typeof F28_BRANCHES !== 'undefined' && typeof MODULES !== 'undefined') {
+      var _curBranch = null;
+      for (var _bi = 0; _bi < F28_BRANCHES.length; _bi++) {
+        if (F28_BRANCHES[_bi].mods.indexOf(mod.id) !== -1) { _curBranch = F28_BRANCHES[_bi]; break; }
+      }
+      if (_curBranch) {
+        var _curPos = _curBranch.mods.indexOf(mod.id);
+        for (var _mi = _curPos + 1; _mi < _curBranch.mods.length; _mi++) {
+          if (_completedArr.indexOf(_curBranch.mods[_mi]) === -1) { _nextModId = _curBranch.mods[_mi]; break; }
+        }
+      }
+      if (_nextModId === null) {
+        if (S.suggestedModuleId != null && _completedArr.indexOf(S.suggestedModuleId) === -1) {
+          _nextModId = S.suggestedModuleId;
+        } else {
+          for (var _ai = 0; _ai < MODULES.length; _ai++) {
+            var _am = MODULES[_ai];
+            if (_am && typeof _am.id === 'number' && _completedArr.indexOf(_am.id) === -1) { _nextModId = _am.id; break; }
+          }
+        }
+      }
+    }
+    if (_nextModId != null) {
+      var _nextMod = null;
+      for (var _nmi = 0; _nmi < MODULES.length; _nmi++) {
+        if (MODULES[_nmi] && MODULES[_nmi].id === _nextModId) { _nextMod = MODULES[_nmi]; break; }
+      }
+      celNextBtn.innerHTML = '⚡ ' + (_nextMod ? _nextMod.icon + ' ' + _nextMod.title : 'Siguiente módulo') + ' →';
+      celNextBtn.style.display = 'block';
+      celNextBtn.onclick = (function(nid) { return function() { closeModal('m-cel'); startModule(nid); }; }(_nextModId));
+    } else {
+      celNextBtn.style.display = 'none';
+    }
+  }
+
   openModal('m-cel');
   SFX.moduleComplete();
   if ((S.completedMods || []).length === 1) NOTIFS.onFirstModule();
