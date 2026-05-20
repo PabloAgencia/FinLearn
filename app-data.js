@@ -6611,6 +6611,301 @@ const EXAM_QUESTION_POOL = [
     ],
   },
 
+  {
+    id: 180, icon: '🌍', title: 'Fondos Indexados: La Estrategia que Bate al 90%',
+    desc: 'Por qué el 90% de los gestores activos pierde contra el índice y cómo aprovecharlo',
+    xp: 30, tag: 'INVERSIÓN', tagC: '#60a5fa',
+    steps: [
+
+      {type:'content', title:'Qué Es un Fondo Indexado y Por Qué Existe',
+        blocks:[
+          {t:'text', h:'Replicar el mercado en lugar de intentar batirlo',
+            p:'Un <strong>fondo indexado</strong> es un fondo de inversión que replica automáticamente un índice bursátil — por ejemplo el S&P 500 (500 mayores empresas de EEUU), el MSCI World (1.600 empresas de 23 países desarrollados) o el IBEX 35. No hay un gestor eligiendo acciones: el fondo simplemente compra todas las empresas del índice en la misma proporción. El resultado es que obtienes exactamente la rentabilidad del mercado, menos una comisión mínima. La idea fue de <strong>John Bogle</strong>, fundador de Vanguard, en 1976. Hoy gestiona billones de euros.'},
+          {t:'text', h:'El dato SPIVA: el 90% de los gestores pierde contra el índice',
+            p:'El informe <strong>SPIVA (S&P Indices vs. Active) 2024</strong> analiza si los fondos activos baten a su índice de referencia. Resultado en España: el <strong>90,3% de los fondos de renta variable española activos</strong> obtuvieron peor rentabilidad que el IBEX en los últimos 10 años. A nivel global, el 92% de los fondos activos de renta variable estadounidense no batieron al S&P 500 en 15 años. No es que los gestores sean malos — es que <strong>las comisiones se comen la diferencia</strong> y el mercado es eficiente: no hay información que el gestor tenga que el mercado no descuente ya.'},
+          {t:'stats', items:[
+            {v:'90,3%', l:'Fondos activos españoles que no batieron al índice en 10 años (SPIVA 2024)'},
+            {v:'0,07%', l:'TER (comisión anual) típico de un fondo indexado global en MyInvestor'},
+            {v:'1,5%–2%', l:'TER medio de un fondo activo español — 20-30 veces más caro'},
+          ]},
+          {t:'hl', s:'', label:'LA DESTRUCCIÓN DE RIQUEZA DE LAS COMISIONES',
+            p:'<strong>Ejemplo real a 20 años:</strong> inviertes 10.000€ al 7% anual. Con fondo indexado al <strong>0,07% de comisión</strong>: resultado final ~38.450€. Con fondo activo al <strong>1,5% de comisión</strong>: resultado final ~30.900€. <strong>Diferencia: 7.550€</strong> — el 75% de lo que invertiste al inicio, perdido solo en comisiones. Y eso asumiendo que el fondo activo iguala al índice, cuando la mayoría lo supera. Las comisiones son el mayor destructor silencioso de riqueza del inversor minorista.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Inviertes 10.000€ a 20 años con una rentabilidad bruta del 7% anual. Fondo A: TER 0,07%. Fondo B: TER 1,5%. ¿Cuánto dinero pierdes aproximadamente con el Fondo B respecto al Fondo A?',
+        opts:[
+          {t:'Unos 1.430€ (la diferencia de comisiones acumuladas)', ok:false},
+          {t:'Unos 7.550€ (efecto del interés compuesto sobre las comisiones)', ok:true},
+          {t:'No pierdes nada si el fondo activo bate al mercado ese año', ok:false},
+          {t:'Exactamente 1,43% × 10.000€ × 20 años = 2.860€', ok:false},
+        ],
+        ok:'Correcto. La diferencia no es lineal: el interés compuesto multiplica el impacto. Con TER 0,07% obtienes ~38.450€. Con TER 1,5% obtienes ~30.900€. La diferencia es ~7.550€ — mucho más que simplemente multiplicar la diferencia de comisión por años, porque las comisiones reducen el capital que genera intereses cada año.',
+        bad:'El impacto real es ~7.550€, no la suma lineal de las comisiones. El interés compuesto actúa sobre el capital neto: cada año las comisiones del fondo activo reducen el capital base, y ese capital reducido genera menos intereses los años siguientes. Es el efecto compuesto funcionando en tu contra. Fondo indexado: ~38.450€. Fondo activo: ~30.900€.',
+      },
+
+      {type:'content', title:'Fondo Indexado vs ETF: La Diferencia Práctica',
+        blocks:[
+          {t:'text', h:'Dos formas de indexarse: misma filosofía, diferente mecánica',
+            p:'Un <strong>ETF (Exchange Traded Fund)</strong> es también un fondo indexado, pero cotiza en bolsa como una acción: puedes comprarlo y venderlo en tiempo real durante el horario de mercado. Un <strong>fondo indexado tradicional</strong> se suscribe y reembolsa una vez al día al valor liquidativo de cierre. Para el inversor de largo plazo, la diferencia es irrelevante. La ventaja práctica del ETF es la comisión: los ETFs indexados (iShares, Vanguard, Amundi) tienen TERs de <strong>0,04% a 0,25%</strong>. En España los ETFs tributan igual que las acciones (no tienen el beneficio del traspaso sin peaje fiscal), por lo que para cuentas normales los fondos indexados suelen ser más eficientes fiscalmente.'},
+          {t:'hl', s:'info', label:'💡 CÓMO EMPEZAR EN ESPAÑA: PLATAFORMAS RECOMENDADAS',
+            p:'<strong>MyInvestor</strong>: broker español, fondos indexados de Vanguard, iShares y Amundi desde 1€. Fondo más popular: Vanguard Global Stock Index (MSCI World, TER 0,18%) o Amundi MSCI World (TER 0,12%). Sin comisión de custodia. <strong>Trade Republic</strong>: broker europeo, ETFs desde 1€ con planes de ahorro automáticos sin comisión. Ideal para ETFs. <strong>Indexa Capital</strong>: gestión automatizada de carteras indexadas desde 10.000€, perfecta si no quieres elegir. Evita los "fondos indexados" de tu banco de toda la vida — suelen tener TER entre 0,5% y 1%, que elimina parte de la ventaja.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'¿Cuál es la principal ventaja fiscal de los fondos indexados tradicionales frente a los ETFs para un inversor español con cuenta de valores normal?',
+        opts:[
+          {t:'Los fondos indexados tienen siempre comisiones más bajas que los ETFs', ok:false},
+          {t:'Puedes traspasar entre fondos sin tributar por las plusvalías hasta que reembolsas', ok:true},
+          {t:'Los ETFs no replican índices internacionales', ok:false},
+          {t:'Los fondos indexados están garantizados por el Estado', ok:false},
+        ],
+        ok:'Correcto. En España, los fondos de inversión tradicionales (incluidos los indexados) tienen el "beneficio del traspaso": puedes mover dinero de un fondo a otro sin tributar por las plusvalías generadas hasta ese momento. Solo pagas impuestos cuando retiras el dinero. Los ETFs tributan como acciones: cada venta genera un hecho imponible. Para inversión a largo plazo con rebalanceos, los fondos indexados tradicionales son más eficientes fiscalmente.',
+        bad:'La ventaja clave es fiscal. En España puedes traspasar dinero entre fondos de inversión sin pagar impuestos por las plusvalías — el "peaje fiscal" se difiere hasta el reembolso final. Con ETFs, cada venta tributa inmediatamente. Esto hace que los fondos indexados tradicionales sean más eficientes para estrategias de largo plazo con rebalanceos periódicos.',
+      },
+
+      {type:'final', xp:30, msg:'Ahora sabes por qué el 90% de los gestores pierde contra el índice y cómo acceder al mercado global con menos de 0,20% de comisión anual.'},
+    ],
+  },
+
+  {
+    id: 181, icon: '🛍️', title: 'Psicología del Precio: Por Qué Compras Lo Que No Necesitas',
+    desc: 'Los trucos cognitivos que usan las marcas para vaciar tu cartera sin que te des cuenta',
+    xp: 28, tag: 'PSICOLOGÍA', tagC: '#c084fc',
+    steps: [
+
+      {type:'content', title:'Anchoring y El Precio Tachado: El Truco Más Viejo',
+        blocks:[
+          {t:'text', h:'El anclaje: tu cerebro se queda con el primer número',
+            p:'El <strong>anchoring (efecto ancla)</strong> es uno de los sesgos cognitivos más poderosos en el consumo: cuando ves un precio, tu cerebro lo usa como referencia para evaluar si lo siguiente es caro o barato. El primer número que ves "ancla" tu percepción. Un vino de 50€ al lado de uno de 150€ parece barato. La misma camisa a 39,99€ al lado de otra a 89,99€ parece una ganga. <strong>La percepción de precio no es absoluta, es relativa al ancla</strong>. Los comercios lo saben y diseñan sus lineales, catálogos y páginas web para que veas el precio más caro primero.'},
+          {t:'text', h:'El precio tachado: la mentira legal más extendida',
+            p:'El <strong>precio tachado</strong> ("antes 99€, ahora 59€") activa el anchoring de forma brutal: tu cerebro calcula el ahorro imaginario (40€) en lugar del coste real (59€). El problema: en muchos casos el precio "original" nunca fue real o estuvo activo solo 1-2 días para poder tacharlo legalmente. En España la directiva europea 2019/2161 obliga a que el precio de referencia sea el precio más bajo de los últimos 30 días — pero las marcas lo cumplen subiendo el precio 30 días antes del Black Friday y luego "rebajándolo". El precio tachado <strong>no te dice nada sobre si algo es barato</strong>; solo manipula tu ancla mental.'},
+          {t:'stats', items:[
+            {v:'40%', l:'Aumento en conversión de ventas cuando se muestra precio "tachado" vs precio solo (estudio Nielsen)'},
+            {v:'3×', l:'Las personas pagan hasta 3 veces más si el ancla inicial es alta (estudio Ariely, MIT)'},
+            {v:'30 días', l:'Período mínimo legal que debe llevar el precio de referencia para poder tacharlo en España'},
+          ]},
+          {t:'hl', s:'', label:'FOMO DEL CONSUMIDOR: LA URGENCIA FABRICADA',
+            p:'El <strong>FOMO (Fear Of Missing Out)</strong> aplicado al consumo explota tu aversión a la pérdida: "solo quedan 3 unidades", "oferta termina en 02:47:13", "10 personas están mirando esto ahora". Amazon, Booking y Zalando son maestros de esta técnica. El contador regresivo te hace sentir que si no compras ahora, perderás algo. En muchos casos el contador se reinicia o el stock "limitado" se repone al instante. <strong>La urgencia real es casi siempre fabricada</strong>. Una regla simple: si necesitas decidir en menos de 10 minutos, la decisión probablemente no deberías tomarla.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Entras a una tienda online. Ves una chaqueta con precio original 120€ tachado, ahora a 72€. Debajo, otra chaqueta similar a 65€ sin descuento. ¿Cuál es el efecto cognitivo que te hace percibir la chaqueta de 72€ como mejor opción, aunque sea más cara?',
+        opts:[
+          {t:'Efecto halo: asumes que la chaqueta cara es de mejor calidad', ok:false},
+          {t:'Anchoring: el precio tachado de 120€ ancla tu referencia y 72€ parece barato', ok:true},
+          {t:'Aversión al riesgo: la chaqueta sin descuento parece más arriesgada', ok:false},
+          {t:'Disonancia cognitiva: te resistes a comprar la más barata por orgullo', ok:false},
+        ],
+        ok:'Correcto. El anchoring hace que tu cerebro procese 72€ como "28€ más barato que 120€" en lugar de "7€ más caro que 65€". La referencia mental cambia de la alternativa real (65€) al precio tachado fabricado (120€). El resultado: pagas 10% más creyendo que ahorras. Este mecanismo es el núcleo del precio tachado y lo usan todas las plataformas de e-commerce.',
+        bad:'Es anchoring. El precio tachado (120€) se convierte en tu ancla mental. En lugar de comparar las dos chaquetas entre sí (72€ vs 65€), tu cerebro calcula el "ahorro" respecto al ancla: 120€ − 72€ = 48€ ahorrados. Eso distorsiona completamente tu percepción. La chaqueta de 72€ es en realidad un 10% más cara que la alternativa sin manipulación.',
+      },
+
+      {type:'content', title:'Mental Accounting: Cómo Tu Cerebro Crea Cuentas Falsas',
+        blocks:[
+          {t:'text', h:'El dinero no es fungible para tu cerebro',
+            p:'La <strong>contabilidad mental (mental accounting)</strong>, concepto del Nobel Richard Thaler, describe cómo las personas asignan el dinero a "cuentas" mentales separadas que no se comunican entre sí. El dinero de la nómina lo tratas con cuidado. El dinero de un regalo o de una devolución de Hacienda lo gastas con más alegría, aunque valen igual. El dinero en una tarjeta de regalo lo gastas más fácil que el efectivo. <strong>El dinero siempre vale lo mismo independientemente de su origen o formato</strong>, pero tu cerebro no lo trata así. Las empresas explotan este sesgo: las tarjetas regalo, los puntos de fidelización y el cashback crean "cuentas mentales" separadas para hacerte gastar más.'},
+          {t:'hl', s:'info', label:'💡 LA REGLA DE LOS 10 MINUTOS Y EL COSTE POR USO',
+            p:'Dos técnicas para contrarrestar los sesgos de precio. <strong>Regla de los 10 minutos</strong>: ante una compra no planificada, espera 10 minutos antes de decidir. El 60% de las compras impulsivas desaparecen en ese tiempo (estudio Journal of Consumer Research 2022). <strong>Coste por uso</strong>: en lugar de pensar en el precio total, calcula cuánto costará cada vez que lo uses. Un abrigo de 200€ que uses 100 veces = 2€ por uso. Una prenda de 30€ que uses 3 veces = 10€ por uso. La "ganga" muchas veces es lo que más caro sale por uso. Esta perspectiva rompe el anchoring y el efecto precio tachado.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Recibes 500€ de devolución de la declaración de la renta. Dos semanas después tienes un gasto de fontanería imprevisto de 500€. Según la contabilidad mental, ¿cómo reaccionará la mayoría de personas?',
+        opts:[
+          {t:'Con indiferencia: 500€ de gasto equivale exactamente a los 500€ recibidos', ok:false},
+          {t:'Con más dolor por el gasto de lo que sintieron placer por el ingreso', ok:true},
+          {t:'Sin dolor porque mentalmente ya "tenían" esos 500€ extra disponibles', ok:false},
+          {t:'Con placer porque el balance neto es cero y no han perdido nada', ok:false},
+        ],
+        ok:'Correcto. La aversión a la pérdida (Kahneman y Tversky) dice que perder 500€ duele aproximadamente el doble de lo que alegra ganarlos. Aunque el balance neto es cero, el gasto inesperado de fontanería genera mucho más malestar que el placer de la devolución. La mayoría también mantiene "cuentas separadas": el dinero de Hacienda ya lo habían mentalmente gastado en otra cosa, así que la fontanería se siente como una pérdida pura.',
+        bad:'La mayoría sentirá más dolor por el gasto que placer por el ingreso. Es la aversión a la pérdida: perder pesa psicológicamente unas 2 veces más que ganar la misma cantidad. Además, la contabilidad mental ya había "asignado" el dinero de Hacienda a una cuenta mental concreta, así que la fontanería se siente como un gasto adicional, no como compensación.',
+      },
+
+      {type:'final', xp:28, msg:'Conocer estos sesgos no los elimina, pero sí los debilita. La próxima vez que veas un precio tachado, pregúntate: ¿cuánto cuesta realmente comparado con la alternativa?'},
+    ],
+  },
+
+  {
+    id: 182, icon: '💼', title: 'Autónomos: Cuánto Pagar de Impuestos Realmente',
+    desc: 'El sistema de cotización por ingresos reales, el modelo 130 y los gastos que sí puedes deducir',
+    xp: 32, tag: 'FISCALIDAD', tagC: '#fbbf24',
+    steps: [
+
+      {type:'content', title:'Cotización por Ingresos Reales: El Sistema Desde 2023',
+        blocks:[
+          {t:'text', h:'El nuevo sistema de 15 tramos desde enero 2023',
+            p:'Desde el 1 de enero de 2023, los autónomos en España cotizan a la Seguridad Social en función de sus <strong>ingresos netos reales</strong> (rendimientos netos previstos), no por una cuota fija elegida libremente. Hay <strong>15 tramos</strong>: desde la cuota mínima de <strong>200€/mes</strong> para rendimientos netos inferiores a 670€/mes, hasta <strong>590€/mes</strong> para rendimientos netos superiores a 6.000€/mes. En 2025 la base mínima es 653,59€/mes y la cuota mínima resultante ronda los 200€/mes. Debes declarar una previsión de ingresos al inicio del año y regularizar al cierre. Si declaras de más, te devuelven; si declaras de menos, pagas la diferencia.'},
+          {t:'text', h:'Cómo calcular el rendimiento neto para elegir tramo',
+            p:'El <strong>rendimiento neto</strong> para elegir el tramo de cotización se calcula como: <strong>Ingresos − Gastos deducibles − 7% de deducción por gastos de difícil justificación</strong> (para autónomos en estimación directa simplificada). Ejemplo: autónomo con 30.000€ de ingresos anuales, 8.000€ de gastos deducibles reales. Rendimiento bruto: 22.000€. Menos 7%: 22.000€ × 0,93 = 20.460€ anuales = 1.705€/mes. Ese dato determina tu tramo de cotización. En 2025 para ese nivel la cuota ronda los <strong>294€/mes</strong>.'},
+          {t:'stats', items:[
+            {v:'200€', l:'Cuota mínima mensual autónomos 2025 (tramo 1, ingresos netos <670€/mes)'},
+            {v:'294€', l:'Cuota aproximada para rendimiento neto de 1.700€/mes (tramo 7-8)'},
+            {v:'590€', l:'Cuota máxima 2025 (tramo 15, rendimientos netos >6.000€/mes)'},
+          ]},
+          {t:'hl', s:'', label:'GASTOS DEDUCIBLES REALES QUE MUCHOS AUTÓNOMOS NO APLICAN',
+            p:'Gastos deducibles en estimación directa simplificada (con factura): <strong>cuota de autónomos</strong> (íntegra), <strong>alquiler de oficina o despacho</strong>, <strong>suministros si trabajas desde casa</strong> (30% de la parte proporcional de la vivienda afecta), <strong>material de oficina</strong>, <strong>servicios de gestoría/asesoría</strong>, <strong>formación relacionada con la actividad</strong>, <strong>gastos de marketing y publicidad</strong>, <strong>vehículo</strong> (solo si está afecto al 100% a la actividad y puedes justificarlo), <strong>dietas</strong> (hasta 26,67€/día en España, 48,08€ en extranjero, con justificación). El gasto deducible reduce tu base imponible de IRPF y también tu rendimiento neto para el cálculo de la cuota de autónomos.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Eres autónomo en estimación directa simplificada. En el primer trimestre tienes: ingresos 4.000€, gastos deducibles 1.000€. ¿Cuánto debes pagar en el modelo 130 de IRPF de ese trimestre?',
+        opts:[
+          {t:'400€ (20% sobre los ingresos brutos de 4.000€)', ok:false},
+          {t:'750€ (25% sobre los ingresos brutos)', ok:false},
+          {t:'300€ (20% sobre el rendimiento neto de 3.000€)', ok:true},
+          {t:'Nada, el modelo 130 solo se paga si superas 10.000€ trimestrales', ok:false},
+        ],
+        ok:'Correcto. El modelo 130 (pago fraccionado de IRPF) se calcula como el 20% del rendimiento neto del trimestre: Ingresos (4.000€) − Gastos deducibles (1.000€) = Rendimiento neto 3.000€. El 20% de 3.000€ = 600€. Pero puedes restar las retenciones de facturas emitidas con IRPF y las cuotas de autónomos pagadas. Si tienes 0€ retenido y cuota de autónomos 300€: 600€ − 300€ = 300€ a pagar. La respuesta más limpia sin retenciones y descontando la cuota es 300€.',
+        bad:'El modelo 130 aplica el 20% sobre el rendimiento neto trimestral (ingresos menos gastos deducibles), no sobre los ingresos brutos. Rendimiento neto: 4.000€ − 1.000€ = 3.000€. El 20% es 600€. A eso se restan las retenciones ya practicadas en tus facturas y la cuota de autónomos del trimestre (~300€ en este caso), resultando aproximadamente 300€ a pagar.',
+      },
+
+      {type:'content', title:'La Declaración de la Renta del Autónomo: Lo Que Cambia',
+        blocks:[
+          {t:'text', h:'IRPF anual: los pagos fraccionados a cuenta',
+            p:'Los modelos 130 que pagas cada trimestre son <strong>pagos a cuenta del IRPF anual</strong>. En la declaración de la renta (modelo 100, abril-junio del año siguiente), calculas tu IRPF total del año y restas lo ya pagado con los 4 modelos 130. Si pagaste de más, te devuelven. Si pagaste de menos, pagas la diferencia. Los autónomos también tienen que presentar el <strong>modelo 303</strong> de IVA trimestralmente (IVA repercutido menos IVA soportado) y el modelo 390 anual de resumen de IVA. La gestoría media en España cobra entre <strong>80€ y 150€/mes</strong> por llevar todo esto — suele ser el gasto más rentable que puede hacer un autónomo.'},
+          {t:'hl', s:'info', label:'💡 LA TARIFA PLANA Y BONIFICACIONES 2025',
+            p:'Si te das de alta como autónomo por primera vez (o si no has sido autónomo los últimos 2 años), tienes derecho a la <strong>tarifa plana de 80€/mes durante los primeros 12 meses</strong>, independientemente de tus ingresos. Algunos ayuntamientos y comunidades autónomas añaden bonificaciones adicionales. En el segundo año la cuota sube progresivamente. Importante: la tarifa plana no exime de presentar el modelo 130 ni el 303 — solo reduce la cuota de Seguridad Social. Tampoco se aplica si ya disfrutaste de ella en el alta anterior.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Un autónomo cobra a sus clientes sin retención de IRPF en las facturas. ¿Qué consecuencia tiene esto en su modelo 130 trimestral?',
+        opts:[
+          {t:'No tiene que presentar el modelo 130 si no tiene retenciones', ok:false},
+          {t:'Paga el 20% completo del rendimiento neto sin poder restar retenciones previas', ok:true},
+          {t:'Puede aplazar el pago de IRPF hasta la declaración anual', ok:false},
+          {t:'La Agencia Tributaria le aplica un recargo automático del 5%', ok:false},
+        ],
+        ok:'Correcto. Las retenciones de IRPF en facturas son anticipos que tus clientes ingresan directamente a Hacienda por ti. Si no las aplicas (muchos autónomos que trabajan con particulares no pueden), no hay nada que restar en el modelo 130 y pagas el 20% del rendimiento neto íntegro cada trimestre. La desventaja es que el pago de tesorería es mayor. La ventaja: cobras el importe íntegro de tus facturas sin que el cliente te retenga nada.',
+        bad:'Sin retenciones en facturas, el modelo 130 recoge el 20% del rendimiento neto sin poder restar anticipos ya ingresados. Sí es obligatorio presentarlo (salvo que el 70% de tus ingresos ya lleven retención). La obligación de presentar el modelo 130 existe independientemente de si tienes retenciones o no; la diferencia es solo cuánto sale a pagar.',
+      },
+
+      {type:'final', xp:32, msg:'Entender tu fiscalidad como autónomo es dinero directo en tu bolsillo. Cada euro deducible que no aplicas es un euro que regalas a Hacienda innecesariamente.'},
+    ],
+  },
+
+  {
+    id: 183, icon: '🏛️', title: 'Bonos del Estado: La Inversión Conservadora',
+    desc: 'Letras, bonos y obligaciones del Tesoro español: cómo funcionan, qué rentabilidad ofrecen y cómo comprarlos',
+    xp: 27, tag: 'INVERSIÓN', tagC: '#60a5fa',
+    steps: [
+
+      {type:'content', title:'Letras, Bonos y Obligaciones: Las Tres Formas de Prestar al Estado',
+        blocks:[
+          {t:'text', h:'La deuda pública como instrumento de inversión',
+            p:'Cuando el Estado necesita financiación emite <strong>deuda pública</strong>: tú prestas dinero al Estado y él te devuelve el capital más un interés pactado. Hay tres tipos según el plazo: <strong>Letras del Tesoro</strong> (3, 6, 9 o 12 meses) — son al descuento: compras por menos del nominal y recibes el nominal al vencer; <strong>Bonos del Estado</strong> (2 y 5 años) — pagan un cupón anual fijo y devuelven el nominal al vencimiento; <strong>Obligaciones del Estado</strong> (10, 15, 30 y 50 años) — igual que los bonos pero a más largo plazo. En todos los casos el emisor es el <strong>Tesoro Público español</strong> y el riesgo de impago es prácticamente nulo para los plazos cortos (las agencias de rating califican a España con Baa1/A− en 2025).'},
+          {t:'text', h:'Rentabilidades actuales en 2025',
+            p:'Tras el ciclo de subidas del BCE de 2022-2023 y las bajadas de 2024-2025, las rentabilidades de la deuda española en mayo de 2025 son: <strong>Letras a 12 meses: ~2,7-2,9%</strong> TAE; <strong>Bonos a 5 años: ~2,9-3,1%</strong>; <strong>Obligaciones a 10 años: ~3,2-3,4%</strong>. Son rentabilidades reales netas mejores que la cuenta corriente media española (que paga ~0,1-0,5%) y comparables a los mejores depósitos, pero con la ventaja de poder venderse en el mercado secundario antes del vencimiento. Punto importante: la rentabilidad de la deuda pública <strong>tributa como rendimiento del capital mobiliario</strong> al tipo de la base del ahorro (19%-28% en función del tramo).'},
+          {t:'stats', items:[
+            {v:'~2,8%', l:'Rentabilidad aproximada Letra del Tesoro a 12 meses (mayo 2025)'},
+            {v:'~3,3%', l:'Rentabilidad aproximada Obligación del Estado a 10 años (mayo 2025)'},
+            {v:'1.000€', l:'Nominal mínimo para suscribir deuda pública en tesoro.es (subasta competitiva)'},
+          ]},
+          {t:'hl', s:'', label:'CÓMO COMPRAR EN TESORO.ES: EL PROCESO PASO A PASO',
+            p:'Puedes comprar deuda pública directamente sin intermediarios en <strong>tesoro.es</strong> (cuenta directa del Tesoro, sin comisiones) o a través de tu banco o broker (con comisiones de 0,1%-0,5%). En tesoro.es: necesitas certificado digital o Cl@ve; accedes a "Cuenta directa en el Tesoro"; seleccionas el tipo (Letra, Bono, Obligación), el importe y el tipo de orden (no competitiva = aceptas el precio de la subasta, recomendado para particulares). El dinero se carga en tu cuenta bancaria el día de la subasta y al vencimiento recibes el nominal más intereses directamente en tu cuenta. <strong>Comisión del Tesoro: 0€</strong>.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Tienes un bono del Estado al 3% con vencimiento en 5 años. Los tipos de interés suben significativamente. ¿Qué ocurre con el precio de mercado de tu bono si necesitas venderlo antes del vencimiento?',
+        opts:[
+          {t:'El precio sube porque los tipos más altos atraen más compradores', ok:false},
+          {t:'El precio baja porque los nuevos bonos emitidos ofrecen más rentabilidad', ok:true},
+          {t:'El precio no cambia porque el cupón está fijo en contrato', ok:false},
+          {t:'El precio sube porque el Estado garantiza el nominal más los intereses', ok:false},
+        ],
+        ok:'Correcto. La relación precio/rentabilidad de los bonos es inversa: cuando los tipos suben, se emiten nuevos bonos con cupones más altos. Tu bono al 3% es menos atractivo que los nuevos al 4%, así que su precio en el mercado secundario baja hasta que la rentabilidad efectiva se iguala con la de los nuevos emisiones. Si lo mantienes hasta vencimiento no te afecta — cobras el cupón pactado y el nominal. El riesgo de tipos solo se materializa si vendes antes del vencimiento.',
+        bad:'Relación inversa: cuando los tipos suben, los bonos existentes de cupón fijo bajan de precio en el mercado secundario. Un bono al 3% no puede competir con los nuevos al 4% a igual precio, así que su precio cae hasta que la rentabilidad efectiva se equipara. Si lo mantienes hasta vencimiento, cobras exactamente lo pactado. El riesgo de tipos de interés en bonos solo se realiza si vendes antes del vencimiento.',
+      },
+
+      {type:'content', title:'Deuda Pública vs Depósitos vs Fondos Monetarios',
+        blocks:[
+          {t:'text', h:'Tres opciones conservadoras para el dinero que no quieres en bolsa',
+            p:'Para capital que necesitas conservar con rentabilidad moderada tienes tres opciones principales en 2025: <strong>Letras del Tesoro</strong> (~2,8% TAE, 0 comisiones vía tesoro.es, plazo fijo hasta vencimiento, tributa al cobrar); <strong>Depósitos bancarios</strong> (0,5%-3,5% TAE según banco, cubiertos por el FGD hasta 100.000€ por banco y titular, liquidez limitada al vencimiento); <strong>Fondos monetarios</strong> (0,5%-3% neto tras comisiones, liquidez diaria, ventaja del traspaso sin peaje fiscal entre fondos). Para importes superiores a 100.000€ el Tesoro es preferible al depósito porque no hay límite de cobertura — el Estado español respalda íntegro el nominal.'},
+          {t:'hl', s:'info', label:'💡 EL RIESGO REAL DE LAS LETRAS DEL TESORO',
+            p:'Las Letras del Tesoro son consideradas <strong>activos libres de riesgo de crédito</strong> en el contexto europeo: la probabilidad de que España no devuelva una letra a 12 meses es prácticamente cero. Sin embargo, tienen dos riesgos menores que conviene conocer: <strong>Riesgo de tipos</strong> (si vendes antes del vencimiento y los tipos han subido, el precio de mercado puede ser inferior al precio de compra); <strong>Riesgo de reinversión</strong> (cuando vence la letra, si los tipos han bajado, la siguiente letra te pagará menos). Para los plazos cortos (3-12 meses) y manteniéndolas hasta vencimiento, la rentabilidad está prácticamente garantizada. Son la mejor opción para el fondo de emergencia que genera algo de rentabilidad.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Compras una Letra del Tesoro a 12 meses con un nominal de 10.000€ por 9.730€ (al descuento). ¿Cuál es la rentabilidad bruta aproximada y cuánto pagas de impuestos si tu tramo de ahorro es el 19%?',
+        opts:[
+          {t:'Rentabilidad 2,7%; impuestos: ~51,3€', ok:true},
+          {t:'Rentabilidad 2,7%; no tributa porque la ganancia es inferior a 1.000€', ok:false},
+          {t:'Rentabilidad 10%; impuestos: 190€', ok:false},
+          {t:'Rentabilidad 2,7%; impuestos: 270€ porque tributa sobre el nominal', ok:false},
+        ],
+        ok:'Correcto. Ganancia bruta: 10.000€ − 9.730€ = 270€. Rentabilidad: 270÷9.730 = 2,77% TAE aproximado. Impuesto al 19%: 270€ × 0,19 = 51,3€. Rentabilidad neta: 270€ − 51,3€ = 218,7€ sobre 9.730€ invertidos = 2,25% neto. Las letras al descuento tributan por la diferencia entre precio de compra y nominal recibido, como rendimiento del capital mobiliario en la base del ahorro.',
+        bad:'Ganancia: 10.000 − 9.730 = 270€. Rentabilidad bruta: 270÷9.730 ≈ 2,77%. Impuestos al 19%: 270 × 0,19 = 51,3€. La letra tributa por la diferencia entre lo pagado y el nominal recibido, como rendimiento del capital mobiliario en la declaración de la renta. No hay exención por ser pública ni por ser inferior a ningún umbral. La rentabilidad neta resultante es aproximadamente el 2,25%.',
+      },
+
+      {type:'final', xp:27, msg:'Ahora puedes comprar Letras del Tesoro en tesoro.es sin pagar comisiones y entiendes por qué los tipos de interés y el precio de los bonos siempre se mueven en direcciones opuestas.'},
+    ],
+  },
+
+  {
+    id: 184, icon: '🛡️', title: 'Seguros: Los Que Necesitas y Los Que Son un Engaño',
+    desc: 'Distingue los seguros imprescindibles de los que solo enriquecen a las aseguradoras',
+    xp: 28, tag: 'AVANZADO', tagC: '#f87171',
+    steps: [
+
+      {type:'content', title:'Los Seguros Imprescindibles: Cuándo Sí Merece la Pena',
+        blocks:[
+          {t:'text', h:'La regla básica del seguro: cúbrete contra lo que no podrías absorber',
+            p:'Un seguro solo tiene sentido cuando el evento cubierto tendría un <strong>impacto financiero catastrófico</strong> que no podrías asumir con tu patrimonio actual. La prima (lo que pagas) siempre es estadísticamente superior al valor esperado del siniestro — si no, las aseguradoras no ganarían dinero. El seguro no es un mecanismo de ahorro ni de inversión; es una <strong>transferencia de riesgo</strong>. Por tanto, solo debes asegurar lo que, si ocurriera, te dejaría en una situación financiera irreversible. Bajo esa lógica, los seguros verdaderamente imprescindibles son pocos.'},
+          {t:'text', h:'Los tres seguros que sí tienen sentido',
+            p:'<strong>1. Seguro de vida (si tienes dependientes):</strong> Si tienes hijos menores o personas que dependen económicamente de ti y tú falleces, necesitan un capital para sostenerse. Un seguro de vida temporal (no unit-linked, no ahorro) para un adulto sano de 35 años cuesta entre <strong>15-30€/mes</strong> para un capital de 200.000€. Si no tienes dependientes o tienes suficiente patrimonio para cubrirlos, no necesitas seguro de vida. <strong>2. Seguro de hogar:</strong> obligatorio si tienes hipoteca (la entidad lo exige), muy recomendable si tienes propiedades. Cubre daños estructurales y de contenido. Precio medio: 200-400€/año. <strong>3. Seguro de salud si eres autónomo:</strong> deducible íntegramente (hasta 500€/persona/año tú, cónyuge e hijos), cubre la asistencia privada rápida y compensa si no puedes permitirte esperas de la sanidad pública.'},
+          {t:'stats', items:[
+            {v:'15-30€', l:'Coste mensual de un seguro de vida temporal 200.000€ para persona sana de 35 años'},
+            {v:'500€', l:'Deducción máxima en IRPF del seguro de salud para autónomos (por persona cubierta, 2025)'},
+            {v:'73%', l:'De los seguros de protección de pagos reclamados que no se cobran por las exclusiones (Organización de Consumidores OCU)'},
+          ]},
+          {t:'hl', s:'', label:'LA REGLA DEL AUTOSEGURO',
+            p:'El <strong>autoseguro</strong> consiste en reservar tú mismo el dinero que pagarías de prima para cubrir eventos de bajo coste. Si un electrodoméstico que vale 500€ tiene una garantía extendida de 80€/año, en 6 años habrás pagado 480€ — casi el valor del aparato. En cambio, si apartas 80€ al mes en un fondo de emergencia, en 6 meses tienes 480€ disponibles para cualquier imprevisto. El autoseguro es superior en cualquier evento cuyo coste <strong>podrías absorber sin cambiar tu estilo de vida</strong>. La frontera habitual: eventos por debajo de 2.000-3.000€ son candidatos al autoseguro; por encima, vale la pena analizar un seguro.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'¿En cuál de estas situaciones es el seguro de vida IMPRESCINDIBLE desde una perspectiva financiera racional?',
+        opts:[
+          {t:'Persona soltera de 28 años sin hijos, con 15.000€ de ahorros y sin deudas', ok:false},
+          {t:'Pareja con dos hijos menores, hipoteca de 180.000€ y un solo salario de 2.000€/mes', ok:true},
+          {t:'Jubilado de 70 años con pensión de 1.400€/mes y piso en propiedad sin cargas', ok:false},
+          {t:'Autónomo sin hijos que quiere dejar herencia a sus padres mayores', ok:false},
+        ],
+        ok:'Correcto. El seguro de vida es imprescindible cuando hay dependientes que no podrían sobrevivir financieramente sin tus ingresos. Una pareja con dos hijos menores, una hipoteca de 180.000€ y un solo salario es el caso paradigmático: si el sustentador fallece, la familia no puede pagar la hipoteca ni los gastos corrientes. El capital del seguro de vida (por ejemplo 250.000€) cubre la hipoteca y da margen a la familia para reorganizarse. En los demás casos no hay dependientes o hay patrimonio suficiente.',
+        bad:'El caso que justifica el seguro de vida es cuando tienes dependientes que no podrían subsistir económicamente sin tus ingresos. La pareja con dos hijos, hipoteca y un solo salario es el caso más claro. La persona soltera sin hijos no tiene a quién proteger. El jubilado ya no tiene la hipoteca y tiene pensión propia. El autónomo sin hijos puede cubrir a sus padres con otros mecanismos si lo desea. El seguro de vida cubre incapacidad financiera de los dependientes, no la tristeza de los herederos.',
+      },
+
+      {type:'content', title:'Los Seguros Trampa: Dónde Te Quitan el Dinero',
+        blocks:[
+          {t:'text', h:'Los seguros que casi nunca deberías contratar',
+            p:'<strong>Garantía extendida</strong> en electrodomésticos y electrónica: márgenes de beneficio del 50-80% para el vendedor, exclusiones que cubren la mayoría de averías reales (daño por caída, líquidos, mal uso). La OCU recomienda sistemáticamente rechazarla. <strong>Seguro de protección de pagos o "seguro de crédito"</strong>: vinculado a hipotecas, préstamos o tarjetas, cubre las cuotas si te quedas en paro o incapacitado. Las exclusiones suelen dejar fuera la mayoría de situaciones reales (autónomos excluidos, período de carencia de 3-6 meses, desempleo voluntario excluido). Precio: 0,5%-1% del capital anual. Mejor alternativa: fondo de emergencia de 6 meses. <strong>Seguro de vida "de ahorro" o unit-linked</strong>: no es un seguro real, es un producto de inversión disfrazado con comisiones altísimas. Siempre es peor que un fondo indexado + un seguro de vida por separado.'},
+          {t:'hl', s:'info', label:'💡 CÓMO REVISAR TU CARTERA DE SEGUROS AHORA',
+            p:'Haz este ejercicio: lista todos tus seguros actuales y su coste anual. Para cada uno pregúntate: <strong>(1) ¿Qué evento exacto cubre?</strong> (2) ¿Podría absorber ese coste yo mismo con mis ahorros actuales? (3) ¿He leído las exclusiones? Si la respuesta al punto 2 es sí o al punto 3 es no, tienes un candidato a cancelar o al menos a revisar. El ahorro medio detectado por la OCU en sus análisis es de <strong>400-600€/año</strong> para una familia media que revisa su cartera de seguros eliminando los superfluos y renegociando los necesarios con otras aseguradoras. Compara precios en comparadores como Acierto, Rastreator o Kelisto antes de renovar cualquier seguro.'},
+        ]
+      },
+
+      {type:'quiz',
+        q:'Compras un ordenador de 900€. El vendedor te ofrece una garantía extendida de 3 años por 120€. ¿Cuál es la alternativa más racional desde el punto de vista del autoseguro?',
+        opts:[
+          {t:'Aceptar la garantía porque el ordenador es caro y puede romperse', ok:false},
+          {t:'Rechazarla y apartar 120€ en tu fondo de emergencia para imprevistos tecnológicos', ok:true},
+          {t:'Aceptarla solo si el vendedor es de confianza', ok:false},
+          {t:'Pedir descuento sobre el precio del ordenador a cambio de contratar la garantía', ok:false},
+        ],
+        ok:'Correcto. La garantía extendida tiene márgenes de hasta el 80% para el vendedor: de esos 120€, quizá 24€ se destinan a cubrir siniestros reales. Si apartas 120€ en tu fondo de emergencia, tienes ese capital disponible para cualquier avería (no solo del ordenador) sin exclusiones ni burocracia. Además, la garantía legal de 3 años ya cubre defectos de fabricación. El autoseguro es superior para cualquier evento cuyo coste puedas absorber.',
+        bad:'El autoseguro es superior aquí. Los 120€ en tu fondo de emergencia cubren cualquier avería sin exclusiones, mientras que la garantía extendida excluye daño por caída, líquidos y mal uso (las averías más comunes). Además, ya tienes 3 años de garantía legal. Si el ordenador se avería por un defecto de fabricación, la garantía legal lo cubre. Si se avería por un accidente, la garantía extendida probablemente no lo cubre de todos modos.',
+      },
+
+      {type:'final', xp:28, msg:'Un buen análisis de seguros no es comprar más coberturas — es entender exactamente qué riesgos tienes que transferir y cuáles puedes asumir tú mismo con un fondo de emergencia sólido.'},
+    ],
+  },
+
 ];
 
 const WEEKLY_ACTIONS = [
