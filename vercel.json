@@ -1,4 +1,10 @@
 {
+  "crons": [
+    {
+      "path": "/api/push-streak-reminder",
+      "schedule": "0 20 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/sw.js",

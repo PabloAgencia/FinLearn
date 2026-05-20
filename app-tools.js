@@ -259,6 +259,8 @@ function _initAppWithState(hasState) {
   if (hasState && S.userName) {
     showScreen('s-home');
     document.getElementById('bottom-nav')?.classList?.remove('hidden');
+    const _skel = document.getElementById('home-skeleton');
+    if (_skel) _skel.style.display = 'block';
     try { renderHomeScreen(); } catch(e) { console.warn('[FinLearn] renderHomeScreen error:', e); }
     setTimeout(_hideSplash, 400);
   } else {
@@ -327,10 +329,83 @@ function _initAppWithState(hasState) {
   // P4-C: Misiones semanales
   initWeeklyMissions();
 
+  // Aviso legal (primera vez que abre la app)
+  setTimeout(_checkLegalDisclaimer, 1800);
+  // Referidos: detectar parámetro ?ref=CODE en URL
+  _checkReferralParam();
+
   // App iniciada
   _initAmbient();
 }
 
+
+/* ══════════════════════════════════════════════════════════════════
+   LEGAL DISCLAIMER — Mostrar aviso legal la primera vez
+══════════════════════════════════════════════════════════════════ */
+const _LEGAL_KEY = 'fl_legal_v1';
+
+function _checkLegalDisclaimer() {
+  if (localStorage.getItem(_LEGAL_KEY)) return; // ya aceptado
+  const el = document.getElementById('m-legal');
+  if (!el) return;
+  el.style.display = 'flex';
+}
+
+function _acceptLegal() {
+  const check = document.getElementById('legal-check');
+  const btn   = document.getElementById('legal-accept-btn');
+  if (check && !check.checked) {
+    if (btn) btn.style.animation = 'shake .3s ease';
+    setTimeout(() => { if (btn) btn.style.animation = ''; }, 400);
+    toast('✋ Un momento', 'Marca la casilla para continuar.', 't-warn');
+    return;
+  }
+  localStorage.setItem(_LEGAL_KEY, '1');
+  const el = document.getElementById('m-legal');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .2s'; setTimeout(() => { el.style.display = 'none'; el.style.opacity = ''; }, 200); }
+}
+
+window._checkLegalDisclaimer = _checkLegalDisclaimer;
+window._acceptLegal           = _acceptLegal;
+
+/* ══════════════════════════════════════════════════════════════════
+   REFERIDOS — Detectar código ?ref= y entregar recompensa
+══════════════════════════════════════════════════════════════════ */
+function _checkReferralParam() {
+  const params = new URLSearchParams(window.location.search);
+  const ref    = params.get('ref');
+  if (!ref || S._referredBy) return;
+  if (ref.length < 4 || ref.length > 8) return;
+  // No auto-referirse con el propio código
+  if (S.friendCode && ref.toUpperCase() === S.friendCode.toUpperCase()) return;
+  S._referredBy = ref.toUpperCase();
+  history.replaceState({}, '', window.location.pathname);
+  saveState();
+}
+
+function _checkReferralReward() {
+  if (S._referralRewarded || !S._referredBy) return;
+  // Solo se entrega al completar el primer módulo real (completedMods.length === 1)
+  if ((S.completedMods || []).length !== 1) return;
+  S._referralRewarded = true;
+  const xpBonus = 200;
+  S.xp += xpBonus;
+  F34_onXPGained(xpBonus);
+  recalcPatrimony();
+  saveState();
+  toast('🎁 ¡Bono de referido!', `+${xpBonus} XP por unirte con el código de un amigo.`, 't-success');
+  // Notificar al servidor (best-effort, no bloquea)
+  try {
+    fetch('/api/referral-complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ referrerCode: S._referredBy, newUserCode: S.friendCode || '' }),
+    }).catch(() => {});
+  } catch(e) {}
+}
+
+window._checkReferralParam  = _checkReferralParam;
+window._checkReferralReward = _checkReferralReward;
 
 /* ══════════════════════════════════════════════════════════════════
    CHART — Gráfica de mercado en tiempo real con Chart.js
@@ -1967,11 +2042,40 @@ const NOTIFS = {
       '💼', 'salary'
     );
   },
+
+  // Subscribe to Web Push via Service Worker
+  async subscribePush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    const VAPID_PUBLIC = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjZJEnS-MRx8hd3Y0tdJTHTkVy-ss'; // placeholder — set real key in vercel env
+    if (!VAPID_PUBLIC || VAPID_PUBLIC.startsWith('BEl62')) {
+      // No VAPID key configured — skip silently
+      return;
+    }
+    try {
+      const reg  = await navigator.serviceWorker.ready;
+      const sub  = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: _urlBase64ToUint8Array(VAPID_PUBLIC),
+      });
+      await fetch('/api/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: sub.toJSON(), userId: S.friendCode || '' }),
+      });
+    } catch(e) {}
+  },
 };
 
 // Auto-init: restore permission state
 if ('Notification' in window && Notification.permission === 'granted') {
   NOTIFS._granted = true;
+}
+
+function _urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw     = window.atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
 }
 
 /* ══════════════════════════════════════════════════════════════════

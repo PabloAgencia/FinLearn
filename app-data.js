@@ -5072,14 +5072,30 @@ const IDENTITY_STAGES = [
 /* ── P4-B: Títulos de nivel por XP acumulado ─────────────────────── */
 const LEVEL_XP_THRESHOLDS = (function() {
   // XP necesario para pasar de nivel N al N+1
-  // Empieza en 200 XP y crece progresivamente hasta ~12.000 XP en los últimos niveles
+  // Curva bifásica: niveles 1-20 crecen a exp 1.5 (desafío inicial)
+  // niveles 21-50 cambian a exp 1.35 (más alcanzables, evita abandono tardío)
   function xpForLevel(n) {
-    return Math.round(200 * Math.pow(1 + (n - 1) * 0.13, 1.5) / 25) * 25;
+    const exp = n <= 20 ? 1.5 : 1.35;
+    return Math.round(200 * Math.pow(1 + (n - 1) * 0.13, exp) / 25) * 25;
   }
   const t = [0]; // t[0]=0 significa que el nivel 1 empieza en 0 XP acumulado
   for (let i = 1; i <= 50; i++) t.push(t[i - 1] + xpForLevel(i));
   return t;
 })();
+
+// Recompensas especiales en hitos de nivel. apply(S) muta el estado; chestType da cofre adicional.
+const LEVEL_MILESTONES = {
+  5:  { label:'+10% XP permanente',          icon:'⚡', chestType: null,        apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 0.1).toFixed(2); } },
+  10: { label:'Cofre de Oro',                icon:'🏅', chestType: 'gold',       apply: null },
+  15: { label:'+2 Vidas extra',              icon:'❤️', chestType: null,        apply: s => { s._maxHearts = (s._maxHearts||5) + 2; s.hearts = Math.min((s.hearts||5) + 2, s._maxHearts||7); } },
+  20: { label:'+10% XP permanente',          icon:'⚡', chestType: null,        apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 0.1).toFixed(2); } },
+  25: { label:'Cofre de Oro',                icon:'🏅', chestType: 'gold',       apply: null },
+  30: { label:'+10% XP permanente',          icon:'⚡', chestType: null,        apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 0.1).toFixed(2); } },
+  35: { label:'Cofre Legendario',            icon:'👑', chestType: 'legendary',  apply: null },
+  40: { label:'Cofre Legendario',            icon:'👑', chestType: 'legendary',  apply: null },
+  45: { label:'+3 Vidas extra',              icon:'❤️', chestType: null,        apply: s => { s._maxHearts = (s._maxHearts||5) + 3; s.hearts = Math.min((s.hearts||5) + 3, s._maxHearts||10); } },
+  50: { label:'XP ×2 permanente + Maestro', icon:'👑', chestType: 'legendary',  apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 1.0).toFixed(2); s._masterBadge = true; } },
+};
 
 const LEVEL_TITLES = [
   { idx:0,  minXP:0,      title:'Aprendiz Financiero',    icon:'🌱', color:'#94a3b8', desc:'El camino comienza aquí. Cada experto fue una vez principiante.' },

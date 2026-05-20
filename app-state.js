@@ -230,6 +230,9 @@ const DEFAULTS = {
   _realMoneyHistory: [],    // [{month, income, expenses, totalExpenses, savings, savedAt}]
   _realMoneyTotal: 0,       // suma acumulada de ahorros guardados
   _realActionsCount: 0,     // número de acciones reales completadas
+  /* ── Referidos ── */
+  _referredBy: '',          // código de quién refirió al usuario
+  _referralRewarded: false, // true cuando ya se entregó la recompensa de referido
 };
 
 

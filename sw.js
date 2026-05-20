@@ -4,7 +4,7 @@
    versión), Cache First para fuentes y assets binarios.
    ══════════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME  = 'finlearn-v2.1.0';
+const CACHE_NAME  = 'finlearn-v2.2.0';
 const OFFLINE_URL = 'index.html';
 
 const PRECACHE_ASSETS = [
@@ -93,4 +93,33 @@ self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+self.addEventListener('push', event => {
+  let data = { title: '🔥 FinLearn', body: 'Tu racha te espera. ¡1 minuto es suficiente!', tag: 'streak' };
+  if (event.data) {
+    try { data = { ...data, ...JSON.parse(event.data.text()) }; } catch(e) {}
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body:    data.body,
+      icon:    './icons/icon-192.png',
+      badge:   './icons/icon-96.png',
+      tag:     data.tag || 'finlearn',
+      vibrate: [100, 50, 100],
+      data:    { url: data.url || './' },
+    })
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || './';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const existing = list.find(c => c.url.includes(self.location.origin) && 'focus' in c);
+      if (existing) return existing.focus();
+      return clients.openWindow(url);
+    })
+  );
 });

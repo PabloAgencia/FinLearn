@@ -399,7 +399,21 @@
         <div id="dyn-banner-wrap"></div>
       </div>
 
+      <!-- ── HOME SKELETON (visible mientras carga renderHomeScreen) ── -->
+      <div id="home-skeleton" style="display:none;padding:16px 16px 0;position:relative;z-index:1;">
+        <div style="height:76px;background:rgba(255,255,255,.06);border-radius:16px;margin-bottom:10px;animation:skeletonPulse 1.4s ease-in-out infinite;"></div>
+        <div style="height:110px;background:rgba(255,255,255,.06);border-radius:16px;margin-bottom:10px;animation:skeletonPulse 1.4s ease-in-out infinite .15s;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div style="height:90px;background:rgba(255,255,255,.06);border-radius:14px;animation:skeletonPulse 1.4s ease-in-out infinite .3s;"></div>
+          <div style="height:90px;background:rgba(255,255,255,.06);border-radius:14px;animation:skeletonPulse 1.4s ease-in-out infinite .45s;"></div>
+        </div>
+        <div style="height:60px;background:rgba(255,255,255,.06);border-radius:16px;animation:skeletonPulse 1.4s ease-in-out infinite .6s;"></div>
+      </div>
+
       <div class="home-inner" style="position:relative;z-index:1;">
+
+        <!-- DAILY HUB ──────────────────────────────────────────────── -->
+        <div id="daily-hub" style="margin-bottom:8px;"></div>
 
         <!-- F33 — EARN BACK BANNER (racha en peligro) ───────── -->
         <div id="f33-earn-back-banner" style="display:none;"></div>
@@ -2862,6 +2876,25 @@
 ════════════════════════════════════════════════════════ -->
 <div id="personality-modal" class="pers-modal-overlay">
   <!-- Contenido inyectado dinámicamente por PERS_renderQuestion / PERS_showResult -->
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: AVISO LEGAL
+════════════════════════════════════════════════════════ -->
+<div id="m-legal" class="modal-overlay" style="display:none;z-index:99998;">
+  <div style="background:#0d1220;border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:28px 24px;max-width:460px;width:92%;max-height:82vh;overflow-y:auto;">
+    <div style="font-size:22px;font-weight:800;color:#fff;margin-bottom:8px;font-family:'Syne',sans-serif;">📋 Aviso Legal</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px;">
+      <p>FinLearn es una aplicación de <strong style="color:#fff">educación financiera</strong>. Todo el contenido tiene carácter exclusivamente didáctico.</p>
+      <p style="margin-top:12px;"><strong style="color:#fff">No somos asesores financieros.</strong> Nada en esta app constituye asesoramiento de inversión, recomendación financiera personalizada ni consejo legal.</p>
+      <p style="margin-top:12px;">Los simuladores y rentabilidades son ficticios. <strong style="color:#fff">Toda inversión conlleva riesgos</strong>, incluida la posible pérdida del capital. Consulta un profesional antes de invertir.</p>
+    </div>
+    <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;cursor:pointer;font-size:13px;color:var(--text2);">
+      <input type="checkbox" id="legal-check" style="width:18px;height:18px;flex-shrink:0;margin-top:2px;accent-color:var(--accent);">
+      He leído y entiendo que FinLearn es educativa, no un servicio de asesoría financiera.
+    </label>
+    <button onclick="_acceptLegal()" id="legal-accept-btn" style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">Entendido, ¡a aprender! 🎓</button>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════

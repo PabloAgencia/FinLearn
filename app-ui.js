@@ -2263,6 +2263,8 @@ function renderHomeScreen() {
   // Ocultar splash/skeleton si sigue visible
   const splash = document.getElementById('app-splash');
   if (splash) splash.style.display = 'none';
+  const skeleton = document.getElementById('home-skeleton');
+  if (skeleton) skeleton.style.display = 'none';
   updateUIFromState();
   renderModules();
   renderHomeRank();
@@ -2313,6 +2315,8 @@ function renderHomeScreen() {
   if (typeof M1_checkDoubleXP === 'function') M1_checkDoubleXP();
   // M3: Friend streak
   if (typeof M3_render === 'function') M3_render();
+  // Daily Hub (resumen diario de acciones pendientes)
+  renderDailyHub();
   // M2: Prestige check
   if (typeof M2_checkPrestige === 'function') M2_checkPrestige();
   // P4-A: Banner racha en riesgo (≥20:00 sin actividad)
@@ -2333,6 +2337,68 @@ function renderHomeScreen() {
   _renderWeeklyActionCard();
   // misión grupal pasa a Laboratorio
   renderHomeCTA();
+}
+
+function _getNextRecommendedMod() {
+  if (typeof MODULES === 'undefined') return null;
+  // Prioridad 1: módulo sugerido en onboarding
+  if (S.suggestedModuleId) {
+    const suggested = MODULES.find(m => m.id === S.suggestedModuleId && !S.completedMods.includes(m.id));
+    if (suggested) return suggested;
+  }
+  // Prioridad 2: primer módulo no completado de la rama activa
+  const activeBranch = S._activeBranch || 'fundamentos';
+  const branchMod = MODULES.find(m =>
+    (m.branch || m.category || '') === activeBranch && !S.completedMods.includes(m.id)
+  );
+  if (branchMod) return branchMod;
+  // Prioridad 3: cualquier módulo no completado
+  return MODULES.find(m => !S.completedMods.includes(m.id)) || null;
+}
+
+function renderDailyHub() {
+  const el = document.getElementById('daily-hub');
+  if (!el) return;
+
+  const today     = new Date().toISOString().slice(0, 10);
+  const dcaDone   = S.dcaLastDate === today;
+  const nextMod   = _getNextRecommendedMod();
+  const missions  = (S.weeklyMissions || []).filter(m => !m.done);
+  const nearMission = missions.sort((a, b) => (b.progress / b.goal) - (a.progress / a.goal))[0];
+
+  // Calcular cuántas acciones diarias quedan
+  const actions = [];
+  if (!dcaDone) actions.push({ icon:'💰', label:'DCA diario pendiente', onclick:"document.getElementById('tab-dca')?.click()||goTo('home')" });
+  if (nextMod)  actions.push({ icon:'📖', label:`Módulo: ${nextMod.title}`, onclick:`startModule(${nextMod.id})` });
+  if (nearMission) {
+    const pct = Math.round((nearMission.progress / nearMission.goal) * 100);
+    actions.push({ icon:'🎯', label:`Misión: ${nearMission.id} (${pct}%)`, onclick:"goTo('home')" });
+  }
+
+  if (actions.length === 0) {
+    el.innerHTML = `
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,229,160,.04));border:1px solid rgba(0,229,160,.25);border-radius:16px;padding:14px 16px;margin:0 0 4px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:28px;">✅</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--accent);">¡Todo completado hoy!</div>
+          <div style="font-size:11px;color:var(--text2);">Vuelve mañana para seguir tu racha.</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const items = actions.slice(0, 3).map(a => `
+    <button onclick="${a.onclick}" style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px;width:100%;cursor:pointer;text-align:left;margin-bottom:6px;">
+      <span style="font-size:20px;flex-shrink:0;">${a.icon}</span>
+      <span style="font-size:12px;font-weight:600;color:var(--text1);">${a.label}</span>
+      <span style="margin-left:auto;font-size:11px;color:var(--accent);">→</span>
+    </button>`).join('');
+
+  el.innerHTML = `
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 14px 8px;margin:0 0 4px;">
+      <div style="font-size:10px;font-weight:800;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;">ACCIONES DE HOY</div>
+      ${items}
+    </div>`;
 }
 
 function renderHomeCTA() {
@@ -4632,6 +4698,8 @@ function finishOnboarding() {
 
   // Auth modal after tutorial would have finished (~20s)
   setTimeout(() => { if (typeof sbShowAuthModal === 'function' && typeof getSBUser === 'function' && !getSBUser()) { sbShowAuthModal('register'); } }, 20000);
+  // Aviso legal (primera vez)
+  if (typeof _checkLegalDisclaimer === 'function') setTimeout(_checkLegalDisclaimer, 3000);
 }
 
 
@@ -4874,6 +4942,8 @@ function completeModule() {
     }
     // P4-C: racha sincronizada
     if (typeof checkStreakMission === 'function') checkStreakMission();
+    // Referral: comprobar recompensa de referido al completar primer módulo
+    if (typeof _checkReferralReward === 'function') _checkReferralReward();
   }
 
   saveState();
@@ -5005,8 +5075,10 @@ function completeModule() {
 
   openModal('m-cel');
   SFX.moduleComplete();
-  if ((S.completedMods || []).length === 1) NOTIFS.onFirstModule();
-  else if (NOTIFS._granted) NOTIFS.scheduleStreakReminder();
+  if ((S.completedMods || []).length === 1) {
+    NOTIFS.onFirstModule();
+    NOTIFS.subscribePush();
+  } else if (NOTIFS._granted) NOTIFS.scheduleStreakReminder();
   // Mensaje emocional de vuelta al día siguiente
   setTimeout(() => {
     const hour = new Date().getHours();
@@ -5054,54 +5126,75 @@ function completeModule() {
 function _showLevelUpScreen(level) {
   const rankTitle = typeof getLevelTitle === 'function' ? getLevelTitle(S.xp) : { icon:'⭐', title:'Nivel ' + level, color:'#00e5a0', desc:'' };
   const chestReward = _getLevelChest(level);
+  const milestone = (typeof LEVEL_MILESTONES !== 'undefined') ? LEVEL_MILESTONES[level] : null;
+
+  // Aplicar recompensa de hito si existe
+  if (milestone) {
+    if (milestone.apply) milestone.apply(S);
+    if (milestone.chestType && typeof F44_earnChest === 'function') F44_earnChest(milestone.chestType);
+    saveState();
+  }
+
   let overlay = document.getElementById('level-up-overlay');
   if (!overlay) { overlay = document.createElement('div'); overlay.id = 'level-up-overlay'; document.body.appendChild(overlay); }
   overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.92);backdrop-filter:blur(12px);animation:fadeInFast .25s ease;';
+
+  const milestoneHtml = milestone ? `
+    <div style="background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(255,165,0,.08));border:1px solid rgba(255,215,0,.4);border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;">
+      <span style="font-size:32px;">${milestone.icon}</span>
+      <div>
+        <div style="font-size:10px;color:#fbbf24;font-weight:700;letter-spacing:.08em;">🏆 HITO DESBLOQUEADO</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;">${milestone.label}</div>
+      </div>
+    </div>` : '';
+
+  const chestHtml = (chestReward && !milestone?.chestType) ? `
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;text-align:left;">
+      <span style="font-size:32px;">${chestReward.icon}</span>
+      <div><div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.08em;">RECOMPENSA DE NIVEL</div>
+      <div style="font-size:14px;font-weight:700;color:#fff;">Cofre ${chestReward.label}</div></div>
+    </div>` : '';
+
   overlay.innerHTML = `
     <div style="text-align:center;padding:32px 24px;max-width:340px;width:100%;animation:levelUpPop .5s cubic-bezier(.34,1.56,.64,1) both;">
       <div style="font-size:11px;font-weight:800;letter-spacing:.15em;color:var(--text3);margin-bottom:16px;">NIVEL DESBLOQUEADO</div>
       <div style="font-size:88px;line-height:1;margin-bottom:8px;filter:drop-shadow(0 0 24px ${rankTitle.color});">${rankTitle.icon}</div>
       <div style="font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px;">${level}</div>
       <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${rankTitle.color};margin-bottom:6px;">${rankTitle.title}</div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.5;">${rankTitle.desc || ''}</div>
-      ${chestReward ? `<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:14px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;text-align:left;">
-        <span style="font-size:32px;">${chestReward.icon}</span>
-        <div><div style="font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.08em;">RECOMPENSA DE NIVEL</div>
-        <div style="font-size:14px;font-weight:700;color:#fff;">Cofre ${chestReward.label}</div></div>
-      </div>` : ''}
+      <div style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;">${rankTitle.desc || ''}</div>
+      ${milestoneHtml}${chestHtml}
       <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();"
         style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">
         ¡Seguir subiendo! 🚀
       </button>
     </div>`;
   if (typeof confetti === 'function') {
-    confetti({ particleCount: 140, spread: 80, origin: { y: 0.5 }, colors: [rankTitle.color, '#ffffff', '#fbbf24'] });
-    setTimeout(() => confetti({ particleCount: 70, spread: 130, origin: { y: 0.35 }, colors: [rankTitle.color, '#fff'] }), 350);
+    const colors = milestone ? ['#fbbf24', '#ff6b35', '#ffffff'] : [rankTitle.color, '#ffffff', '#fbbf24'];
+    confetti({ particleCount: milestone ? 200 : 140, spread: 80, origin: { y: 0.5 }, colors });
+    setTimeout(() => confetti({ particleCount: milestone ? 100 : 70, spread: 130, origin: { y: 0.35 }, colors }), 350);
   }
   setTimeout(() => {
     const el = document.getElementById('level-up-overlay');
     if (el) { el.style.animation = 'fadeOutFast .3s ease forwards'; setTimeout(() => { el.remove(); if(typeof F44_render==='function') F44_render(); }, 300); }
   }, 5000);
-  if (chestReward && typeof F44_earnChest === 'function') F44_earnChest(chestReward.type);
+  if (chestReward && !milestone?.chestType && typeof F44_earnChest === 'function') F44_earnChest(chestReward.type);
 }
 
 function _getLevelChest(level) {
   const icons  = { bronze:'📦', silver:'🥈', gold:'🏅', legendary:'👑' };
   const labels = { bronze:'Bronce', silver:'Plata', gold:'Oro', legendary:'Legendario' };
 
+  // Determinista: el tipo de cofre depende solo del nivel, nunca de Math.random()
   if (isPremium()) {
-    // Premium: cofres especiales en niveles clave, oro/plata entre medias
-    const special = { 5:'gold', 10:'legendary', 15:'gold', 20:'legendary', 25:'legendary', 30:'legendary', 35:'legendary', 40:'legendary', 45:'legendary', 50:'legendary' };
-    const type = special[level] || (level % 3 === 0 ? 'gold' : level % 2 === 0 ? 'silver' : 'bronze');
+    const type = level % 10 === 0 ? 'legendary'
+               : level % 5  === 0 ? 'gold'
+               : level % 3  === 0 ? 'silver'
+               : 'bronze';
     return { type, icon: icons[type], label: labels[type] };
   } else {
-    // Gratis: bronce casi siempre, plata muy raro, oro rarísimo, nunca legendario
-    const rand = Math.random();
-    let type;
-    if (level % 10 === 0 && rand < 0.3)      type = 'gold';    // 30% en nivel ×10
-    else if (level % 5 === 0 && rand < 0.25)  type = 'silver';  // 25% en nivel ×5
-    else if (rand < 0.08)                     type = 'silver';  // 8% resto
-    else                                      type = 'bronze';  // siempre bronce por defecto
+    const type = level % 10 === 0 ? 'gold'
+               : level % 5  === 0 ? 'silver'
+               : 'bronze';
     return { type, icon: icons[type], label: labels[type] };
   }
 }
