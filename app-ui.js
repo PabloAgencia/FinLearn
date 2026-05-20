@@ -3522,7 +3522,61 @@ function renderProfileScreen() {
   // SPEEDRUN records
   if (typeof SPEEDRUN_renderRecords === 'function') { try { SPEEDRUN_renderRecords(); } catch(e) {} }
   renderStreakBadges();
+  _renderProfileFinancialHealth();
 }
+
+
+function _renderProfileFinancialHealth() {
+  var el = document.getElementById('prof-fin-health');
+  if (!el) return;
+  var hist    = S._realMoneyHistory || [];
+  var total   = S._realMoneyTotal || 0;
+  var actions = S._realActionsCount || 0;
+  if (hist.length === 0 && actions === 0) {
+    el.style.display = 'none'; return;
+  }
+  el.style.display = 'block';
+  var last = hist.length > 0 ? hist[hist.length - 1] : null;
+  var lastSavings  = last ? (last.savings || 0) : 0;
+  var lastExpenses = last ? (last.totalExpenses || 0) : 0;
+  var lastRate     = (last && last.income > 0) ? Math.round((lastSavings / last.income) * 100) : null;
+  var rateColor    = lastRate === null ? 'var(--text2)' : lastRate >= 20 ? '#00e5a0' : lastRate >= 10 ? '#f5a623' : '#ef4444';
+  var rateLabel    = lastRate === null ? '—' : lastRate + '%';
+
+  // FIRE calc
+  var fireTarget = lastExpenses > 0 ? Math.round(lastExpenses * 12 * 25) : 0;
+  var fireYrsHtml = '';
+  if (fireTarget > 0 && lastSavings > 0) {
+    var mRate = 0.07 / 12;
+    var pv = (S.realPatrimony != null && S.realPatrimony > 0) ? S.realPatrimony : total;
+    var v = pv, months = 0;
+    while (v < fireTarget && months < 600) { v = v * (1 + mRate) + lastSavings; months++; }
+    var yrs = months < 600 ? Math.ceil(months / 12) : null;
+    fireYrsHtml = yrs !== null
+      ? '<span style="color:var(--accent);font-weight:700;">' + yrs + ' años</span> para independencia financiera'
+      : 'Aumenta tu ahorro para calcular tu independencia';
+  }
+
+  el.innerHTML = '<div style="background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,229,160,.02));border:1px solid rgba(0,229,160,.2);border-radius:16px;padding:18px;cursor:pointer;" onclick="goTo(\'realmoney\')">'
+    + '<div style="font-size:11px;font-weight:800;color:#00e5a0;letter-spacing:.08em;margin-bottom:14px;">💰 MI SITUACIÓN FINANCIERA REAL</div>'
+    + '<div style="display:flex;gap:10px;margin-bottom:' + (fireYrsHtml ? '12px' : '0') + ';">'
+      + '<div style="flex:1;background:var(--bg);border-radius:10px;padding:10px;">'
+        + '<div style="font-size:10px;color:var(--text2);margin-bottom:3px;">AHORROS ACUMULADOS</div>'
+        + '<div style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;color:#00e5a0;">€' + total.toLocaleString('es') + '</div>'
+      + '</div>'
+      + '<div style="flex:1;background:var(--bg);border-radius:10px;padding:10px;">'
+        + '<div style="font-size:10px;color:var(--text2);margin-bottom:3px;">TASA DE AHORRO</div>'
+        + '<div style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;color:' + rateColor + ';">' + rateLabel + '</div>'
+      + '</div>'
+      + '<div style="flex:1;background:var(--bg);border-radius:10px;padding:10px;">'
+        + '<div style="font-size:10px;color:var(--text2);margin-bottom:3px;">ACCIONES REALES</div>'
+        + '<div style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;color:var(--gold);">' + actions + '</div>'
+      + '</div>'
+    + '</div>'
+    + (fireYrsHtml ? '<div style="font-size:12px;color:var(--text2);padding-top:10px;border-top:1px solid rgba(0,229,160,.15);">🏝️ ' + fireYrsHtml + '</div>' : '')
+  + '</div>';
+}
+window._renderProfileFinancialHealth = _renderProfileFinancialHealth;
 
 /* ── P4-B: Panel de rangos en el perfil ─────────────────────────── */
 /**
@@ -5359,8 +5413,9 @@ window._renderWeeklyActionCard = _renderWeeklyActionCard;
 
 function _renderRealMoneyHomeCard() {
   if (!S.userName || !S.onboardingDone) return;
-  const total = S._totalRealSavings || 0;
+  const total   = S._realMoneyTotal || 0;
   const actions = S._realActionsCount || 0;
+  const hist    = S._realMoneyHistory || [];
   let el = document.getElementById('home-realmoney-card');
   if (!el) {
     el = document.createElement('div');
@@ -5371,24 +5426,62 @@ function _renderRealMoneyHomeCard() {
     if (area) area.insertBefore(el, area.firstChild);
     else if (homeScreen) homeScreen.appendChild(el);
   }
+
   if (total === 0 && actions === 0) {
     el.innerHTML = `
       <div onclick="goTo('realmoney')" style="cursor:pointer;padding:18px 20px;background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,229,160,.02));border:1px solid rgba(0,229,160,.2);border-radius:16px;display:flex;align-items:center;gap:12px;">
         <div style="font-size:28px;">💰</div>
         <div style="flex:1;">
-          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#00e5a0;">Empieza a trackear tu dinero real</div>
-          <div style="font-size:12px;color:var(--text2);margin-top:2px;">Introduce tus ingresos y gastos del mes →</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#00e5a0;">Conecta tu dinero real</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px;">Calcula tu tasa de ahorro y camino FIRE →</div>
         </div>
       </div>`;
-  } else {
-    el.innerHTML = `
-      <div onclick="goTo('realmoney')" style="cursor:pointer;padding:18px 20px;background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,229,160,.04));border:1px solid rgba(0,229,160,.3);border-radius:16px;position:relative;overflow:hidden;">
-        <div style="position:absolute;top:-15px;right:-15px;font-size:80px;opacity:.06;">💰</div>
-        <div style="font-size:11px;color:var(--text2);letter-spacing:.08em;margin-bottom:6px;position-relative;">AHORRADO GRACIAS A FINLEARN</div>
-        <div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:#00e5a0;line-height:1;position:relative;">€${total.toLocaleString('es')}</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:6px;position:relative;">${actions} ${actions === 1 ? 'acción real completada' : 'acciones reales completadas'} →</div>
-      </div>`;
+    return;
   }
+
+  // Calculate FIRE context from last history entry
+  var last = hist.length > 0 ? hist[hist.length - 1] : null;
+  var lastSavings = last ? (last.savings || 0) : 0;
+  var lastExpenses = last ? (last.totalExpenses || 0) : 0;
+  var fireTarget = lastExpenses > 0 ? Math.round(lastExpenses * 12 * 25) : 0;
+  var fireLabel  = '';
+  var fireYrsHtml = '';
+  var progressPct = 0;
+  if (fireTarget > 0 && lastSavings > 0) {
+    var mRate = 0.07 / 12;
+    var pv = (S.realPatrimony != null && S.realPatrimony > 0) ? S.realPatrimony : total;
+    var v = pv, months = 0;
+    while (v < fireTarget && months < 600) { v = v * (1 + mRate) + lastSavings; months++; }
+    var yrs = months < 600 ? Math.ceil(months / 12) : null;
+    fireLabel = yrs !== null ? '🏝️ Independencia en ' + yrs + ' años · al 7% anual' : '🏝️ Sigue ahorrando para tu independencia';
+    progressPct = Math.min(100, Math.round((pv / fireTarget) * 100));
+  }
+
+  var lastSavingsHtml = lastSavings > 0
+    ? `<div style="text-align:right;">
+        <div style="font-size:10px;color:var(--text3);letter-spacing:.05em;">ESTE MES</div>
+        <div style="font-size:16px;font-weight:800;color:#00e5a0;font-family:'Syne',sans-serif;">+€${lastSavings.toLocaleString('es')}</div>
+       </div>` : '';
+
+  var fireLineHtml = fireLabel
+    ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,229,160,.15);">
+        <div style="font-size:11px;color:var(--gold);font-weight:600;">${fireLabel}</div>
+        ${progressPct > 0 ? `<div style="height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:6px;overflow:hidden;"><div style="width:${progressPct}%;height:100%;background:var(--gold);border-radius:2px;"></div></div>` : ''}
+       </div>` : '';
+
+  el.innerHTML = `
+    <div onclick="goTo('realmoney')" style="cursor:pointer;padding:18px 20px;background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,229,160,.04));border:1px solid rgba(0,229,160,.3);border-radius:16px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-15px;right:-15px;font-size:80px;opacity:.05;">💰</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;">
+        <div>
+          <div style="font-size:10px;color:var(--text2);letter-spacing:.08em;margin-bottom:4px;">AHORROS ACUMULADOS</div>
+          <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#00e5a0;line-height:1;">€${total.toLocaleString('es')}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px;">${actions} ${actions === 1 ? 'acción real' : 'acciones reales'} completadas</div>
+        </div>
+        ${lastSavingsHtml}
+      </div>
+      ${fireLineHtml}
+    </div>`;
 }
 window._renderRealMoneyHomeCard = _renderRealMoneyHomeCard;
 
@@ -5621,6 +5714,55 @@ function _rmUpdate() {
   } else if (compEl) {
     compEl.style.display = 'none';
   }
+
+  // FIRE projection
+  var fireCard = document.getElementById('rm-fire-card');
+  var fireNum  = document.getElementById('rm-fire-number');
+  var fireYrs  = document.getElementById('rm-fire-years');
+  var fireTip  = document.getElementById('rm-fire-tip');
+  if (fireCard && fireNum && fireYrs && fireTip && inc > 0 && totalExp > 0 && savings > 0) {
+    var annualExp  = totalExp * 12;
+    var fireTarget = Math.round(annualExp * 25);
+    var pv         = (S.realPatrimony != null && S.realPatrimony > 0) ? S.realPatrimony : (S._realMoneyTotal || 0);
+    var mRate      = 0.07 / 12;
+
+    function _monthsToFIRE(pmt, target, start) {
+      var v = start;
+      for (var m = 1; m <= 600; m++) { v = v * (1 + mRate) + pmt; if (v >= target) return m; }
+      return null;
+    }
+
+    var m1 = _monthsToFIRE(savings, fireTarget, pv);
+    var yrs = m1 !== null ? Math.ceil(m1 / 12) : null;
+
+    // Format FIRE number
+    var fireLabel = fireTarget >= 1000000
+      ? (fireTarget / 1000000).toFixed(1) + 'M'
+      : Math.round(fireTarget / 1000) + 'k';
+    fireNum.textContent = '€' + fireLabel;
+    fireYrs.textContent = yrs !== null ? yrs + ' años' : '+50 años';
+
+    // Tip: +10% savings
+    var m2 = _monthsToFIRE(savings * 1.1, fireTarget, pv);
+    var yrs2 = m2 !== null ? Math.ceil(m2 / 12) : null;
+    var diff2 = (yrs !== null && yrs2 !== null) ? yrs - yrs2 : null;
+    var progressPct = pv > 0 ? Math.min(100, Math.round((pv / fireTarget) * 100)) : 0;
+
+    var tip = '';
+    if (diff2 && diff2 > 0) {
+      tip += '💡 Ahorrar <strong>€' + Math.round(savings * 0.1).toLocaleString('es') + ' más al mes</strong> (10% extra) te acercaría <strong>' + diff2 + ' ' + (diff2 === 1 ? 'año' : 'años') + '</strong> a la independencia.';
+    }
+    if (progressPct > 0) {
+      tip += (tip ? ' <span style="color:var(--text3);">·</span> ' : '') + 'Llevas el <strong style="color:var(--gold);">' + progressPct + '%</strong> del camino recorrido.';
+    }
+    if (!tip) {
+      tip = 'Invirtiendo tus ahorros mensuales al 7% anual (media histórica de mercado global).';
+    }
+    fireTip.innerHTML = tip;
+    fireCard.style.display = 'block';
+  } else if (fireCard) {
+    fireCard.style.display = 'none';
+  }
 }
 
 function _rmToggleEdit() {
@@ -5669,6 +5811,8 @@ function _rmSaveMonth() {
     if (typeof spawnXPv2 === 'function') spawnXPv2('+50 XP', 'Mi Dinero Real');
     saveState();
   }
+  // Refresh home card immediately
+  if (typeof _renderRealMoneyHomeCard === 'function') _renderRealMoneyHomeCard();
 }
 
 function _rmLoad() {

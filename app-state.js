@@ -226,6 +226,10 @@ const DEFAULTS = {
   _mw_missions: [],
   _mw_perfect_weeks: [],
   _mw_ten_weeks: [],
+  /* ── Mi Dinero Real ── */
+  _realMoneyHistory: [],    // [{month, income, expenses, totalExpenses, savings, savedAt}]
+  _realMoneyTotal: 0,       // suma acumulada de ahorros guardados
+  _realActionsCount: 0,     // número de acciones reales completadas
 };
 
 
