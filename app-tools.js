@@ -394,14 +394,6 @@ function _checkReferralReward() {
   recalcPatrimony();
   saveState();
   toast('🎁 ¡Bono de referido!', `+${xpBonus} XP por unirte con el código de un amigo.`, 't-success');
-  // Notificar al servidor (best-effort, no bloquea)
-  try {
-    fetch('/api/referral-complete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ referrerCode: S._referredBy, newUserCode: S.friendCode || '' }),
-    }).catch(() => {});
-  } catch(e) {}
 }
 
 window._checkReferralParam  = _checkReferralParam;
@@ -2043,27 +2035,8 @@ const NOTIFS = {
     );
   },
 
-  // Subscribe to Web Push via Service Worker
-  async subscribePush() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-    const VAPID_PUBLIC = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjZJEnS-MRx8hd3Y0tdJTHTkVy-ss'; // placeholder — set real key in vercel env
-    if (!VAPID_PUBLIC || VAPID_PUBLIC.startsWith('BEl62')) {
-      // No VAPID key configured — skip silently
-      return;
-    }
-    try {
-      const reg  = await navigator.serviceWorker.ready;
-      const sub  = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: _urlBase64ToUint8Array(VAPID_PUBLIC),
-      });
-      await fetch('/api/push-subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subscription: sub.toJSON(), userId: S.friendCode || '' }),
-      });
-    } catch(e) {}
-  },
+  // subscribePush — placeholder hasta configurar Cloudflare Workers + VAPID
+  async subscribePush() { /* pendiente: migrar a Cloudflare Workers */ },
 };
 
 // Auto-init: restore permission state
