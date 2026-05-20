@@ -25,17 +25,27 @@ export async function onRequest({ request, env }) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`,
+      'https://api.groq.com/openai/v1/chat/completions',
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${env.GROQ_API_KEY}`,
+        },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: `Eres FinAI, un coach financiero personal dentro de FinLearn. Responde en español, de forma concisa (máximo 3 frases), práctica y personalizada.\n\nContexto del usuario:\n${context || 'Sin contexto'}\n\nPregunta: ${question}`,
-            }],
-          }],
-          generationConfig: { maxOutputTokens: 200, temperature: 0.7 },
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: 'Eres FinAI, un coach financiero personal dentro de FinLearn. Responde en español, de forma concisa (máximo 3 frases), práctica y personalizada.',
+            },
+            {
+              role: 'user',
+              content: `Contexto del usuario:\n${context || 'Sin contexto'}\n\nPregunta: ${question}`,
+            },
+          ],
+          max_tokens: 200,
+          temperature: 0.7,
         }),
       }
     );
@@ -43,12 +53,12 @@ export async function onRequest({ request, env }) {
     const data = await response.json();
     if (!response.ok) {
       const errMsg = data.error?.message || JSON.stringify(data);
-      return new Response(JSON.stringify({ text: `Error Gemini: ${errMsg}` }), {
+      return new Response(JSON.stringify({ text: `Error del coach: ${errMsg}` }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
     }
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No pude generar una respuesta.';
+    const text = data.choices?.[0]?.message?.content || 'No pude generar una respuesta.';
     return new Response(JSON.stringify({ text }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
