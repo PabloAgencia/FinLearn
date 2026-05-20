@@ -394,6 +394,13 @@ function _checkReferralReward() {
   recalcPatrimony();
   saveState();
   toast('🎁 ¡Bono de referido!', `+${xpBonus} XP por unirte con el código de un amigo.`, 't-success');
+  try {
+    fetch('/api/referral-complete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ referrerCode: S._referredBy, newUserCode: S.friendCode || '' }),
+    }).catch(() => {});
+  } catch(e) {}
 }
 
 window._checkReferralParam  = _checkReferralParam;
@@ -2035,8 +2042,24 @@ const NOTIFS = {
     );
   },
 
-  // subscribePush — placeholder hasta configurar Cloudflare Workers + VAPID
-  async subscribePush() { /* pendiente: migrar a Cloudflare Workers */ },
+  // Subscribe to Web Push via Service Worker — requiere VAPID configurado en Cloudflare env vars
+  async subscribePush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    const VAPID_PUBLIC = window._VAPID_PUBLIC || '';
+    if (!VAPID_PUBLIC) return; // no configurado aún
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: _urlBase64ToUint8Array(VAPID_PUBLIC),
+      });
+      await fetch('/api/push-subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscription: sub.toJSON(), userId: S.friendCode || '' }),
+      }).catch(() => {});
+    } catch(e) {}
+  },
 };
 
 // Auto-init: restore permission state
