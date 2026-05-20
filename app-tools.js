@@ -2569,22 +2569,22 @@ const TUTORIAL_STEPS = [
   {
     icon: '🎓',
     title: '¡Bienvenido a FinLearn!',
-    desc: 'Aprende finanzas reales en módulos de 5 minutos. Cada módulo te da XP y conocimiento que puedes aplicar hoy mismo. La constancia es lo único que marca la diferencia.',
+    desc: 'Módulos de 5 minutos, conocimiento que puedes aplicar hoy. La constancia es lo que separa a quienes consiguen libertad financiera de los que no.',
   },
   {
     icon: '🔥',
     title: 'Mantén tu racha',
-    desc: 'Completa al menos un módulo cada día para mantener tu racha activa. Las rachas desbloquean recompensas especiales y te ayudan a construir el hábito que más enriquece.',
+    desc: 'Un módulo al día mantiene la racha viva. Las rachas desbloquean recompensas y construyen el hábito más valioso que existe.',
   },
   {
     icon: '📈',
-    title: 'Simula decisiones reales',
-    desc: 'Invierte en bolsa, gestiona negocios y simula crisis financieras — todo con dinero virtual. El simulador usa tu situación real para que las proyecciones tengan sentido.',
+    title: 'Simulador financiero',
+    desc: 'Invierte, gestiona negocios y simula crisis — todo con dinero virtual basado en tu situación real.',
   },
   {
     icon: '🚀',
     title: '¡Tu primera lección!',
-    desc: 'Hemos elegido el módulo perfecto para empezar según tu objetivo. Toca "¡Vamos!" para lanzarte — son solo 5 minutos y cuando acabes sabrás algo que la mayoría no sabe.',
+    desc: 'Hemos elegido el módulo perfecto según tu objetivo. 5 minutos que valen miles de euros.',
   },
 ];
 

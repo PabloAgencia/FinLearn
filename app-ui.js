@@ -3955,9 +3955,8 @@ function selectGoal(key, label) {
   if (card) card.classList.add('selected');
   const btn = document.getElementById('ob-s1-btn');
   if (btn) {
-    const ready = S.goal && S.investorLevel;
-    btn.style.opacity = ready ? '1' : '0.4';
-    btn.style.cursor  = ready ? 'pointer' : 'not-allowed';
+    btn.style.opacity = '1';
+    btn.style.cursor  = 'pointer';
   }
 }
 
@@ -4107,11 +4106,10 @@ function selectInvestorLevel(level, label) {
   document.querySelectorAll('.ob-level-card').forEach(c => c.classList.remove('selected'));
   const card = document.getElementById('lvl-' + level);
   if (card) card.classList.add('selected');
-  const btn = document.getElementById('ob-s1-btn');
+  const btn = document.getElementById('ob-s3-btn');
   if (btn) {
-    const ready = S.goal && S.investorLevel;
-    btn.style.opacity = ready ? '1' : '0.4';
-    btn.style.cursor  = ready ? 'pointer' : 'not-allowed';
+    btn.style.opacity = '1';
+    btn.style.cursor  = 'pointer';
   }
 }
 

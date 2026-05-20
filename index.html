@@ -178,34 +178,9 @@
             <div class="ob-dot"></div>
             <div class="ob-dot"></div>
           </div>
-          <div class="ob-emoji">🧠</div>
-          <div class="ob-title">¿Cuál es tu nivel financiero?</div>
-          <div class="ob-sub">Sin juicios — esto nos ayuda a darte el contenido más útil desde el primer día.</div>
-          <div class="ob-level-grid">
-            <div class="ob-level-card" id="lvl-zero" onclick="selectInvestorLevel('zero','Empezando desde cero')">
-              <div class="ob-lc-icon">🌱</div>
-              <div class="ob-lc-title">Empezando desde cero</div>
-              <div class="ob-lc-desc">No tengo ahorros ni conozco el mundo de las inversiones</div>
-            </div>
-            <div class="ob-level-card" id="lvl-saving" onclick="selectInvestorLevel('saving','Tengo algo ahorrado')">
-              <div class="ob-lc-icon">🏦</div>
-              <div class="ob-lc-title">Tengo algo ahorrado</div>
-              <div class="ob-lc-desc">Ahorro pero no sé dónde ni cómo invertir</div>
-            </div>
-            <div class="ob-level-card" id="lvl-investing" onclick="selectInvestorLevel('investing','Ya invierto un poco')">
-              <div class="ob-lc-icon">📊</div>
-              <div class="ob-lc-title">Ya invierto un poco</div>
-              <div class="ob-lc-desc">Tengo fondos, ETFs o acciones pero quiero mejorar</div>
-            </div>
-            <div class="ob-level-card" id="lvl-active" onclick="selectInvestorLevel('active','Inversor activo')">
-              <div class="ob-lc-icon">🚀</div>
-              <div class="ob-lc-title">Inversor activo</div>
-              <div class="ob-lc-desc">Gestiono mi cartera y busco optimizarla</div>
-            </div>
-          </div>
-          <div class="ob-emoji" id="ob-sel-av" style="margin-top:20px;">🌱</div>
+          <div class="ob-emoji" id="ob-sel-av">🌱</div>
           <div class="ob-title">¿Cómo te llamamos?</div>
-          <div class="ob-sub">Elige tu avatar y tu nombre para el ranking.</div>
+          <div class="ob-sub">Elige tu avatar y escribe tu nombre. Puedes cambiarlo desde tu perfil cuando quieras.</div>
           <div class="av-grid">
             <div class="av-opt sel" onclick="pickAvatar('🌱','Novato')" data-av="🌱"><span class="av-em">🌱</span><span class="av-nm">Novato</span></div>
             <div class="av-opt" onclick="pickAvatar('🦊','Estratega')" data-av="🦊"><span class="av-em">🦊</span><span class="av-nm">Estratega</span></div>
@@ -217,10 +192,10 @@
             <div class="av-opt" onclick="pickAvatar('⚡','Relámpago')" data-av="⚡"><span class="av-em">⚡</span><span class="av-nm">Rayo</span></div>
           </div>
           <input class="ob-input" type="text" placeholder="Tu nombre o apodo..." id="ob-name-input" maxlength="20" oninput="validateObs2()">
-          <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="obNext(3)" style="opacity:.4;cursor:not-allowed;">Cuéntame tu nivel →</button>
+          <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="obNext(3)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
         </div>
 
-        <!-- STEP 3: Projection -->
+        <!-- STEP 3: Level + Basic data -->
         <div class="ob-step" id="ob-s3">
           <div class="ob-logo">FinLearn</div>
           <div class="ob-dots">
@@ -230,11 +205,34 @@
             <div class="ob-dot"></div>
             <div class="ob-dot"></div>
           </div>
-          <div class="ob-emoji">💰</div>
-          <div class="ob-title">Tu situación financiera actual</div>
-          <div class="ob-sub">Para calcular tu proyección real. Tus datos nunca salen de este dispositivo.</div>
+          <div class="ob-emoji">🧠</div>
+          <div class="ob-title">¿Cuál es tu nivel actual?</div>
+          <div class="ob-sub">Sin juicios — esto personaliza tu ruta de aprendizaje.</div>
 
-          <div class="fin-row-2">
+          <div class="ob-level-grid">
+            <div class="ob-level-card" id="lvl-zero" onclick="selectInvestorLevel('zero','Empezando desde cero')">
+              <div class="ob-lc-icon">🌱</div>
+              <div class="ob-lc-title">Desde cero</div>
+              <div class="ob-lc-desc">No conozco el mundo de las inversiones</div>
+            </div>
+            <div class="ob-level-card" id="lvl-saving" onclick="selectInvestorLevel('saving','Tengo algo ahorrado')">
+              <div class="ob-lc-icon">🏦</div>
+              <div class="ob-lc-title">Tengo ahorros</div>
+              <div class="ob-lc-desc">Ahorro pero no sé bien dónde invertir</div>
+            </div>
+            <div class="ob-level-card" id="lvl-investing" onclick="selectInvestorLevel('investing','Ya invierto un poco')">
+              <div class="ob-lc-icon">📊</div>
+              <div class="ob-lc-title">Ya invierto</div>
+              <div class="ob-lc-desc">Fondos, ETFs o acciones — quiero mejorar</div>
+            </div>
+            <div class="ob-level-card" id="lvl-active" onclick="selectInvestorLevel('active','Inversor activo')">
+              <div class="ob-lc-icon">🚀</div>
+              <div class="ob-lc-title">Activo</div>
+              <div class="ob-lc-desc">Gestiono mi cartera y busco optimizarla</div>
+            </div>
+          </div>
+
+          <div class="fin-row-2" style="margin-top:16px;">
             <div class="fin-field">
               <label>EDAD</label>
               <div class="fin-input-row">
@@ -246,30 +244,14 @@
               <label>INGRESOS/MES (€)</label>
               <div class="fin-input-row">
                 <span class="fin-prefix">€</span>
-                <input class="fin-num" type="number" id="ob-income" placeholder="2.000" min="0" oninput="_renderProjectionStepFinal()">
+                <input class="fin-num" type="number" id="ob-income" placeholder="1.800" min="0" oninput="_renderProjectionStepFinal()">
               </div>
             </div>
           </div>
+          <p style="font-size:11px;color:var(--text3);text-align:center;margin:-4px 0 4px;">Opcionales — solo para calcular tu proyección. Nunca salen de tu dispositivo.</p>
 
-          <div class="fin-row-2">
-            <div class="fin-field">
-              <label>AHORROS ACTUALES (€)</label>
-              <div class="fin-input-row">
-                <span class="fin-prefix">🏦</span>
-                <input class="fin-num" type="number" id="ob-savings" placeholder="0" min="0" oninput="_renderProjectionStepFinal()">
-              </div>
-            </div>
-            <div class="fin-field">
-              <label>DEUDAS TOTALES (€)</label>
-              <div class="fin-input-row">
-                <span class="fin-prefix">💳</span>
-                <input class="fin-num" type="number" id="ob-debt-total" placeholder="0" min="0" oninput="_renderProjectionStepFinal()">
-              </div>
-            </div>
-          </div>
-
-          <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="obNext(4)">
-            Ver mi futuro →
+          <button class="btn btn-primary btn-block" id="ob-s3-btn" onclick="obNext(4)" style="opacity:.4;cursor:not-allowed;margin-top:16px;">
+            Ver mi proyección →
           </button>
         </div>
 

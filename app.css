@@ -6606,7 +6606,9 @@ a.btn {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: min(340px, 88vw);
+  width: min(360px, 90vw);
+  max-height: 90vh;
+  overflow-y: auto;
   margin: 0;
   background: var(--card);
   border: 1px solid var(--border);
@@ -6688,14 +6690,18 @@ a.btn {
 }
 @media (max-width: 480px) {
   .tut-card {
-    width: min(340px, 88vw);
-    padding: 20px 16px 16px !important;
-    max-height: 72vh;
+    width: 90vw;
+    padding: 16px 14px 14px !important;
+    max-height: min(440px, 75dvh);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
-  .tut-icon  { font-size: 32px; }
-  .tut-title { font-size: 16px; }
-  .tut-desc  { font-size: 12px; margin-bottom: 14px; }
+  .tut-icon  { font-size: 28px; margin-bottom: 6px; }
+  .tut-title { font-size: 15px; margin-bottom: 6px; }
+  .tut-desc  { font-size: 12px; margin-bottom: 10px; line-height: 1.5; }
+  .tut-step-dots { margin-bottom: 10px; }
 }
 
 /* ═══════════════════════════════════════════════════════════

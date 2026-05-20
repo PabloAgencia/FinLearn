@@ -1257,23 +1257,41 @@ function makeNumericControl(opts) {
   }
 
   function setupHold(btn, dir) {
-    var timer, interval;
-    var speed = 300;
-    function startHold() {
+    var _holdTimer = null;
+    var _repeatTimer = null;
+    var _speed = 320;
+    var _running = false;
+
+    function startHold(e) {
+      if (_running) return;
+      _running = true;
+      if (e && e.cancelable) e.preventDefault();
       change(dir);
-      timer = setTimeout(function() {
-        interval = setInterval(function() {
-          change(dir);
-          if (speed > 60) { speed -= 20; clearInterval(interval); interval = setInterval(arguments.callee, speed); }
-        }, speed);
-      }, 400);
+      _holdTimer = setTimeout(function loop() {
+        change(dir);
+        _speed = Math.max(90, _speed - 15);
+        _repeatTimer = setTimeout(loop, _speed);
+      }, 500);
     }
-    function stopHold() { clearTimeout(timer); clearInterval(interval); speed = 300; }
-    btn.addEventListener('mousedown',  startHold);
-    btn.addEventListener('touchstart', startHold, { passive: true });
-    btn.addEventListener('mouseup',    stopHold);
-    btn.addEventListener('mouseleave', stopHold);
-    btn.addEventListener('touchend',   stopHold);
+
+    function stopHold() {
+      _running = false;
+      clearTimeout(_holdTimer);
+      clearTimeout(_repeatTimer);
+      _holdTimer = null;
+      _repeatTimer = null;
+      _speed = 320;
+    }
+
+    btn.addEventListener('touchstart', startHold, { passive: false });
+    btn.addEventListener('mousedown', function(e) {
+      if ('ontouchstart' in window) return;
+      startHold(e);
+    });
+    btn.addEventListener('touchend',    stopHold);
+    btn.addEventListener('touchcancel', stopHold);
+    btn.addEventListener('mouseup',     stopHold);
+    btn.addEventListener('mouseleave',  stopHold);
   }
 
   var w = el.parentNode;
