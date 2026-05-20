@@ -9,7 +9,15 @@
   "theme_color": "#00e5a0",
   "lang": "es",
   "categories": ["education", "finance"],
-  "screenshots": [],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "FinLearn — Aprende finanzas en 1 minuto al día"
+    }
+  ],
   "icons": [
     {
       "src": "icons/icon-72.png",

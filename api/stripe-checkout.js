@@ -13,8 +13,8 @@ export default async function handler(req, res) {
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: 'https://fin-learn-seven.vercel.app/?premium=1&session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: 'https://fin-learn-seven.vercel.app/?cancelled=1',
+      success_url: 'https://finlearn.app/?premium=1&session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'https://finlearn.app/?cancelled=1',
       customer_email: userEmail || undefined,
       metadata: { userId: userId || '' },
     });
