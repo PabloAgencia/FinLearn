@@ -5491,31 +5491,155 @@ function _repairStreak(cost) {
 window._repairStreak = _repairStreak;
 
 function _rmUpdate() {
-  const get = id => parseFloat(document.getElementById(id)?.value) || 0;
-  const inc = get('rm-income');
-  const exp = get('rm-exp-home') + get('rm-exp-food') + get('rm-exp-transport') + get('rm-exp-fun') + get('rm-exp-other');
-  const savings = Math.max(0, inc - exp);
-  const pct = inc > 0 ? Math.round((savings / inc) * 100) : 0;
-  const valEl = document.getElementById('rm-savings-val');
-  const pctEl = document.getElementById('rm-savings-pct');
+  var get = function(id) { return parseFloat(document.getElementById(id) && document.getElementById(id).value) || 0; };
+  var inc = get('rm-income');
+  var expHome = get('rm-exp-home'), expFood = get('rm-exp-food'), expTransport = get('rm-exp-transport'), expFun = get('rm-exp-fun'), expOther = get('rm-exp-other');
+  var totalExp = expHome + expFood + expTransport + expFun + expOther;
+  var savings = Math.max(0, inc - totalExp);
+  var pct = inc > 0 ? Math.round((savings / inc) * 100) : 0;
+
+  // Hero values
+  var valEl = document.getElementById('rm-savings-val');
+  var pctEl = document.getElementById('rm-savings-pct');
   if (valEl) valEl.textContent = '€' + savings.toLocaleString('es');
   if (pctEl) {
-    if (inc === 0) pctEl.textContent = 'Introduce tus datos para empezar';
-    else if (savings === 0 && exp > inc) pctEl.textContent = '⚠️ Gastas más de lo que ingresas';
-    else pctEl.textContent = `Tasa de ahorro: ${pct}% · ${pct >= 20 ? '🔥 Excelente' : pct >= 10 ? '✓ Correcto' : '⚠️ Mejora'}`;
+    if (inc === 0) pctEl.textContent = 'Introduce tus datos →';
+    else if (totalExp > inc) pctEl.textContent = '⚠️ Gastas más de lo que ingresas';
+    else pctEl.textContent = pct >= 20 ? '🔥 Tasa excelente' : pct >= 10 ? '✓ Tasa correcta' : '⚠️ Tasa baja';
   }
-  // Mostrar comparación con mes anterior si existe
-  const last = S._realMoneyHistory && S._realMoneyHistory.length > 0 ? S._realMoneyHistory[S._realMoneyHistory.length - 1] : null;
-  const compEl = document.getElementById('rm-comparison');
-  const compText = document.getElementById('rm-compare-text');
+
+  // Rate bar
+  var rateBar = document.getElementById('rm-rate-bar');
+  var rateLbl = document.getElementById('rm-rate-lbl');
+  if (rateBar) {
+    var barW = Math.min(100, pct * 2.5); // 40% → 100%
+    var barColor = pct >= 20 ? '#00e5a0' : pct >= 10 ? '#f5a623' : '#ef4444';
+    rateBar.style.width = barW + '%';
+    rateBar.style.background = barColor;
+  }
+  if (rateLbl) {
+    rateLbl.textContent = inc > 0 ? pct + '%' : '—';
+    rateLbl.style.color = pct >= 20 ? '#00e5a0' : pct >= 10 ? '#f5a623' : '#ef4444';
+  }
+
+  // Total strip
+  var totalStrip = document.getElementById('rm-total-strip');
+  var totalVal = document.getElementById('rm-total-val');
+  var histTotal = (S._realMoneyHistory || []).reduce(function(a,h){ return a + (h.savings||0); }, 0);
+  if (totalStrip && totalVal) {
+    totalStrip.style.display = histTotal > 0 ? 'flex' : 'none';
+    totalVal.textContent = '€' + histTotal.toLocaleString('es');
+  }
+
+  // Expense breakdown
+  var brkCard = document.getElementById('rm-breakdown-card');
+  var brkBars = document.getElementById('rm-breakdown-bars');
+  if (brkCard && brkBars && totalExp > 0) {
+    var cats = [
+      { label:'🏠 Vivienda', val:expHome },
+      { label:'🛒 Comida', val:expFood },
+      { label:'🚗 Transporte', val:expTransport },
+      { label:'🎉 Ocio', val:expFun },
+      { label:'📱 Otros', val:expOther }
+    ];
+    var maxCat = Math.max.apply(null, cats.map(function(c){ return c.val; }).concat([1]));
+    brkBars.innerHTML = cats.map(function(c) {
+      var cpct = totalExp > 0 ? Math.round((c.val / totalExp) * 100) : 0;
+      var bw = Math.round((c.val / maxCat) * 100);
+      var col = (c.label.indexOf('Vivienda') !== -1 && cpct > 35) ? '#ef4444' : '#60a5fa';
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">' +
+        '<div style="font-size:12px;width:96px;color:var(--text2);flex-shrink:0;">' + c.label + '</div>' +
+        '<div style="flex:1;height:7px;background:var(--bg2);border-radius:4px;overflow:hidden;">' +
+          '<div style="width:' + bw + '%;height:100%;background:' + col + ';border-radius:4px;"></div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text3);white-space:nowrap;width:70px;text-align:right;">' + cpct + '% · €' + c.val.toLocaleString('es') + '</div>' +
+        '</div>';
+    }).join('');
+    brkCard.style.display = 'block';
+  } else if (brkCard) {
+    brkCard.style.display = 'none';
+  }
+
+  // Insight
+  var insCard = document.getElementById('rm-insight-card');
+  var insTxt = document.getElementById('rm-insight-text');
+  if (insCard && insTxt && inc > 0) {
+    var insightMsg = '';
+    var homePct = inc > 0 ? Math.round((expHome / inc) * 100) : 0;
+    var fv5 = savings > 0 ? Math.round(savings * 12 * ((Math.pow(1.07, 5) - 1) / 0.07)) : 0;
+    if (savings === 0 && totalExp >= inc) {
+      insightMsg = '⚠️ Tus gastos igualan o superan tus ingresos. Identifica los 2 gastos más fáciles de reducir y aplica la regla 50/30/20.';
+    } else if (homePct > 35) {
+      insightMsg = '🏠 Tu vivienda consume el ' + homePct + '% de tus ingresos (recomendado: máx. 30–35%). Considera renegociar el contrato o buscar alternativas.';
+    } else if (pct >= 20) {
+      insightMsg = '🔥 Tasa de ahorro del ' + pct + '%. Excelente. Invirtiendo estos €' + savings.toLocaleString('es') + '/mes a 7% anual, en 5 años tendrás aproximadamente €' + fv5.toLocaleString('es') + '.';
+    } else if (pct >= 10) {
+      var gap = Math.round(inc * 0.20 - savings);
+      insightMsg = '✓ Tasa del ' + pct + '%. Para alcanzar el 20% recomendado necesitas ahorrar €' + gap.toLocaleString('es') + ' más al mes. Revisa suscripciones y ocio.';
+    } else {
+      insightMsg = '⚠️ Tasa de ahorro del ' + pct + '%. El objetivo mínimo es el 10% de los ingresos. Con €' + inc.toLocaleString('es') + ' de ingresos, eso son €' + Math.round(inc * 0.1).toLocaleString('es') + '/mes.';
+    }
+    insTxt.textContent = insightMsg;
+    insCard.style.display = 'block';
+  } else if (insCard) {
+    insCard.style.display = 'none';
+  }
+
+  // History bars
+  var histCard = document.getElementById('rm-history-card');
+  var histBars = document.getElementById('rm-history-bars');
+  var history = S._realMoneyHistory || [];
+  if (histCard && histBars && history.length > 0) {
+    var recent = history.slice(-6);
+    var maxSav = Math.max.apply(null, recent.map(function(h){ return h.savings||0; }).concat([1]));
+    histBars.innerHTML = recent.reverse().map(function(h) {
+      var bw = Math.round(((h.savings||0) / maxSav) * 100);
+      var monthLabel = (h.month || '').slice(0, 7);
+      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">' +
+        '<div style="font-size:11px;color:var(--text3);width:54px;flex-shrink:0;">' + monthLabel + '</div>' +
+        '<div style="flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;">' +
+          '<div style="width:' + bw + '%;height:100%;background:#00e5a0;border-radius:4px;"></div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:#00e5a0;width:54px;text-align:right;">€' + (h.savings||0).toLocaleString('es') + '</div>' +
+        '</div>';
+    }).join('');
+    histCard.style.display = 'block';
+  } else if (histCard) {
+    histCard.style.display = 'none';
+  }
+
+  // VS mes anterior
+  var last = history.length > 0 ? history[history.length - 1] : null;
+  var compEl = document.getElementById('rm-comparison');
+  var compText = document.getElementById('rm-compare-text');
   if (last && inc > 0 && compEl && compText) {
-    const diff = savings - last.savings;
-    if (diff > 0) compText.innerHTML = `📈 Ahorras <strong style="color:#00e5a0;">€${diff.toLocaleString('es')} más</strong> que el mes pasado`;
-    else if (diff < 0) compText.innerHTML = `📉 Ahorras <strong style="color:#ef4444;">€${Math.abs(diff).toLocaleString('es')} menos</strong> que el mes pasado`;
-    else compText.textContent = 'Mismo ahorro que el mes pasado';
+    var diff = savings - (last.savings || 0);
+    if (diff > 0) compText.innerHTML = '📈 Ahorras <strong style="color:#00e5a0;">€' + diff.toLocaleString('es') + ' más</strong> que el mes pasado';
+    else if (diff < 0) compText.innerHTML = '📉 Ahorras <strong style="color:#ef4444;">€' + Math.abs(diff).toLocaleString('es') + ' menos</strong> que el mes pasado';
+    else compText.textContent = 'Igual que el mes pasado';
     compEl.style.display = 'block';
+  } else if (compEl) {
+    compEl.style.display = 'none';
   }
 }
+
+function _rmToggleEdit() {
+  var body = document.getElementById('rm-edit-body');
+  var arrow = document.getElementById('rm-edit-arrow');
+  var toggle = document.getElementById('rm-edit-toggle');
+  if (!body) return;
+  var isOpen = body.style.maxHeight !== '0px' && body.style.maxHeight !== '';
+  if (isOpen) {
+    body.style.maxHeight = '0px';
+    if (arrow) arrow.style.transform = '';
+    if (toggle) toggle.style.borderBottomColor = 'transparent';
+  } else {
+    body.style.maxHeight = '600px';
+    if (arrow) arrow.style.transform = 'rotate(180deg)';
+    if (toggle) toggle.style.borderBottomColor = 'var(--border)';
+  }
+}
+window._rmToggleEdit = _rmToggleEdit;
 
 function _rmSaveMonth() {
   const get = id => parseFloat(document.getElementById(id)?.value) || 0;
@@ -5548,7 +5672,19 @@ function _rmSaveMonth() {
 }
 
 function _rmLoad() {
-  if (!S._realMoneyHistory || S._realMoneyHistory.length === 0) { _rmUpdate(); return; }
+  if (!S._realMoneyHistory || S._realMoneyHistory.length === 0) {
+    // First time: auto-open the edit form
+    setTimeout(function() {
+      var body = document.getElementById('rm-edit-body');
+      var arrow = document.getElementById('rm-edit-arrow');
+      var toggle = document.getElementById('rm-edit-toggle');
+      if (body) body.style.maxHeight = '600px';
+      if (arrow) arrow.style.transform = 'rotate(180deg)';
+      if (toggle) toggle.style.borderBottomColor = 'var(--border)';
+    }, 100);
+    _rmUpdate();
+    return;
+  }
   const last = S._realMoneyHistory[S._realMoneyHistory.length - 1];
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
   set('rm-income', last.income);

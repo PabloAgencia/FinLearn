@@ -1229,38 +1229,86 @@
     <div class="screen" id="s-realmoney" style="overflow-y:auto;">
       <div class="nav">
         <button class="nav-back" onclick="goTo('home')">←</button>
-        <div class="nav-title">Mi Dinero Real</div>
+        <div class="nav-title">💰 Mi Dinero Real</div>
         <div></div>
       </div>
-      <div class="sc-body">
-        <div style="background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(245,166,35,.04));border:1px solid rgba(0,229,160,.15);border-radius:16px;padding:18px;margin-bottom:16px;">
-          <div style="font-size:11px;color:var(--text2);letter-spacing:.08em;margin-bottom:6px;">TU AHORRO ESTE MES</div>
-          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#00e5a0;" id="rm-savings-val">€0</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:4px;" id="rm-savings-pct">Introduce tus datos para empezar</div>
-        </div>
+      <div class="sc-body" style="padding-bottom:32px;">
 
-        <div style="background:var(--surface);border-radius:16px;padding:18px;margin-bottom:16px;">
-          <div style="font-size:13px;font-weight:700;color:var(--text1);margin-bottom:14px;">💰 INGRESOS NETOS DEL MES</div>
-          <input type="number" id="rm-income" placeholder="Ej: 1800" style="width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text1);font-size:16px;" oninput="_rmUpdate()">
-        </div>
-
-        <div style="background:var(--surface);border-radius:16px;padding:18px;margin-bottom:16px;">
-          <div style="font-size:13px;font-weight:700;color:var(--text1);margin-bottom:14px;">🧾 GASTOS REALES DEL MES</div>
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🏠 Vivienda (alquiler, hipoteca, suministros)</label><input type="number" id="rm-exp-home" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
-            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🛒 Comida y supermercado</label><input type="number" id="rm-exp-food" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
-            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🚗 Transporte</label><input type="number" id="rm-exp-transport" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
-            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">🎉 Ocio y restaurantes</label><input type="number" id="rm-exp-fun" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
-            <div><label style="font-size:11px;color:var(--text2);display:block;margin-bottom:4px;">📱 Suscripciones y otros</label><input type="number" id="rm-exp-other" placeholder="0" style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;" oninput="_rmUpdate()"></div>
+        <!-- HERO: savings amount + rate bar -->
+        <div style="background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(0,229,160,.03));border:1px solid rgba(0,229,160,.2);border-radius:20px;padding:20px;margin-bottom:16px;">
+          <div style="font-size:10px;color:var(--text2);letter-spacing:.1em;margin-bottom:4px;">AHORRO ESTE MES</div>
+          <div style="display:flex;align-items:flex-end;gap:10px;margin-bottom:12px;">
+            <div style="font-family:'Syne',sans-serif;font-size:40px;font-weight:800;color:#00e5a0;line-height:1;" id="rm-savings-val">€0</div>
+            <div style="font-size:13px;color:var(--text2);margin-bottom:7px;" id="rm-savings-pct">Introduce tus datos →</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:4px;">
+              <span>Tasa de ahorro</span>
+              <span id="rm-rate-lbl" style="font-weight:700;"></span>
+            </div>
+            <div style="height:10px;background:var(--bg2);border-radius:5px;overflow:hidden;">
+              <div id="rm-rate-bar" style="height:100%;width:0%;background:#00e5a0;border-radius:5px;transition:width .5s cubic-bezier(.4,0,.2,1),background .3s;"></div>
+            </div>
+            <div style="display:flex;font-size:9px;color:var(--text3);margin-top:3px;gap:0;">
+              <span>0%</span>
+              <span style="margin-left:9%;">10%</span>
+              <span style="margin-left:9%;">20%</span>
+              <span style="margin-left:auto;">40%+</span>
+            </div>
+          </div>
+          <div id="rm-total-strip" style="display:none;border-top:1px solid rgba(0,229,160,.15);padding-top:10px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:12px;color:var(--text2);">Total ahorrado con FinLearn</span>
+            <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#00e5a0;" id="rm-total-val">€0</span>
           </div>
         </div>
 
-        <div id="rm-comparison" style="background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(108,99,255,.02));border:1px solid rgba(108,99,255,.2);border-radius:16px;padding:16px;margin-bottom:16px;display:none;">
-          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;">VS. MES ANTERIOR</div>
+        <!-- INSIGHT -->
+        <div id="rm-insight-card" style="display:none;background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(99,102,241,.03));border:1px solid rgba(99,102,241,.25);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+          <div style="font-size:10px;color:#818cf8;font-weight:800;letter-spacing:.08em;margin-bottom:5px;">💡 INSIGHT PERSONALIZADO</div>
+          <div id="rm-insight-text" style="font-size:13px;color:var(--text1);line-height:1.55;"></div>
+        </div>
+
+        <!-- EXPENSE BREAKDOWN -->
+        <div id="rm-breakdown-card" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:800;color:var(--text1);letter-spacing:.07em;margin-bottom:14px;">DESGLOSE DE GASTOS</div>
+          <div id="rm-breakdown-bars"></div>
+        </div>
+
+        <!-- HISTORY -->
+        <div id="rm-history-card" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:800;color:var(--text1);letter-spacing:.07em;margin-bottom:14px;">HISTORIAL DE AHORRO</div>
+          <div id="rm-history-bars"></div>
+        </div>
+
+        <!-- VS MES ANTERIOR -->
+        <div id="rm-comparison" style="display:none;background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(108,99,255,.02));border:1px solid rgba(108,99,255,.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+          <div style="font-size:10px;color:#818cf8;font-weight:800;letter-spacing:.08em;margin-bottom:5px;">VS. MES ANTERIOR</div>
           <div id="rm-compare-text" style="font-size:14px;color:var(--text1);font-weight:600;"></div>
         </div>
 
-        <button class="btn btn-primary btn-block" onclick="_rmSaveMonth()">✓ Guardar mes actual</button>
+        <!-- EDIT FORM (collapsible) -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:16px;overflow:hidden;">
+          <button onclick="_rmToggleEdit()" id="rm-edit-toggle" style="width:100%;padding:15px 18px;background:none;border:none;border-bottom:1px solid transparent;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--text1);">
+            <span style="font-size:13px;font-weight:700;">✏️ Actualizar datos del mes</span>
+            <span id="rm-edit-arrow" style="color:var(--text3);font-size:18px;line-height:1;transition:transform .25s;">▾</span>
+          </button>
+          <div id="rm-edit-body" style="max-height:0;overflow:hidden;transition:max-height .35s ease;">
+            <div style="padding:0 18px 18px;">
+              <div style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.06em;margin:14px 0 6px;">💰 INGRESOS NETOS DEL MES (€)</div>
+              <input type="number" id="rm-income" placeholder="Ej: 1800" style="width:100%;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text1);font-size:16px;box-sizing:border-box;" oninput="_rmUpdate()">
+              <div style="font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.06em;margin:14px 0 8px;">🧾 GASTOS REALES (€)</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:3px;">🏠 Vivienda (alquiler/hipoteca/suministros)</label><input type="number" id="rm-exp-home" placeholder="0" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;box-sizing:border-box;" oninput="_rmUpdate()"></div>
+                <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:3px;">🛒 Comida y supermercado</label><input type="number" id="rm-exp-food" placeholder="0" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;box-sizing:border-box;" oninput="_rmUpdate()"></div>
+                <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:3px;">🚗 Transporte</label><input type="number" id="rm-exp-transport" placeholder="0" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;box-sizing:border-box;" oninput="_rmUpdate()"></div>
+                <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:3px;">🎉 Ocio y restaurantes</label><input type="number" id="rm-exp-fun" placeholder="0" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;box-sizing:border-box;" oninput="_rmUpdate()"></div>
+                <div><label style="font-size:11px;color:var(--text3);display:block;margin-bottom:3px;">📱 Suscripciones y otros</label><input type="number" id="rm-exp-other" placeholder="0" style="width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text1);font-size:14px;box-sizing:border-box;" oninput="_rmUpdate()"></div>
+              </div>
+              <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="_rmSaveMonth()">✓ Guardar mes</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
