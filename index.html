@@ -426,11 +426,17 @@
         <div class="card modules-section-card">
           <div class="sec-head mb12">
             <div class="sec-title">📚 Módulos de aprendizaje</div>
-            <button class="btn btn-ghost btn-sm" onclick="goTo('rank')">Ranking →</button>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button class="btn btn-ghost btn-sm mod-view-btn active" id="btn-view-map" onclick="switchModView('map')" title="Vista mapa">🗺️ Mapa</button>
+              <button class="btn btn-ghost btn-sm mod-view-btn" id="btn-view-list" onclick="switchModView('list')" title="Vista lista">☰ Lista</button>
+            </div>
           </div>
 
-          <!-- Branch tabs + cards ── -->
-          <div class="modules-grid" id="modules-grid"></div>
+          <!-- Skill tree (mapa) ── -->
+          <div id="f28-skill-tree" class="f28-wrap"></div>
+
+          <!-- Branch tabs + cards (lista) ── -->
+          <div class="modules-grid" id="modules-grid" style="display:none;"></div>
           <div id="modules-show-more-wrap" style="text-align:center;margin-top:8px;display:none;">
             <button class="btn btn-ghost btn-sm" id="modules-show-more-btn" onclick="toggleModulesExpand()" style="width:100%;padding:10px;">
               Ver todos los módulos ▾

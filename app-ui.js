@@ -910,6 +910,31 @@ function switchModBranch(branchId) {
 }
 window.switchModBranch = switchModBranch;
 
+var _modView = localStorage.getItem('finlearn_mod_view') || 'map';
+
+function switchModView(view) {
+  _modView = view;
+  localStorage.setItem('finlearn_mod_view', view);
+  const mapEl  = document.getElementById('f28-skill-tree');
+  const listEl = document.getElementById('modules-grid');
+  const btnMap  = document.getElementById('btn-view-map');
+  const btnList = document.getElementById('btn-view-list');
+  if (view === 'map') {
+    if (mapEl)  mapEl.style.display  = '';
+    if (listEl) listEl.style.display = 'none';
+    btnMap?.classList.add('active');
+    btnList?.classList.remove('active');
+    if (typeof F28_render === 'function') F28_render();
+  } else {
+    if (mapEl)  mapEl.style.display  = 'none';
+    if (listEl) listEl.style.display = '';
+    btnMap?.classList.remove('active');
+    btnList?.classList.add('active');
+    renderModules();
+  }
+}
+window.switchModView = switchModView;
+
 function toggleModulesExpand() {
   _modulesExpanded = !_modulesExpanded;
   renderModules();
@@ -2205,7 +2230,8 @@ function renderHomeScreen() {
   _f24_highlightSuggestedModule();
   // F27: plan de acción personalizado
   if (typeof F27_render === 'function') F27_render();
-  // F28: Skill Tree — renderizado gestionado por renderModules()
+  // F28: Skill Tree / vista módulos
+  switchModView(_modView);
   // F29: Caja Sorpresa Diaria
   if (typeof F29_render === 'function') F29_render();
   // F30: Misiones Grupales
