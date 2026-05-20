@@ -3435,6 +3435,7 @@ function F27_stepDone(id) {
   const total = S.actionPlan.length;
   const xpReward = 30;
   S.xp += xpReward;
+  F34_onXPGained(xpReward);
   spawnXP(xpReward);
   saveState();
 
@@ -3912,6 +3913,7 @@ function answerDCA(chosen, correct, explanation) {
 
   S.xp           += xpGained;
   S.totalXPtoday += xpGained;
+  if (xpGained > 0) F34_onXPGained(xpGained);
   S.dcaDone       = true;
   S.dcaDate       = new Date().toISOString().slice(0, 10);
   // Racha: sube solo si aciertas; si fallas, mantiene el valor actual (nunca fuerza a 1)
@@ -5353,6 +5355,7 @@ function answerExamQuestion(chosen) {
     GAME.examScore++;
     const _eXP = Math.round(50 * _eMult);
     S.xp += _eXP;
+    F34_onXPGained(_eXP);
     spawnXP('+' + _eXP + ' XP' + (_eMult > 1 ? ' ×' + _eMult : ''));
     setTimeout(() => _quizBurst(null), 60);
     saveState();

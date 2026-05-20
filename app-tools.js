@@ -734,6 +734,7 @@ function claimDailyReward(winIdx, dayCount) {
   // Apply reward
   if (reward.type === 'xp') {
     S.xp += reward.amount;
+    F34_onXPGained(reward.amount);
     spawnXP('+' + reward.amount + ' XP');
   } else if (reward.type === 'cash') {
     S.cash += reward.amount;
@@ -4605,6 +4606,7 @@ function _checkScenarioCompletion() {
     if (pct >= m.pct && !S._scenarioMilestones.includes(key)) {
       S._scenarioMilestones.push(key);
       S.xp += m.xp;
+      F34_onXPGained(m.xp);
       spawnXP('+' + m.xp + ' XP');
       toast('🎯 ' + m.label, 'Hito alcanzado · +' + m.xp + ' XP', 't-success');
       saveState();
@@ -6664,6 +6666,7 @@ const DUEL = (() => {
     const draw  = _score === _botScore;
     const xp    = _score * 30 + (won ? 200 : draw ? 80 : 20);
     S.xp += xp;
+    F34_onXPGained(xp);
     saveState();
     checkAchievements();
     if (won) { confetti(); SFX.levelUp(); HAPTIC.levelUp(); }
@@ -10777,6 +10780,7 @@ function F34_claim() {
 
   const xp = S.dailyChallengeXPReward || 100;
   S.xp += xp;
+  F34_onXPGained(xp);
   S.dailyChallengeClaimed = true;
   saveState();
 

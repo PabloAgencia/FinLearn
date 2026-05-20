@@ -81,6 +81,7 @@ function F44_openChest(index) {
   if (reward.type === 'xp') {
     const gained = Math.round(reward.value * (S.xpMultiplier || 1));
     S.xp += gained;
+    F34_onXPGained(gained);
     resultMsg = `+${gained} XP`;
     spawnXP('+' + gained + ' XP');
   } else if (reward.type === 'shield') {
@@ -98,6 +99,7 @@ function F44_openChest(index) {
   } else if (reward.type === 'legendary_pack') {
     const gained = Math.round(reward.value * (S.xpMultiplier || 1));
     S.xp += gained;
+    F34_onXPGained(gained);
     S.xpMultiplier = +((S.xpMultiplier || 1) + 0.1).toFixed(2);
     resultMsg = `+${gained} XP + multiplicador permanente ×${S.xpMultiplier.toFixed(1)}`;
     spawnXP('+' + gained + ' XP 🏆');

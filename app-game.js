@@ -510,7 +510,7 @@ function takeLifeEvent(eventId) {
   }
 
   // Aplicar efectos
-  if (fx.xp)              { S.xp          += fx.xp;          spawnXP('+' + fx.xp + ' XP'); }
+  if (fx.xp)              { S.xp += fx.xp; F34_onXPGained(fx.xp); spawnXP('+' + fx.xp + ' XP'); }
   if (fx.salaryMultiplier) { S.lifeSalary   = Math.round((S.lifeSalary || 1800) * fx.salaryMultiplier); }
   if (fx.salaryBonus)      { S.lifeSalary   = (S.lifeSalary || 1800) + fx.salaryBonus; }
   if (fx.expenseIncrease) {
@@ -1341,7 +1341,7 @@ var _FC = {
     st.doneToday.push(tod);
     st.doneToday=st.doneToday.filter(function(d){ return d===tod; });
     S._flashcards=st;
-    S.xp+=5; saveState(); spawnXP('+5 XP');
+    S.xp+=5; F34_onXPGained(5); saveState(); spawnXP('+5 XP');
     var m=document.getElementById('m-flashcard');
     if (m) this._render(m);
   },
@@ -1733,6 +1733,7 @@ function _checkPatrimonyMilestones() {
   var hit = pending[pending.length - 1];
   S.milestonesReached.push(hit.v);
   S.xp   += hit.xp;
+  F34_onXPGained(hit.xp);
   S.cash += hit.cash;
   saveState();
 
