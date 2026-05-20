@@ -4495,6 +4495,7 @@ function startModule(id) {
   goTo('lesson');
   renderStep();
   renderLessonNav();
+  if (typeof F46_renderHearts === 'function') F46_renderHearts();
 }
 
 /**

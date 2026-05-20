@@ -376,7 +376,7 @@ const MODULES = [
             {v:'S&P500', l:'Ha superado la inflación en el 100% de los períodos de 20 años'},
           ]},
           {t:'hl', s:'', label:'📊 BASE DEL AHORRO: CÓMO TRIBUTAN TUS INVERSIONES EN ESPAÑA',
-            p:'Las ganancias de capital y dividendos tributan en la <strong>Base Imponible del Ahorro</strong> (IRPF 2024): hasta 6.000€ → 19%, de 6.000€ a 50.000€ → 21%, de 50.000€ a 200.000€ → 23%, más de 200.000€ → 28%. El dato fundamental: <strong>no tributas mientras no vendes</strong>. Mientras mantienes el ETF, el interés compuesto crece sin que Hacienda corte su parte.'},
+            p:'Las ganancias de capital y dividendos tributan en la <strong>Base Imponible del Ahorro</strong> (IRPF 2025): hasta 6.000€ → 19%, de 6.000€ a 50.000€ → 21%, de 50.000€ a 200.000€ → 23%, de 200.000€ a 300.000€ → 27%, más de 300.000€ → 30%. El dato fundamental: <strong>no tributas mientras no vendes</strong>. Mientras mantienes el ETF, el interés compuesto crece sin que Hacienda corte su parte.'},
           {t:'hl', s:'info', label:'💡 ESTRATEGIA: DIFERIMIENTO FISCAL',
             p:'Si tienes ETFs accumulating (acumulación), los dividendos se reinvierten automáticamente sin generar evento fiscal. Solo tributas cuando vendes. Si mantienes 20 años sin vender, el 100% del interés compuesto trabaja para ti sin interrupciones fiscales. Al vender, pagas sobre la ganancia total — pero esa ganancia es mucho mayor que si hubieras tributado cada año por los dividendos distribuidos.'},
         ]
@@ -384,7 +384,7 @@ const MODULES = [
 
       /* ── Quiz 1 ── */
       {type:'quiz',
-        q:'Tienes una ganancia realizada de 12.000€ en la venta de un ETF y una pérdida realizada de 3.000€ en la venta de unas acciones. ¿Cuánto pagas en concepto de IRPF (base del ahorro) en España en 2024?',
+        q:'Tienes una ganancia realizada de 12.000€ en la venta de un ETF y una pérdida realizada de 3.000€ en la venta de unas acciones. ¿Cuánto pagas en concepto de IRPF (base del ahorro) en España en 2025?',
         opts:[
           {t:'Sobre 12.000€: 19% hasta 6.000€ y 21% sobre los 6.000€ restantes = 2.400€',   ok:false},
           {t:'Sobre 9.000€: 19% hasta 6.000€ = 1.140€ + 21% sobre 3.000€ = 630€ = 1.770€', ok:true},
@@ -403,7 +403,7 @@ const MODULES = [
           {t:'hl', s:'', label:'🏅 TABLA DE PROTECCIÓN ANTI-INFLACIÓN',
             p:'<strong>Renta variable (ETFs globales)</strong> ⭐⭐⭐⭐⭐ — supera inflación en 100% períodos 20 años | <strong>REITs</strong> ⭐⭐⭐⭐ — alquileres indexados | <strong>TIPS/bonos indexados</strong> ⭐⭐⭐ — protección directa pero rentabilidad baja | <strong>Oro</strong> ⭐⭐ — bueno en crisis, irregular en inflación moderada | <strong>Cuenta corriente/depósito</strong> ⭐ — destrucción de poder adquisitivo garantizada.'},
           {t:'text', h:'Plan de pensiones vs fondo de inversión: la decisión fiscal',
-            p:'Los planes de pensiones reducen la Base General del IRPF (hasta 1.500€ en 2024): si tributas al marginal del 40%, cada 1.500€ aportados te devuelven 600€ en la declaración. El truco: al rescatar el plan en jubilación, tributan en la Base General — si tu pensión pública es baja, puede ser ventajoso. Los fondos de inversión no tienen deducción inmediata, pero permiten traspasos sin tributar (de fondo a fondo), diferimiento fiscal ilimitado y más liquidez. La elección óptima depende de tu tipo marginal actual vs el esperado en jubilación.'},
+            p:'Los planes de pensiones reducen la Base General del IRPF (hasta 1.500€/año): si tributas al marginal del 40%, cada 1.500€ aportados te devuelven 600€ en la declaración. El truco: al rescatar el plan en jubilación, tributan en la Base General — si tu pensión pública es baja, puede ser ventajoso. Los fondos de inversión no tienen deducción inmediata, pero permiten traspasos sin tributar (de fondo a fondo), diferimiento fiscal ilimitado y más liquidez. La elección óptima depende de tu tipo marginal actual vs el esperado en jubilación.'},
         ]
       },
 
@@ -593,7 +593,7 @@ const MODULES = [
           {t:'hl', s:'info', label:'💡 ESTRATEGIA PARA PRINCIPIANTES: BITCOIN + DCA',
             p:'La estrategia más conservadora en cripto: comprar exclusivamente Bitcoin (el activo más maduro y regulado) mediante DCA mensual de una cantidad pequeña (50-100€/mes), mantenerlo a largo plazo sin mirar el precio a diario, y no superar el 5-10% de tu patrimonio total. Esta estrategia evita el FOMO, los altcoins especulativos y las pérdidas por panic-selling.'},
           {t:'text', h:'Fiscalidad de las criptomonedas en España',
-            p:'La AEAT considera las criptomonedas como activos patrimoniales. Las ganancias tributan como <strong>ganancias patrimoniales en el IRPF</strong>: 19% hasta 6.000€, 21% entre 6.000-50.000€, 23% entre 50.000-200.000€ y 27% a partir de 200.000€. Cada intercambio (BTC→ETH, no solo venta a euros) es un hecho imponible. Mantener un registro exhaustivo de todas las operaciones es obligatorio.'},
+            p:'La AEAT considera las criptomonedas como activos patrimoniales. Las ganancias tributan como <strong>ganancias patrimoniales en el IRPF</strong>: 19% hasta 6.000€, 21% entre 6.000-50.000€, 23% entre 50.000-200.000€, 27% entre 200.000-300.000€ y 30% a partir de 300.000€. Cada intercambio (BTC→ETH, no solo venta a euros) es un hecho imponible. Mantener un registro exhaustivo de todas las operaciones es obligatorio.'},
         ]
       },
     ],
@@ -1183,8 +1183,8 @@ const MODULES = [
     steps:[
       {type:'content', title:'Cómo Tributan tus Inversiones en España',
         blocks:[
-          {t:'text', h:'La base del ahorro: tipos del IRPF 2024',
-            p:'En España, las ganancias de capital (vender con beneficio) y los dividendos tributan en la <strong>base del ahorro</strong>, separada de los ingresos del trabajo. Los tipos son: <strong>19%</strong> hasta 6.000€ de ganancia; <strong>21%</strong> de 6.000€ a 50.000€; <strong>23%</strong> de 50.000€ a 200.000€; <strong>27%</strong> de 200.000€ a 300.000€; <strong>28%</strong> por encima de 300.000€. Estos tipos son significativamente más bajos que los del trabajo (hasta 47%). Esto es una ventaja legal que los inversores deben aprovechar.'},
+          {t:'text', h:'La base del ahorro: tipos del IRPF 2025',
+            p:'En España, las ganancias de capital (vender con beneficio) y los dividendos tributan en la <strong>base del ahorro</strong>, separada de los ingresos del trabajo. Los tipos son: <strong>19%</strong> hasta 6.000€ de ganancia; <strong>21%</strong> de 6.000€ a 50.000€; <strong>23%</strong> de 50.000€ a 200.000€; <strong>27%</strong> de 200.000€ a 300.000€; <strong>30%</strong> por encima de 300.000€. Estos tipos son significativamente más bajos que los del trabajo (hasta 47%). Esto es una ventaja legal que los inversores deben aprovechar.'},
           {t:'stats', items:[
             {v:'19%',  l:'Primeros €6.000 de ganancias de capital'},
             {v:'21%',  l:'De €6.001 a €50.000'},
@@ -1210,9 +1210,9 @@ const MODULES = [
       {type:'content', title:'Plan de Pensiones vs Cuenta de Valores: Cuándo usar cada uno',
         blocks:[
           {t:'text', h:'Plan de pensiones: la deducción que pocos aprovechan',
-            p:'Las aportaciones a planes de pensiones <strong>reducen tu base imponible del IRPF de trabajo</strong> hasta 1.500€/año (límite 2023). Si tu tipo marginal es el 37%, cada 1.000€ que metes en el plan te ahorras 370€ en la declaración de la renta. El problema: al retirar el capital en jubilación tributa como renta del trabajo (hasta 47%). Por eso el plan de pensiones solo tiene sentido si tu tipo en activo es muy superior al que tendrás en jubilación.'},
+            p:'Las aportaciones a planes de pensiones <strong>reducen tu base imponible del IRPF de trabajo</strong> hasta 1.500€/año. Si tu tipo marginal es el 37%, cada 1.000€ que metes en el plan te ahorras 370€ en la declaración de la renta. El problema: al retirar el capital en jubilación tributa como renta del trabajo (hasta 47%). Por eso el plan de pensiones solo tiene sentido si tu tipo en activo es muy superior al que tendrás en jubilación.'},
           {t:'text', h:'Cuenta de valores: flexibilidad y fiscalidad del ahorro',
-            p:'Una cuenta de valores estándar (en cualquier broker) tributa en la base del ahorro (19-28%) cuando vendes con beneficio. Sin límites de aportación, sin penalización por rescatar antes. La ventaja vs plan de pensiones: pagas siempre en la base del ahorro, nunca como renta del trabajo. <strong>Para la mayoría de inversores jóvenes con tipo marginal bajo, la cuenta de valores es más eficiente que el plan de pensiones.</strong>'},
+            p:'Una cuenta de valores estándar (en cualquier broker) tributa en la base del ahorro (19-30%) cuando vendes con beneficio. Sin límites de aportación, sin penalización por rescatar antes. La ventaja vs plan de pensiones: pagas siempre en la base del ahorro, nunca como renta del trabajo. <strong>Para la mayoría de inversores jóvenes con tipo marginal bajo, la cuenta de valores es más eficiente que el plan de pensiones.</strong>'},
           {t:'hl', s:'info', label:'📊 LA REGLA DE ORO FISCAL',
             p:'Primero: fondo de emergencia (sin inversión). Segundo: plan de pensiones hasta el máximo si tu tipo marginal supera el 30%. Tercero: cuenta de valores con ETFs de acumulación para el resto. Cuarto: amortiza hipoteca si el tipo de interés supera tu rentabilidad esperada. Este orden maximiza la eficiencia fiscal en el sistema español.'},
         ]

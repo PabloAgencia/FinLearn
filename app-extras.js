@@ -447,17 +447,24 @@ function F46_buyHeart() {
 
 function F46_renderHearts() {
   F46_regenHearts();
-  const el = document.getElementById('f46-hearts-row');
-  if (!el) return;
   const h   = S.hearts || 0;
   const max = 5;
   const next = (S.heartsLastRegen || Date.now()) + 2 * 3600000;
   const minLeft = Math.max(0, Math.round((next - Date.now()) / 60000));
   const regenStr = h < max ? ` · ${minLeft}min para +1` : '';
+  const heartsHtml = Array(max).fill(0).map((_, i) => `<span class="f46-heart${i < h ? '' : ' f46-heart-empty'}">${i < h ? '❤️' : '🖤'}</span>`).join('');
 
-  el.innerHTML = Array(max).fill(0).map((_, i) => `<span class="f46-heart${i < h ? '' : ' f46-heart-empty'}">${i < h ? '❤️' : '🖤'}</span>`).join('') + `<span class="f46-regen-label">${regenStr}</span>`;
-  // Pulsar si queda 1
-  el.classList.toggle('f46-danger', h <= 1);
+  const el = document.getElementById('f46-hearts-row');
+  if (el) {
+    el.innerHTML = heartsHtml + `<span class="f46-regen-label">${regenStr}</span>`;
+    el.classList.toggle('f46-danger', h <= 1);
+  }
+  // También en el indicador compacto de la lección
+  const lf = document.getElementById('lf-hearts-display');
+  if (lf) {
+    lf.innerHTML = heartsHtml;
+    lf.style.opacity = h <= 1 ? '1' : '0.7';
+  }
 }
 
 window.F46_loseHeart    = F46_loseHeart;
