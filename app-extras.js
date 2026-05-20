@@ -91,8 +91,9 @@ function F44_openChest(index) {
     resultMsg = 'XP ×2 durante 24h 🚀';
   } else if (reward.type === 'patBonus') {
     const bonus = Math.round((S.patrimony || 0) * reward.value);
-    S.patrimony = (S.patrimony || 0) + bonus;
     S.invested  = (S.invested  || 0) + bonus;
+    recalcPatrimony();
+    _ledgerAdd('in', 'reward', 'Cofre: bono patrimonio ' + reward.label, bonus);
     resultMsg = `+€${bonus.toLocaleString('es')} al patrimonio`;
   } else if (reward.type === 'legendary_pack') {
     const gained = Math.round(reward.value * (S.xpMultiplier || 1));
@@ -352,7 +353,9 @@ function F45_decide(action, eventId) {
 
   xpGain = Math.round(xpGain * (S.xpMultiplier || 1));
   S.xp += xpGain;
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(xpGain);
   saveState();
+  checkAchievements();
   spawnXP('+' + xpGain + ' XP');
 
   if (banner) {
@@ -509,7 +512,7 @@ const DILEMMAS = [
     id: 'invest_vs_mortgage',
     q: () => `Tienes €500/mes libre. ¿Amortizar hipoteca al 3% o invertirlo en ETF al histórico 7%?`,
     ctx: 'Amortizar reduce el riesgo y la deuda total. Invertir aprovecha el diferencial de rentabilidad.',
-    a: { label: '🏠 Amortizar hipoteca (sin riesgo)', apply: () => { S.patrimony = (S.patrimony||0) + 500; } },
+    a: { label: '🏠 Amortizar hipoteca (sin riesgo)', apply: () => { const m = (S.debts||[]).find(d => /hipotec/i.test(d.name)); if (m) m.balance = Math.max(0, m.balance - 500); else S.cash = (S.cash||0) + 500; } },
     b: { label: '📊 Invertir en ETF (7% histórico)', apply: () => { S.invested = (S.invested||0) + 500; S.patrimony = (S.patrimony||0) + 500; } },
     comparison: 'Con hipoteca al 3% e inversión al 7%, matemáticamente conviene invertir (4% de diferencial). Pero la tranquilidad de no deber también tiene valor.',
   },
@@ -597,7 +600,7 @@ const DILEMMAS = [
     id: 'real_estate_vs_etf',
     q: () => `€100.000 disponibles: ¿piso para alquilar o ETF global?`,
     ctx: 'El inmobiliario en España ha dado ~3-4% real histórico. El ETF global ~5-7% real. Pero el inmobiliario da apalancamiento.',
-    a: { label: '🏠 Piso para alquilar (tangible, apalancamiento)', apply: () => { S.patrimony = (S.patrimony||0) + 100000; S.invested = (S.invested||0) + 50000; } },
+    a: { label: '🏠 Piso para alquilar (tangible, apalancamiento)', apply: () => { S.cash = Math.max(0, (S.cash||0) - 100000); S.invested = (S.invested||0) + 100000; } },
     b: { label: '📊 ETF global (mayor liquidez y retorno histórico)', apply: () => { S.invested = (S.invested||0) + 100000; S.patrimony = (S.patrimony||0) + 100000; } },
     comparison: 'El ETF global tiene mayor retorno histórico y cero gestión. El piso ofrece apalancamiento (hipoteca) pero requiere gestión y tiene iliquidez. Depende de tu perfil y conocimiento del mercado local.',
   },
@@ -770,17 +773,19 @@ function F47_choose(choice, idx) {
 
   // Aplicar consecuencia
   const option = choice === 'a' ? dilemma.a : dilemma.b;
+  const _xpBefore = S.xp || 0;
   if (typeof option.apply === 'function') option.apply();
 
-  // +30 XP
+  // +30 XP base para tomar la decisión
   const xpGain = Math.round(30 * (S.xpMultiplier || 1));
   S.xp += xpGain;
+  const _totalXPDelta = (S.xp || 0) - _xpBefore;
+  if (_totalXPDelta > 0 && typeof F34_onXPGained === 'function') F34_onXPGained(_totalXPDelta);
   spawnXP('+' + xpGain + ' XP');
 
   S.lastDilemma = { week: _f47_weekKey(), answered: true, choice };
-  saveState();
-  // Refrescar UI para mostrar cambios en sueldo/patrimonio
   if (typeof recalcPatrimony === 'function') recalcPatrimony();
+  saveState();
   if (typeof updateUIFromState === 'function') setTimeout(updateUIFromState, 100);
 
   // Mostrar consecuencia
@@ -855,7 +860,9 @@ function F48_checkShow() {
   S.weeklyReviewSeen = weekKey;
   saveState();
 
-  setTimeout(() => F48_showReview(snap.prev, snap.cur), 2500);
+  // En lunes hay ruleta diaria (1.2s) + welcome-back (5.8s) — retrasar para no solapar
+  const _hadLongAbsence = (S.lastLoginTimestamp || 0) > 0 && (Date.now() - (S.lastLoginTimestamp || 0)) < 60000;
+  setTimeout(() => F48_showReview(snap.prev, snap.cur), _hadLongAbsence ? 9000 : 2500);
 }
 
 function F48_showReview(prev, cur) {
@@ -953,22 +960,26 @@ function M1_checkDoubleXP() {
   if (!banner) return;
 
   if (isWeekend) {
-    // Calcular cuántas horas quedan hasta el fin del domingo
     const now = new Date();
     const endOfSunday = new Date(now);
     const daysUntilMonday = day === 0 ? 1 : (day === 5 ? 3 : 2);
     endOfSunday.setDate(now.getDate() + daysUntilMonday);
     endOfSunday.setHours(0, 0, 0, 0);
+    const endTs = endOfSunday.getTime();
     const hLeft = Math.max(0, Math.round((endOfSunday - now) / 3600000));
+
+    // Aplicar el multiplicador x2 hasta final del domingo si no hay uno más largo activo
+    if (S && (!S.xpMultiplierExpiry || S.xpMultiplierExpiry < endTs)) {
+      S.xpMultiplierExpiry = endTs;
+      if (typeof saveState === 'function') saveState();
+    }
+
     banner.style.display = '';
     banner.innerHTML = `<div class="m1-banner">⚡ DOBLE XP activo — quedan ${hLeft}h · ¡Aprovecha el fin de semana!</div>`;
   } else {
     banner.style.display = 'none';
   }
 }
-
-// Aplicar doble XP si es fin de semana en saveState hook
-const _origSaveState = typeof saveState !== 'undefined' ? null : null; // ya definida arriba, hook via multiplier
 
 window.M1_checkDoubleXP = M1_checkDoubleXP;
 
@@ -2880,9 +2891,11 @@ function BOSS_showResult() {
     if (!S.bossBeaten) S.bossBeaten = [];
     S.bossBeaten.push(_bossState.branchId);
     S.xp += 300;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(300);
     if (!S.chestsAvailable) S.chestsAvailable = [];
     S.chestsAvailable.push({ type: 'legendary', earnedAt: Date.now() });
     saveState();
+    checkAchievements();
     confetti();
     emojiConfetti();
     // P4-C: tick misión boss
@@ -3756,14 +3769,16 @@ function SEA_claimReward(rewardKey, badge) {
   if (!S.seenSeasonalRewards) S.seenSeasonalRewards = [];
   if (S.seenSeasonalRewards.includes(rewardKey)) return;
   S.seenSeasonalRewards.push(rewardKey);
-  // Dar cofre especial
+  // Dar cofre especial (gold — 'epic' no existe en CHEST_REWARDS)
   if (!S.chestsAvailable) S.chestsAvailable = [];
-  S.chestsAvailable.push({ type: 'epic', earnedAt: Date.now() });
+  S.chestsAvailable.push({ type: 'gold', earnedAt: Date.now() });
   // Dar XP bonus
   S.xp += 300;
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(300);
   saveState();
+  checkAchievements();
   closeModal('m-sea');
-  toast('🎁 ¡Recompensa reclamada!', badge + ' · +300 XP · Cofre épico', 't-success');
+  toast('🎁 ¡Recompensa reclamada!', badge + ' · +300 XP · Cofre Oro', 't-success');
   if (typeof F44_render === 'function') F44_render();
 }
 

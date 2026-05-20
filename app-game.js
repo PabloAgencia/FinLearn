@@ -321,6 +321,7 @@ function executeBizAcquire() {
   S.cash -= bizCost;
   S.businesses[biz.id] = { level: 1, purchasePrice: bizCost, totalRevenue: 0, upgrades: [] };
   _ledgerAdd('out', 'biz_buy', `Adquirir negocio: ${biz.name}`, bizCost);
+  recalcPatrimony();
   saveState();
   closeModal('m-biz');
   renderBusinesses();
@@ -339,21 +340,16 @@ function executeBizSell() {
   const owned = S.businesses[biz.id];
   if (!owned) return;
   const sellPrice = Math.round(owned.purchasePrice * 0.75);
-  // Paper hands detection
-  if (GAME._flashCrashTime && Date.now() - GAME._flashCrashTime < 10000 &&
-      GAME._lastFlashCrashTicker === ticker) {
+  // Paper hands detection (negocios no tienen ticker, solo aplica crisis activa)
+  if (_crisisActive) {
     S.paperHandsCount = (S.paperHandsCount || 0) + 1;
-    toast('🧻 ¡Manos de Papel!', 'Vendiste durante un flash crash. Acabas de cristalizar tus pérdidas.', 't-danger');
-    HAPTIC.error();
-  } else if (_crisisActive) {
-    // Sold during a crisis - still paper hands
-    S.paperHandsCount = (S.paperHandsCount || 0) + 1;
-  } else {
-    // Held through crisis = diamond hands progress tracked via crisisSurvived
+    toast('🧻 ¡Manos de Papel!', 'Vendiste durante una crisis. Acabas de cristalizar tus pérdidas.', 't-danger');
+    if (typeof HAPTIC !== 'undefined') HAPTIC.error();
   }
   S.cash += sellPrice;
   delete S.businesses[biz.id];
-  _ledgerAdd('in', 'biz_buy', `Vender negocio: ${biz.name}`, sellPrice);
+  _ledgerAdd('in', 'biz_sell', `Vender negocio: ${biz.name}`, sellPrice);
+  recalcPatrimony();
   saveState();
   closeModal('m-biz');
   renderBusinesses();
@@ -376,11 +372,13 @@ function executeBizUpgrade(bizId, upgradeId) {
   S.cash -= upg.cost;
   if (!owned.upgrades) owned.upgrades = [];
   owned.upgrades.push(upgradeId);
-  _ledgerAdd('out', 'biz_upgrade', `Mejora: ${upg.name} (${biz.name})`, upg.cost);
-  saveState();
-  toast('⬆️ Mejora aplicada', upg.name + ' · ' + upg.desc, 't-success');
-  spawnXP('+50 XP');
   S.xp += 50;
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(50);
+  _ledgerAdd('out', 'biz_upgrade', `Mejora: ${upg.name} (${biz.name})`, upg.cost);
+  recalcPatrimony();
+  saveState();
+  spawnXP('+50 XP');
+  toast('⬆️ Mejora aplicada', upg.name + ' · ' + upg.desc, 't-success');
   openBizDetail(bizId); // re-render modal
   renderBusinesses();
   renderBizCashflow();
@@ -447,7 +445,7 @@ function openCareerModal() {
 
   modal.innerHTML = `
     <div class="modal-box" style="max-width:420px;">
-      <button class="modal-close" onclick="document.getElementById('m-career').style.display='none'">✕</button>
+      <button class="modal-close" onclick="closeModal('m-career')">✕</button>
       <div class="h3 mb4">💼 Trayectoria profesional</div>
       <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">
         Tu nivel de XP desbloquea nuevas etapas profesionales. Cuantos más módulos completes, más carreras se abren.
@@ -563,14 +561,16 @@ function respondToBlackSwan(decision) {
 
   if (decision === 'hold') {
     S.xp += 150;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(150);
     outcomeEl.innerHTML = `
       <div style="color:var(--accent);font-weight:700;margin-bottom:6px;">💪 Decisión correcta: MANTENER</div>
       <div style="font-size:13px;color:var(--text2);">Históricamente, los mercados siempre se han recuperado. +150 XP por tu disciplina inversora.</div>`;
     toast('💪 ¡Mantuviste la calma!', '+150 XP · Decisión históricamente correcta', 't-success');
   } else {
-    const loss      = Math.round(S.invested * 0.15);
-    S.invested      = Math.max(0, S.invested - loss);
-    S.patrimony     = Math.max(0, S.patrimony - loss);
+    const loss = Math.round(S.invested * 0.15);
+    S.invested = Math.max(0, S.invested - loss);
+    recalcPatrimony();
+    _ledgerAdd('out', 'sell', 'Venta en pánico (crisis)', loss);
     outcomeEl.innerHTML = `
       <div style="color:var(--danger);font-weight:700;margin-bottom:6px;">📉 Vendiste en pánico</div>
       <div style="font-size:13px;color:var(--text2);">Realizaste pérdidas de €${loss}. En el mundo real, esto sería permanente.</div>`;
@@ -1635,9 +1635,11 @@ var INVESTOR_TEST = (function() {
 
     // Save to state
     S.investorProfile = { id: p.id, label: p.label, icon: p.icon, color: p.color, scores: _scores };
+    S.xp += 100;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(100);
     saveState();
+    checkAchievements();
     spawnXP('+100 XP');
-    S.xp += 100; saveState();
 
     // Build pie SVG
     var total = p.portfolio.reduce(function(a, b) { return a + b.pct; }, 0);
@@ -2191,6 +2193,7 @@ var _BUDGET = (function() {
     if (!b.saved) {
       b.saved = true;
       S.xp += 50;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(50);
       spawnXP('+50 XP');
       toast('\uD83D\uDCCA Presupuesto guardado', 'Ya tienes tu mapa financiero mensual', 't-success');
     } else {
@@ -2198,6 +2201,7 @@ var _BUDGET = (function() {
     }
     S._budget = b;
     saveState();
+    checkAchievements();
     document.getElementById('m-budget').style.display = 'none';
   }
 

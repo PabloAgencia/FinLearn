@@ -613,12 +613,7 @@ function openModal(id) {
   const el = document.getElementById(id);
   if (!el) { console.warn('[openModal] Elemento no encontrado:', id); return; }
   el.classList.add('open');
-  // Support both modal-bg (class toggle) and modal-overlay (display toggle)
-  if (el.classList.contains('modal-overlay')) {
-    el.style.display = 'flex';
-  } else {
-    el.style.display = 'flex'; // modal-bg also needs display flex
-  }
+  el.style.display = 'flex';
 }
 
 /** Cierra un modal quitando la clase 'open'. Silent si no existe (puede que no esté en DOM). */

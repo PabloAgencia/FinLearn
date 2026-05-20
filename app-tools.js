@@ -317,8 +317,11 @@ function _initAppWithState(hasState) {
       }, 1500);
     } catch(e) {}
   }
-  // F47: Dilema semanal (lunes)
-  if (typeof F47_checkShow === 'function') setTimeout(F47_checkShow, 2000);
+  // F47: Dilema semanal (lunes) — en lunes con login nuevo (ruleta activa) retrasar a 12s
+  if (typeof F47_checkShow === 'function') {
+    const _f47IsMonday = new Date().getDay() === 1;
+    setTimeout(F47_checkShow, _f47IsMonday ? 12000 : 2000);
+  }
   // F48: Snapshot semanal update
   if (typeof F48_updateSnapshot === 'function') F48_updateSnapshot();
   // P4-C: Misiones semanales
@@ -737,7 +740,8 @@ function _showWelcomeBackModal(hoursAway, gameDaysDelta, patrimonyBefore, income
   }
 
   modal.innerHTML =
-    '<div class="modal-box wb-modal">' +
+    '<div class="modal-box wb-modal" style="position:relative">' +
+      '<button onclick="closeModal(\'m-welcome-back\')" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);z-index:10;">✕</button>' +
       '<div class="wb-header">' +
         '<div class="wb-emoji">\uD83C\uDF1F</div>' +
         '<div class="wb-title">¡Bienvenido de vuelta!</div>' +
@@ -776,12 +780,18 @@ function checkWelcomeBack() {
     if (e.type !== 'in') return;
     if (e.cat === 'salary')   incomeSummary.salary    += e.amount;
     if (e.cat === 'dividend') incomeSummary.dividends += e.amount;
-    if (e.cat === 'biz_revenue' || e.cat === 'biz_buy') incomeSummary.biz += e.amount;
+    if (e.cat === 'biz_revenue' || e.cat === 'biz_sell') incomeSummary.biz += e.amount;
   });
+
+  // Si la ruleta diaria también va a aparecer (>24h desde último login), retrasamos el welcome-back
+  var lastLoginTs = S.lastLoginTimestamp || 0;
+  var hoursSinceLogin = lastLoginTs > 0 ? (Date.now() - lastLoginTs) / 3600000 : 0;
+  var rouletteWillShow = hoursSinceLogin >= 24;
+  var delay = rouletteWillShow ? 5800 : 800;
 
   setTimeout(function() {
     _showWelcomeBackModal(hoursAway, gameDaysDelta, patrimonyBefore, incomeSummary);
-  }, 800);
+  }, delay);
 }
 
 
@@ -812,7 +822,7 @@ const FIRST_PATH_STEPS = [
     icon:   '\uD83D\uDCC8',
     title:  'Haz tu primera inversión',
     desc:   'Compra aunque sea 1 acción o ETF. Ver tu cartera crecer en tiempo real lo cambia todo.',
-    reward: '+€200 en cartera',
+    reward: '+150 XP al invertir',
     rewardCol: '#00e5a0',
     cta:    'Ir a la bolsa',
     action: function() { goTo('portfolio'); },
@@ -1199,6 +1209,8 @@ function _tickGameDay() {
       S.yearBizIncome = (S.yearBizIncome || 0) + net;
     });
     if (totalBizIncome > 0) {
+      recalcPatrimony();
+      _ledgerAdd('in', 'biz_revenue', `Ingresos negocios · mes ${Math.floor(S.gameDay/30)}`, totalBizIncome);
       spawnMoney('+€' + Math.round(totalBizIncome).toLocaleString('es') + ' 🏪', '#0091ff');
       toast('🏪 Ingresos de negocios', `+€${Math.round(totalBizIncome).toLocaleString('es')} este mes de juego`, 't-success');
     }
@@ -2149,7 +2161,11 @@ function pickCareerChoice(eventId, choiceIdx) {
   if (!choice) return;
 
   // Apply effect
+  const _xpBefore = S.xp || 0;
   try { choice.effect(S); } catch(e) {}
+  const _xpDelta = (S.xp || 0) - _xpBefore;
+  if (_xpDelta > 0 && typeof F34_onXPGained === 'function') F34_onXPGained(_xpDelta);
+  recalcPatrimony();
 
   // Mark as seen
   if (!Array.isArray(S.seenCareerEvents)) S.seenCareerEvents = [];
@@ -3142,6 +3158,8 @@ function resolveLifeEvent(eventId, action) {
   if (ev.type === 'bad') {
     const cost = Math.min(ev.cost, S.cash || 0);
     S.cash = Math.max(0, (S.cash||0) - cost);
+    recalcPatrimony();
+    if (cost > 0) _ledgerAdd('out', 'life_event', ev.icon + ' ' + ev.title, cost);
     spawnMoney('−€' + cost.toLocaleString('es'), '#ff4b5c');
     toast(ev.icon + ' ' + ev.title, `−€${cost.toLocaleString('es')} de tu efectivo`, 't-danger');
   } else if (ev.type === 'good') {
@@ -3151,10 +3169,15 @@ function resolveLifeEvent(eventId, action) {
       S.cash    = (S.cash||0) + sav;
       S.invested = (S.invested||0) + inv;
       S.xp += 150;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(150);
+      recalcPatrimony();
+      _ledgerAdd('in', 'reward', ev.icon + ' ' + ev.title + ' (invertido)', ev.gain);
       spawnMoney('+€' + ev.gain.toLocaleString('es'), '#00e5a0');
       toast(ev.icon + ' ' + ev.title, `+€${inv.toLocaleString('es')} invertidos + €${sav} guardados · +150 XP`, 't-success');
     } else {
       S.cash = (S.cash||0) + ev.gain;
+      recalcPatrimony();
+      _ledgerAdd('in', 'reward', ev.icon + ' ' + ev.title, ev.gain);
       spawnMoney('+€' + ev.gain.toLocaleString('es'), '#00e5a0');
       toast(ev.icon + ' ' + ev.title, `+€${ev.gain.toLocaleString('es')} en efectivo`, 't-success');
     }
@@ -3162,7 +3185,11 @@ function resolveLifeEvent(eventId, action) {
     const idx = parseInt(action.replace('choice_', ''));
     const ch  = ev.choices[idx];
     if (ch) {
+      const _xpBefore = S.xp || 0;
       try { ch.effect(S); } catch(e) {}
+      const _xpDelta = (S.xp || 0) - _xpBefore;
+      if (_xpDelta > 0 && typeof F34_onXPGained === 'function') F34_onXPGained(_xpDelta);
+      recalcPatrimony();
       toast(ev.icon + ' ' + ev.title, ch.result, ch.type === 'positive' ? 't-success' : ch.type === 'negative' ? 't-danger' : 't-social');
     }
   }
@@ -3717,6 +3744,9 @@ function applyForMortgage(propertyValue, downPayment, years, type) {
   S._hadMortgages = true;
   S.mortgages.push(mortgage);
   S.xp += 200;
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(200);
+  _ledgerAdd('out', 'mortgage', `Entrada hipoteca: ${mortgage.propertyName}`, downPayment);
+  recalcPatrimony();
   saveState();
   HAPTIC.success();
   SFX.levelUp();
@@ -3768,6 +3798,7 @@ function _tickMortgages() {
     if (m.remainingMonths === 0) {
       m.paid = true;
       S.xp += 500;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(500);
       confetti(); confetti();
       toast('🎉 ¡Hipoteca pagada!', `${m.propertyName} ya es tuya. Pagaste €${Math.round(m.totalInterestPaid).toLocaleString('es')} en intereses.`, 't-success');
       HAPTIC.levelUp(); SFX.levelUp();
@@ -6802,7 +6833,11 @@ function takeJobChoice(idx) {
   const choice = job.choices[idx];
   if (!choice) return;
 
+  const _xpBefore = S.xp || 0;
   try { choice.effect(S); } catch(e) {}
+  const _xpDelta = (S.xp || 0) - _xpBefore;
+  if (_xpDelta > 0 && typeof F34_onXPGained === 'function') F34_onXPGained(_xpDelta);
+  recalcPatrimony();
 
   document.getElementById('m-job-offer').style.display = 'none';
   _pendingJobOffer = null;
@@ -7520,11 +7555,13 @@ function _rotateMissions(week) {
       if (!S._mw_perfect_weeks) S._mw_perfect_weeks = [];
       S._mw_perfect_weeks.push(S._mw_week);
       S.xp += 400;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(400);
       setTimeout(() => _showMissionPopup({ icon:'👑', title:'¡Semana Perfecta! 14/14', xp: 400 }), 800);
     } else if (done >= 10 && !S._mw_ten_weeks?.includes(S._mw_week)) {
       if (!S._mw_ten_weeks) S._mw_ten_weeks = [];
       S._mw_ten_weeks.push(S._mw_week);
       S.xp += 200;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(200);
       setTimeout(() => _showMissionPopup({ icon:'🏅', title:'10+ Misiones — Bonus', xp: 200 }), 800);
     }
   }
@@ -7588,6 +7625,7 @@ function checkMissions() {
       if (!m.xpClaimed) {
         m.xpClaimed = true;
         S.xp += m.xp;
+        if (typeof F34_onXPGained === 'function') F34_onXPGained(m.xp);
         S._mw_total_done = (S._mw_total_done || 0) + 1;
         anyNew = true;
         const snap = { icon: m.icon, title: m.title, xp: m.xp };
@@ -11023,6 +11061,7 @@ function F42_answer(chosen) {
     const xpMap = [50, 30, 10];
     const xpGain = Math.round(xpMap[attempt - 1] * (S.xpMultiplier || 1));
     S.xp += xpGain;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(xpGain);
     spawnXP('+' + xpGain + ' XP');
     saveState();
     if (typeof checkAchievements === 'function') checkAchievements();
@@ -11032,6 +11071,7 @@ function F42_answer(chosen) {
   } else {
     if (S.dailyProblem.attempts >= 3) {
       S.xp += 5;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(5);
       saveState();
       if (fbEl) fbEl.innerHTML = `<div class="f42-fb-bad">❌ Sin más intentos. +5 XP de consolación<br><small><strong>Respuesta correcta:</strong> ${problem.opts[problem.ans]}<br>${problem.exp}</small></div>`;
       setTimeout(F42_render, 2000);

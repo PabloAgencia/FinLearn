@@ -117,14 +117,19 @@ function renderDynamicMessage() {
 
   let msg = null;
 
-  if (!S.dcaDone) {
+  const _dcaHint = !S.dcaDone ? ' <strong>⚠️ Acción Diaria pendiente</strong> — respóndela para mantener tu racha.' : '';
+  if (daysSince >= 7) {
+    msg = {type:'info', icon:'👋', text:`<strong>¡Bienvenido de vuelta!</strong> Llevas ${daysSince} días sin pasar por aquí. Tu patrimonio no puede esperar — retomemos donde lo dejaste.${_dcaHint}`};
+  } else if (daysSince >= 3) {
+    msg = {type:'warn', icon:'⏰', text:`<strong>Han pasado ${daysSince} días.</strong> La constancia es la clave — los inversores que revisan su progreso semanalmente obtienen un 40% más de rentabilidad emocional.${_dcaHint}`};
+  } else if (!S.dcaDone) {
     msg = {type:'warn', icon:'⚠️', text:`<strong>Tu racha de ${S.streak} días está en riesgo.</strong> Responde la Acción Diaria para mantenerla.`};
-  } else if (S.streak >= 7 && S.streak < 14) {
-    msg = {type:'fire', icon:'🔥', text:`<strong>¡Racha de ${S.streak} días!</strong> Estás en el top 20% de usuarios constantes. ¡No pares ahora!`};
-  } else if (S.streak >= 14 && S.streak < 30) {
-    msg = {type:'fire', icon:'🏆', text:`<strong>Racha de ${S.streak} días — nivel elite.</strong> Solo el 8% de usuarios llega a esto. Eres un referente.`};
   } else if (S.streak >= 30) {
     msg = {type:'ok', icon:'💎', text:`<strong>Racha de ${S.streak} días — Leyenda.</strong> Estás en el top 1% de FinLearn. Tu constancia es tu mayor activo.`};
+  } else if (S.streak >= 14) {
+    msg = {type:'fire', icon:'🏆', text:`<strong>Racha de ${S.streak} días — nivel elite.</strong> Solo el 8% de usuarios llega a esto. Eres un referente.`};
+  } else if (S.streak >= 7) {
+    msg = {type:'fire', icon:'🔥', text:`<strong>¡Racha de ${S.streak} días!</strong> Estás en el top 20% de usuarios constantes. ¡No pares ahora!`};
   } else if (S.completedMods.length === 0) {
     msg = {type:'info', icon:'💡', text:`<strong>Completa tu primer módulo hoy.</strong> Los usuarios que terminan el primero tienen 5× más probabilidad de llegar a la semana 4.`};
   } else if (S.completedMods.length >= 5) {
@@ -150,7 +155,9 @@ function renderStreakRiskBanner() {
   const today = new Date().toISOString().slice(0, 10);
   const studied = S.activityLog && S.activityLog[today];
   const hour    = new Date().getHours();
-  if (studied || hour < 20) return;
+  // Rachas largas reciben aviso más temprano — más valioso proteger
+  const riskHour = S.streak >= 14 ? 17 : S.streak >= 7 ? 18 : S.streak >= 3 ? 19 : 20;
+  if (studied || hour < riskHour) return;
   const shields = S.streakShields || 0;
   const shieldNote = shields > 0
     ? ` <span style="opacity:.8">(tienes ${shields} escudo${shields>1?'s':''} — se usará automáticamente si pierdes el día)</span>`
@@ -945,7 +952,10 @@ function toggleModulesExpand() {
 }
 
 
+let _activeReadInterval = null;
+
 function renderStep() {
+  if (_activeReadInterval) { clearInterval(_activeReadInterval); _activeReadInterval = null; }
   const mod = S.currentMod;
   if (!mod || !mod.steps) return;
   const step = mod.steps[S.step];
@@ -1008,14 +1018,15 @@ function renderStep() {
       + ' stroke-dasharray="' + _circ.toFixed(1) + '" stroke-dashoffset="' + _circ.toFixed(1) + '"'
       + ' stroke-linecap="round" transform="rotate(-90 13 13)"/>'
       + '</svg><span id="read-ring-sec" style="margin-left:6px;">' + _rsecs + 's</span>';
-    const _readInterval = setInterval(() => {
+    _activeReadInterval = setInterval(() => {
       _rsecs--;
       const _arc = document.getElementById('read-ring-arc');
       const _sec = document.getElementById('read-ring-sec');
       if (_arc) _arc.style.strokeDashoffset = (_circ * (1 - (_RTOTAL - _rsecs) / _RTOTAL)).toFixed(2);
       if (_sec) _sec.textContent = _rsecs > 0 ? _rsecs + 's' : '';
       if (_rsecs <= 0) {
-        clearInterval(_readInterval);
+        clearInterval(_activeReadInterval);
+        _activeReadInterval = null;
         nextBtn.disabled = false;
         nextBtn.innerHTML = S.step >= total - 2 ? 'Completar ✓' : 'Siguiente →';
         delete nextBtn.dataset.readLock;
@@ -1135,7 +1146,7 @@ function renderCourseBadges() {
           <div class="cb-badge-name">Mitad del camino</div>
           <div class="cb-badge-desc">50% completado</div>
           ${!earned50
-            ? `<div class="cb-badge-prog">${completed}/10 mód.</div>`
+            ? `<div class="cb-badge-prog">${completed}/${Math.round(total/2)} mód.</div>`
             : '<div class="cb-badge-prog" style="color:var(--accent)">¡Desbloqueado!</div>'}
         </div>
       </div>
@@ -1146,7 +1157,7 @@ function renderCourseBadges() {
           <div class="cb-badge-name">Curso completo</div>
           <div class="cb-badge-desc">100% dominado</div>
           ${!earned100
-            ? `<div class="cb-badge-prog">${completed}/20 mód.</div>`
+            ? `<div class="cb-badge-prog">${completed}/${total} mód.</div>`
             : '<div class="cb-badge-prog" style="color:var(--gold)">¡Leyenda!</div>'}
         </div>
       </div>
@@ -3795,7 +3806,10 @@ function renderDCA() {
     return;
   }
 
-  const q = DAILY_QUESTIONS[Math.floor(Math.random() * DAILY_QUESTIONS.length)];
+  // Seed diaria: misma pregunta todo el día, no se puede eludir recargando
+  const _dcaSeed = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const _dcaIdx = parseInt(_dcaSeed, 10) % DAILY_QUESTIONS.length;
+  const q = DAILY_QUESTIONS[_dcaIdx];
   if (!q) return;
 
   setEl('dca-q-title', q.q || q.question || q.title || 'Reto de hoy');
@@ -3840,7 +3854,9 @@ function answerDCA(chosen, correct, explanation) {
     _checkStreakMilestone(S.streak);
   }
   S.maxStreak = Math.max(S.maxStreak || 0, S.streak || 0);
+  if (isCorrect && typeof F34_onXPGained === 'function') F34_onXPGained(xpGained);
   saveState();
+  checkAchievements();
   updateDCALock(true);
 
   setTimeout(() => {
@@ -3864,9 +3880,11 @@ function answerDCA(chosen, correct, explanation) {
  * Rota los mensajes de SOCIAL_PROOF cada 5 segundos con fade.
  * El prefijo _ indica función interna (no se expone a window).
  */
+let _tickerRunning = false;
 function _renderTicker() {
   const el = document.getElementById('ticker-inner');
-  if (!el || !SOCIAL_PROOF?.length) return;
+  if (!el || !SOCIAL_PROOF?.length || _tickerRunning) return;
+  _tickerRunning = true;
   let idx = 0;
   const rotate = () => {
     el.style.opacity = '0';
@@ -3884,8 +3902,10 @@ function _renderTicker() {
  * _renderFacts — Inicia la rotación de datos financieros curiosos.
  * Cambia cada 9 segundos con fade animado.
  */
+let _factsRunning = false;
 function _renderFacts() {
-  if (!FINANCIAL_FACTS?.length) return;
+  if (!FINANCIAL_FACTS?.length || _factsRunning) return;
+  _factsRunning = true;
   let idx = 0;
   const show = (i) => {
     const f   = FINANCIAL_FACTS[i];
@@ -4815,17 +4835,21 @@ function completeModule() {
     S.completedMods.push(mod.id);
     // P3-B: acumular minutos de estudio (8 min estimados por módulo)
     S.totalStudyMinutes = (S.totalStudyMinutes || 0) + 8;
-    // F29: aplicar multiplicador x2 si está activo
+    // F29: aplicar multiplicador x2 si está activo + multiplicador de evento estacional
     const hasMultiplier = S.xpMultiplierExpiry && Date.now() < S.xpMultiplierExpiry;
     const permMult = S.xpMultiplier || 1.0;
-    const xpGain = Math.round((hasMultiplier ? XP_PER_MODULE * 2 : XP_PER_MODULE) * permMult);
+    const seaMult  = (typeof SEA_getXPMult === 'function') ? SEA_getXPMult() : 1;
+    const xpGain = Math.round((hasMultiplier ? XP_PER_MODULE * 2 : XP_PER_MODULE) * permMult * seaMult);
     S.xp           += xpGain;
     S.totalXPtoday += xpGain;
     S.streak        = Math.max(1, S.streak);
     // F34: trackear XP ganado para reto de tipo 'xp'
     if (typeof F34_onXPGained === 'function') F34_onXPGained(xpGain);
     if (typeof recalcPatrimony === 'function') recalcPatrimony();
-    if (hasMultiplier) toast('🚀 ¡Multiplicador x2 activo!', '+' + xpGain + ' XP (doble)', 't-success');
+    if (hasMultiplier || seaMult > 1) {
+      const multLabel = hasMultiplier && seaMult > 1 ? 'doble + evento' : hasMultiplier ? 'doble' : 'evento \xd71.5';
+      toast('🚀 ¡Multiplicador activo!', '+' + xpGain + ' XP (' + multLabel + ')', 't-success');
+    }
 
     // Subir de nivel automáticamente (sistema progresivo 50 niveles)
     let newLevel = 1;
@@ -4854,9 +4878,12 @@ function completeModule() {
 
   saveState();
 
-  // Calcular xpGain real para mostrar en UI (refleja el multiplicador)
-  const _xpGainDisplay = (S.xpMultiplierExpiry && Date.now() < S.xpMultiplierExpiry)
-    ? XP_PER_MODULE * 2 : XP_PER_MODULE;
+  // Calcular xpGain real para mostrar en UI (refleja todos los multiplicadores)
+  const _seaMultDisplay = (typeof SEA_getXPMult === 'function') ? SEA_getXPMult() : 1;
+  const _xpGainDisplay = Math.round(
+    ((S.xpMultiplierExpiry && Date.now() < S.xpMultiplierExpiry) ? XP_PER_MODULE * 2 : XP_PER_MODULE)
+    * (S.xpMultiplier || 1) * _seaMultDisplay
+  );
 
   // Actualizar pantalla de certificado
   setEl('cert-name', S.userName || 'Explorador');
@@ -4950,6 +4977,30 @@ function completeModule() {
     if (_celRaBtn) { _celRaBtn.disabled = false; _celRaBtn.textContent = '✅ Ya lo hice · +25 XP'; _celRaBtn.style.opacity = '1'; }
   } else if (_celRa) {
     _celRa.style.display = 'none';
+  }
+
+  // Simulator CTA: conectar lección con práctica real en el simulador
+  var _celSimBtn = document.getElementById('cel-simulator-btn');
+  if (_celSimBtn) {
+    var _branchId = '';
+    if (typeof F28_BRANCHES !== 'undefined') {
+      for (var _sb = 0; _sb < F28_BRANCHES.length; _sb++) {
+        if (F28_BRANCHES[_sb].mods.indexOf(mod.id) !== -1) { _branchId = F28_BRANCHES[_sb].id; break; }
+      }
+    }
+    var _simScreen = null, _simLabel = '';
+    if (_branchId === 'inversion' || _branchId === 'avanzado' || (mod.tag||'').toUpperCase().indexOf('INVERS') !== -1) {
+      _simScreen = 'portfolio'; _simLabel = '📈 Practica en el simulador de bolsa';
+    } else if ((mod.tag||'').toUpperCase().indexOf('NEGOCIO') !== -1 || (mod.tag||'').toUpperCase().indexOf('EMPRESA') !== -1) {
+      _simScreen = 'business'; _simLabel = '🏪 Prueba el simulador de negocios';
+    }
+    if (_simScreen) {
+      _celSimBtn.textContent = _simLabel;
+      _celSimBtn.onclick = (function(sc) { return function() { closeModal('m-cel'); goTo(sc); }; }(_simScreen));
+      _celSimBtn.style.display = 'block';
+    } else {
+      _celSimBtn.style.display = 'none';
+    }
   }
 
   openModal('m-cel');
@@ -5071,7 +5122,8 @@ function toggleFocusMode() {
  * Plataformas: 'twitter' | 'linkedin'
  */
 function shareCert(platform) {
-  const text = encodeURIComponent(`¡Acabo de completar un módulo en FinLearn! 🎓📈 Mejora tus finanzas personales en finlearn.app`);
+  const modName = S.currentMod ? S.currentMod.title : 'un módulo';
+  const text = encodeURIComponent(`¡Acabo de completar "${modName}" en FinLearn! 🎓📈 Mejora tus finanzas personales en finlearn.app`);
   const urls = {
     twitter:  `https://twitter.com/intent/tweet?text=${text}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://finlearn.app`,
@@ -5084,7 +5136,9 @@ function shareCert(platform) {
  * Plataformas: 'whatsapp' | 'twitter'
  */
 function quickShare(platform) {
-  const text = encodeURIComponent(`Acabo de completar un módulo de finanzas en FinLearn 🚀 finlearn.app`);
+  const modName = S.currentMod ? S.currentMod.title : 'un módulo';
+  const streakTxt = S.streak >= 3 ? ` 🔥 ${S.streak} días de racha.` : '';
+  const text = encodeURIComponent(`Acabo de completar "${modName}" en FinLearn 🚀${streakTxt} finlearn.app`);
   const url  = platform === 'whatsapp'
     ? `https://api.whatsapp.com/send?text=${text}`
     : `https://twitter.com/intent/tweet?text=${text}`;
