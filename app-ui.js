@@ -956,6 +956,7 @@ let _activeReadInterval = null;
 
 function renderStep() {
   if (_activeReadInterval) { clearInterval(_activeReadInterval); _activeReadInterval = null; }
+  if (typeof AUDIO !== 'undefined') AUDIO.stop();
   const mod = S.currentMod;
   if (!mod || !mod.steps) return;
   const step = mod.steps[S.step];

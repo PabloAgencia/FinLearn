@@ -4521,3 +4521,87 @@ window.RUTA_closeQuiz = RUTA_closeQuiz;
 window.RUTA_pick      = RUTA_pick;
 window.RUTA_back      = RUTA_back;
 window.RUTA_finish    = RUTA_finish;
+
+/* ══════════════════════════════════════════════════════════════════
+   AUDIO — Modo lectura en voz alta (Web Speech API)
+   Botón 🔊 en el top-nav de la pantalla de lección.
+   Lee título, intro, bullets, párrafos y datos clave del paso actual.
+══════════════════════════════════════════════════════════════════ */
+const AUDIO = (function() {
+  var _reading = false;
+  var _btn = null;
+
+  function _getBtn() {
+    return _btn || (_btn = document.getElementById('audio-read-btn'));
+  }
+
+  function _setReading(v) {
+    _reading = v;
+    var b = _getBtn();
+    if (!b) return;
+    b.textContent = v ? '⏸' : '🔊';
+    b.classList.toggle('audio-reading', v);
+    b.title = v ? 'Pausar lectura' : 'Leer en voz alta';
+  }
+
+  function stop() {
+    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+    _setReading(false);
+  }
+
+  function _stripHtml(str) {
+    return (str || '').replace(/<[^>]+>/g, '').replace(/&[a-zA-Z]+;/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+
+  function _extractText(step) {
+    if (!step) return '';
+    var parts = [];
+    if (step.title)  parts.push(step.title);
+    if (step.intro)  parts.push(step.intro);
+    if (step.blocks && step.blocks.length) {
+      step.blocks.forEach(function(b) {
+        if (b.h) parts.push(b.h);
+        if (b.p) parts.push(b.p);
+        if (b.t === 'formula' && b.l) parts.push('Fórmula: ' + b.l);
+        if (b.t === 'stats' && b.items) b.items.forEach(function(s) { parts.push(s.l + ': ' + s.v); });
+        if (b.t === 'hl' && b.p) parts.push((b.label ? b.label + '. ' : '') + b.p);
+      });
+    }
+    if (step.bullets && step.bullets.length) step.bullets.forEach(function(b) { parts.push(b); });
+    if (step.p)    parts.push(step.p);
+    if (step.fact) parts.push('Dato clave: ' + step.fact);
+    if (step.type === 'quiz') {
+      if (step.q) parts.push(step.q);
+      if (step.opts) step.opts.forEach(function(o, i) { parts.push('ABCD'[i] + ': ' + o.t); });
+    }
+    return parts.map(_stripHtml).filter(Boolean).join('. ');
+  }
+
+  function speak(text) {
+    if (!('speechSynthesis' in window)) {
+      if (typeof toast === 'function') toast('❌ Sin soporte', 'Tu navegador no soporta síntesis de voz', 't-warn');
+      return;
+    }
+    stop();
+    if (!text) return;
+    var utt = new SpeechSynthesisUtterance(text);
+    utt.lang  = 'es-ES';
+    utt.rate  = 0.93;
+    utt.pitch = 1.0;
+    utt.onstart = function() { _setReading(true); };
+    utt.onend   = function() { _setReading(false); };
+    utt.onerror = function() { _setReading(false); };
+    speechSynthesis.speak(utt);
+  }
+
+  function toggle() {
+    if (_reading) { stop(); return; }
+    if (typeof S === 'undefined' || !S.currentMod) return;
+    var step = S.currentMod.steps[S.step];
+    speak(_extractText(step));
+  }
+
+  return { stop: stop, speak: speak, toggle: toggle };
+})();
+
+window.AUDIO = AUDIO;
