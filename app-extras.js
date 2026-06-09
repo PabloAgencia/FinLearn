@@ -1183,12 +1183,36 @@ function renderToolsScreen() {
         </div>
         <span class="tool-arrow">›</span>
       </button>
+      <button class="tool-card" onclick="openTool('regla72')">
+        <span class="tool-icon">⚡</span>
+        <div class="tool-info">
+          <div class="tool-name">Regla del 72</div>
+          <div class="tool-desc">¿En cuántos años doblas tu dinero?</div>
+        </div>
+        <span class="tool-arrow">›</span>
+      </button>
+      <button class="tool-card" onclick="openTool('emergencia')">
+        <span class="tool-icon">🛡️</span>
+        <div class="tool-info">
+          <div class="tool-name">Fondo de Emergencia</div>
+          <div class="tool-desc">Cuánto necesitas guardar y cuándo llegas</div>
+        </div>
+        <span class="tool-arrow">›</span>
+      </button>
+      <button class="tool-card" onclick="openTool('deuda')">
+        <span class="tool-icon">💳</span>
+        <div class="tool-info">
+          <div class="tool-name">Coste Real de la Deuda</div>
+          <div class="tool-desc">Cuánto te cuesta realmente tu tarjeta</div>
+        </div>
+        <span class="tool-arrow">›</span>
+      </button>
     </div>
   `;
 }
 
 function openTool(id) {
-  const fns = { irpf: T1_open, hipoteca: T2_open, fire: T3_open, snowball: T4_open, compound: T5_open, networth: T6_open, simhipoteca: T7_open, dca: T8_open };
+  const fns = { irpf: T1_open, hipoteca: T2_open, fire: T3_open, snowball: T4_open, compound: T5_open, networth: T6_open, simhipoteca: T7_open, dca: T8_open, regla72: T9_open, emergencia: T10_open, deuda: T11_open };
   if (fns[id]) {
     fns[id]();
     // P4-C: registrar herramienta usada (tracker de herramientas únicas esta semana)
@@ -2450,6 +2474,360 @@ function T8_calc() {
   } catch(e) {}
 }
 window.T8_open = T8_open; window.T8_calc = T8_calc;
+
+/* ─────────────────────────────────────────────────────────────────
+   T9 — REGLA DEL 72
+   ¿En cuántos años doblas tu dinero? Bidireccional: años ↔ tasa.
+───────────────────────────────────────────────────────────────── */
+let _t9Tab = 'time';
+
+function T9_open() {
+  const modal = document.getElementById('tool-modal');
+  if (!modal) return;
+  _t9Tab = 'time';
+  modal.innerHTML = `
+    <div class="tool-modal-inner">
+      <div class="tool-modal-head">
+        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <h3>⚡ Regla del 72</h3>
+      </div>
+      <div class="tool-body">
+        <p class="tool-intro">Divide 72 entre la rentabilidad anual y obtendrás los años necesarios para doblar tu dinero.</p>
+        <div class="t9-tabs">
+          <button class="t9-tab active" onclick="T9_setTab('time',this)">Años para doblar</button>
+          <button class="t9-tab" onclick="T9_setTab('rate',this)">Rentabilidad necesaria</button>
+        </div>
+        <div id="t9-time-panel" class="t9-panel">
+          <div class="tool-section">
+            <label class="tool-label">Rentabilidad anual: <strong id="t9-rate-v">7%</strong></label>
+            <input id="t9-rate" class="tool-slider" type="range" min="1" max="30" step="0.5" value="7" oninput="T9_calc()">
+          </div>
+        </div>
+        <div id="t9-rate-panel" class="t9-panel" style="display:none;">
+          <div class="tool-section">
+            <label class="tool-label">Años para doblar: <strong id="t9-years-v">10</strong></label>
+            <input id="t9-years" class="tool-slider" type="range" min="1" max="36" step="1" value="10" oninput="T9_calc()">
+          </div>
+        </div>
+        <div id="t9-result" class="t9-result"></div>
+        <div class="t9-ref">
+          <div class="t9-ref-title">Referencias habituales</div>
+          <div class="t9-ref-grid">
+            <div class="t9-ref-card"><div class="t9-ref-name">Cuenta ahorro 2%</div><div class="t9-ref-years">36 años</div></div>
+            <div class="t9-ref-card"><div class="t9-ref-name">Bonos/renta fija 4%</div><div class="t9-ref-years">18 años</div></div>
+            <div class="t9-ref-card t9-ref-highlight"><div class="t9-ref-name">S&P 500 histórico ~7%</div><div class="t9-ref-years">~10 años</div></div>
+            <div class="t9-ref-card"><div class="t9-ref-name">NASDAQ ~10%</div><div class="t9-ref-years">~7 años</div></div>
+            <div class="t9-ref-card"><div class="t9-ref-name">Inmuebles ~5%</div><div class="t9-ref-years">14 años</div></div>
+            <div class="t9-ref-card"><div class="t9-ref-name">Inflación ~3%</div><div class="t9-ref-years">24 años</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('active');
+  T9_calc();
+}
+
+function T9_setTab(tab, btn) {
+  _t9Tab = tab;
+  document.querySelectorAll('.t9-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const timeP = document.getElementById('t9-time-panel');
+  const rateP = document.getElementById('t9-rate-panel');
+  if (timeP) timeP.style.display = tab === 'time' ? '' : 'none';
+  if (rateP) rateP.style.display = tab === 'rate' ? '' : 'none';
+  T9_calc();
+}
+
+function T9_calc() {
+  const res = document.getElementById('t9-result');
+  if (!res) return;
+  if (_t9Tab === 'time') {
+    const rate   = parseFloat(document.getElementById('t9-rate')?.value) || 7;
+    const rateV  = document.getElementById('t9-rate-v');
+    if (rateV) rateV.textContent = rate + '%';
+    const approx = (72 / rate).toFixed(1);
+    const exact  = (Math.log(2) / Math.log(1 + rate / 100)).toFixed(1);
+    res.innerHTML = `
+      <div class="t9-big">
+        <div class="t9-big-num">${approx}<span class="t9-big-unit"> años</span></div>
+        <div class="t9-big-sub">para doblar al ${rate}% anual</div>
+        <div class="t9-exact">Cálculo exacto: ${exact} años</div>
+      </div>
+      <div class="t9-insight">💡 10.000€ al ${rate}% → ~20.000€ en ${approx} años sin aportar nada más.</div>
+    `;
+  } else {
+    const years  = parseInt(document.getElementById('t9-years')?.value) || 10;
+    const yearsV = document.getElementById('t9-years-v');
+    if (yearsV) yearsV.textContent = years;
+    const rate   = (72 / years).toFixed(1);
+    const exact  = ((Math.pow(2, 1 / years) - 1) * 100).toFixed(2);
+    res.innerHTML = `
+      <div class="t9-big">
+        <div class="t9-big-num">${rate}<span class="t9-big-unit">%</span> <span style="font-size:15px;color:var(--text2);">anual</span></div>
+        <div class="t9-big-sub">para doblar en ${years} año${years !== 1 ? 's' : ''}</div>
+        <div class="t9-exact">Tasa exacta: ${exact}%</div>
+      </div>
+      <div class="t9-insight">💡 El S&P 500 histórico (~7% real) dobla cada ~10 años. Un depósito al 2% tarda 36 años.</div>
+    `;
+  }
+}
+
+window.T9_open = T9_open; window.T9_calc = T9_calc; window.T9_setTab = T9_setTab;
+
+/* ─────────────────────────────────────────────────────────────────
+   T10 — FONDO DE EMERGENCIA
+   Objetivo, progreso y tiempo estimado para llegar al colchón.
+───────────────────────────────────────────────────────────────── */
+let _t10Months = 6;
+
+const _T10_HINTS = {
+  3: '3 meses: mínimo para empleados fijos con ingresos estables.',
+  6: '6 meses: recomendado para la mayoría · autónomos y temporales.',
+  9: '9 meses: ideal si tienes personas a cargo o sector inestable.',
+  12: '12 meses: máxima seguridad · emprendedores y sector volátil.',
+};
+
+function T10_open() {
+  const modal = document.getElementById('tool-modal');
+  if (!modal) return;
+  _t10Months = 6;
+  const expenses = S.monthlyExpenses || 1500;
+  modal.innerHTML = `
+    <div class="tool-modal-inner">
+      <div class="tool-modal-head">
+        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <h3>🛡️ Fondo de Emergencia</h3>
+      </div>
+      <div class="tool-body">
+        <p class="tool-intro">Calcula cuánto debes tener guardado para estar protegido ante cualquier imprevisto.</p>
+        <div class="tool-section">
+          <label class="tool-label">Gastos mensuales fijos (alquiler, comida, suministros) €</label>
+          <input id="t10-expenses" class="tool-input" type="number" value="${expenses}" min="100" oninput="T10_calc()">
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Meses de cobertura objetivo</label>
+          <div class="t10-months-sel">
+            <button class="t10-mbtn" onclick="T10_setMonths(3,this)">3 meses</button>
+            <button class="t10-mbtn active" onclick="T10_setMonths(6,this)">6 meses</button>
+            <button class="t10-mbtn" onclick="T10_setMonths(9,this)">9 meses</button>
+            <button class="t10-mbtn" onclick="T10_setMonths(12,this)">12 meses</button>
+          </div>
+          <div class="t10-hint" id="t10-hint">${_T10_HINTS[6]}</div>
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Ahorro actual disponible €</label>
+          <input id="t10-saved" class="tool-input" type="number" value="0" min="0" oninput="T10_calc()">
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Capacidad de ahorro mensual €</label>
+          <input id="t10-monthly" class="tool-input" type="number" value="200" min="0" oninput="T10_calc()">
+        </div>
+        <div id="t10-result"></div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('active');
+  T10_calc();
+}
+
+function T10_setMonths(m, btn) {
+  _t10Months = m;
+  document.querySelectorAll('.t10-mbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const hint = document.getElementById('t10-hint');
+  if (hint) hint.textContent = _T10_HINTS[m] || '';
+  T10_calc();
+}
+
+function T10_calc() {
+  const expenses = parseFloat(document.getElementById('t10-expenses')?.value) || 0;
+  const saved    = parseFloat(document.getElementById('t10-saved')?.value)    || 0;
+  const monthly  = parseFloat(document.getElementById('t10-monthly')?.value)  || 0;
+  const res      = document.getElementById('t10-result');
+  if (!res || expenses <= 0) return;
+
+  const target  = expenses * _t10Months;
+  const needed  = Math.max(0, target - saved);
+  const pct     = Math.min(100, Math.round((saved / target) * 100));
+  const moTime  = monthly > 0 ? Math.ceil(needed / monthly) : null;
+  const barClr  = pct >= 100 ? 'var(--green)' : pct >= 60 ? '#f5a623' : 'var(--red)';
+
+  if (needed <= 0) {
+    res.innerHTML = `
+      <div class="t10-done">
+        <div style="font-size:36px;margin-bottom:8px;">✅</div>
+        <div class="t10-done-title">¡Fondo de emergencia completo!</div>
+        <div class="t10-done-sub">Tienes ${_fmt(Math.round(saved))}€ guardados (${_t10Months} meses de gastos). El excedente puede ir a inversión.</div>
+      </div>
+    `;
+    return;
+  }
+
+  let timeStr = moTime ? (moTime >= 12 ? `${Math.floor(moTime/12)} año${Math.floor(moTime/12)>1?'s':''} y ${moTime%12} meses` : `${moTime} meses`) : '—';
+
+  res.innerHTML = `
+    <div class="t10-target-box">
+      <div class="t10-target-lbl">Objetivo</div>
+      <div class="t10-target-val">${_fmt(Math.round(target))}€</div>
+      <div class="t10-target-sub">${_t10Months} meses × ${_fmt(Math.round(expenses))}€</div>
+    </div>
+    <div class="t10-prog-wrap">
+      <div class="t10-prog-bar"><div class="t10-prog-fill" style="width:${pct}%;background:${barClr};"></div></div>
+      <div class="t10-prog-pct" style="color:${barClr};">${pct}% completado</div>
+    </div>
+    <div class="t10-stats-grid">
+      <div class="t10-stat">
+        <div class="t10-stat-val">${_fmt(Math.round(saved))}€</div>
+        <div class="t10-stat-lbl">Ahorrado</div>
+      </div>
+      <div class="t10-stat" style="border-color:var(--red);">
+        <div class="t10-stat-val" style="color:var(--red);">${_fmt(Math.round(needed))}€</div>
+        <div class="t10-stat-lbl">Falta</div>
+      </div>
+      ${moTime ? `<div class="t10-stat">
+        <div class="t10-stat-val">${timeStr}</div>
+        <div class="t10-stat-lbl">Tiempo estimado</div>
+      </div>` : ''}
+    </div>
+    <div class="t9-insight">💡 Guárdalo en cuenta de alta rentabilidad (Openbank, MyInvestor, CUEN). Accesible en 24–48h, nunca en fondos de inversión.</div>
+  `;
+}
+
+window.T10_open = T10_open; window.T10_calc = T10_calc; window.T10_setMonths = T10_setMonths;
+
+/* ─────────────────────────────────────────────────────────────────
+   T11 — COSTE REAL DE LA DEUDA
+   Amortización real con TAE: cuánto pagas en total y cuándo acabas.
+───────────────────────────────────────────────────────────────── */
+const _T11_PRESETS = {
+  tarjeta:  { rate: 24.9, payment: 100 },
+  revolving:{ rate: 26.8, payment: 80  },
+  prestamo: { rate: 8.5,  payment: 150 },
+  coche:    { rate: 6.5,  payment: 250 },
+};
+
+function T11_open() {
+  const modal = document.getElementById('tool-modal');
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="tool-modal-inner">
+      <div class="tool-modal-head">
+        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <h3>💳 Coste Real de la Deuda</h3>
+      </div>
+      <div class="tool-body">
+        <p class="tool-intro">Descubre cuánto te cuesta realmente una deuda una vez sumados todos los intereses.</p>
+        <div class="tool-section">
+          <label class="tool-label">Tipo de deuda</label>
+          <select id="t11-type" class="tool-select" onchange="T11_preset()">
+            <option value="tarjeta">Tarjeta de crédito</option>
+            <option value="revolving">Tarjeta revolving</option>
+            <option value="prestamo">Préstamo personal</option>
+            <option value="coche">Financiación coche</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Deuda total €</label>
+          <input id="t11-amount" class="tool-input" type="number" value="3000" min="100" oninput="T11_calc()">
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">TAE anual %</label>
+          <input id="t11-rate" class="tool-input" type="number" step="0.1" value="24.9" min="0.1" max="100" oninput="T11_calc()">
+        </div>
+        <div class="tool-section">
+          <label class="tool-label">Cuota mensual que pagas €</label>
+          <input id="t11-payment" class="tool-input" type="number" value="100" min="1" oninput="T11_calc()">
+        </div>
+        <div id="t11-result"></div>
+      </div>
+    </div>
+  `;
+  modal.classList.add('active');
+  T11_calc();
+}
+
+function T11_preset() {
+  const type = document.getElementById('t11-type')?.value;
+  const p    = _T11_PRESETS[type];
+  if (!p) return;
+  const rateEl = document.getElementById('t11-rate');
+  const payEl  = document.getElementById('t11-payment');
+  if (rateEl) rateEl.value = p.rate;
+  if (payEl)  payEl.value  = p.payment;
+  T11_calc();
+}
+
+function T11_calc() {
+  const amount  = parseFloat(document.getElementById('t11-amount')?.value)  || 0;
+  const tae     = parseFloat(document.getElementById('t11-rate')?.value)    || 0;
+  const payment = parseFloat(document.getElementById('t11-payment')?.value) || 0;
+  const res     = document.getElementById('t11-result');
+  if (!res || amount <= 0 || tae <= 0 || payment <= 0) { if (res) res.innerHTML = ''; return; }
+
+  const mr = tae / 100 / 12;
+  const minPayment = amount * mr;
+
+  if (payment <= minPayment) {
+    res.innerHTML = `<div class="t11-warning">⚠️ Con ${_fmt(Math.round(payment))}€/mes solo cubres los intereses (${_fmt(Math.round(minPayment))}€). Necesitas pagar más para reducir la deuda.</div>`;
+    return;
+  }
+
+  let balance = amount, totalInterest = 0, months = 0;
+  while (balance > 0.01 && months < 600) {
+    const interest  = balance * mr;
+    const principal = Math.min(payment - interest, balance);
+    totalInterest  += interest;
+    balance        -= principal;
+    months++;
+  }
+
+  const totalPaid = amount + totalInterest;
+  const costPct   = Math.round(totalInterest / amount * 100);
+  const years     = Math.floor(months / 12);
+  const remMo     = months % 12;
+  const timeStr   = years > 0 ? `${years}a ${remMo}m` : `${months} meses`;
+  const principalPct = Math.round(amount / totalPaid * 100);
+  const interestPct  = 100 - principalPct;
+  const severity     = costPct >= 50 ? 'var(--red)' : costPct >= 20 ? '#f5a623' : 'var(--green)';
+
+  res.innerHTML = `
+    <div class="t11-stats-grid">
+      <div class="t11-stat">
+        <div class="t11-stat-val">${_fmt(Math.round(amount))}€</div>
+        <div class="t11-stat-lbl">Deuda original</div>
+      </div>
+      <div class="t11-stat" style="border-color:${severity};">
+        <div class="t11-stat-val" style="color:${severity};">+${_fmt(Math.round(totalInterest))}€</div>
+        <div class="t11-stat-lbl">Intereses (+${costPct}%)</div>
+      </div>
+      <div class="t11-stat">
+        <div class="t11-stat-val">${_fmt(Math.round(totalPaid))}€</div>
+        <div class="t11-stat-lbl">Total pagado</div>
+      </div>
+      <div class="t11-stat">
+        <div class="t11-stat-val">${timeStr}</div>
+        <div class="t11-stat-lbl">Tiempo para saldar</div>
+      </div>
+    </div>
+    <div class="t11-bar-wrap">
+      <div class="t11-bar-labels">
+        <span>Principal ${_fmt(Math.round(amount))}€</span>
+        <span style="color:${severity};">Intereses ${_fmt(Math.round(totalInterest))}€</span>
+      </div>
+      <div class="t11-bar">
+        <div class="t11-bar-principal" style="width:${principalPct}%;"></div>
+        <div class="t11-bar-interest" style="width:${interestPct}%;background:${severity};opacity:.8;"></div>
+      </div>
+    </div>
+    <div class="t9-insight">
+      💡 ${costPct >= 30 ? `Esta deuda te cuesta un <strong>${costPct}%</strong> extra. Prioriza pagarla antes que invertir.` : `Coste razonable. Subir la cuota a ${_fmt(Math.round(payment * 1.5))}€ reduciría el tiempo notablemente.`}
+    </div>
+  `;
+}
+
+window.T11_open = T11_open; window.T11_calc = T11_calc; window.T11_preset = T11_preset;
 
 /* ══════════════════════════════════════════════════════════════════
    PRIORIDAD 2A — BOSS BATTLES

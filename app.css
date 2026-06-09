@@ -15606,3 +15606,91 @@ body.light-mode .tool-back {
 /* ── Vista toggle módulos ──────────────────────────── */
 .mod-view-btn { font-size: 12px; padding: 5px 10px; border-radius: 8px; transition: all .2s; }
 .mod-view-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+/* ── T9 — Regla del 72 ─────────────────────────────── */
+.t9-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.t9-tab {
+  flex: 1; padding: 8px 10px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  border: 1.5px solid var(--surface2); background: var(--surface); color: var(--text2);
+  cursor: pointer; transition: all .15s;
+}
+.t9-tab.active { background: rgba(108,99,255,.18); border-color: var(--accent); color: var(--text1); }
+.t9-big {
+  background: var(--surface); border-radius: 14px; padding: 20px;
+  text-align: center; margin-bottom: 12px; border: 1px solid var(--surface2);
+}
+.t9-big-num { font-size: 52px; font-weight: 800; line-height: 1; color: var(--accent); }
+.t9-big-unit { font-size: 22px; color: var(--text2); }
+.t9-big-sub { font-size: 14px; color: var(--text2); margin-top: 6px; }
+.t9-exact { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.t9-insight {
+  background: rgba(0,229,160,.07); border: 1px solid rgba(0,229,160,.18);
+  border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--text2);
+  line-height: 1.5; margin-top: 12px;
+}
+.t9-ref { margin-top: 18px; }
+.t9-ref-title { font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+.t9-ref-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+@media(max-width:400px){ .t9-ref-grid { grid-template-columns: 1fr 1fr; } }
+.t9-ref-card {
+  background: var(--surface); border-radius: 10px; padding: 10px 10px;
+  border: 1px solid var(--surface2); text-align: center;
+}
+.t9-ref-highlight { border-color: rgba(0,229,160,.4); background: rgba(0,229,160,.06); }
+.t9-ref-name { font-size: 11px; color: var(--text2); line-height: 1.3; margin-bottom: 5px; }
+.t9-ref-years { font-size: 16px; font-weight: 800; color: var(--text1); }
+body.light-mode .t9-tab { background: #f5f5f5; border-color: #ddd; color: #555; }
+body.light-mode .t9-tab.active { background: rgba(108,99,255,.12); border-color: var(--accent); }
+body.light-mode .t9-big, body.light-mode .t9-ref-card { background: #fff; border-color: #e0e0e0; }
+
+/* ── T10 — Fondo de Emergencia ─────────────────────── */
+.t10-months-sel { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.t10-mbtn {
+  flex: 1; min-width: 60px; padding: 8px 6px; border-radius: 10px;
+  font-size: 13px; font-weight: 600; border: 1.5px solid var(--surface2);
+  background: var(--surface); color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.t10-mbtn.active { background: rgba(108,99,255,.18); border-color: var(--accent); color: var(--text1); }
+.t10-hint { font-size: 12px; color: var(--text3); font-style: italic; line-height: 1.4; }
+.t10-target-box {
+  background: var(--surface); border-radius: 14px; padding: 16px;
+  text-align: center; margin: 14px 0 10px; border: 1px solid var(--surface2);
+}
+.t10-target-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+.t10-target-val { font-size: 40px; font-weight: 800; color: var(--accent); line-height: 1.1; }
+.t10-target-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.t10-prog-wrap { margin-bottom: 14px; }
+.t10-prog-bar { height: 12px; background: var(--surface2); border-radius: 6px; overflow: hidden; margin-bottom: 6px; }
+.t10-prog-fill { height: 100%; border-radius: 6px; transition: width .4s; }
+.t10-prog-pct { font-size: 13px; font-weight: 700; text-align: right; }
+.t10-stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 12px; }
+@media(max-width:360px){ .t10-stats-grid { grid-template-columns: 1fr 1fr; } }
+.t10-stat { background: var(--surface); border-radius: 10px; padding: 10px; text-align: center; border: 1px solid var(--surface2); }
+.t10-stat-val { font-size: 16px; font-weight: 800; color: var(--text1); }
+.t10-stat-lbl { font-size: 10px; color: var(--text3); margin-top: 3px; }
+.t10-done { text-align: center; padding: 20px 0; }
+.t10-done-title { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+.t10-done-sub { font-size: 13px; color: var(--text2); line-height: 1.5; }
+body.light-mode .t10-mbtn { background: #f5f5f5; border-color: #ddd; color: #555; }
+body.light-mode .t10-mbtn.active { background: rgba(108,99,255,.12); border-color: var(--accent); }
+body.light-mode .t10-target-box, body.light-mode .t10-stat { background: #fff; border-color: #e0e0e0; }
+
+/* ── T11 — Coste Real de la Deuda ──────────────────── */
+.t11-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 12px; }
+.t11-stat {
+  background: var(--surface); border-radius: 10px; padding: 12px;
+  border: 1px solid var(--surface2);
+}
+.t11-stat-val { font-size: 17px; font-weight: 800; color: var(--text1); }
+.t11-stat-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.t11-bar-wrap { margin-bottom: 12px; }
+.t11-bar-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.t11-bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--surface2); }
+.t11-bar-principal { background: var(--accent); transition: width .4s; }
+.t11-bar-interest  { transition: width .4s; }
+.t11-warning {
+  background: rgba(255,80,80,.08); border: 1px solid rgba(255,80,80,.25);
+  border-radius: 12px; padding: 14px; font-size: 13px; color: var(--red);
+  line-height: 1.5; margin-top: 12px;
+}
+body.light-mode .t11-stat { background: #fff; border-color: #e0e0e0; }
