@@ -4607,6 +4607,103 @@ const AUDIO = (function() {
 window.AUDIO = AUDIO;
 
 /* ══════════════════════════════════════════════════════════════════
+   AVATAR_GEN — Avatar procedural único por usuario (Canvas API)
+   Genera una imagen de gradientes tipo "AI art": 3 orbes de color
+   superpuestos + inicial del nombre con glow. Sin APIs externas,
+   funciona offline. Completamente único por nombre de usuario.
+══════════════════════════════════════════════════════════════════ */
+const AVATAR_GEN = (function() {
+  var PALS = [
+    ['#00e5a0','#0091ff'], ['#c084fc','#f87171'], ['#fbbf24','#fb923c'],
+    ['#60a5fa','#818cf8'], ['#34d399','#fbbf24'], ['#f87171','#c084fc'],
+    ['#00e5a0','#c084fc'], ['#38bdf8','#818cf8']
+  ];
+
+  function _hash(s) {
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    return Math.abs(h);
+  }
+
+  function generate(name, sz) {
+    sz = sz || 128;
+    var canvas = document.createElement('canvas');
+    canvas.width = canvas.height = sz;
+    var ctx = canvas.getContext('2d');
+    var h = _hash(name || 'finlearn');
+    var pal = PALS[h % PALS.length];
+
+    // Fondo oscuro
+    ctx.fillStyle = '#07101f';
+    ctx.fillRect(0, 0, sz, sz);
+
+    // Función pseudo-aleatoria determinista desde el hash
+    function rng(i) { return ((h * 1000003 + i * 31337) % 997) / 997; }
+
+    // 3 orbes de color superpuestos — el look "AI art"
+    [[rng(0), rng(1), rng(2), pal[0]],
+     [rng(3), rng(4), rng(5), pal[1]],
+     [rng(6), rng(7), rng(8), pal[0]]
+    ].forEach(function(o, i) {
+      var x = (o[0] * 0.65 + 0.17) * sz;
+      var y = (o[1] * 0.65 + 0.17) * sz;
+      var r = (o[2] * 0.22 + 0.32) * sz;
+      var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, o[3] + (i === 2 ? '77' : 'aa'));
+      g.addColorStop(0.55, o[3] + '22');
+      g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, sz, sz);
+    });
+
+    // Glow central suave
+    var cg = ctx.createRadialGradient(sz/2, sz/2, 0, sz/2, sz/2, sz*0.38);
+    cg.addColorStop(0, 'rgba(255,255,255,0.13)');
+    cg.addColorStop(1, 'transparent');
+    ctx.fillStyle = cg;
+    ctx.fillRect(0, 0, sz, sz);
+
+    // Inicial del nombre con text shadow
+    ctx.shadowColor = pal[0];
+    ctx.shadowBlur  = sz * 0.14;
+    ctx.fillStyle   = 'rgba(255,255,255,0.93)';
+    ctx.font        = 'bold ' + Math.round(sz * 0.44) + 'px Syne,Arial,sans-serif';
+    ctx.textAlign   = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText((name || 'F')[0].toUpperCase(), sz / 2, sz / 2 + sz * 0.02);
+
+    return canvas.toDataURL('image/png');
+  }
+
+  function apply(name) {
+    if (!name) return;
+    var url = generate(name);
+    // Inyectar en los contenedores de avatar
+    [['home-nav-av','28px','50%'], ['prof-av','100%','50%']].forEach(function(t) {
+      var el = document.getElementById(t[0]);
+      if (!el) return;
+      var img = el.querySelector('.fl-gen-av');
+      if (!img) {
+        img = document.createElement('img');
+        img.className = 'fl-gen-av';
+        img.alt = '';
+        el.insertBefore(img, el.firstChild);
+      }
+      img.src = url;
+      img.style.cssText = 'width:'+t[1]+';height:'+t[1]+';border-radius:'+t[2]+
+        ';object-fit:cover;display:block;pointer-events:none;';
+      // Ocultar texto emoji original
+      Array.from(el.childNodes).forEach(function(n) {
+        if (n.nodeType === 3) n.textContent = '';
+      });
+    });
+  }
+
+  return { generate: generate, apply: apply };
+})();
+window.AVATAR_GEN = AVATAR_GEN;
+
+/* ══════════════════════════════════════════════════════════════════
    MICRO-ANIMATIONS — XP counter, streak glow, home stagger
 ══════════════════════════════════════════════════════════════════ */
 
