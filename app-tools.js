@@ -2745,13 +2745,13 @@ function _renderTutStep() {
   if (hl)   hl.style.display  = 'none';
   if (arr)  arr.style.display = 'none';
   if (card) {
-    card.style.position  = 'fixed';
-    card.style.top       = '50%';
-    card.style.left      = '50%';
-    card.style.right     = 'auto';
-    card.style.bottom    = 'auto';
-    card.style.margin    = '0';
-    card.style.transform = 'translate(-50%, -50%)';
+    card.style.position  = '';
+    card.style.top       = '';
+    card.style.left      = '';
+    card.style.right     = '';
+    card.style.bottom    = '';
+    card.style.margin    = '';
+    card.style.transform = '';
   }
 
   SFX.xp();
@@ -9924,6 +9924,7 @@ function F30_getTotalProgress() {
 function F30_render() {
   const el = document.getElementById('f30-group-mission');
   if (!el) return;
+  el.innerHTML = ''; el.style.display = 'none'; return;
 
   F30_init();
   const gm = S.groupMission;

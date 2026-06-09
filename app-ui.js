@@ -232,6 +232,35 @@ function updateUIFromState() {
     _sPill.classList.toggle('streak-lit',  S.streak > 0);
     _sPill.classList.toggle('streak-fire', S.streak >= 7);
   }
+  // Streak banner visible en home
+  (function() {
+    var _sb = document.getElementById('home-streak-banner');
+    if (!_sb) return;
+    var streak = S.streak || 0;
+    if (streak === 0) { _sb.style.display = 'none'; return; }
+    var msg = streak >= 30 ? '¡Racha legendaria! Eres imparable.' :
+              streak >= 14 ? '¡Dos semanas seguidas! Extraordinario.' :
+              streak >= 7  ? '¡Una semana completa! Increíble.' :
+              streak >= 3  ? 'La constancia marca la diferencia.' :
+                             'Buen comienzo. ¡Sigue así!';
+    var nextMilestone = streak < 3 ? 3 : streak < 7 ? 7 : streak < 14 ? 14 : streak < 30 ? 30 : null;
+    var progressPct = nextMilestone ? Math.round((streak / nextMilestone) * 100) : 100;
+    var color = streak >= 30 ? '#a855f7' : streak >= 14 ? '#f0b429' : streak >= 7 ? '#ff6b35' : '#00e5a0';
+    _sb.style.display = 'block';
+    _sb.innerHTML = '<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid ' + color + '30;border-radius:14px;padding:10px 14px;">' +
+      '<span style="font-size:26px;flex-shrink:0;">🔥</span>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+          '<span style="font-size:13px;font-weight:700;color:var(--text1);">' + streak + ' días de racha</span>' +
+          (nextMilestone ? '<span style="font-size:10px;color:var(--text3);">Meta: ' + nextMilestone + ' días</span>' : '<span style="font-size:10px;color:' + color + ';">¡Máximo nivel!</span>') +
+        '</div>' +
+        '<div style="height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;">' +
+          '<div style="height:100%;width:' + progressPct + '%;background:' + color + ';border-radius:2px;transition:width .4s ease;"></div>' +
+        '</div>' +
+        '<div style="font-size:11px;color:var(--text3);margin-top:3px;">' + msg + '</div>' +
+      '</div>' +
+    '</div>';
+  })();
   setEl('home-nav-av', S.avatar);
   if (S.userName && typeof AVATAR_AI !== 'undefined') AVATAR_AI.apply(S.userName);
 
@@ -2389,19 +2418,18 @@ function renderDailyHub() {
   const el = document.getElementById('daily-hub');
   if (!el) return;
 
-  const today     = new Date().toISOString().slice(0, 10);
-  const dcaDone   = S.dcaLastDate === today;
+  const dcaDone   = !!S.dcaDone;
   const nextMod   = _getNextRecommendedMod();
-  const missions  = (S.weeklyMissions || []).filter(m => !m.done);
+  const missions  = (S._mw_missions || []).filter(m => !m.done);
   const nearMission = missions.sort((a, b) => (b.progress / b.goal) - (a.progress / a.goal))[0];
 
   // Calcular cuántas acciones diarias quedan
   const actions = [];
-  if (!dcaDone) actions.push({ icon:'💰', label:'DCA diario pendiente', onclick:"document.getElementById('tab-dca')?.click()||goTo('home')" });
+  if (!dcaDone) actions.push({ icon:'💰', label:'Pregunta del día pendiente', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
   if (nextMod)  actions.push({ icon:'📖', label:`Módulo: ${nextMod.title}`, onclick:`startModule(${nextMod.id})` });
   if (nearMission) {
     const pct = Math.round((nearMission.progress / nearMission.goal) * 100);
-    actions.push({ icon:'🎯', label:`Misión: ${nearMission.id} (${pct}%)`, onclick:"goTo('home')" });
+    actions.push({ icon:'🎯', label:`${nearMission.title} (${pct}%)`, onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('missions-card');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},400)" });
   }
 
   if (actions.length === 0) {
@@ -4045,8 +4073,11 @@ function answerDCA(chosen, correct, explanation) {
     if (done) done.style.display = 'block';
     setEl('dca-done-msg', isCorrect ? '¡Correcto! 🎯' : '❌ Respuesta incorrecta');
     setEl('dca-done-sub', isCorrect ? `Has ganado +${xpGained} XP · Racha: 🔥${S.streak}` : `Sin XP hoy. Vuelve mañana y acierta para +80 XP y mantener tu racha.`);
-    spawnXP('+' + xpGained + ' XP');
+    if (xpGained > 0) spawnXP('+' + xpGained + ' XP');
     if (isCorrect) toast('🎯 ¡Correcto!', '+' + xpGained + ' XP ganados', 't-success');
+    else toast('❌ Incorrecto', 'Sin XP · Vuelve mañana para mantener tu racha', 't-error');
+    renderDailyHub();
+    updateUIFromState();
   }, 900);
 }
 
@@ -4947,7 +4978,7 @@ function lessonNext() {
 
 function _closeModuleSummary() {
   const m = document.getElementById('m-module-summary');
-  if (m) m.classList.remove('active');
+  if (m) { m.classList.remove('active'); m.style.display = 'none'; }
 }
 window._closeModuleSummary = _closeModuleSummary;
 
@@ -5027,6 +5058,7 @@ function lessonNextModule() {
 function completeModule() {
   if (!S.currentMod) return;
   const mod = S.currentMod;
+  window._celPendingAfterLevelUp = false;
 
   if (!S.completedMods.includes(mod.id)) {
     S.completedMods.push(mod.id);
@@ -5061,7 +5093,10 @@ function completeModule() {
     if (newLevel > S.level) {
       S.level = newLevel;
       SFX.levelUp && SFX.levelUp();
+      window._celPendingAfterLevelUp = true;
       _showLevelUpScreen(newLevel);
+    } else {
+      window._celPendingAfterLevelUp = false;
     }
     // P4-B: comprobar si se ha desbloqueado nuevo título de rango
     checkTitleUpgrade();
@@ -5202,7 +5237,7 @@ function completeModule() {
     }
   }
 
-  openModal('m-cel');
+  if (!window._celPendingAfterLevelUp) openModal('m-cel');
   SFX.moduleComplete();
   if ((S.completedMods || []).length === 1) {
     NOTIFS.onFirstModule();
@@ -5215,7 +5250,6 @@ function completeModule() {
     toast('💪 ¡Lección completada!', msg, 't-success');
   }, 2500);
   confetti();
-  emojiConfetti();
   spawnXP('+' + _xpGainDisplay + ' XP');
   checkAchievements();
 
@@ -5292,7 +5326,7 @@ function _showLevelUpScreen(level) {
       <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${rankTitle.color};margin-bottom:6px;">${rankTitle.title}</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;">${rankTitle.desc || ''}</div>
       ${milestoneHtml}${chestHtml}
-      <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();"
+      <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();if(window._celPendingAfterLevelUp){window._celPendingAfterLevelUp=false;if(typeof openModal==='function')openModal('m-cel');}"
         style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">
         ¡Seguir subiendo! 🚀
       </button>
