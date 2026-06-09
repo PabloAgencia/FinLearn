@@ -873,6 +873,8 @@ function renderHomeScreen() {
   if (typeof F31_renderBadges === 'function') F31_renderBadges('f31-home-badges');
   // F32: Ligas Semanales (una sola llamada)
   if (typeof F32_render === 'function') F32_render();
+  // Streak card: racha + ruleta diaria
+  if (typeof renderStreakCard === 'function') renderStreakCard();
   // F33: Streak Identity — banner Earn Back
   if (typeof F33_renderBanner === 'function') F33_renderBanner();
   // F34: Reto Diario

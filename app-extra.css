@@ -327,3 +327,177 @@ body.light-mode .income-panel-source { color: #777; }
   border: 1px solid var(--surface2);
 }
 body.light-mode .income-modal-tip { background: #f5f5f5; color: #555; }
+
+/* ══════════════════════════════════════════════════════════════════
+   STREAK CARD & MODAL — Racha diaria + ruleta
+   Prefijo: .sc-
+══════════════════════════════════════════════════════════════════ */
+
+/* ── Tarjeta en home ── */
+.sc-card {
+  background: var(--surface);
+  border: 1.5px solid var(--surface2);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+body.light-mode .sc-card { background: #fff; border-color: #e0e0e0; }
+
+.sc-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sc-card-streak-wrap { display: flex; align-items: center; gap: 10px; }
+.sc-card-fire { font-size: 28px; line-height: 1; }
+.sc-card-num { font-size: 32px; font-weight: 900; color: var(--text); line-height: 1; }
+.sc-card-sublabel { font-size: 12px; color: var(--text2); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+.sc-card-shields { font-size: 13px; font-weight: 700; color: var(--accent); background: rgba(0,229,160,.1); border-radius: 8px; padding: 5px 10px; }
+.sc-shields-empty { color: var(--text3); background: none; font-weight: 500; font-size: 11px; }
+.sc-card-bonus-tag { background: rgba(255,180,0,.15); color: #f5a623; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; }
+.sc-tag-mega { background: rgba(255,80,160,.12); color: #ff50a0; }
+
+/* ── Dots row ── */
+.sc-dots-wrap { display: flex; gap: 6px; justify-content: space-between; }
+.sc-dot {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  background: var(--surface2);
+  color: var(--text3);
+  border: 2px solid transparent;
+  transition: all .2s;
+}
+.sc-dot-done { background: rgba(0,229,160,.15); color: var(--accent); border-color: var(--accent); }
+.sc-dot-active { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 10px rgba(0,229,160,.4); animation: scPulse .9s ease-in-out infinite; }
+.sc-dot-bonus { background: rgba(255,180,0,.12); color: #f5a623; border-color: rgba(255,180,0,.35); }
+@keyframes scPulse { 0%,100%{box-shadow:0 0 6px rgba(0,229,160,.3)} 50%{box-shadow:0 0 14px rgba(0,229,160,.6)} }
+
+/* ── CTAs ── */
+.sc-cta-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .2s;
+}
+.sc-cta-available {
+  background: linear-gradient(135deg, #00e5a0, #00c984);
+  color: #000;
+  box-shadow: 0 4px 16px rgba(0,229,160,.35);
+}
+.sc-cta-available:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,160,.45); }
+.sc-cta-done {
+  background: var(--surface2);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 600;
+}
+.sc-cta-pulse { animation: scBtnPulse 1.4s ease-in-out infinite; }
+@keyframes scBtnPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.02)} }
+
+/* ── Modal overlay ── */
+.sc-modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 999;
+  padding: 0;
+}
+
+/* ── Modal box ── */
+.sc-modal-box {
+  background: var(--bg);
+  border-radius: 28px 28px 0 0;
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 28px 20px 32px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+body.light-mode .sc-modal-box { background: #fff; }
+
+.sc-modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: var(--surface2);
+  border: none;
+  color: var(--text2);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.sc-modal-flame { font-size: 48px; line-height: 1; margin-bottom: 2px; }
+.sc-modal-streak-num { font-size: 56px; font-weight: 900; color: var(--text); line-height: 1; }
+.sc-modal-streak-label { font-size: 14px; color: var(--text2); font-weight: 600; }
+.sc-modal-msg { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 4px; }
+
+/* ── Calendar row in modal ── */
+.sc-cal-row { display: flex; gap: 6px; justify-content: center; width: 100%; flex-wrap: wrap; }
+.sc-cal-day {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  width: 42px;
+}
+.sc-cal-icon { font-size: 20px; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; }
+.sc-cal-sub { font-size: 9px; font-weight: 700; color: var(--text3); text-align: center; }
+.sc-day-done .sc-cal-icon { background: rgba(0,229,160,.15); border-color: var(--accent); color: var(--accent); }
+.sc-day-active .sc-cal-icon { background: var(--accent); border-color: var(--accent); color: #000; box-shadow: 0 0 12px rgba(0,229,160,.5); }
+.sc-day-active .sc-cal-sub { color: var(--accent); }
+.sc-day-bonus .sc-cal-icon { background: rgba(255,180,0,.12); border-color: rgba(255,180,0,.4); }
+.sc-day-bonus .sc-cal-sub { color: #f5a623; }
+.sc-day-future .sc-cal-icon { background: var(--surface2); color: var(--text3); }
+
+/* ── Bonus callout ── */
+.sc-bonus-callout {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  text-align: center;
+}
+.sc-bonus-3 { background: rgba(255,180,0,.1); color: #f5a623; border: 1px solid rgba(255,180,0,.3); }
+.sc-bonus-7 { background: rgba(255,50,150,.08); color: #ff50a0; border: 1px solid rgba(255,50,150,.25); }
+
+/* ── Wheel section in modal ── */
+.sc-wheel-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+/* ── Spin button in modal ── */
+.sc-spin-btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(135deg, #00e5a0, #00c984);
+  color: #000;
+  box-shadow: 0 4px 18px rgba(0,229,160,.4);
+  transition: transform .1s, box-shadow .2s;
+}
+.sc-spin-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(0,229,160,.5); }
+.sc-spin-btn:disabled { background: var(--surface2); color: var(--text3); box-shadow: none; cursor: not-allowed; }
+
+/* ── Claimed state ── */
+.sc-claimed-state { font-size: 16px; font-weight: 700; color: var(--accent); }
+.sc-next-reward-cd { font-size: 14px; color: var(--text2); text-align: center; }
+.sc-next-reward-cd strong { color: var(--text); }
+.sc-next-bonus-hint { font-size: 12px; color: var(--text3); text-align: center; margin-top: 2px; }

@@ -639,66 +639,152 @@ function _rouletteTargetDeg(winIdx) {
 }
 
 function showDailyRewardModal(dayCount) {
-  const today   = new Date().toISOString().slice(0, 10);
-  const streak  = S.streak || 0;
-  const winIdx  = _rouletteRoll(today, streak);
-  const reward  = ROULETTE_SEGS[winIdx];
-  const cycleDay = ((dayCount - 1) % 7) + 1;
+  var today    = new Date().toISOString().slice(0, 10);
+  var streak   = S.streak || 0;
+  var winIdx   = _rouletteRoll(today, streak);
+  var reward   = ROULETTE_SEGS[winIdx];
+  var cycleDay = ((dayCount - 1) % 7) + 1;
+  var claimed  = (S.claimedDays || []).includes(dayCount);
 
-  // Build 7-day dots
-  const dots = Array.from({length:7}, (_,i) => {
-    const filled = i < cycleDay;
-    const active = i === cycleDay - 1;
-    return '<div class="dr-dot ' + (filled ? 'filled' : '') + ' ' + (active ? 'active' : '') + '">' +
-           (filled ? (i < cycleDay - 1 ? '\u2713' : reward.icon) : i + 1) + '</div>';
-  }).join('');
-
-  // Streak tier badge
-  const tierLabel = streak >= 7 ? '\uD83D\uDD25 Racha \xd7' + streak + ' \u2014 premios \u00e9picos' :
-                    streak >= 3 ? '\u26a1 Racha \xd7' + streak + ' \u2014 premios mejorados' :
-                    'Racha \xd7' + streak + ' \u2014 consigue 3+ d\xedas para mejores premios';
-
-  let modal = document.getElementById('m-daily-reward');
+  var modal = document.getElementById('m-daily-reward');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'm-daily-reward';
     modal.className = 'modal-overlay';
-    modal.style.display = 'none';
     document.body.appendChild(modal);
   }
 
-  modal.innerHTML =
-    '<div class="modal-box dr-modal rl-modal" style="position:relative">' +
-      '<button onclick="document.getElementById(\'m-daily-reward\').style.display=\'none\'" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3);z-index:10;">✕</button>' +
-      '<div class="dr-glow"></div>' +
-      '<div class="dr-eyebrow">\uD83C\uDF81 RULETA DIARIA \u00b7 D\xcdA ' + cycleDay + ' DE 7</div>' +
-      '<div class="rl-streak-badge">' + tierLabel + '</div>' +
+  var streakMsg = streak >= 100 ? 'Leyenda absoluta. Top 0.1% de usuarios' :
+                  streak >= 30  ? 'Racha epica. Top 1%' :
+                  streak >= 14  ? 'Dos semanas seguidas. Top 5%' :
+                  streak >= 7   ? 'Una semana completa. Top 15%' :
+                  streak >= 3   ? streak + ' dias seguidos. Sigue asi.' :
+                  streak === 1  ? 'Primer dia. Empieza tu racha.' :
+                  'Completa un modulo para iniciar tu racha';
 
-      // Wheel container + pointer
-      '<div class="rl-wheel-wrap">' +
-        '<div class="rl-pointer">\u25bc</div>' +
-        '<div id="rl-wheel-container">' + _buildRouletteSVG() + '</div>' +
-      '</div>' +
+  var calHTML = Array.from({length:7}, function(_,i) {
+    var d = i + 1, isDone = d < cycleDay, isCurr = d === cycleDay;
+    var isB3 = d === 3, isB7 = d === 7;
+    var icon = isDone ? '✓' : isCurr ? reward.icon : (isB7 ? '👑' : isB3 ? '⚡' : '○');
+    var cls  = isDone ? 'sc-cal-day sc-day-done'
+             : isCurr ? 'sc-cal-day sc-day-active'
+             : (isB3||isB7) ? 'sc-cal-day sc-day-bonus' : 'sc-cal-day sc-day-future';
+    var sub  = isDone ? '' : isCurr ? 'Hoy' : isB3 ? '+100XP' : isB7 ? '+300+🛡️' : 'D'+d;
+    return '<div class="' + cls + '"><div class="sc-cal-icon">' + icon + '</div><div class="sc-cal-sub">' + sub + '</div></div>';
+  }).join('');
 
-      // Prize reveal (hidden until spin ends)
-      '<div id="rl-prize-reveal" style="display:none">' +
-        '<div class="rl-prize-icon">' + reward.icon + '</div>' +
-        '<div class="rl-prize-label" style="color:' + reward.color + '">' + reward.label + '</div>' +
-      '</div>' +
+  var bonusHTML = cycleDay === 3
+    ? '<div class="sc-bonus-callout sc-bonus-3">🎯 BONUS HOY — <strong>+100 XP garantizados</strong></div>'
+    : cycleDay === 7
+    ? '<div class="sc-bonus-callout sc-bonus-7">👑 MEGA BONUS HOY — <strong>+300 XP + 🛡️ Escudo garantizados</strong></div>'
+    : '';
 
-      '<div class="dr-dots" style="margin-top:14px">' + dots + '</div>' +
+  var nextB = cycleDay < 3 ? 3 : cycleDay < 7 ? 7 : null;
+  var daysToNext = nextB ? nextB - cycleDay : null;
+  var nextHTML = daysToNext
+    ? '<div class="sc-next-bonus-hint">Pr\xF3ximo bonus: D\xEDa ' + nextB + ' en ' + daysToNext + ' d\xEDa' + (daysToNext > 1 ? 's' : '') + (nextB === 7 ? ' — 👑 +300XP + Escudo' : ' — ⚡ +100XP') + '</div>'
+    : '';
 
-      '<button id="rl-spin-btn" class="btn btn-primary btn-block dr-claim-btn" onclick="_rouletteSpinAndClaim(' + winIdx + ',' + dayCount + ')">' +
-        '\uD83C\uDFB0 \u00a1Girar la ruleta!' +
-      '</button>' +
-      '<div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:center">' +
-        'D\xeda ' + dayCount + ' de tu camino' +
-      '</div>' +
-    '</div>';
+  if (claimed) {
+    var nextTs = (S.lastLoginTimestamp || 0) + 86400000;
+    var msLeft = Math.max(0, nextTs - Date.now());
+    var hh = Math.floor(msLeft / 3600000), mm = Math.floor((msLeft % 3600000) / 60000);
+    var cdStr = hh > 0 ? hh + 'h ' + (mm < 10 ? '0' : '') + mm + 'm' : mm + 'm';
+    modal.innerHTML = '<div class="sc-modal-backdrop" onclick="closeModal(\'m-daily-reward\')">'
+      + '<div class="sc-modal-box" onclick="event.stopPropagation()">'
+      + '<button class="sc-modal-close" onclick="closeModal(\'m-daily-reward\')">✕</button>'
+      + '<div class="sc-modal-flame">🔥</div>'
+      + '<div class="sc-modal-streak-num">' + streak + '</div>'
+      + '<div class="sc-modal-streak-label">d\xEDas de racha \xB7 D\xEDa ' + cycleDay + '/7</div>'
+      + '<div class="sc-modal-msg">' + streakMsg + '</div>'
+      + '<div class="sc-cal-row">' + calHTML + '</div>'
+      + '<div class="sc-claimed-state">✅ Ya reclamaste hoy</div>'
+      + '<div class="sc-next-reward-cd">Siguiente ruleta en <strong>' + cdStr + '</strong></div>'
+      + nextHTML
+      + '</div></div>';
+  } else {
+    modal.innerHTML = '<div class="sc-modal-backdrop" onclick="closeModal(\'m-daily-reward\')">'
+      + '<div class="sc-modal-box" onclick="event.stopPropagation()">'
+      + '<button class="sc-modal-close" onclick="closeModal(\'m-daily-reward\')">✕</button>'
+      + '<div class="sc-modal-flame">🔥</div>'
+      + '<div class="sc-modal-streak-num">' + streak + '</div>'
+      + '<div class="sc-modal-streak-label">d\xEDas de racha \xB7 D\xEDa ' + cycleDay + '/7</div>'
+      + '<div class="sc-modal-msg">' + streakMsg + '</div>'
+      + '<div class="sc-cal-row">' + calHTML + '</div>'
+      + bonusHTML
+      + '<div class="sc-wheel-wrap">'
+      +   '<div class="rl-wheel-wrap" style="margin:0 auto">'
+      +     '<div class="rl-pointer">▼</div>'
+      +     '<div id="rl-wheel-container">' + _buildRouletteSVG() + '</div>'
+      +   '</div>'
+      +   '<div id="rl-prize-reveal" style="display:none;flex-direction:column;align-items:center;gap:4px;margin-top:8px;">'
+      +     '<div class="rl-prize-icon">' + reward.icon + '</div>'
+      +     '<div class="rl-prize-label" style="color:' + reward.color + '">' + reward.label + '</div>'
+      +   '</div>'
+      + '</div>'
+      + '<button id="rl-spin-btn" class="sc-spin-btn" onclick="_rouletteSpinAndClaim(' + winIdx + ',' + dayCount + ')">🎰 \xA1Girar la ruleta!</button>'
+      + nextHTML
+      + '</div></div>';
+  }
 
-  modal.style.display = 'flex';
-  SFX.achievement();
+  openModal('m-daily-reward');
+  if (typeof SFX !== 'undefined' && SFX.achievement) SFX.achievement();
 }
+
+function renderStreakCard() {
+  var el = document.getElementById('streak-card-widget');
+  if (!el) return;
+  if (!S.userName) { el.innerHTML = ''; return; }
+
+  var streak   = S.streak || 0;
+  var dayCount = S.loginDayCount || 1;
+  var cycleDay = ((dayCount - 1) % 7) + 1;
+  var claimed  = (S.claimedDays || []).includes(dayCount);
+  var shields  = S.streakShields || 0;
+  var today    = new Date().toISOString().slice(0, 10);
+  var reward   = ROULETTE_SEGS[_rouletteRoll(today, streak)];
+
+  var dotsHTML = Array.from({length:7}, function(_,i) {
+    var d = i + 1, isDone = d < cycleDay, isCurr = d === cycleDay;
+    var isB3 = d === 3, isB7 = d === 7;
+    var icon = isDone ? '✓' : isCurr ? (claimed ? '✓' : reward.icon) : (isB7 ? '👑' : isB3 ? '⚡' : '\xB7');
+    var cls = isDone || (isCurr && claimed) ? 'sc-dot sc-dot-done'
+            : isCurr ? 'sc-dot sc-dot-active'
+            : (isB3||isB7) ? 'sc-dot sc-dot-bonus' : 'sc-dot';
+    return '<div class="' + cls + '">' + icon + '</div>';
+  }).join('');
+
+  var bonusTag = cycleDay === 3 ? ' <span class="sc-card-bonus-tag">⚡ +100XP</span>'
+               : cycleDay === 7 ? ' <span class="sc-card-bonus-tag sc-tag-mega">👑 Mega</span>'
+               : '';
+
+  var ctaHTML;
+  if (claimed) {
+    var nextTs = (S.lastLoginTimestamp || 0) + 86400000;
+    var msLeft = Math.max(0, nextTs - Date.now());
+    var hh = Math.floor(msLeft / 3600000), mm = Math.floor((msLeft % 3600000) / 60000);
+    var cdStr = hh > 0 ? hh + 'h ' + (mm < 10 ? '0' : '') + mm + 'm' : (mm > 0 ? mm + 'm' : 'pronto');
+    ctaHTML = '<button class="sc-cta-btn sc-cta-done" onclick="showDailyRewardModal(' + dayCount + ')">✅ Reclamado \xB7 vuelve en ' + cdStr + '</button>';
+  } else {
+    ctaHTML = '<button class="sc-cta-btn sc-cta-available sc-cta-pulse" onclick="showDailyRewardModal(' + dayCount + ')">🎰 Girar ruleta del d\xEDa</button>';
+  }
+
+  el.innerHTML = '<div class="sc-card">'
+    + '<div class="sc-card-top">'
+    +   '<div class="sc-card-streak-wrap">'
+    +     '<span class="sc-card-fire">🔥</span>'
+    +     '<div>'
+    +       '<div class="sc-card-num">' + streak + '</div>'
+    +       '<div class="sc-card-sublabel">d\xEDas de racha' + bonusTag + '</div>'
+    +     '</div>'
+    +   '</div>'
+    +   (shields > 0 ? '<div class="sc-card-shields">🛡️ \xD7' + shields + '</div>' : '<div class="sc-card-shields sc-shields-empty">Sin escudos</div>')
+    + '</div>'
+    + '<div class="sc-dots-wrap">' + dotsHTML + '</div>'
+    + ctaHTML
+    + '</div>';
+}
+window.renderStreakCard = renderStreakCard;
 
 function _rouletteSpinAndClaim(winIdx, dayCount) {
   const btn  = document.getElementById('rl-spin-btn');

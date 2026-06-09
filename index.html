@@ -348,7 +348,7 @@
       <div class="top-nav">
         <div class="logo">FinLearn</div>
         <div class="nav-pills">
-          <div class="nav-pill streak">🔥 <span class="pv" id="nav-streak">0</span></div>
+          <div class="nav-pill streak" onclick="showDailyRewardModal(S.loginDayCount||1)" style="cursor:pointer">🔥 <span class="pv" id="nav-streak">0</span></div>
           <div id="streak-shield-icon" style="display:inline-flex;align-items:center;margin-left:6px;"></div>
           <div id="nav-shield-wrap" class="nav-pill shield-pill" style="display:none;">🛡️ <span class="pv" id="nav-shields">0</span></div>
           <div class="nav-pill xpill" onclick="showXPPanel()" style="cursor:pointer;">⚡ <span class="pv" id="nav-xp">0 XP</span></div>
@@ -438,6 +438,9 @@
 
         <!-- CTA "Continúa aprendiendo" ──────────────────────── -->
         <div id="home-continue-cta" style="display:none;" class="mb16"></div>
+
+        <!-- STREAK CARD — Racha y ruleta diaria ─────────────── -->
+        <div id="streak-card-widget" class="mb16"></div>
 
         <!-- F3X — Ruta de aprendizaje personalizada ─────────── -->
         <div id="learning-path-card" class="mb16" style="display:none;"></div>
