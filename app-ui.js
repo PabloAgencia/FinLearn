@@ -233,7 +233,7 @@ function updateUIFromState() {
     _sPill.classList.toggle('streak-fire', S.streak >= 7);
   }
   setEl('home-nav-av', S.avatar);
-  if (S.userName && typeof AVATAR_GEN !== 'undefined') AVATAR_GEN.apply(S.userName);
+  if (S.userName && typeof AVATAR_AI !== 'undefined') AVATAR_AI.apply(S.userName);
 
   // ── Profile hero ───────────────────────────────────────────────────
   setEl('prof-av',    S.avatar);

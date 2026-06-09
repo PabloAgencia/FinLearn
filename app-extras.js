@@ -4607,79 +4607,29 @@ const AUDIO = (function() {
 window.AUDIO = AUDIO;
 
 /* ══════════════════════════════════════════════════════════════════
-   AVATAR_GEN — Avatar procedural único por usuario (Canvas API)
-   Genera una imagen de gradientes tipo "AI art": 3 orbes de color
-   superpuestos + inicial del nombre con glow. Sin APIs externas,
-   funciona offline. Completamente único por nombre de usuario.
+   AVATAR_AI — Avatares generados con IA via DiceBear API
+   Sprites pixel-art únicos por nombre de usuario. Primera carga
+   desde CDN (instant), cacheados en localStorage para offline PWA.
+   Fallback: gradiente procedural canvas si no hay red.
+   Estilo: pixel-art (RPG financiero). Sin API key, sin coste.
 ══════════════════════════════════════════════════════════════════ */
-const AVATAR_GEN = (function() {
-  var PALS = [
-    ['#00e5a0','#0091ff'], ['#c084fc','#f87171'], ['#fbbf24','#fb923c'],
-    ['#60a5fa','#818cf8'], ['#34d399','#fbbf24'], ['#f87171','#c084fc'],
-    ['#00e5a0','#c084fc'], ['#38bdf8','#818cf8']
-  ];
+const AVATAR_AI = (function() {
+  var STYLE   = 'pixel-art';
+  var BASE    = 'https://api.dicebear.com/9.x/' + STYLE + '/svg';
+  var BG      = '07101f';   // fondo oscuro del app
 
-  function _hash(s) {
-    var h = 5381;
-    for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
-    return Math.abs(h);
+  function _key(name) {
+    return 'fl_av3_' + name.trim().toLowerCase().slice(0, 24);
   }
 
-  function generate(name, sz) {
-    sz = sz || 128;
-    var canvas = document.createElement('canvas');
-    canvas.width = canvas.height = sz;
-    var ctx = canvas.getContext('2d');
-    var h = _hash(name || 'finlearn');
-    var pal = PALS[h % PALS.length];
-
-    // Fondo oscuro
-    ctx.fillStyle = '#07101f';
-    ctx.fillRect(0, 0, sz, sz);
-
-    // Función pseudo-aleatoria determinista desde el hash
-    function rng(i) { return ((h * 1000003 + i * 31337) % 997) / 997; }
-
-    // 3 orbes de color superpuestos — el look "AI art"
-    [[rng(0), rng(1), rng(2), pal[0]],
-     [rng(3), rng(4), rng(5), pal[1]],
-     [rng(6), rng(7), rng(8), pal[0]]
-    ].forEach(function(o, i) {
-      var x = (o[0] * 0.65 + 0.17) * sz;
-      var y = (o[1] * 0.65 + 0.17) * sz;
-      var r = (o[2] * 0.22 + 0.32) * sz;
-      var g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, o[3] + (i === 2 ? '77' : 'aa'));
-      g.addColorStop(0.55, o[3] + '22');
-      g.addColorStop(1, 'transparent');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, sz, sz);
-    });
-
-    // Glow central suave
-    var cg = ctx.createRadialGradient(sz/2, sz/2, 0, sz/2, sz/2, sz*0.38);
-    cg.addColorStop(0, 'rgba(255,255,255,0.13)');
-    cg.addColorStop(1, 'transparent');
-    ctx.fillStyle = cg;
-    ctx.fillRect(0, 0, sz, sz);
-
-    // Inicial del nombre con text shadow
-    ctx.shadowColor = pal[0];
-    ctx.shadowBlur  = sz * 0.14;
-    ctx.fillStyle   = 'rgba(255,255,255,0.93)';
-    ctx.font        = 'bold ' + Math.round(sz * 0.44) + 'px Syne,Arial,sans-serif';
-    ctx.textAlign   = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText((name || 'F')[0].toUpperCase(), sz / 2, sz / 2 + sz * 0.02);
-
-    return canvas.toDataURL('image/png');
+  function _url(name) {
+    return BASE + '?seed=' + encodeURIComponent(name) +
+      '&backgroundColor=' + BG +
+      '&scale=88&radius=12';
   }
 
-  function apply(name) {
-    if (!name) return;
-    var url = generate(name);
-    // Inyectar en los contenedores de avatar
-    [['home-nav-av','28px','50%'], ['prof-av','100%','50%']].forEach(function(t) {
+  function _inject(src) {
+    [['home-nav-av', '28px'], ['prof-av', '100%']].forEach(function(t) {
       var el = document.getElementById(t[0]);
       if (!el) return;
       var img = el.querySelector('.fl-gen-av');
@@ -4687,21 +4637,73 @@ const AVATAR_GEN = (function() {
         img = document.createElement('img');
         img.className = 'fl-gen-av';
         img.alt = '';
+        img.style.cssText = 'display:block;border-radius:50%;object-fit:cover;pointer-events:none;';
         el.insertBefore(img, el.firstChild);
       }
-      img.src = url;
-      img.style.cssText = 'width:'+t[1]+';height:'+t[1]+';border-radius:'+t[2]+
-        ';object-fit:cover;display:block;pointer-events:none;';
-      // Ocultar texto emoji original
+      img.src = src;
+      img.style.width = img.style.height = t[1];
+      // Ocultar emoji original
       Array.from(el.childNodes).forEach(function(n) {
         if (n.nodeType === 3) n.textContent = '';
       });
     });
   }
 
-  return { generate: generate, apply: apply };
+  // Fallback procedural si no hay red ni caché
+  function _fallback(name) {
+    var PALS = [
+      ['#00e5a0','#0091ff'],['#c084fc','#f87171'],['#fbbf24','#fb923c'],
+      ['#60a5fa','#818cf8'],['#34d399','#fbbf24'],['#f87171','#c084fc']
+    ];
+    var h = 5381;
+    for (var i = 0; i < name.length; i++) h = ((h << 5) + h + name.charCodeAt(i)) | 0;
+    h = Math.abs(h);
+    var pal = PALS[h % PALS.length];
+    var sz = 128;
+    var c = document.createElement('canvas'); c.width = c.height = sz;
+    var x = c.getContext('2d');
+    x.fillStyle = '#07101f'; x.fillRect(0, 0, sz, sz);
+    [[.3,.3,pal[0]],[.65,.55,pal[1]],[.45,.7,pal[0]]].forEach(function(o,i) {
+      var g = x.createRadialGradient(o[0]*sz,o[1]*sz,0,o[0]*sz,o[1]*sz,sz*.42);
+      g.addColorStop(0, o[2]+'99'); g.addColorStop(1,'transparent');
+      x.fillStyle = g; x.fillRect(0,0,sz,sz);
+    });
+    x.shadowColor = pal[0]; x.shadowBlur = 14;
+    x.fillStyle = 'rgba(255,255,255,.9)';
+    x.font = 'bold 52px Syne,Arial'; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.fillText(name[0].toUpperCase(), sz/2, sz/2+2);
+    return c.toDataURL();
+  }
+
+  function apply(name) {
+    if (!name) return;
+    var key = _key(name);
+    // 1. Si está cacheado, inyectar inmediatamente (offline-first)
+    try {
+      var cached = localStorage.getItem(key);
+      if (cached) { _inject(cached); return; }
+    } catch(e) {}
+    // 2. Inyectar URL directa (el navegador cachea con HTTP cache)
+    var direct = _url(name);
+    _inject(direct);
+    // 3. Fetch + guardar en localStorage para siguiente visita offline
+    fetch(direct).then(function(r) {
+      return r.ok ? r.text() : Promise.reject();
+    }).then(function(svg) {
+      try {
+        var encoded = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        localStorage.setItem(key, encoded);
+        _inject(encoded);
+      } catch(e) {}
+    }).catch(function() {
+      // Sin red y sin caché → fallback procedural
+      _inject(_fallback(name));
+    });
+  }
+
+  return { apply: apply, url: _url };
 })();
-window.AVATAR_GEN = AVATAR_GEN;
+window.AVATAR_AI = AVATAR_AI;
 
 /* ══════════════════════════════════════════════════════════════════
    MICRO-ANIMATIONS — XP counter, streak glow, home stagger
