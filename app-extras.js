@@ -4372,6 +4372,151 @@ function RUTA_finish() {
 }
 
 window.RUTA_openQuiz  = RUTA_openQuiz;
+
+
+/* ══════════════════════════════════════════════════════════════════
+   MARKET — Datos de mercado reales vía Cloudflare Function → Yahoo Finance
+   ─────────────────────────────────────────────────────────────────
+   · Fetches batch quotes para todos los tickers al cargar la bolsa
+   · Aplica el % de cambio real del día a los precios simulados
+   · Fetches historial real (1 mes de cierres diarios) al abrir un stock
+   · Cache 15 min en memoria para quotes, 1h para historial
+   · Fallback silencioso a simulación si la API no está disponible
+══════════════════════════════════════════════════════════════════ */
+
+var MARKET = (function() {
+
+  var _cache     = null;  // { ts: Date.now(), data: {appTicker: {price,changePct,...}} }
+  var _histCache = {};    // { appTicker: { ts, closes: [] } }
+  var _CACHE_TTL  = 15 * 60 * 1000;  // 15 min
+  var _HIST_TTL   = 60 * 60 * 1000;  // 1 hora
+
+  // app ticker → Yahoo Finance symbol
+  var _MAP = {
+    AAPL:  'AAPL',
+    MSFT:  'MSFT',
+    NVDA:  'NVDA',
+    TSLA:  'TSLA',
+    GOOGL: 'GOOGL',
+    META:  'META',
+    AMZN:  'AMZN',
+    JNJ:   'JNJ',
+    BRK:   'BRK-B',
+    KO:    'KO',
+    NVO:   'NVO',
+    PFE:   'PFE',
+    VICI:  'VICI',
+    BTC:   'BTC-USD',
+    ETH:   'ETH-USD',
+    GOLD:  'GC=F',
+    VUSA:  'VUSA.L',
+    IWDA:  'IWDA.L',
+    EQQQ:  'EQQQ.L',
+    SHEL:  'SHEL.L',
+    EMIM:  'EMIM.L',
+    SAN:   'SAN.MC',
+    ITX:   'ITX.MC',
+    IBE:   'IBE.MC',
+    TEF:   'TEF.MC',
+    REP:   'REP.MC',
+    AMS:   'AMS.MC',
+    LVMH:  'MC.PA',
+    NESN:  'NESN.SW',
+    XDWD:  'XDWD.DE',
+  };
+
+  // Reverse map: yahoo symbol → app ticker
+  var _REV = {};
+  Object.keys(_MAP).forEach(function(app) { _REV[_MAP[app]] = app; });
+
+  function init() {
+    _fetchQuotes();
+    // Refresh cada 15 min si la ventana está activa
+    setInterval(function() {
+      if (!document.hidden) _fetchQuotes();
+    }, _CACHE_TTL);
+  }
+
+  function _fetchQuotes() {
+    if (_cache && (Date.now() - _cache.ts) < _CACHE_TTL) return;
+
+    var yahooSyms = Object.values(_MAP).join(',');
+    fetch('/api/market?symbols=' + encodeURIComponent(yahooSyms))
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(json) {
+        if (!json || !json.ok || !json.data) return;
+
+        _cache = { ts: Date.now(), data: {} };
+        Object.keys(json.data).forEach(function(yahooSym) {
+          var appTicker = _REV[yahooSym];
+          if (!appTicker) return;
+          var q = json.data[yahooSym];
+          _cache.data[appTicker] = q;
+
+          // Aplicar % de cambio real al precio base simulado
+          var stock = (typeof STOCKS !== 'undefined') && STOCKS.find(function(s) { return s.ticker === appTicker; });
+          var base = (stock && stock.price) || (GAME.stockPrices && GAME.stockPrices[appTicker]) || 1;
+          var newPrice = +(base * (1 + (q.changePct || 0) / 100)).toFixed(2);
+          if (newPrice > 0 && typeof GAME !== 'undefined') {
+            GAME.stockPrices[appTicker] = newPrice;
+            if (GAME.priceHistory && GAME.priceHistory[appTicker]) {
+              GAME.priceHistory[appTicker].push(newPrice);
+              if (GAME.priceHistory[appTicker].length > 60) GAME.priceHistory[appTicker].shift();
+            }
+          }
+        });
+
+        GAME._realPrices = true;
+        _updateBadge();
+      })
+      .catch(function(e) {
+        console.warn('[MARKET] quotes error:', e);
+      });
+  }
+
+  function fetchHistory(appTicker, onDone) {
+    // Si hay cache válido, devolver inmediatamente
+    var cached = _histCache[appTicker];
+    if (cached && (Date.now() - cached.ts) < _HIST_TTL) {
+      if (onDone) onDone(cached.closes);
+      return;
+    }
+
+    var yahooSym = _MAP[appTicker];
+    if (!yahooSym) return;
+
+    fetch('/api/market-history?symbol=' + encodeURIComponent(yahooSym) + '&range=1mo')
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(json) {
+        if (!json || !json.ok || !json.closes || json.closes.length < 5) return;
+        _histCache[appTicker] = { ts: Date.now(), closes: json.closes };
+        // Actualizar priceHistory con datos reales (hasta 60 puntos)
+        if (typeof GAME !== 'undefined' && GAME.priceHistory) {
+          GAME.priceHistory[appTicker] = json.closes.slice(-60);
+        }
+        if (onDone) onDone(json.closes);
+      })
+      .catch(function() { /* silencioso */ });
+  }
+
+  function getQuote(appTicker) {
+    return (_cache && _cache.data && _cache.data[appTicker]) || null;
+  }
+
+  function _updateBadge() {
+    var el = document.getElementById('mkt-real-badge');
+    if (el) el.style.display = GAME._realPrices ? '' : 'none';
+    // Actualizar lista si está visible
+    var portScreen = document.getElementById('s-portfolio');
+    if (portScreen && portScreen.classList.contains('active')) {
+      if (typeof renderStockList === 'function') renderStockList(GAME.currentStockFilter || 'all');
+    }
+  }
+
+  return { init: init, fetchHistory: fetchHistory, getQuote: getQuote };
+})();
+
+window.MARKET = MARKET;
 window.RUTA_closeQuiz = RUTA_closeQuiz;
 window.RUTA_pick      = RUTA_pick;
 window.RUTA_back      = RUTA_back;

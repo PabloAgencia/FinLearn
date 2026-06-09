@@ -2205,7 +2205,12 @@ function goTo(screen) {
   if (screen === 'rank')      { renderFullRank(); renderPodium(); }
   if (screen === 'profile')   { renderProfileScreen(); }
   if (screen === 'stats')     { renderStatsScreen(); }
-  if (screen === 'portfolio') { renderPortfolioSummary(); renderStockList(); renderMyPositions(); setTimeout(() => CHART.init(), 50); setTimeout(renderPortfolioDonut, 120); }
+  if (screen === 'portfolio') {
+    renderPortfolioSummary(); renderStockList(); renderMyPositions();
+    setTimeout(() => CHART.init(), 50); setTimeout(renderPortfolioDonut, 120);
+    // Refresh datos reales al entrar en bolsa
+    if (typeof MARKET !== 'undefined') MARKET.init();
+  }
   if (screen === 'business')  { renderBusinesses(); renderBizCashflow(); }
   if (screen === 'life')      { renderLifeScreen(); renderCareerCard(); renderLifeEvents(); }
   if (screen === 'lifestyle') { setTimeout(renderLifestyleComparator, 60); }

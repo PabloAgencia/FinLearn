@@ -148,11 +148,19 @@ function openStockDetail(ticker) {
   GAME.currentStock = stock;
   GAME.stockQty     = 1;
 
-  setEl('sdh-name',   stock.name   || ticker);
+  const livePrice = (GAME.stockPrices && GAME.stockPrices[ticker]) || stock.price || 0;
+  const realQuote = (typeof MARKET !== 'undefined') ? MARKET.getQuote(ticker) : null;
+  const changePct = realQuote ? realQuote.changePct : (stock.change || 0);
+
+  setEl('sdh-name',   stock.name || ticker);
   setEl('sdh-ticker', ticker + ' · ' + (stock.market || ''));
-  setEl('sdh-price',  fmtPrice(stock.price || 0));
-  setEl('sdh-logo',   stock.icon   || '📈');
-  setElHTML('sdh-pct', `<span style="color:${(stock.change || 0) >= 0 ? 'var(--accent)' : 'var(--danger)'}">${stock.change >= 0 ? '+' : ''}${(stock.change || 0).toFixed(2)}%</span>`);
+  setEl('sdh-price',  fmtPrice(livePrice));
+  setEl('sdh-logo',   stock.icon || '📈');
+  setElHTML('sdh-pct',
+    `<span style="color:${changePct >= 0 ? 'var(--accent)' : 'var(--danger)'}">` +
+    `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%` +
+    `${realQuote ? ' <span class="sdh-real-tag">🟢 Real</span>' : ''}</span>`
+  );
 
   const pos     = S.portfolio[ticker];
   const sellBtn = document.getElementById('btn-sell-stock');
@@ -190,6 +198,12 @@ function openStockDetail(ticker) {
   updateQtyDisplay();
   renderMiniChart(ticker);
   openModal('m-stock');
+  // Fetch historial real en segundo plano y re-renderiza el chart si llega
+  if (typeof MARKET !== 'undefined') {
+    MARKET.fetchHistory(ticker, function() {
+      if (GAME.currentStock && GAME.currentStock.ticker === ticker) renderMiniChart(ticker);
+    });
+  }
   (function() {
     function holdBtn(id, dir) {
       var btn = document.getElementById(id);

@@ -216,6 +216,9 @@ function _initAppWithState(hasState) {
     GAME.priceHistory[s.ticker] = history;
   });
 
+  // ── Datos de mercado reales (Cloudflare Function → Yahoo Finance) ────
+  setTimeout(function() { if (typeof MARKET !== 'undefined') MARKET.init(); }, 3000);
+
   // ── Simulación de precios en tiempo real (cada 4 segundos) ───────────
   setInterval(() => {
     // ── Flash Crash: 0.5% de probabilidad por tick ──────────────
@@ -9397,11 +9400,11 @@ window.F27_openModule = F27_openModule;
 const F28_BRANCHES = [
   {
     id: 'fundamentos', label: 'Fundamentos', emoji: '🏗️', color: '#00e5a0',
-    mods: [0, 11, 29, 39, 57, 70, 75, 103, 105, 108, 114, 116, 122, 129, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 175, 177]
+    mods: [0, 11, 29, 39, 57, 70, 75, 103, 108, 114, 116, 122, 129, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 175, 177]
   },
   {
     id: 'inversion', label: 'Inversión', emoji: '📈', color: '#60a5fa',
-    mods: [1, 7, 16, 26, 30, 32, 34, 36, 48, 58, 61, 62, 66, 92, 96, 99, 101, 104, 106, 113, 117, 121, 123, 125, 127, 128, 146, 147, 148, 149, 178, 179, 180, 183]
+    mods: [1, 7, 16, 26, 30, 32, 34, 36, 48, 58, 61, 62, 66, 96, 99, 101, 104, 106, 113, 117, 121, 123, 125, 127, 128, 146, 147, 148, 149, 178, 179, 180, 183]
   },
   {
     id: 'deuda', label: 'Deuda & Riesgo', emoji: '🔄', color: '#fb923c',
@@ -9409,15 +9412,15 @@ const F28_BRANCHES = [
   },
   {
     id: 'fiscalidad', label: 'Fiscalidad', emoji: '🧾', color: '#fbbf24',
-    mods: [4, 9, 21, 28, 38, 42, 51, 60, 68, 83, 91, 94, 100, 110, 119, 126, 172, 173, 174, 182]
+    mods: [4, 9, 21, 28, 38, 42, 49, 51, 60, 68, 83, 94, 100, 110, 119, 126, 172, 173, 174, 182]
   },
   {
     id: 'psicologia', label: 'Psicología', emoji: '🧠', color: '#c084fc',
-    mods: [2, 6, 20, 33, 54, 59, 67, 71, 74, 78, 95, 98, 107, 112, 118, 124, 130, 181]
+    mods: [2, 6, 20, 33, 53, 54, 59, 67, 71, 74, 78, 95, 98, 107, 112, 118, 124, 130, 181]
   },
   {
     id: 'avanzado', label: 'Avanzado', emoji: '🚀', color: '#f87171',
-    mods: [5, 8, 10, 12, 13, 15, 17, 18, 19, 22, 23, 24, 27, 35, 40, 43, 44, 45, 46, 47, 50, 52, 56, 63, 64, 65, 69, 72, 73, 76, 77, 79, 80, 81, 82, 89, 90, 93, 97, 102, 109, 111, 115, 184]
+    mods: [5, 8, 10, 12, 13, 15, 17, 18, 19, 22, 23, 24, 27, 35, 40, 43, 44, 45, 46, 47, 50, 52, 56, 63, 64, 65, 69, 72, 73, 76, 77, 79, 80, 81, 82, 89, 90, 97, 102, 109, 111, 115, 184]
   },
   {
     id: 'vivienda', label: 'Vivienda', emoji: '🏠', color: '#34d399',
