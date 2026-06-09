@@ -616,7 +616,7 @@ function _showLevelUpScreen(level) {
       <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${rankTitle.color};margin-bottom:6px;">${rankTitle.title}</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;">${rankTitle.desc || ''}</div>
       ${milestoneHtml}${chestHtml}
-      <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();if(window._celPendingAfterLevelUp){window._celPendingAfterLevelUp=false;if(typeof openModal==='function')openModal('m-cel');}"
+      <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();if(window._celPendingAfterLevelUp){window._celPendingAfterLevelUp=false;if(typeof openModal==='function')openModal('m-cel');}if(typeof _checkShowRating==='function')_checkShowRating();"
         style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">
         ¡Seguir subiendo! 🚀
       </button>

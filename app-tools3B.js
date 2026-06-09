@@ -1011,6 +1011,9 @@ function F32_render() {
         <div class="f32-footer-info">🏅 ${PROMO_ZONE} ascienden · ${total - RELEGATE_ZONE} descienden</div>
         <div class="f32-reset-label" id="f32-countdown">Reinicia en ${F32_formatCountdown(msLeft)}</div>
       </div>
+      <div class="f32-challenge-row">
+        <button class="f32-challenge-btn" onclick="F32_challengeFriend()">🏆 Reta a un amigo</button>
+      </div>
     </div>`;
 
   // Actualizar contador en tiempo real
@@ -1029,6 +1032,28 @@ function F32_render() {
 
 window.F32_render = F32_render;
 window.F32_init   = F32_init;
+
+function F32_challengeFriend() {
+  var league  = F32_LEAGUES[S.league] || F32_LEAGUES.bronze;
+  var weekXP  = Math.max(0, (S.xp || 0) - (S.leagueWeekXPBase || 0));
+  var yourPos = 0;
+  try {
+    var rivals = F32_generateRivals(S.league, S.leagueSeed);
+    var you    = { xp: weekXP, isYou: true };
+    var all    = rivals.concat([you]);
+    all.sort(function(a,b) { return b.xp - a.xp; });
+    yourPos = all.findIndex(function(u) { return u.isYou; }) + 1;
+  } catch(e) {}
+  var text = '🏆 Estoy en posici\xF3n ' + (yourPos || '?') + ' en la liga ' + league.label + ' de FinLearn con ' + weekXP.toLocaleString('es') + ' XP esta semana. \xBFPuedes superarme? → finlearn.app';
+  if (navigator.share) {
+    navigator.share({ title: 'Te reto en FinLearn', text: text }).catch(function() {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof toast === 'function') toast('📋 Reto copiado', 'P\xE9galo en WhatsApp o Instagram.', 't-success');
+    });
+  }
+}
+window.F32_challengeFriend = F32_challengeFriend;
 
 /* ══════════════════════════════════════════════════════════════════
    F33 — STREAK IDENTITY UPGRADE

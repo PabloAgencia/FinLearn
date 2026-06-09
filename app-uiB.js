@@ -875,6 +875,8 @@ function renderHomeScreen() {
   if (typeof F32_render === 'function') F32_render();
   // Streak card: racha + ruleta diaria
   if (typeof renderStreakCard === 'function') renderStreakCard();
+  // Simulador de cartera virtual
+  if (typeof SIM_renderWidget === 'function') SIM_renderWidget();
   // F33: Streak Identity — banner Earn Back
   if (typeof F33_renderBanner === 'function') F33_renderBanner();
   // F34: Reto Diario

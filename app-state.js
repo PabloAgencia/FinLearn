@@ -221,6 +221,9 @@ const DEFAULTS = {
   financialProfile: null,      // key del perfil resultado del quiz de personalidad
   referralCode: '',             // código único de referido del usuario
   referralUsed: false,          // si ya recibió bonus de referido como nuevo usuario
+  sim: null,                    // cartera de inversión virtual { cash, holdings, startValue, startDate }
+  ratingShown: false,           // si ya se mostró el prompt de valoración
+  ratingScore: 0,               // puntuación dada (1-5)
   /* ── Campos internos (no mostrar al usuario) ── */
   _budget: null,
   _totalSells: 0,
