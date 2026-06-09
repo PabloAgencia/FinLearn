@@ -4605,3 +4605,23 @@ const AUDIO = (function() {
 })();
 
 window.AUDIO = AUDIO;
+
+/* ══════════════════════════════════════════════════════════════════
+   RIPPLE — Efecto de onda en todos los botones .btn al pulsar
+   El CSS (.btn-ripple / @keyframes rippleAnim) ya existe en app.css.
+   Este listener delega en document para cubrir botones inyectados
+   dinámicamente en innerHTML.
+══════════════════════════════════════════════════════════════════ */
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.btn');
+  if (!btn) return;
+  var rect = btn.getBoundingClientRect();
+  var size = Math.max(rect.width, rect.height) * 1.8;
+  var x = e.clientX - rect.left - size / 2;
+  var y = e.clientY - rect.top  - size / 2;
+  var ripple = document.createElement('span');
+  ripple.className = 'btn-ripple';
+  ripple.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + x + 'px;top:' + y + 'px;';
+  btn.appendChild(ripple);
+  setTimeout(function() { ripple.remove(); }, 600);
+}, { passive: true });

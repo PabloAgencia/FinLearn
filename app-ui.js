@@ -752,7 +752,7 @@ function renderLessonNav() {
       const cls      = isActive ? 'active' : done ? 'done' : locked ? 'lmb-locked' : '';
       const title    = (done ? '✓ ' : locked ? '🔒 ' : '') + m.title;
       const style    = locked ? 'opacity:.4;cursor:not-allowed;' : '';
-      return `<div class="lmb-pill ${cls}" onclick="jumpToModule(${m.id})"
+      return `<div class="lmb-pill ${cls}" onclick="startModule(${m.id})"
         title="${title}" style="${style}">${m.id + 1}</div>`;
     }).join('');
   }
