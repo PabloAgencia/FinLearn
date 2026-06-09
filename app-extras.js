@@ -4607,6 +4607,45 @@ const AUDIO = (function() {
 window.AUDIO = AUDIO;
 
 /* ══════════════════════════════════════════════════════════════════
+   MICRO-ANIMATIONS — XP counter, streak glow, home stagger
+══════════════════════════════════════════════════════════════════ */
+
+// Count-up animation para el contador de XP en el nav
+function _animateNum(el, from, to, ms) {
+  if (!el || from === to) return;
+  ms = ms || 650;
+  var start = performance.now();
+  var diff  = to - from;
+  function step(now) {
+    var t = Math.min((now - start) / ms, 1);
+    var eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+    el.textContent = Math.round(from + diff * eased).toLocaleString('es') + ' XP';
+    if (t < 1) requestAnimationFrame(step);
+    else el.textContent = to.toLocaleString('es') + ' XP';
+  }
+  requestAnimationFrame(step);
+}
+window._animateNum = _animateNum;
+
+// Stagger de tarjetas al entrar al home (solo primera vez por visita)
+var _homeStaggerCount = 0;
+function _staggerHomeItems() {
+  var inner = document.querySelector('.home-inner');
+  if (!inner) return;
+  var items = Array.from(inner.children).filter(function(el) {
+    return el.offsetHeight > 0; // solo visibles
+  });
+  items.forEach(function(el, i) {
+    el.style.animationDelay = (i * 48) + 'ms';
+    el.classList.remove('home-item-in');
+    void el.offsetWidth; // force reflow
+    el.classList.add('home-item-in');
+  });
+  _homeStaggerCount++;
+}
+window._staggerHomeItems = _staggerHomeItems;
+
+/* ══════════════════════════════════════════════════════════════════
    RIPPLE — Efecto de onda en todos los botones .btn al pulsar
    El CSS (.btn-ripple / @keyframes rippleAnim) ya existe en app.css.
    Este listener delega en document para cubrir botones inyectados

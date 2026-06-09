@@ -216,7 +216,22 @@ function updateUIFromState() {
   // ── Nav bar ────────────────────────────────────────────────────────
   if (typeof F33_updateNavStreak === 'function') F33_updateNavStreak(); else setEl('nav-streak', S.streak);
   if (typeof _updateShieldUI === 'function') _updateShieldUI();
-  setEl('nav-xp', S.xp.toLocaleString('es') + ' XP');
+  // XP animado: cuenta de valor anterior al nuevo
+  const _xpEl = document.getElementById('nav-xp');
+  if (_xpEl && typeof _animateNum === 'function') {
+    const _prevXP = parseInt(_xpEl.dataset.val || S.xp, 10);
+    if (_prevXP !== S.xp && _prevXP > 0) _animateNum(_xpEl, _prevXP, S.xp);
+    else _xpEl.textContent = S.xp.toLocaleString('es') + ' XP';
+    _xpEl.dataset.val = S.xp;
+  } else {
+    setEl('nav-xp', S.xp.toLocaleString('es') + ' XP');
+  }
+  // Streak glow: la pill de fuego brilla cuando hay racha activa
+  const _sPill = document.getElementById('nav-streak')?.closest?.('.nav-pill');
+  if (_sPill) {
+    _sPill.classList.toggle('streak-lit',  S.streak > 0);
+    _sPill.classList.toggle('streak-fire', S.streak >= 7);
+  }
   setEl('home-nav-av', S.avatar);
 
   // ── Profile hero ───────────────────────────────────────────────────
@@ -2347,6 +2362,8 @@ function renderHomeScreen() {
   _renderWeeklyActionCard();
   // misión grupal pasa a Laboratorio
   renderHomeCTA();
+  // Micro-animation: stagger de cards al entrar al home
+  if (typeof _staggerHomeItems === 'function') setTimeout(_staggerHomeItems, 40);
 }
 
 function _getNextRecommendedMod() {

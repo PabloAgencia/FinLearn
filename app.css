@@ -15861,3 +15861,28 @@ body.light-mode .ruta-opt:hover { background: #ebebeb; }
 }
 body.light-mode .audio-btn { border-color: rgba(0,0,0,0.12); color: var(--text2); }
 body.light-mode .audio-btn:hover { background: rgba(0,0,0,0.04); }
+
+/* ─── Streak glow ─── */
+.nav-pill.streak.streak-lit {
+  border-color: rgba(251,146,60,.45);
+  background: rgba(251,146,60,.07);
+  transition: border-color .4s, background .4s, box-shadow .4s;
+}
+.nav-pill.streak.streak-fire {
+  border-color: rgba(251,146,60,.65);
+  box-shadow: 0 0 10px rgba(251,146,60,.28);
+  animation: streakGlow 2s ease-in-out infinite;
+}
+@keyframes streakGlow {
+  0%, 100% { box-shadow: 0 0 6px rgba(251,146,60,.2); }
+  50%       { box-shadow: 0 0 14px rgba(251,146,60,.5); }
+}
+
+/* ─── Home card stagger ─── */
+.home-item-in {
+  animation: homeItemFade .38s cubic-bezier(.25,.46,.45,.94) both;
+}
+@keyframes homeItemFade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
