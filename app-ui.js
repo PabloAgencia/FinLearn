@@ -2283,6 +2283,8 @@ function renderHomeScreen() {
   // F24: personalized hero message + suggested module badge
   _f24_renderHeroMsg();
   _f24_highlightSuggestedModule();
+  // F3X: Rutas de aprendizaje personalizadas
+  if (typeof renderLearningPathCard === 'function') renderLearningPathCard();
   // F27: plan de acción personalizado
   if (typeof F27_render === 'function') F27_render();
   // F28: Skill Tree / vista módulos
@@ -2502,6 +2504,89 @@ function _f24_highlightSuggestedModule() {
   }
 }
 
+
+/* ══════════════════════════════════════════════════════════════════
+   F3X — RUTAS DE APRENDIZAJE PERSONALIZADAS
+   ─────────────────────────────────────────────────────────────────
+   Card en home con la rama recomendada según goal + investorLevel.
+   Muestra los próximos módulos pendientes de la rama y permite
+   cambiar la ruta con un quiz de 3 preguntas.
+══════════════════════════════════════════════════════════════════ */
+
+function renderLearningPathCard() {
+  var el = document.getElementById('learning-path-card');
+  if (!el) return;
+
+  if (typeof F28_BRANCHES === 'undefined' || typeof MODULES === 'undefined') {
+    el.style.display = 'none';
+    return;
+  }
+
+  var branchId = S.suggestedBranchId;
+  // Retrocompatibilidad: usuarios anteriores sin suggestedBranchId
+  if (!branchId && S.suggestedModuleId != null) {
+    branchId = _ob_getSuggestedBranch();
+    S.suggestedBranchId = branchId;
+  }
+  if (!branchId && !S.goal && !S.investorLevel) {
+    // Usuario nuevo sin perfil — mostrar teaser
+    el.style.display = '';
+    el.innerHTML = `
+      <div class="lp-teaser" onclick="if(typeof RUTA_openQuiz==='function')RUTA_openQuiz()">
+        <div class="lp-teaser-icon">🎯</div>
+        <div class="lp-teaser-text">
+          <div class="lp-teaser-title">Descubre tu ruta de aprendizaje</div>
+          <div class="lp-teaser-sub">3 preguntas · Ruta personalizada en segundos</div>
+        </div>
+        <span class="lp-teaser-arrow">›</span>
+      </div>`;
+    return;
+  }
+
+  if (!branchId) branchId = _ob_getSuggestedBranch();
+
+  var branch = F28_BRANCHES.find(function(b) { return b.id === branchId; });
+  if (!branch) { el.style.display = 'none'; return; }
+
+  var completed = S.completedMods || [];
+  var pendingMods = branch.mods
+    .filter(function(id) { return !completed.includes(id); })
+    .slice(0, 3)
+    .map(function(id) { return MODULES.find(function(m) { return m && m.id === id; }); })
+    .filter(Boolean);
+
+  var done = branch.mods.filter(function(id) { return completed.includes(id); }).length;
+  var total = branch.mods.length;
+  var pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+  var modsHtml = pendingMods.length > 0
+    ? pendingMods.map(function(m) {
+        return '<div class="lp-mod-item" onclick="if(typeof startModule===\'function\')startModule(' + m.id + ')">' +
+               '<span class="lp-mod-icon">' + (m.icon || '📖') + '</span>' +
+               '<span class="lp-mod-title">' + (m.title || 'Módulo') + '</span>' +
+               '<span class="lp-mod-arrow">›</span></div>';
+      }).join('')
+    : '<div class="lp-done-msg">🎉 ¡Rama completada! Empieza otra.</div>';
+
+  el.style.display = '';
+  el.innerHTML = `
+    <div class="lp-card">
+      <div class="lp-header">
+        <div class="lp-branch-info">
+          <span class="lp-emoji">${branch.emoji}</span>
+          <div>
+            <div class="lp-title">Tu ruta: <strong>${branch.label}</strong></div>
+            <div class="lp-sub">${done}/${total} módulos · ${pct}% completado</div>
+          </div>
+        </div>
+        <button class="lp-change-btn" onclick="if(typeof RUTA_openQuiz==='function')RUTA_openQuiz()" title="Cambiar ruta">✏️</button>
+      </div>
+      <div class="lp-progress-bar"><div class="lp-progress-fill" style="width:${pct}%;background:${branch.color}"></div></div>
+      <div class="lp-mods">${modsHtml}</div>
+    </div>`;
+}
+
+window.renderLearningPathCard = renderLearningPathCard;
 
 /* ══════════════════════════════════════════════════════════════════
    F25 — TRACKER DE PATRIMONIO REAL
@@ -4316,6 +4401,20 @@ function _ob_getSuggestedModule() {
   return (map[goal] || map.freedom)[level] ?? 0;
 }
 
+function _ob_getSuggestedBranch() {
+  const goal  = S.goal  || 'freedom';
+  const level = S.investorLevel || 'zero';
+  const map = {
+    freedom:   { zero: 'fundamentos', saving: 'fundamentos', investing: 'inversion',  active: 'avanzado'    },
+    debt:      { zero: 'deuda',       saving: 'deuda',       investing: 'deuda',       active: 'deuda'        },
+    house:     { zero: 'fundamentos', saving: 'vivienda',    investing: 'vivienda',    active: 'inversion'    },
+    retire:    { zero: 'fundamentos', saving: 'fundamentos', investing: 'inversion',   active: 'avanzado'     },
+    invest:    { zero: 'fundamentos', saving: 'inversion',   investing: 'inversion',   active: 'avanzado'     },
+    emergency: { zero: 'fundamentos', saving: 'fundamentos', investing: 'inversion',   active: 'inversion'    },
+  };
+  return (map[goal] || map.freedom)[level] || 'fundamentos';
+}
+
 /**
  * _ob_buildHeroMsg — Construye el mensaje personalizado para el hero card.
  * Calcula cuánto necesitas al mes y en cuántos años para tu objetivo.
@@ -4684,8 +4783,9 @@ function finishOnboarding() {
     if (!S._budget) S._budget = { income: finalIncome, cats: {}, saved: false };
     else S._budget.income = finalIncome;
   }
-  // Calcular módulo más relevante según goal + nivel
+  // Calcular módulo y rama más relevantes según goal + nivel
   S.suggestedModuleId = _ob_getSuggestedModule();
+  S.suggestedBranchId = _ob_getSuggestedBranch();
   // Construir mensaje personalizado para el hero card
   S.onboardHeroMsg = _ob_buildHeroMsg();
 

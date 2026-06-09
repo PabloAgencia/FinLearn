@@ -102,6 +102,7 @@ const DEFAULTS = {
   /* ── F24 Onboarding personalizado ── */
   investorLevel: '',        // 'zero' | 'saving' | 'investing' | 'active'
   suggestedModuleId: null,  // id del módulo sugerido según goal+level
+  suggestedBranchId: null,  // id de rama sugerida según goal+level
   onboardHeroMsg: '',       // mensaje personalizado para el hero card
   /* ── F25 Tracker de Patrimonio Real ── */
   realAssets: null,         // { checking, funds, stocks, property, pension, other } — null = no configurado
@@ -384,8 +385,8 @@ function loadState() {
     // ── MIGRACIÓN: saves antiguos tienen dinero en S.balance pero S.cash era 5000 default.
     //    Si el save tenía S.balance > 0 y S.cash es el valor default (5000), 
     //    mover S.balance a S.cash para unificar. ──────────────────────────────────────────
-    if (S.balance > 0 && S.cash <= 5000) {
-      S.cash    = S.balance + S.cash;
+    if (S.balance > 0) {
+      S.cash   += S.balance;
       S.balance = 0;
     }
 
@@ -399,9 +400,15 @@ function loadState() {
       S.currentMod = MODULES.find(m => m.id === saved.currentModId) || null;
     }
 
+    // ── Expiración del multiplicador de XP ──
+    if (S.xpMultiplierExpiry > 0 && Date.now() > S.xpMultiplierExpiry) {
+      S.xpMultiplier       = 1.0;
+      S.xpMultiplierExpiry = 0;
+    }
+
     // ── Reset diario: detectar si es un día nuevo ──
-    const today     = new Date().toISOString().slice(0, 10);
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const today     = new Date().toLocaleDateString('sv');
+    const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
     if (S.lastVisit !== today) {
       if (S.lastVisit !== yesterday) {
         // Rompió la racha — consumir escudo si hay

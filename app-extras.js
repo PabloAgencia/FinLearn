@@ -4207,3 +4207,172 @@ function _renderGroupMissionEpic() {
     </div>`;
 }
 window._renderGroupMissionEpic = _renderGroupMissionEpic;
+
+
+/* ══════════════════════════════════════════════════════════════════
+   RUTA — Quiz de 3 preguntas para personalizar la ruta de aprendizaje
+   ─────────────────────────────────────────────────────────────────
+   · 3 preguntas: nivel actual, objetivo y área de enfoque
+   · Resultado: actualiza S.goal, S.investorLevel, S.suggestedBranchId,
+     S.suggestedModuleId y re-renderiza el home
+══════════════════════════════════════════════════════════════════ */
+
+var _ruta_answers = {};
+var _ruta_step    = 0;
+
+var RUTA_STEPS = [
+  {
+    q: '¿Cuál es tu situación financiera ahora?',
+    key: 'level',
+    opts: [
+      { label: '🌱 Sin ahorros todavía',     val: 'zero' },
+      { label: '💰 Algo ahorrado, sin invertir', val: 'saving' },
+      { label: '📈 Ya invierto algo',         val: 'investing' },
+      { label: '🚀 Inversor activo',          val: 'active' },
+    ]
+  },
+  {
+    q: '¿Cuál es tu objetivo principal?',
+    key: 'goal',
+    opts: [
+      { label: '🏝️ Libertad financiera',      val: 'freedom' },
+      { label: '🔄 Salir de deudas',          val: 'debt' },
+      { label: '🏠 Comprar casa',             val: 'house' },
+      { label: '📊 Construir cartera',        val: 'invest' },
+    ]
+  },
+  {
+    q: '¿Qué quieres aprender primero?',
+    key: 'branch',
+    opts: [
+      { label: '🏗️ Fundamentos del dinero',  val: 'fundamentos' },
+      { label: '📈 Inversión y bolsa',        val: 'inversion' },
+      { label: '🔄 Gestión de deudas',        val: 'deuda' },
+      { label: '🧠 Psicología financiera',    val: 'psicologia' },
+    ]
+  }
+];
+
+function RUTA_openQuiz() {
+  _ruta_answers = {};
+  _ruta_step    = 0;
+
+  var modal = document.createElement('div');
+  modal.id  = 'ruta-quiz-overlay';
+  modal.className = 'ruta-overlay';
+  modal.innerHTML = '<div class="ruta-modal" id="ruta-modal-inner"></div>';
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) RUTA_closeQuiz();
+  });
+  document.body.appendChild(modal);
+  RUTA_renderStep();
+  requestAnimationFrame(function() { modal.classList.add('ruta-overlay-in'); });
+}
+
+function RUTA_closeQuiz() {
+  var overlay = document.getElementById('ruta-quiz-overlay');
+  if (overlay) {
+    overlay.classList.remove('ruta-overlay-in');
+    setTimeout(function() { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 260);
+  }
+}
+
+function RUTA_renderStep() {
+  var inner = document.getElementById('ruta-modal-inner');
+  if (!inner) return;
+
+  var step = RUTA_STEPS[_ruta_step];
+  var progressPct = Math.round((_ruta_step / RUTA_STEPS.length) * 100);
+
+  inner.innerHTML = `
+    <div class="ruta-header">
+      <div class="ruta-progress-bar"><div class="ruta-progress-fill" style="width:${progressPct}%"></div></div>
+      <div class="ruta-step-lbl">${_ruta_step + 1} / ${RUTA_STEPS.length}</div>
+      <button class="ruta-close-btn" onclick="RUTA_closeQuiz()">✕</button>
+    </div>
+    <div class="ruta-question">${step.q}</div>
+    <div class="ruta-opts">
+      ${step.opts.map(function(o) {
+        return '<button class="ruta-opt" onclick="RUTA_pick(\'' + step.key + '\',\'' + o.val + '\',this)">' + o.label + '</button>';
+      }).join('')}
+    </div>
+    ${_ruta_step > 0 ? '<button class="ruta-back-btn" onclick="RUTA_back()">← Anterior</button>' : ''}`;
+}
+
+function RUTA_pick(key, val, btn) {
+  _ruta_answers[key] = val;
+  var opts = document.querySelectorAll('.ruta-opt');
+  opts.forEach(function(o) { o.classList.remove('ruta-opt-sel'); });
+  if (btn) btn.classList.add('ruta-opt-sel');
+
+  setTimeout(function() {
+    _ruta_step++;
+    if (_ruta_step < RUTA_STEPS.length) {
+      RUTA_renderStep();
+    } else {
+      RUTA_finish();
+    }
+  }, 280);
+}
+
+function RUTA_back() {
+  if (_ruta_step > 0) {
+    _ruta_step--;
+    RUTA_renderStep();
+  }
+}
+
+function RUTA_finish() {
+  var level  = _ruta_answers.level  || S.investorLevel || 'zero';
+  var goal   = _ruta_answers.goal   || S.goal          || 'freedom';
+  var branch = _ruta_answers.branch || null;
+
+  // Goal label
+  var goalLabels = {
+    freedom: '🏝️ Libertad financiera', debt: '🔄 Salir de deudas',
+    house:   '🏠 Comprar casa',         invest: '📊 Construir cartera',
+    retire:  '🎯 Jubilación',           emergency: '🛡️ Fondo emergencia',
+  };
+
+  S.investorLevel = level;
+  S.goal          = goal;
+  S.goalLabel     = goalLabels[goal] || S.goalLabel || '🏝️ Libertad financiera';
+
+  // Si el usuario eligió rama explícitamente, usar esa; si no, calcularla
+  if (branch) {
+    S.suggestedBranchId = branch;
+  } else if (typeof _ob_getSuggestedBranch === 'function') {
+    S.suggestedBranchId = _ob_getSuggestedBranch();
+  }
+
+  // Calcular módulo sugerido dentro de la rama elegida
+  if (typeof F28_BRANCHES !== 'undefined' && typeof MODULES !== 'undefined') {
+    var b = F28_BRANCHES.find(function(x) { return x.id === S.suggestedBranchId; });
+    if (b) {
+      var completedSet = new Set(S.completedMods || []);
+      var nextMod = b.mods.find(function(id) { return !completedSet.has(id); });
+      if (nextMod != null) S.suggestedModuleId = nextMod;
+    }
+  }
+
+  if (typeof _ob_buildHeroMsg === 'function') S.onboardHeroMsg = _ob_buildHeroMsg();
+
+  if (typeof saveState === 'function') saveState();
+
+  RUTA_closeQuiz();
+
+  if (typeof renderLearningPathCard === 'function') renderLearningPathCard();
+  if (typeof _f24_renderHeroMsg === 'function') _f24_renderHeroMsg();
+  if (typeof _f24_highlightSuggestedModule === 'function') _f24_highlightSuggestedModule();
+
+  var bData = (typeof F28_BRANCHES !== 'undefined') ? F28_BRANCHES.find(function(x) { return x.id === S.suggestedBranchId; }) : null;
+  if (typeof toast === 'function') {
+    toast('🎯 Ruta actualizada', bData ? ('Tu ruta: ' + bData.label) : 'Ruta personalizada lista', 't-success');
+  }
+}
+
+window.RUTA_openQuiz  = RUTA_openQuiz;
+window.RUTA_closeQuiz = RUTA_closeQuiz;
+window.RUTA_pick      = RUTA_pick;
+window.RUTA_back      = RUTA_back;
+window.RUTA_finish    = RUTA_finish;
