@@ -1347,6 +1347,167 @@ var _FC = {
   },
 };
 
+/* ─── F14 v2: ampliar _FC con SM-2, tarjetas de módulos y UI mejorada ─── */
+_FC._DAILY = 10;
+_FC._sessionXP = 0;
+_FC._sessionCards = 0;
+
+_FC._buildAllCards = function() {
+  var cards = FLASHCARDS.slice();
+  try {
+    if (typeof MODULES !== 'undefined' && Array.isArray(MODULES)) {
+      var completed = (S && S.completedMods) || [];
+      MODULES.forEach(function(mod) {
+        if (!completed.includes(mod.id)) return;
+        (mod.steps || []).forEach(function(step, si) {
+          if (step.type !== 'quiz') return;
+          var correct = (step.opts || []).find(function(o) { return o.ok; });
+          if (!correct) return;
+          var back = correct.t;
+          if (step.ok) back += '\n\n' + step.ok.replace(/<[^>]+>/g, '');
+          cards.push({ id: 'm' + mod.id + '_' + si, front: step.q, back: back, modTitle: mod.title || ('Mod ' + mod.id), fromModule: true });
+        });
+      });
+    }
+  } catch(e) {}
+  return cards;
+};
+
+_FC._due = function() {
+  var st = this._st(), tod = this._today();
+  return this._buildAllCards().filter(function(c) {
+    var key = c.id !== undefined ? c.id : (c.front || '');
+    var term = (typeof c === 'object' && 'f' in c) ? c.f : c.front;
+    var nr = st.nextReview[c.id !== undefined ? c.id : term];
+    return !nr || nr <= tod;
+  });
+};
+
+_FC._st = function() {
+  if (!S._flashcards) S._flashcards = { intervals: {}, nextReview: {}, doneToday: [], srs: {} };
+  if (!S._flashcards.srs) S._flashcards.srs = {};
+  return S._flashcards;
+};
+
+_FC.open = function() {
+  this._sessionXP = 0; this._sessionCards = 0;
+  var m = document.getElementById('m-flashcard');
+  if (!m) { m = document.createElement('div'); m.id = 'm-flashcard'; m.className = 'modal-overlay'; document.body.appendChild(m); }
+  m.style.display = 'flex';
+  this._render(m);
+};
+
+_FC._render = function(m) {
+  var due = this._due(), done = this._doneCount(), daily = this._DAILY;
+  var allCards = this._buildAllCards();
+  var xpEarned = this._sessionXP || done * 5;
+  var X = '✕', STAR = '🌟', CHECK = '✅', FIRE = '🔥';
+
+  if (done >= daily) {
+    m.innerHTML = '<div class="fc-box">'
+      + '<button class="modal-close" onclick="document.getElementById(\'m-flashcard\').style.display=\'none\';_FC.updateEntryUI();">' + X + '</button>'
+      + '<div style="text-align:center;padding:32px 20px;">'
+      + '<div style="font-size:52px;margin-bottom:12px;">' + STAR + '</div>'
+      + '<div class="fc-end-title">Sesi\xF3n completada</div>'
+      + '<div class="fc-end-xp">+' + xpEarned + ' XP</div>'
+      + '<div class="fc-end-stats">'
+      + '<div class="fc-end-stat"><div class="fc-end-stat-val">' + done + '</div><div class="fc-end-stat-lbl">tarjetas</div></div>'
+      + '<div class="fc-end-stat"><div class="fc-end-stat-val">' + allCards.length + '</div><div class="fc-end-stat-lbl">en el mazo</div></div>'
+      + '<div class="fc-end-stat"><div class="fc-end-stat-val">' + due.length + '</div><div class="fc-end-stat-lbl">ma\xF1ana</div></div>'
+      + '</div>'
+      + '<div style="font-size:12px;color:var(--text3);margin-top:12px;">Vuelve ma\xF1ana ' + FIRE + '</div>'
+      + '</div></div>';
+    this.updateEntryUI(); return;
+  }
+  if (due.length === 0) {
+    m.innerHTML = '<div class="fc-box">'
+      + '<button class="modal-close" onclick="document.getElementById(\'m-flashcard\').style.display=\'none\'">' + X + '</button>'
+      + '<div style="text-align:center;padding:40px 20px;">'
+      + '<div style="font-size:52px;margin-bottom:12px;">' + CHECK + '</div>'
+      + '<div class="fc-end-title">\xA1Al d\xEDa!</div>'
+      + '<div style="font-size:13px;color:var(--text2);margin-top:8px;">No hay tarjetas pendientes. El sistema las programa autom\xE1ticamente.</div>'
+      + '<div style="font-size:11px;color:var(--text3);margin-top:16px;">' + allCards.length + ' conceptos en el mazo</div>'
+      + '</div></div>';
+    this.updateEntryUI(); return;
+  }
+
+  var card = due[0];
+  var cId   = card.id !== undefined ? card.id : card.f;
+  var term  = card.fromModule ? card.front : card.f;
+  var def   = card.fromModule ? card.back  : card.b;
+  var srs   = (this._st().srs || {})[cId] || { interval: 1, ease: 2.5, reps: 0 };
+  var nHard = Math.max(1, Math.round((srs.interval || 1) * 0.5));
+  var nOk   = srs.reps === 0 ? 1 : srs.reps === 1 ? 3 : Math.round((srs.interval || 1) * 1.5);
+  var nEasy = srs.reps <= 1 ? (srs.reps === 0 ? 4 : 7) : Math.round((srs.interval || 1) * 2.5);
+  var idStr = (typeof cId === 'string') ? "'" + cId + "'" : cId;
+  var badge = card.fromModule ? '<div class="fc-mod-badge">📚 ' + (card.modTitle || '') + '</div>' : '';
+  var eyeF  = card.fromModule ? 'Pregunta del m\xF3dulo' : 'Concepto';
+
+  m.innerHTML = '<div class="fc-box">'
+    + '<button class="modal-close" onclick="document.getElementById(\'m-flashcard\').style.display=\'none\'">' + X + '</button>'
+    + '<div class="fc-header"><span class="fc-progress">' + done + ' / ' + daily + ' hoy</span><span class="fc-count">' + due.length + ' pendientes</span></div>'
+    + '<div class="fc-pbar"><div class="fc-pbar-fill" style="width:' + Math.round(done / daily * 100) + '%;"></div></div>'
+    + '<div class="fc-scene" id="fc-scene" onclick="_FC.flip()">'
+    + '  <div class="fc-card" id="fc-card">'
+    + '    <div class="fc-face fc-front">' + badge + '<div class="fc-eyebrow">' + eyeF + '</div><div class="fc-term">' + term + '</div><div class="fc-hint">Toca para ver la respuesta</div></div>'
+    + '    <div class="fc-face fc-back">'  + badge + '<div class="fc-eyebrow">Respuesta</div><div class="fc-def">' + (def || '').replace(/\n/g, '<br>') + '</div></div>'
+    + '  </div>'
+    + '</div>'
+    + '<div class="fc-btns" id="fc-btns" style="display:none;">'
+    + '  <button class="fc-btn fc-btn-no"   onclick="_FC.answer(' + idStr + ',0)">No lo s\xE9<br><span>Hoy</span></button>'
+    + '  <button class="fc-btn fc-btn-hard" onclick="_FC.answer(' + idStr + ',1)">Dif\xEDcil<br><span>' + nHard + 'd</span></button>'
+    + '  <button class="fc-btn fc-btn-ok"   onclick="_FC.answer(' + idStr + ',2)">Bien<br><span>' + nOk + 'd</span></button>'
+    + '  <button class="fc-btn fc-btn-easy" onclick="_FC.answer(' + idStr + ',3)">F\xE1cil<br><span>' + nEasy + 'd</span></button>'
+    + '</div></div>';
+};
+
+_FC.answer = function(cardId, quality) {
+  var st = this._st(), tod = this._today();
+  if (!st.srs) st.srs = {};
+  var srs = st.srs[cardId] || { interval: 1, ease: 2.5, reps: 0 };
+  var days;
+  if (quality === 0) {
+    days = 0; srs.interval = 1; srs.reps = 0;
+  } else if (quality === 1) {
+    days = Math.max(1, Math.round((srs.interval || 1) * 0.5));
+    srs.interval = days; srs.ease = Math.max(1.3, (srs.ease || 2.5) - 0.2);
+    srs.reps = Math.max(0, (srs.reps || 0) - 1);
+  } else if (quality === 2) {
+    days = srs.reps === 0 ? 1 : srs.reps === 1 ? 3 : Math.round((srs.interval || 1) * 1.5);
+    srs.interval = days; srs.reps = (srs.reps || 0) + 1;
+  } else {
+    days = srs.reps === 0 ? 4 : srs.reps === 1 ? 7 : Math.round((srs.interval || 1) * (srs.ease || 2.5));
+    srs.ease = Math.min(3.5, (srs.ease || 2.5) + 0.1);
+    srs.interval = days; srs.reps = (srs.reps || 0) + 1;
+  }
+  var next = new Date();
+  if (days > 0) next.setDate(next.getDate() + days);
+  var nextStr = days === 0 ? tod : next.toISOString().slice(0, 10);
+  st.srs[cardId] = srs;
+  st.nextReview[cardId] = nextStr;
+  st.intervals[cardId] = days;
+  if (!Array.isArray(st.doneToday)) st.doneToday = [];
+  st.doneToday.push(tod);
+  st.doneToday = st.doneToday.filter(function(d) { return d === tod; });
+  S._flashcards = st;
+  S.xp += 5; F34_onXPGained(5); saveState(); spawnXP('+5 XP');
+  this._sessionXP = (this._sessionXP || 0) + 5;
+  this._sessionCards = (this._sessionCards || 0) + 1;
+  var m = document.getElementById('m-flashcard');
+  if (m) this._render(m);
+};
+
+_FC.updateEntryUI = function() {
+  var subEl = document.querySelector('.fc-entry-sub');
+  if (!subEl) return;
+  var done = this._doneCount();
+  if (done >= this._DAILY) { subEl.textContent = '✅ Sesi\xF3n de hoy completada'; return; }
+  var due = this._due().length;
+  subEl.textContent = due > 0
+    ? due + ' tarjetas pendientes \xB7 toca para repasar'
+    : '✅ Al d\xEDa \xB7 Vuelve ma\xF1ana';
+};
+
 /* ══════════════════════════════════════════════════════════════════
    F15 — WIDGET DAILY PATRIMONY DELTA
    · Compara patrimonio actual con snapshot del día anterior

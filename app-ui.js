@@ -2317,6 +2317,8 @@ function renderHomeScreen() {
   if (typeof M3_render === 'function') M3_render();
   // Daily Hub (resumen diario de acciones pendientes)
   renderDailyHub();
+  // F14: actualizar indicador de flashcards pendientes
+  if (typeof _FC !== 'undefined' && _FC.updateEntryUI) _FC.updateEntryUI();
   // M2: Prestige check
   if (typeof M2_checkPrestige === 'function') M2_checkPrestige();
   // P4-A: Banner racha en riesgo (≥20:00 sin actividad)
