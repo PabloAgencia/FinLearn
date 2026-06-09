@@ -1095,8 +1095,24 @@ function renderStep() {
           `).join('')}
         </div>
         <div class="quiz-fb" id="quiz-fb"></div>
+        ${(S.quizHints > 0) ? '<div class="quiz-hint-active">💡 Pista activa — se eliminarán 2 opciones incorrectas</div>' : ''}
       </div>
     `;
+    // F50 quiz hint: consume 1 pista, deshabilita 2 opciones incorrectas
+    if ((S.quizHints || 0) > 0) {
+      S.quizHints--;
+      saveState();
+      setTimeout(function() {
+        var correctIdx = step.opts.findIndex(function(o){ return o.ok; });
+        var wrongIdxs  = step.opts.map(function(_,i){ return i; }).filter(function(i){ return i !== correctIdx; });
+        // eliminar 2 de las opciones incorrectas (las primeras 2)
+        wrongIdxs.slice(0, 2).forEach(function(i) {
+          var el = document.getElementById('qo-' + i);
+          if (el) { el.classList.add('quiz-opt-hint-out'); el.style.pointerEvents = 'none'; el.style.opacity = '0.3'; }
+        });
+        spawnXP('💡 Pista usada');
+      }, 350);
+    }
   } else if (step.type === 'final') {
     S.lessonDone = true;
     nextBtn.textContent = '🏆 Ver mi certificado';

@@ -538,8 +538,12 @@
           </div>
         </div>
 
-        <!-- F44 — COFRES ────────────────────────────────────── -->
-        <div id="f44-chests" class="mb16"></div>
+        <!-- F44 — COFRES + F50 TIENDA ─────────────────────── -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:0;">
+          <div id="f44-chests" style="flex:1;"></div>
+          <button class="f50-shop-fab" onclick="F50_open()" title="Tienda de Mejoras">⚡ Tienda</button>
+        </div>
+        <div class="mb16"></div>
 
         <!-- ② PATRIMONY CHART — curva histórica ─────────────── -->
         <!-- ══════════════════════════════════════════════════════
@@ -732,6 +736,12 @@
 
         <!-- F34 — RETO DIARIO ───────────────────────────────── -->
         <div id="f34-daily-challenge" class="mb16"></div>
+
+        <!-- F35 — MISIONES DIARIAS (3 simultáneas) ─────────── -->
+        <div id="f35-quest-board" class="mb16"></div>
+
+        <!-- F32 — LIGA SEMANAL (home) ───────────────────────── -->
+        <div id="f32-league-widget" class="mb16"></div>
 
         <!-- F42 — PROBLEMA DEL DÍA ─────────────────────────── -->
         <div id="f42-daily-problem" class="mb16"></div>

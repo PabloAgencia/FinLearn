@@ -755,13 +755,35 @@ function claimDailyReward(winIdx, dayCount) {
 
   if (!Array.isArray(S.claimedDays)) S.claimedDays = [];
   S.claimedDays.push(dayCount);
+
+  // Login bonus escalado: bonuses garantizados en d\u00EDas 3 y 7 del ciclo
+  const _cycleDay = ((dayCount - 1) % 7) + 1;
+  if (_cycleDay === 3) {
+    S.xp += 100;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(100);
+    spawnXP('+100 XP \uD83C\uDFAF');
+    setTimeout(function() {
+      toast('\uD83C\uDFAF \u00a1Bonus D\u00EDa 3!', '+100 XP extra por tu constancia. \u00a1Sigue as\u00ED!', 't-success');
+    }, 500);
+  } else if (_cycleDay === 7) {
+    S.xp += 300;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(300);
+    S.streakShields = Math.min(3, (S.streakShields || 0) + 1);
+    if (typeof _updateShieldUI === 'function') _updateShieldUI();
+    spawnXP('+300 XP \uD83D\uDC51');
+    setTimeout(function() {
+      if (typeof confetti === 'function') confetti();
+      toast('\uD83D\uDC51 \u00a1MEGA BONUS D\u00EDa 7!', '+300 XP + \uD83D\uDEE1\uFE0F Escudo de Racha por tu semana completa. \u00a1Eres una m\u00E1quina!', 't-success');
+    }, 500);
+  }
+
   saveState();
   checkAchievements();
 
   const modal = document.getElementById('m-daily-reward');
   if (modal) modal.style.display = 'none';
 
-  const isMega = reward.type === 'shield' || reward.amount >= 1000;
+  const isMega = reward.type === 'shield' || reward.amount >= 1000 || _cycleDay === 7;
   if (isMega) confetti();
   toast('\uD83C\uDF81 \u00a1Premio reclamado!', reward.label, 't-success');
   updateUIFromState();

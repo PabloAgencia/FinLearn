@@ -234,6 +234,12 @@ const DEFAULTS = {
   /* ── Referidos ── */
   _referredBy: '',          // código de quién refirió al usuario
   _referralRewarded: false, // true cuando ya se entregó la recompensa de referido
+  /* ── F35 Misiones Diarias ── */
+  dailyQuests: [],          // [{type,desc,progress,target,xpReward,icon,done,claimed}]
+  dailyQuestsKey: '',       // 'YYYY-MM-DD' de la última generación
+  dailyQuestsBonus: false,  // true si se reclamó el cofre bonus por completar las 3
+  /* ── F50 Power-up shop ── */
+  quizHints: 0,             // pistas de quiz disponibles (cada una elimina 2 opciones)
 };
 
 

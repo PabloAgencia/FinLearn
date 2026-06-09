@@ -896,7 +896,7 @@ function F32_generateRivals(leagueName, seed) {
 let F32_countdownInterval = null;
 
 function F32_render() {
-  const el = document.getElementById('f32-league-widget');
+  const el = document.getElementById('f32-league-widget') || document.getElementById('f32-profile-league');
   if (!el) return;
 
   F32_init();

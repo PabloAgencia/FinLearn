@@ -877,6 +877,8 @@ function renderHomeScreen() {
   if (typeof F33_renderBanner === 'function') F33_renderBanner();
   // F34: Reto Diario
   if (typeof F34_render === 'function') F34_render();
+  // F35: Misiones Diarias (3 simultáneas)
+  if (typeof F35_render === 'function') F35_render();
   // F42: Problema del Día
   if (typeof F42_render === 'function') F42_render();
   // F44: Cofres

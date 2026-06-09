@@ -1187,3 +1187,294 @@ document.addEventListener('click', function(e) {
   btn.appendChild(ripple);
   setTimeout(function() { ripple.remove(); }, 600);
 }, { passive: true });
+
+/* ══════════════════════════════════════════════════════════════════
+   F35 — MISIONES DIARIAS (3 simultáneas)
+   ─────────────────────────────────────────────────────────────────
+   3 misiones distintas cada día (module, quiz, xp).
+   Se generan deterministas por fecha. Cada una tiene su propio
+   progreso y premio. Completar las 3 da un cofre bonus.
+══════════════════════════════════════════════════════════════════ */
+
+var F35_QUEST_DEFS = [
+  { type:'module', icon:'📚', label:'Módulos',  gen:function(rng){ var n=[2,3,2,3,2][Math.floor(rng()*5)]; return { target:n, xp:n*40, desc:'Completa <strong>'+n+' módulo'+(n>1?'s':'')+'</strong> hoy' }; } },
+  { type:'quiz',   icon:'🎯', label:'Quizzes',  gen:function(rng){ var n=[5,7,5,10,7][Math.floor(rng()*5)]; return { target:n, xp:n*12, desc:'Acierta <strong>'+n+' quiz'+(n>1?'zes':'')+'</strong> hoy' }; } },
+  { type:'xp',     icon:'⚡', label:'XP',        gen:function(rng){ var t=[80,100,80,150,100][Math.floor(rng()*5)]; return { target:t, xp:Math.round(t*0.4), desc:'Gana <strong>'+t+' XP</strong> hoy' }; } },
+];
+
+function _f35_rng(seed) {
+  var s = (seed >>> 0);
+  return function() { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff; };
+}
+
+function _f35_todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function F35_getOrGenerate() {
+  var today = _f35_todayKey();
+  if (S.dailyQuestsKey === today && Array.isArray(S.dailyQuests) && S.dailyQuests.length === 3) {
+    return S.dailyQuests;
+  }
+  var seed = parseInt(today.replace(/-/g,''), 10) % 9999999;
+  var rng  = _f35_rng(seed);
+  var quests = F35_QUEST_DEFS.map(function(def) {
+    var g = def.gen(_f35_rng(seed + def.type.charCodeAt(0)));
+    return { type:def.type, icon:def.icon, label:def.label, desc:g.desc, target:g.target, xpReward:g.xp, progress:0, done:false, claimed:false };
+  });
+  S.dailyQuests    = quests;
+  S.dailyQuestsKey = today;
+  S.dailyQuestsBonus = false;
+  saveState();
+  return quests;
+}
+
+function F35_render() {
+  var el = document.getElementById('f35-quest-board');
+  if (!el) return;
+  var quests = F35_getOrGenerate();
+  var today  = _f35_todayKey();
+  if (S.dailyQuestsKey !== today) { S.dailyQuests = null; quests = F35_getOrGenerate(); }
+
+  var allDone    = quests.every(function(q) { return q.done; });
+  var allClaimed = quests.every(function(q) { return q.claimed; });
+
+  var bonusHTML = '';
+  if (allDone && !S.dailyQuestsBonus) {
+    bonusHTML = '<button class="f35-bonus-btn f35-pulse" onclick="F35_claimBonus()">🎁 Reclamar cofre bonus</button>';
+  } else if (S.dailyQuestsBonus) {
+    bonusHTML = '<div class="f35-bonus-done">✅ Cofre bonus reclamado · Vuelve mañana</div>';
+  } else {
+    bonusHTML = '<div class="f35-bonus-hint">Completa las 3 misiones para ganar un cofre bonus 🎁</div>';
+  }
+
+  el.innerHTML = '<div class="f35-wrap">'
+    + '<div class="f35-header"><span class="f35-title">🗓️ Misiones del Día</span>'
+    + '<span class="f35-sub">' + quests.filter(function(q){return q.done;}).length + '/3 completadas</span></div>'
+    + '<div class="f35-list">'
+    + quests.map(function(q, i) {
+        var pct = q.target > 0 ? Math.min(100, Math.round((q.progress / q.target) * 100)) : 0;
+        var cls = q.claimed ? 'f35-quest f35-quest-done' : (q.done ? 'f35-quest f35-quest-ready' : 'f35-quest');
+        var actionHTML = q.claimed
+          ? '<span class="f35-claimed-lbl">✅ +' + q.xpReward + ' XP</span>'
+          : (q.done
+            ? '<button class="f35-claim-btn f35-pulse" onclick="F35_claimQuest(' + i + ')">Reclamar +' + q.xpReward + ' XP</button>'
+            : '<div class="f35-prog"><div class="f35-prog-fill" style="width:' + pct + '%;"></div></div><span class="f35-prog-lbl">' + q.progress + '/' + q.target + (q.type==='xp'?' XP':'') + ' · +' + q.xpReward + ' XP</span>');
+        return '<div class="' + cls + '">'
+          + '<span class="f35-icon">' + q.icon + '</span>'
+          + '<div class="f35-info"><div class="f35-desc">' + q.desc + '</div>' + actionHTML + '</div>'
+          + '</div>';
+      }).join('')
+    + '</div>'
+    + '<div class="f35-bonus-row">' + bonusHTML + '</div>'
+    + '</div>';
+}
+
+function F35_claimQuest(idx) {
+  var quests = S.dailyQuests;
+  if (!quests || !quests[idx]) return;
+  var q = quests[idx];
+  if (!q.done || q.claimed) return;
+  q.claimed = true;
+  S.xp += q.xpReward;
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(q.xpReward);
+  spawnXP('+' + q.xpReward + ' XP');
+  if (typeof SFX !== 'undefined' && SFX.correct) SFX.correct();
+  saveState();
+  if (typeof checkAchievements === 'function') checkAchievements();
+  F35_render();
+}
+
+function F35_claimBonus() {
+  if (!S.dailyQuests || !S.dailyQuests.every(function(q){return q.done;})) return;
+  if (S.dailyQuestsBonus) return;
+  S.dailyQuestsBonus = true;
+  if (typeof F44_earnChest === 'function') F44_earnChest('silver');
+  else if (typeof spawnXP === 'function') spawnXP('+1 Cofre Plata 🥈');
+  if (typeof confetti === 'function') confetti();
+  if (typeof SFX !== 'undefined' && SFX.levelUp) SFX.levelUp();
+  saveState();
+  toast('🎁 ¡Cofre Plata ganado!', 'Completaste las 3 misiones del día. ¡Increíble constancia!', 't-success');
+  F35_render();
+  if (typeof F44_render === 'function') F44_render();
+}
+
+// ── Hooks de progreso (llamados desde quiz/módulo/XP) ─────────────
+
+function F35_onModuleComplete() {
+  var quests = F35_getOrGenerate();
+  var today  = _f35_todayKey();
+  if (S.dailyQuestsKey !== today) return;
+  var changed = false;
+  quests.forEach(function(q) {
+    if (q.type === 'module' && !q.done) {
+      q.progress = Math.min(q.target, (q.progress || 0) + 1);
+      if (q.progress >= q.target) q.done = true;
+      changed = true;
+    }
+  });
+  if (changed) { saveState(); setTimeout(F35_render, 100); }
+}
+
+function F35_onQuizCorrect() {
+  var quests = F35_getOrGenerate();
+  var today  = _f35_todayKey();
+  if (S.dailyQuestsKey !== today) return;
+  var changed = false;
+  quests.forEach(function(q) {
+    if (q.type === 'quiz' && !q.done) {
+      q.progress = Math.min(q.target, (q.progress || 0) + 1);
+      if (q.progress >= q.target) q.done = true;
+      changed = true;
+    }
+  });
+  if (changed) { saveState(); setTimeout(F35_render, 100); }
+}
+
+function F35_onXPGained(amount) {
+  var quests = F35_getOrGenerate();
+  var today  = _f35_todayKey();
+  if (S.dailyQuestsKey !== today) return;
+  var changed = false;
+  quests.forEach(function(q) {
+    if (q.type === 'xp' && !q.done) {
+      q.progress = Math.min(q.target, (q.progress || 0) + (amount || 0));
+      if (q.progress >= q.target) q.done = true;
+      changed = true;
+    }
+  });
+  if (changed) { saveState(); setTimeout(F35_render, 200); }
+}
+
+window.F35_render         = F35_render;
+window.F35_claimQuest     = F35_claimQuest;
+window.F35_claimBonus     = F35_claimBonus;
+window.F35_onModuleComplete = F35_onModuleComplete;
+window.F35_onQuizCorrect  = F35_onQuizCorrect;
+window.F35_onXPGained     = F35_onXPGained;
+
+
+/* ══════════════════════════════════════════════════════════════════
+   F50 — POWER-UP SHOP
+   ─────────────────────────────────────────────────────────────────
+   Tienda de mejoras temporales compradas con XP.
+   Items: XP ×2 (1h), Pista de Quiz, Escudo de Racha extra.
+   Accesible desde un botón en el home.
+══════════════════════════════════════════════════════════════════ */
+
+var F50_ITEMS = [
+  {
+    id:    'xp2',
+    icon:  '⚡',
+    label: 'XP ×2 durante 1h',
+    desc:  'Duplica el XP de todos los módulos y quizzes durante 60 minutos.',
+    cost:  150,
+    color: '#f0b429',
+    canBuy: function() { return Date.now() >= (S.xpMultiplierExpiry || 0); },
+    apply:  function() {
+      S.xpMultiplierExpiry = Date.now() + 3600000;
+      toast('⚡ ¡XP ×2 activado!', 'Tienes 1 hora de XP doble. ¡Estudia rápido!', 't-success');
+    },
+    status: function() {
+      if (Date.now() < (S.xpMultiplierExpiry || 0)) {
+        var minLeft = Math.ceil((S.xpMultiplierExpiry - Date.now()) / 60000);
+        return '⚡ Activo — ' + minLeft + 'm restantes';
+      }
+      return null;
+    }
+  },
+  {
+    id:    'hint',
+    icon:  '💡',
+    label: 'Pista de Quiz',
+    desc:  'Elimina 2 opciones incorrectas en el próximo quiz. Se usa automáticamente.',
+    cost:  75,
+    color: '#00e5a0',
+    canBuy: function() { return (S.quizHints || 0) < 3; },
+    apply:  function() {
+      S.quizHints = Math.min(3, (S.quizHints || 0) + 1);
+      toast('💡 Pista comprada', 'Se eliminará 2 opciones en el próximo quiz. Tienes ' + S.quizHints + '.', 't-success');
+    },
+    status: function() {
+      var h = S.quizHints || 0;
+      return h > 0 ? ('💡 ' + h + ' pista' + (h > 1 ? 's' : '') + ' disponible' + (h > 1 ? 's' : '')) : null;
+    }
+  },
+  {
+    id:    'shield',
+    icon:  '🛡️',
+    label: 'Escudo de Racha',
+    desc:  'Protege tu racha 1 día aunque no estudies. Máximo 3 escudos.',
+    cost:  200,
+    color: '#60a5fa',
+    canBuy: function() { return (S.streakShields || 0) < 3; },
+    apply:  function() {
+      S.streakShields = Math.min(3, (S.streakShields || 0) + 1);
+      if (typeof _updateShieldUI === 'function') _updateShieldUI();
+      toast('🛡️ Escudo comprado', 'Tu racha está protegida ' + S.streakShields + ' día(s) extra.', 't-success');
+    },
+    status: function() {
+      var sh = S.streakShields || 0;
+      return sh > 0 ? ('🛡️ ' + sh + ' escudo' + (sh > 1 ? 's' : '')) : null;
+    }
+  },
+];
+
+function F50_open() {
+  var modal = document.getElementById('m-f50-shop');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-f50-shop';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+
+  var xp = Math.round(S.xp || 0);
+  var itemsHTML = F50_ITEMS.map(function(item) {
+    var canAfford = xp >= item.cost;
+    var canBuy    = item.canBuy();
+    var status    = item.status();
+    var disabled  = !canAfford || !canBuy;
+    var btnLabel  = !canAfford ? 'Faltan ' + (item.cost - xp) + ' XP' : (!canBuy ? 'Máximo alcanzado' : 'Comprar — ' + item.cost + ' XP');
+    return '<div class="f50-item" style="--f50-color:' + item.color + '">'
+      + '<div class="f50-item-icon">' + item.icon + '</div>'
+      + '<div class="f50-item-body">'
+      +   '<div class="f50-item-label">' + item.label + '</div>'
+      +   '<div class="f50-item-desc">' + item.desc + '</div>'
+      +   (status ? '<div class="f50-item-status">' + status + '</div>' : '')
+      + '</div>'
+      + '<button class="f50-buy-btn' + (disabled ? ' f50-btn-disabled' : '') + '" '
+      + (disabled ? 'disabled' : 'onclick="F50_buy(\'' + item.id + '\')"') + '>'
+      + btnLabel + '</button>'
+      + '</div>';
+  }).join('');
+
+  modal.innerHTML = '<div class="modal-box f50-modal">'
+    + '<div class="f50-header">'
+    +   '<span class="f50-title">⚡ Tienda de Mejoras</span>'
+    +   '<button class="modal-close-btn" onclick="closeModal(\'m-f50-shop\')">✕</button>'
+    + '</div>'
+    + '<div class="f50-balance">Tu saldo: <strong>' + xp.toLocaleString('es') + ' XP</strong></div>'
+    + '<div class="f50-list">' + itemsHTML + '</div>'
+    + '<div class="f50-footer">Los power-ups usan tu XP acumulado. Tu nivel no baja.</div>'
+    + '</div>';
+
+  openModal('m-f50-shop');
+}
+
+function F50_buy(itemId) {
+  var item = F50_ITEMS.find(function(i) { return i.id === itemId; });
+  if (!item) return;
+  if ((S.xp || 0) < item.cost) { toast('❌ XP insuficiente', 'Necesitas ' + item.cost + ' XP.', 't-warn'); return; }
+  if (!item.canBuy()) { toast('⚠️ No disponible', 'Ya tienes el máximo de este power-up.', 't-warn'); return; }
+
+  S.xp -= item.cost;
+  item.apply();
+  saveState();
+  if (typeof checkAchievements === 'function') checkAchievements();
+  if (typeof SFX !== 'undefined' && SFX.xp) SFX.xp();
+  F50_open(); // refresca el modal con saldo actualizado
+}
+
+window.F50_open = F50_open;
+window.F50_buy  = F50_buy;

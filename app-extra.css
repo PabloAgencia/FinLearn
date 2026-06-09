@@ -262,6 +262,59 @@ body.light-mode .income-panel-source { color: #777; }
 .income-modal-row strong { color: var(--text); font-weight: 700; }
 .income-modal-divider { height: 1px; background: var(--surface2); margin: 4px 0; }
 .income-modal-total { padding: 10px 0 4px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   F35 — MISIONES DIARIAS
+══════════════════════════════════════════════════════════════════ */
+.f35-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; }
+.f35-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.f35-title { font-weight: 800; font-size: 14px; color: var(--text); }
+.f35-sub { font-size: 11px; color: var(--text3); font-weight: 600; }
+.f35-list { display: flex; flex-direction: column; gap: 10px; }
+.f35-quest { display: flex; align-items: flex-start; gap: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; transition: border-color .2s; }
+.f35-quest-done { border-color: rgba(0, 229, 160, .35); background: rgba(0,229,160,.05); }
+.f35-quest-ready { border-color: rgba(0,229,160,.6); animation: f35pulse 1.4s ease-in-out infinite; }
+@keyframes f35pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.0)} 50%{box-shadow:0 0 0 4px rgba(0,229,160,.18)} }
+.f35-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.f35-info { flex: 1; min-width: 0; }
+.f35-desc { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 6px; }
+.f35-prog { height: 6px; background: var(--surface2); border-radius: 99px; overflow: hidden; margin-bottom: 4px; }
+.f35-prog-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s ease; }
+.f35-prog-lbl { font-size: 11px; color: var(--text3); }
+.f35-claim-btn { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.f35-claimed-lbl { font-size: 12px; color: var(--accent); font-weight: 700; }
+.f35-bonus-row { margin-top: 12px; text-align: center; }
+.f35-bonus-btn { background: linear-gradient(135deg,#ffd700,#ff6b35); color: #000; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 800; cursor: pointer; width: 100%; }
+.f35-bonus-done { font-size: 12px; color: var(--accent); font-weight: 600; padding: 6px 0; }
+.f35-bonus-hint { font-size: 11px; color: var(--text3); padding: 4px 0; }
+.f35-pulse { animation: f35btnpulse 1.2s ease-in-out infinite; }
+@keyframes f35btnpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+
+/* ══════════════════════════════════════════════════════════════════
+   F50 — POWER-UP SHOP
+══════════════════════════════════════════════════════════════════ */
+.f50-shop-fab { background: var(--surface); border: 1px solid var(--border); color: var(--accent); border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.f50-modal { max-width: 360px; width: 100%; }
+.f50-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.f50-title { font-size: 16px; font-weight: 800; color: var(--text); }
+.f50-balance { font-size: 13px; color: var(--text2); margin-bottom: 14px; background: var(--surface2); border-radius: 8px; padding: 8px 12px; }
+.f50-balance strong { color: var(--accent); }
+.f50-list { display: flex; flex-direction: column; gap: 12px; }
+.f50-item { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--f50-color, var(--accent)); border-radius: 12px; padding: 12px 14px; }
+.f50-item-icon { font-size: 26px; flex-shrink: 0; }
+.f50-item-body { flex: 1; min-width: 0; }
+.f50-item-label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.f50-item-desc { font-size: 11px; color: var(--text3); line-height: 1.4; }
+.f50-item-status { font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 4px; }
+.f50-buy-btn { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+.f50-btn-disabled { background: var(--surface2) !important; color: var(--text3) !important; cursor: not-allowed !important; }
+.f50-footer { font-size: 11px; color: var(--text3); text-align: center; margin-top: 14px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   F50 QUIZ HINT
+══════════════════════════════════════════════════════════════════ */
+.quiz-hint-active { font-size: 11px; color: #00e5a0; font-weight: 600; text-align: center; padding: 4px 0 0; }
+.quiz-opt-hint-out { transition: opacity .3s ease !important; }
 .income-modal-total span { font-weight: 700; color: var(--text); }
 .income-modal-total strong { color: var(--accent); font-size: 18px; }
 .income-modal-tip {

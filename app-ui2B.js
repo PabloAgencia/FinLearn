@@ -544,6 +544,8 @@ function completeModule() {
   if (typeof F33_checkEarnBack === 'function') F33_checkEarnBack();
   // F34: trackear módulo completado
   if (typeof F34_onModuleComplete === 'function') F34_onModuleComplete(mod);
+  // F35: misiones diarias — módulo completado
+  if (typeof F35_onModuleComplete === 'function') F35_onModuleComplete();
   // F44: posible cofre por completar módulo
   if (typeof F44_onModuleComplete === 'function') F44_onModuleComplete();
   // BOSS BATTLE: comprobar si se ha completado la última rama
@@ -747,9 +749,11 @@ function answerQuiz(chosen) {
     spawnXP('+' + _xpGain + ' XP' + (_cMult > 1 ? ' ×' + _cMult : ''));
     setTimeout(() => _quizBurst('qo-' + correctIdx), 60);
     saveState();
-    // F34: trackear quiz correcto y XP ganado
+    // F34/F35: trackear quiz correcto y XP ganado
     if (typeof F34_onQuizCorrect === 'function') F34_onQuizCorrect();
     if (typeof F34_onXPGained === 'function') F34_onXPGained(_xpGain);
+    if (typeof F35_onQuizCorrect === 'function') F35_onQuizCorrect();
+    if (typeof F35_onXPGained === 'function') F35_onXPGained(_xpGain);
     // P4-C: tick misión quiz (racha de consecutivas)
     if (typeof tickMission === 'function') tickMission('quiz', 1);
   } else {
