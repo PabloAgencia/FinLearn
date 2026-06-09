@@ -204,7 +204,7 @@
           <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="obNext(3)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
         </div>
 
-        <!-- STEP 3: Level + Basic data -->
+        <!-- STEP 3: Nivel de conocimiento (auto-avanza al seleccionar) -->
         <div class="ob-step" id="ob-s3">
           <div class="ob-logo">FinLearn</div>
           <div class="ob-dots">
@@ -215,56 +215,33 @@
             <div class="ob-dot"></div>
           </div>
           <div class="ob-emoji">🧠</div>
-          <div class="ob-title">¿Cuál es tu nivel actual?</div>
+          <div class="ob-title">¿Cuánto sabes de finanzas?</div>
           <div class="ob-sub">Sin juicios — esto personaliza tu ruta de aprendizaje.</div>
-
           <div class="ob-level-grid">
-            <div class="ob-level-card" id="lvl-zero" onclick="selectInvestorLevel('zero','Empezando desde cero')">
+            <div class="ob-level-card" id="lvl-zero" onclick="_obLevelSelect('zero',this)">
               <div class="ob-lc-icon">🌱</div>
               <div class="ob-lc-title">Desde cero</div>
-              <div class="ob-lc-desc">No conozco el mundo de las inversiones</div>
+              <div class="ob-lc-desc">No conozco el mundo financiero</div>
             </div>
-            <div class="ob-level-card" id="lvl-saving" onclick="selectInvestorLevel('saving','Tengo algo ahorrado')">
+            <div class="ob-level-card" id="lvl-saving" onclick="_obLevelSelect('saving',this)">
               <div class="ob-lc-icon">🏦</div>
               <div class="ob-lc-title">Tengo ahorros</div>
-              <div class="ob-lc-desc">Ahorro pero no sé bien dónde invertir</div>
+              <div class="ob-lc-desc">Ahorro pero no sé dónde invertir</div>
             </div>
-            <div class="ob-level-card" id="lvl-investing" onclick="selectInvestorLevel('investing','Ya invierto un poco')">
+            <div class="ob-level-card" id="lvl-investing" onclick="_obLevelSelect('investing',this)">
               <div class="ob-lc-icon">📊</div>
               <div class="ob-lc-title">Ya invierto</div>
-              <div class="ob-lc-desc">Fondos, ETFs o acciones — quiero mejorar</div>
+              <div class="ob-lc-desc">ETFs o acciones — quiero mejorar</div>
             </div>
-            <div class="ob-level-card" id="lvl-active" onclick="selectInvestorLevel('active','Inversor activo')">
+            <div class="ob-level-card" id="lvl-active" onclick="_obLevelSelect('active',this)">
               <div class="ob-lc-icon">🚀</div>
-              <div class="ob-lc-title">Activo</div>
-              <div class="ob-lc-desc">Gestiono mi cartera y busco optimizarla</div>
+              <div class="ob-lc-title">Inversor activo</div>
+              <div class="ob-lc-desc">Gestiono mi cartera y quiero optimizarla</div>
             </div>
           </div>
-
-          <div class="fin-row-2" style="margin-top:16px;">
-            <div class="fin-field">
-              <label>EDAD</label>
-              <div class="fin-input-row">
-                <span class="fin-prefix">🎂</span>
-                <input class="fin-num" type="number" id="ob-age" placeholder="30" min="16" max="80" oninput="_renderProjectionStepFinal()">
-              </div>
-            </div>
-            <div class="fin-field">
-              <label>INGRESOS/MES (€)</label>
-              <div class="fin-input-row">
-                <span class="fin-prefix">€</span>
-                <input class="fin-num" type="number" id="ob-income" placeholder="1.800" min="0" oninput="_renderProjectionStepFinal()">
-              </div>
-            </div>
-          </div>
-          <p style="font-size:11px;color:var(--text3);text-align:center;margin:-4px 0 4px;">Opcionales — solo para calcular tu proyección. Nunca salen de tu dispositivo.</p>
-
-          <button class="btn btn-primary btn-block" id="ob-s3-btn" onclick="obNext(4)" style="opacity:.4;cursor:not-allowed;margin-top:16px;">
-            Ver mi proyección →
-          </button>
         </div>
 
-        <!-- STEP 4: Financial profile (enriched) -->
+        <!-- STEP 4: Tiempo disponible (auto-avanza al seleccionar) -->
         <div class="ob-step" id="ob-s4">
           <div class="ob-logo">FinLearn</div>
           <div class="ob-dots">
@@ -274,44 +251,35 @@
             <div class="ob-dot active"></div>
             <div class="ob-dot"></div>
           </div>
-          <div class="ob-emoji">🔮</div>
-          <div class="ob-title">Tu proyección personalizada</div>
-          <div class="ob-sub">Basada en tu situación real. El interés compuesto hace el trabajo.</div>
-
-          <div class="fin-preview-final" id="fin-preview-final">
-            <div class="fp-final-row">
-              <span class="fp-final-label">Patrimonio neto hoy</span>
-              <span class="fp-final-val" id="fp-today-final">€0</span>
+          <div class="ob-emoji">⏱️</div>
+          <div class="ob-title">¿Cuánto tiempo tienes al día?</div>
+          <div class="ob-sub">Adaptamos el ritmo para que no sea una carga.</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+            <div class="ob-time-card" onclick="_obTimeSelect(5,this)">
+              <span class="ob-tc-icon">⚡</span>
+              <div>
+                <div class="ob-tc-title">5 minutos</div>
+                <div class="ob-tc-sub">Sesiones ultrarrápidas entre reuniones</div>
+              </div>
             </div>
-            <div class="fp-divider"></div>
-            <div class="fp-final-row">
-              <span class="fp-final-label">En 10 años</span>
-              <span class="fp-final-val accent" id="fp-10y-final">€—</span>
+            <div class="ob-time-card" onclick="_obTimeSelect(15,this)">
+              <span class="ob-tc-icon">🎯</span>
+              <div>
+                <div class="ob-tc-title">15 minutos</div>
+                <div class="ob-tc-sub">El ritmo ideal para aprender sin agobio</div>
+              </div>
             </div>
-            <div class="fp-final-row">
-              <span class="fp-final-label">En 20 años</span>
-              <span class="fp-final-val accent" id="fp-20y-final">€—</span>
-            </div>
-            <div class="fp-final-row">
-              <span class="fp-final-label">Potencial a 30 años 🎯</span>
-              <span class="fp-final-val big gold" id="fp-30y-final">€—</span>
+            <div class="ob-time-card" onclick="_obTimeSelect(30,this)">
+              <span class="ob-tc-icon">🔥</span>
+              <div>
+                <div class="ob-tc-title">30 minutos o más</div>
+                <div class="ob-tc-sub">Modo intensivo — quiero avanzar rápido</div>
+              </div>
             </div>
           </div>
-
-          <div id="ob-proj-motivation" style="display:none;margin:12px 0 4px;font-size:13px;color:var(--text3);text-align:center;line-height:1.5;font-style:italic;"></div>
-
-          <div id="ob-career-auto" style="margin:16px 0;padding:12px 16px;background:var(--surface);border-radius:12px;border:1px solid var(--border);text-align:center;display:none;">
-            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.08em;">TU PERFIL FINANCIERO</div>
-            <div id="ob-career-icon" style="font-size:28px;margin-bottom:4px;">🌱</div>
-            <div id="ob-career-label" style="font-size:15px;font-weight:700;color:var(--text1);">Junior / Empleado</div>
-            <div id="ob-career-salary" style="font-size:12px;color:var(--text3);margin-top:2px;">Calculado según tus ingresos reales</div>
-          </div>
-
-          <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="obNext(5)">
-            ¡Quiero empezar! →
-          </button>
         </div>
 
+        <!-- STEP 5: Perfil resultado + CTA -->
         <div class="ob-step" id="ob-s5">
           <div class="ob-logo">FinLearn</div>
           <div class="ob-dots">
@@ -321,20 +289,18 @@
             <div class="ob-dot"></div>
             <div class="ob-dot active"></div>
           </div>
-          <div class="ob-emoji">⏰</div>
-          <div class="ob-title">¿A qué hora te recordamos?</div>
-          <div class="ob-sub">Solo una notificación al día. Solo si estás a punto de perder tu racha.</div>
-
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:20px;">
-            <button class="ob-time-btn" onclick="_obSelectTime(8)">🌅 Por la mañana · 8:00</button>
-            <button class="ob-time-btn" onclick="_obSelectTime(14)">☀️ Al mediodía · 14:00</button>
-            <button class="ob-time-btn" onclick="_obSelectTime(20)">🌙 Por la noche · 20:00</button>
-            <button class="ob-time-btn" onclick="_obSelectTime(-1)" style="background:transparent;border:1px solid var(--border2);">Sin recordatorios</button>
+          <div id="ob-profile-reveal">
+            <!-- rellenado por _obShowProfile() -->
           </div>
-
-          <button class="btn btn-primary btn-block" style="margin-top:24px;" onclick="finishOnboarding()">
+          <div class="ob-perks">
+            <div class="ob-perk-row">✓ Ruta de aprendizaje personalizada</div>
+            <div class="ob-perk-row">✓ +200 XP de bienvenida</div>
+            <div class="ob-perk-row">✓ Retos adaptados a tu nivel</div>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="finishOnboarding()" style="margin-top:20px;font-size:17px;padding:16px;">
             🚀 Empezar FinLearn
           </button>
+          <p class="ob-legal-note">Tus datos nunca salen de tu dispositivo.</p>
         </div>
       </div>
     </div>
@@ -2647,6 +2613,8 @@
 <script src="app-extrasB.js?v=2.1.0"></script>
 <script src="app-extras2.js?v=2.1.0"></script>
 <script src="app-extras2B.js?v=2.1.0"></script>
+<script src="app-onboarding.js?v=2.1.0"></script>
+<script src="app-share.js?v=2.1.0"></script>
 
 
 <!-- ══ MODAL: CAREER ══ -->

@@ -217,6 +217,10 @@ const DEFAULTS = {
   totalStudyMinutes: 0,        // minutos acumulados de estudio (estimado: 8 min/módulo)
   /* ── Blog / Guías ── */
   readGuides: [],              // IDs de artículos leídos ['guide_ahorro', ...]
+  /* ── Perfil personalidad + Referidos ── */
+  financialProfile: null,      // key del perfil resultado del quiz de personalidad
+  referralCode: '',             // código único de referido del usuario
+  referralUsed: false,          // si ya recibió bonus de referido como nuevo usuario
   /* ── Campos internos (no mostrar al usuario) ── */
   _budget: null,
   _totalSells: 0,

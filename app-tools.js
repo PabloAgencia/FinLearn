@@ -782,6 +782,10 @@ function renderStreakCard() {
     + '</div>'
     + '<div class="sc-dots-wrap">' + dotsHTML + '</div>'
     + ctaHTML
+    + '<div class="sc-share-row">'
+    +   '<button class="sc-share-btn" onclick="shareStats()">📸 Compartir racha</button>'
+    +   '<button class="sc-share-btn" onclick="showReferralSheet()">🎁 Invitar amigos</button>'
+    + '</div>'
     + '</div>';
 }
 window.renderStreakCard = renderStreakCard;

@@ -501,3 +501,71 @@ body.light-mode .sc-modal-box { background: #fff; }
 .sc-next-reward-cd { font-size: 14px; color: var(--text2); text-align: center; }
 .sc-next-reward-cd strong { color: var(--text); }
 .sc-next-bonus-hint { font-size: 12px; color: var(--text3); text-align: center; margin-top: 2px; }
+
+/* ── Streak card share row ── */
+.sc-share-row { display: flex; gap: 8px; }
+.sc-share-btn {
+  flex: 1;
+  padding: 9px 8px;
+  border-radius: 10px;
+  border: 1.5px solid var(--surface2);
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.sc-share-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ══════════════════════════════════════════════════════════════════
+   ONBOARDING — Pasos 3, 4, 5 rediseñados
+══════════════════════════════════════════════════════════════════ */
+
+/* ── Time cards (S4) ── */
+.ob-time-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--surface2);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.ob-time-card:hover { border-color: var(--accent); transform: translateX(3px); }
+.ob-tc-selected { border-color: var(--accent) !important; background: rgba(0,229,160,.08) !important; transform: translateX(3px) !important; }
+.ob-tc-icon { font-size: 28px; flex-shrink: 0; }
+.ob-tc-title { font-size: 16px; font-weight: 700; color: var(--text); }
+.ob-tc-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+body.light-mode .ob-time-card { background: #fff; border-color: #e0e0e0; }
+
+/* ── Profile perks (S5) ── */
+.ob-perks { display: flex; flex-direction: column; gap: 0; width: 100%; margin-bottom: 4px; }
+.ob-perk-row {
+  font-size: 14px;
+  color: var(--text2);
+  padding: 9px 0;
+  border-bottom: 1px solid var(--surface2);
+}
+.ob-perk-row:last-child { border-bottom: none; }
+
+/* ══════════════════════════════════════════════════════════════════
+   REFERRAL MODAL
+══════════════════════════════════════════════════════════════════ */
+.ref-modal-box { max-width: 380px; }
+.ref-code-box {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px dashed var(--accent);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: background .15s;
+}
+.ref-code-box:hover { background: rgba(0,229,160,.05); }
+.ref-code-label { font-size: 10px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+.ref-code-val { font-size: 30px; font-weight: 900; color: var(--accent); letter-spacing: .12em; margin-bottom: 6px; }
+.ref-code-copy { font-size: 12px; color: var(--text3); }

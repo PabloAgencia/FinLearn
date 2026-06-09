@@ -125,6 +125,14 @@ function finishOnboarding() {
   // Construir mensaje personalizado para el hero card
   S.onboardHeroMsg = _ob_buildHeroMsg();
 
+  // Generar código de referido si no existe
+  if (!S.referralCode) {
+    var _rbase = (S.userName || 'FL').replace(/\s+/g, '').toUpperCase().slice(0, 4);
+    S.referralCode = _rbase + Math.random().toString(36).slice(2, 6).toUpperCase();
+  }
+  // Aplicar bonus de referido si hay uno pendiente
+  if (typeof _applyPendingReferral === 'function') _applyPendingReferral();
+
   saveState();
   goTo('home');
   checkAchievements();
