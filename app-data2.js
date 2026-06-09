@@ -1,0 +1,1437 @@
+const STOCKS = [
+  // ── ACTIVOS DESTACADOS (los 4 pedidos) ─────────────────
+  {
+    ticker:'VUSA', name:'Vanguard S&P 500', icon:'🇺🇸',
+    bg:'#000f1a', sector:'etf', group:'etf', exchange:'LSE',
+    price:480.20,
+    dividendYield:1.3, per:22, featured:true,
+    annualReturn:0.10,       // 10 % — media histórica S&P 500 durante 100 años
+    annualVolatility:0.15,   // 15 % — volatilidad histórica del índice
+    description:'Las 500 mayores empresas de EE.UU. TER 0.07%. El activo más estudiado de la historia de las finanzas.',
+    fundamentals:{eps:21.8, pb:4.2, market:'35B USD', beta:1.0},
+    historicalNote:'Dato real: +10% anual nominal / +7% real (sin inflación) — últimos 100 años',
+  },
+  {
+    ticker:'AAPL', name:'Apple Inc.', icon:'🍎',
+    bg:'#1a1a2e', sector:'tech', group:'usa', exchange:'NASDAQ',
+    price:182.50,
+    dividendYield:0.5, per:28, featured:true,
+    annualReturn:0.28,       // 28 % — retorno anualizado 2014-2024
+    annualVolatility:0.28,   // 28 % — volatilidad histórica
+    description:'El fabricante del iPhone, Mac y servicios digitales. Primera empresa en superar los 3 billones de dólares de capitalización.',
+    fundamentals:{eps:6.52, pb:45, market:'2.8T USD', beta:1.2},
+    historicalNote:'Dato real: +28% anual últimos 10 años — el retorno pasado no garantiza el futuro',
+  },
+  {
+    ticker:'BTC', name:'Bitcoin', icon:'₿',
+    bg:'#1a0f00', sector:'crypto', group:'crypto', exchange:'—',
+    price:62000,
+    dividendYield:0, per:0, featured:true, isCrypto:true,
+    annualReturn:0.50,       // ~50 % retorno geométrico histórico 2014-2024
+    annualVolatility:0.80,   // 80 % — volatilidad real (caídas del 80 % × 3)
+    description:'Primera criptomoneda. Oferta máxima de 21 millones de unidades programada matemáticamente. Halving cada 4 años.',
+    fundamentals:{eps:0, pb:0, market:'1.2T USD', beta:3.5},
+    historicalNote:'Dato real: +50% anual 10 años — con 3 crashes del 80%+. Solo inviertes lo que puedes perder.',
+  },
+  {
+    ticker:'GOLD', name:'Oro (XAU/EUR)', icon:'🥇',
+    bg:'#1a1500', sector:'commodity', group:'commodity', exchange:'SPOT',
+    price:1870,
+    dividendYield:0, per:0, featured:true,
+    annualReturn:0.08,       // ~8 % últimos 20 años — superior al largo plazo histórico (5%)
+    annualVolatility:0.12,   // 12 % — baja volatilidad, activo refugio
+    description:'El activo refugio por excelencia durante 5.000 años. Protección frente a inflación, crisis bancarias y pérdida de valor de las monedas fiduciarias.',
+    fundamentals:{eps:0, pb:0, market:'14T USD', beta:-0.1},
+    historicalNote:'Dato real: +8% anual 2004-2024 — correlación negativa con renta variable en crisis',
+  },
+
+  // ── TECNOLOGÍA ──────────────────────────────────────────
+  {ticker:'MSFT', name:'Microsoft',       icon:'🪟', bg:'#001a2e', sector:'tech',    group:'usa',    exchange:'NASDAQ', price:374.0,  dividendYield:0.8, per:35, annualReturn:0.30, annualVolatility:0.22, description:'Líder en cloud (Azure), software empresarial y gaming. Copilot AI transformando toda su suite.',          fundamentals:{eps:10.68, pb:14,  market:'2.8T USD', beta:0.9}},
+  {ticker:'GOOGL', name:'Alphabet',       icon:'🔍', bg:'#1a2010', sector:'tech',    group:'usa',    exchange:'NASDAQ', price:141.8,  dividendYield:0,   per:25, annualReturn:0.20, annualVolatility:0.24, description:'Google: el buscador más usado del mundo + YouTube + Cloud + DeepMind AI.',                               fundamentals:{eps:5.68,  pb:6.5, market:'1.8T USD', beta:1.1}},
+  {ticker:'NVDA',  name:'NVIDIA',         icon:'🎮', bg:'#0d1a0d', sector:'tech',    group:'usa',    exchange:'NASDAQ', price:495.0,  dividendYield:0.1, per:65, annualReturn:0.60, annualVolatility:0.55, description:'GPUs para gaming e IA. Sus chips H100 son la base del boom de inteligencia artificial.',               fundamentals:{eps:7.62,  pb:35,  market:'1.2T USD', beta:1.7}},
+  {ticker:'TSLA',  name:'Tesla',          icon:'⚡', bg:'#1a0000', sector:'tech',    group:'usa',    exchange:'NASDAQ', price:248.0,  dividendYield:0,   per:75, annualReturn:0.30, annualVolatility:0.65, description:'Coches eléctricos, energía solar y almacenamiento. Alta volatilidad — puede moverse ±20% en días.',   fundamentals:{eps:3.31,  pb:12,  market:'790B USD', beta:2.1}},
+
+  // ── ETFs ────────────────────────────────────────────────
+  {ticker:'IWDA',  name:'iShares MSCI World', icon:'🌍', bg:'#001020', sector:'etf', group:'etf', exchange:'LSE',  price:89.4,   dividendYield:1.4, per:20, annualReturn:0.09, annualVolatility:0.14, description:'1.600 empresas de 23 países desarrollados. El ETF global más popular entre inversores europeos. TER 0.20%.', fundamentals:{eps:4.47, pb:2.8, market:'60B USD', beta:1.0}},
+  {ticker:'EQQQ',  name:'Nasdaq 100 ETF',     icon:'💻', bg:'#0d0020', sector:'etf', group:'etf', exchange:'LSE',  price:446.2,  dividendYield:0.4, per:30, annualReturn:0.15, annualVolatility:0.20, description:'Las 100 mayores tecnológicas del Nasdaq. Alta concentración en Apple, Microsoft y NVIDIA.',               fundamentals:{eps:14.87, pb:8.1, market:'25B USD', beta:1.2}},
+
+  // ── IBEX 35 ─────────────────────────────────────────────
+  {ticker:'SAN',   name:'Banco Santander', icon:'🏦', bg:'#1a0010', sector:'ibex', group:'ibex', exchange:'BME', price:3.82,  dividendYield:6.2, per:6,  annualReturn:0.05, annualVolatility:0.25, description:'Mayor banco de la zona euro. Fuerte en América Latina y UK.',                                       fundamentals:{eps:0.64, pb:0.7, market:'65B EUR',  beta:1.4}},
+  {ticker:'ITX',   name:'Inditex / Zara',  icon:'👗', bg:'#1a1a00', sector:'ibex', group:'ibex', exchange:'BME', price:38.5,  dividendYield:3.4, per:24, annualReturn:0.12, annualVolatility:0.18, description:'El mayor grupo textil del mundo. Propietario de Zara, Massimo Dutti, Bershka y 7 marcas más.',   fundamentals:{eps:1.60, pb:8.5, market:'120B EUR', beta:0.9}},
+  {ticker:'IBE',   name:'Iberdrola',        icon:'🔋', bg:'#001a10', sector:'ibex', group:'ibex', exchange:'BME', price:11.8,  dividendYield:4.5, per:18, annualReturn:0.08, annualVolatility:0.16, description:'Líder mundial en energía renovable. Eólica, solar e hidroeléctrica en 30+ países.',              fundamentals:{eps:0.65, pb:1.8, market:'75B EUR',  beta:0.7}},
+  {ticker:'TEF',   name:'Telefónica',       icon:'📱', bg:'#00001a', sector:'ibex', group:'ibex', exchange:'BME', price:3.95,  dividendYield:7.8, per:10, annualReturn:0.02, annualVolatility:0.20, description:'Operadora en España, Alemania, Brasil y Reino Unido. Alto dividendo.',                           fundamentals:{eps:0.39, pb:0.9, market:'22B EUR',  beta:0.8}},
+
+  // ── EE.UU. ───────────────────────────────────────────────
+  {ticker:'JNJ',   name:'Johnson & Johnson',  icon:'💊', bg:'#1a0000', sector:'health',  group:'usa',    exchange:'NYSE', price:152.0, dividendYield:3.1, per:15, annualReturn:0.08, annualVolatility:0.12, description:'Farmacéutica y dispositivos médicos. Dividendo creciente 60+ años (Dividend King).',           fundamentals:{eps:10.13, pb:5.2, market:'370B USD', beta:0.6}},
+  {ticker:'BRK',   name:'Berkshire Hathaway', icon:'🎩', bg:'#1a0f00', sector:'usa',    group:'usa',    exchange:'NYSE', price:372.0, dividendYield:0,   per:21, annualReturn:0.10, annualVolatility:0.15, description:'Conglomerado de Warren Buffett. 50+ empresas subsidiarias + cartera de $350B en acciones.',  fundamentals:{eps:17.7,  pb:1.5, market:'800B USD', beta:0.8}},
+  {ticker:'LVMH',  name:'LVMH Moët Hennessy', icon:'💎', bg:'#1a0020', sector:'europe', group:'europe', exchange:'PAR', price:722.0, dividendYield:1.8, per:22, annualReturn:0.18, annualVolatility:0.20, description:'El mayor grupo de lujo del mundo. Louis Vuitton, Dior, Tiffany, Moët & Chandon.',              fundamentals:{eps:32.8,  pb:5.0, market:'360B EUR', beta:0.9}},
+
+  // ── CRYPTO ───────────────────────────────────────────────
+  {ticker:'ETH',   name:'Ethereum',           icon:'🔷', bg:'#001020', sector:'crypto', group:'crypto', exchange:'—', price:2850, dividendYield:0, per:0, isCrypto:true, annualReturn:0.60, annualVolatility:0.90, description:'Plataforma de contratos inteligentes. Base de DeFi, NFTs y Web3. Lanzada en 2015.', fundamentals:{eps:0, pb:0, market:'340B USD', beta:3.2}},
+
+  // ── SALUD Y FARMA ───────────────────────────────────────
+  {ticker:'NVO',   name:'Novo Nordisk',      icon:'💉', bg:'#001a10', sector:'health', group:'europe', exchange:'CPH',   price:128.0, dividendYield:1.1, per:32, annualReturn:0.28, annualVolatility:0.30, description:'Líder mundial en diabetes y obesidad. Ozempic/Wegovy cambiando la medicina moderna.', fundamentals:{eps:4.0, pb:24, market:'580B EUR', beta:0.7}},
+  {ticker:'PFE',   name:'Pfizer',            icon:'🔬', bg:'#00001a', sector:'health', group:'usa',    exchange:'NYSE',  price:27.5,  dividendYield:6.8, per:12, annualReturn:0.04, annualVolatility:0.22, description:'Gigante farmacéutico global. Alto dividendo, pipeline amplio. Creador de la vacuna COVID mRNA.', fundamentals:{eps:2.29, pb:1.8, market:'155B USD', beta:0.6}},
+
+  // ── CONSUMO DEFENSIVO ────────────────────────────────────
+  {ticker:'NESN',  name:'Nestlé',            icon:'☕', bg:'#1a0f00', sector:'consumer', group:'europe', exchange:'SIX', price:94.5,  dividendYield:3.2, per:20, annualReturn:0.07, annualVolatility:0.13, description:'El mayor grupo de alimentación del mundo. Nespresso, KitKat, Maggi. Dividendo creciente 25+ años.', fundamentals:{eps:4.72, pb:5.5, market:'245B CHF', beta:0.5}},
+  {ticker:'KO',    name:'Coca-Cola',         icon:'🥤', bg:'#1a0000', sector:'consumer', group:'usa',    exchange:'NYSE',price:61.2,  dividendYield:3.1, per:24, annualReturn:0.09, annualVolatility:0.14, description:'200 países, 500 marcas. Dividend King con 62 años consecutivos de aumento de dividendo.', fundamentals:{eps:2.55, pb:10, market:'265B USD', beta:0.6}},
+
+  // ── ENERGÍA ──────────────────────────────────────────────
+  {ticker:'SHEL',  name:'Shell',             icon:'🛢️', bg:'#1a1500', sector:'energy', group:'europe', exchange:'LSE',  price:28.4,  dividendYield:4.2, per:9,  annualReturn:0.08, annualVolatility:0.25, description:'Supermajor energético global. Petróleo, gas natural y transición a renovables.', fundamentals:{eps:3.16, pb:1.1, market:'210B USD', beta:0.7}},
+
+  // ── INMOBILIARIO / REITs ─────────────────────────────────
+  {ticker:'VICI',  name:'VICI Properties',   icon:'🎰', bg:'#1a1000', sector:'reit', group:'usa', exchange:'NYSE',   price:31.8,  dividendYield:5.8, per:15, annualReturn:0.12, annualVolatility:0.18, description:'REIT de casinos y entretenimiento. Propietario de Caesars Palace y MGM Grand Las Vegas.', fundamentals:{eps:2.12, pb:1.8, market:'33B USD', beta:0.9}},
+
+  // ── ETFs ADICIONALES ─────────────────────────────────────
+  {ticker:'EMIM',  name:'iShares MSCI EM',   icon:'🌏', bg:'#001010', sector:'etf', group:'etf', exchange:'LSE',     price:29.8,  dividendYield:2.8, per:13, annualReturn:0.07, annualVolatility:0.20, description:'2.000 empresas emergentes: China, India, Brasil, Corea. Diversificación global real. TER 0.18%.', fundamentals:{eps:2.29, pb:1.7, market:'18B USD', beta:1.1}},
+  {ticker:'XDWD',  name:'Xtrackers MSCI World', icon:'🗺️', bg:'#000a1a', sector:'etf', group:'etf', exchange:'XETRA',price:104.2, dividendYield:1.6, per:19, annualReturn:0.10, annualVolatility:0.14, description:'1.600 empresas de países desarrollados. Alternativa a IWDA con TER 0.19%. Acumulación.', fundamentals:{eps:5.49, pb:2.9, market:'12B USD', beta:1.0}},
+
+  // ── TECNOLOGÍA ADICIONAL ─────────────────────────────────
+  {ticker:'META',  name:'Meta Platforms',    icon:'📘', bg:'#00001a', sector:'tech', group:'usa', exchange:'NASDAQ', price:487.0, dividendYield:0.4, per:26, annualReturn:0.35, annualVolatility:0.38, description:'Facebook, Instagram, WhatsApp y Quest VR. 3.200M usuarios diarios activos.', fundamentals:{eps:18.73, pb:8.5, market:'1.2T USD', beta:1.3}},
+  {ticker:'AMZN',  name:'Amazon',            icon:'📦', bg:'#1a1000', sector:'tech', group:'usa', exchange:'NASDAQ', price:185.0, dividendYield:0,   per:44, annualReturn:0.25, annualVolatility:0.32, description:'E-commerce + AWS (cloud líder mundial) + Prime + Ads. El negocio de cloud crece al 20% anual.', fundamentals:{eps:4.21, pb:8.2, market:'1.9T USD', beta:1.2}},
+
+  // ── IBEX ADICIONAL ───────────────────────────────────────
+  {ticker:'REP',   name:'Repsol',            icon:'⛽', bg:'#1a0a00', sector:'ibex', group:'ibex', exchange:'BME',    price:14.2,  dividendYield:6.1, per:7,  annualReturn:0.06, annualVolatility:0.22, description:'Multinacional energética española. Petróleo, gas y transición energética. Alto dividendo.', fundamentals:{eps:2.03, pb:0.8, market:'17B EUR', beta:0.9}},
+  {ticker:'AMS',   name:'Amadeus IT',        icon:'✈️', bg:'#001020', sector:'ibex', group:'ibex', exchange:'BME',    price:67.8,  dividendYield:1.8, per:25, annualReturn:0.11, annualVolatility:0.25, description:'Líder mundial en tecnología para el sector turístico. Reservas de vuelos, hoteles y sistemas GDS.', fundamentals:{eps:2.71, pb:5.0, market:'30B EUR', beta:1.1}},
+];
+
+const CAREERS = [
+  {
+    id: 'intern',
+    icon: '🎓',
+    title: 'Becario',
+    subtitle: 'El comienzo de todo',
+    salary: 900,
+    salaryRange: '€700 – €1.100/mes',
+    lifestyleExtra: 0,
+    xpRequired: 0,
+    description: 'Prácticas remuneradas. Poco dinero pero invaluable para aprender y construir red de contactos. El momento de meter el 100% del sueldo en un fondo de emergencia.',
+    pros: ['Sin responsabilidades', 'Aprendizaje brutal', 'Tiempo para estudiar'],
+    cons: ['Sueldo de supervivencia', 'Sin estabilidad', 'Depende de que te contraten'],
+    color: '#94a3b8',
+    tasks: ['Preparar informes', 'Analizar datos', 'Apoyar al equipo'],
+    lesson: 'Un becario que invierte €100/mes durante 40 años acaba con más dinero que un directivo que empieza a invertir a los 45.',
+  },
+  {
+    id: 'junior',
+    icon: '🌱',
+    title: 'Junior / Empleado',
+    subtitle: 'El punto de partida',
+    salary: 1800,
+    salaryRange: '€1.200 – €2.400/mes',
+    lifestyleExtra: 0,
+    xpRequired: 100,
+    description: 'Sueldo predecible y estable. Mucho tiempo libre para aprender y construir el colchón financiero. El momento de automatizar el ahorro.',
+    pros: ['Sueldo garantizado cada mes', 'Tiempo para invertir y aprender', 'Sin estrés operativo'],
+    cons: ['Crecimiento lento', 'Techo salarial bajo', 'Dependes de un solo empleador'],
+    color: 'var(--accent)',
+    tasks: ['Gestionar proyectos', 'Presentaciones', 'Análisis de mercado'],
+    lesson: 'Con un sueldo junior puedes construir riqueza si controlas los gastos. El 20% de ahorro es no negociable.',
+  },
+  {
+    id: 'specialist',
+    icon: '🔧',
+    title: 'Especialista',
+    subtitle: 'Experto en tu área',
+    salary: 2800,
+    salaryRange: '€2.200 – €3.800/mes',
+    lifestyleExtra: 300,
+    xpRequired: 350,
+    description: 'Tu expertise tiene valor de mercado. Puedes freelancear, cobrar por consultoría puntual y negociar subidas. El lifestyle empieza a subir ligeramente.',
+    pros: ['Mercado laboral fuerte', 'Freelance posible', 'Conocimiento diferencial'],
+    cons: ['Primer golpe del lifestyle creep', 'Zona de confort peligrosa', 'Sin gestión de equipos'],
+    color: '#38bdf8',
+    tasks: ['Consultoría técnica', 'Formación interna', 'Auditorías'],
+    lesson: 'El especialista que aprende a vender sus servicios multiplica su sueldo por 3 sin cambiar de empresa.',
+  },
+  {
+    id: 'senior',
+    icon: '💼',
+    title: 'Senior / Manager',
+    subtitle: 'Más dinero, más tentaciones',
+    salary: 3800,
+    salaryRange: '€3.000 – €6.000/mes',
+    lifestyleExtra: 900,
+    xpRequired: 500,
+    description: 'Sueldo alto, pero el estilo de vida escala automáticamente. La trampa del "me lo merezco": el coche nuevo, el piso más grande, las vacaciones premium.',
+    pros: ['Sueldo 2× mayor', 'Más opciones de inversión', 'Red de contactos premium'],
+    cons: ['Gastos de estilo de vida +€900/mes', 'Más estrés y menos tiempo', 'Lifestyle creep difícil de revertir'],
+    unlocks: ['saas', 'solar'],
+    color: 'var(--accent2)',
+    tasks: ['Liderar equipos', 'P&L management', 'Negociaciones clave'],
+    lesson: '⚠️ Lifestyle creep: cuando el sueldo sube un 30% pero los gastos suben un 50%, en realidad eres más pobre.',
+  },
+  {
+    id: 'director',
+    icon: '🏛️',
+    title: 'Director / VP',
+    subtitle: 'Alto ejecutivo',
+    salary: 7500,
+    salaryRange: '€5.500 – €12.000/mes',
+    lifestyleExtra: 2200,
+    xpRequired: 1000,
+    description: 'Bonus, stock options, coche de empresa. El sueldo es transformacional pero los impuestos y el estilo de vida se comen una parte enorme. Aquí empieza la planificación fiscal.',
+    pros: ['Bonus anuales 2x-5x salario', 'Stock options', 'Influencia real en la empresa'],
+    cons: ['IRPF marginal >45%', 'Lifestyle brutal: €2.200/mes extra', 'Alta exposición a despido'],
+    unlocks: ['saas', 'solar', 'rental'],
+    color: '#f0b429',
+    tasks: ['Estrategia corporativa', 'Fusiones y adquisiciones', 'Board presentations'],
+    lesson: 'A este nivel, la planificación fiscal (SL, EPSV, planes de pensiones) puede ahorrarte €20.000/año en impuestos.',
+  },
+  {
+    id: 'clevel',
+    icon: '👑',
+    title: 'C-Level / CEO',
+    subtitle: 'La cima del asalariado',
+    salary: 18000,
+    salaryRange: '€10.000 – €30.000/mes',
+    lifestyleExtra: 5000,
+    xpRequired: 2000,
+    description: 'Máxima responsabilidad, máximo sueldo. Pero el estilo de vida C-Level es monstruoso: guardaespaldas, club de golf, jets privados ocasionales. El 80% del patrimonio debe estar invertido.',
+    pros: ['Sueldo transformacional', 'Participación en beneficios', 'Acceso a inversiones privadas (PE, VC)'],
+    cons: ['€5.000/mes en lifestyle obligatorio', 'Escrutinio máximo', 'Media de permanencia: 4 años'],
+    unlocks: ['saas', 'solar', 'rental', 'lav', 'vend'],
+    color: '#f43f5e',
+    tasks: ['Visión estratégica', 'Capital allocation', 'Gestión de crisis'],
+    lesson: 'El CEO que no invierte el 70% de su sueldo acaba sin nada cuando le despiden. El efectivo de un C-Level se evapora en 2 años si no trabaja.',
+  },
+  {
+    id: 'entrepreneur',
+    icon: '🚀',
+    title: 'Emprendedor',
+    subtitle: 'Alto riesgo, alto potencial',
+    salary: 0,
+    salaryRange: '€0 – €8.000/mes (variable)',
+    lifestyleExtra: 400,
+    xpRequired: 1500,
+    description: 'Sin sueldo fijo. Algunos meses son brillantes, otros devastadores. El runway (meses de gastos ahorrados) es tu única red de seguridad. Desbloquea los negocios de mayor ROI.',
+    pros: ['Potencial ilimitado', 'Desbloquea todos los negocios', 'Control total de tu tiempo'],
+    cons: ['Sin sueldo garantizado', 'Alta incertidumbre mensual', 'Requiere fondo de emergencia sólido'],
+    unlocks: ['rental', 'lav', 'vend'],
+    color: '#a78bfa',
+    tasks: ['Pitch a inversores', 'Product-market fit', 'Team building'],
+    lesson: '💡 Los emprendedores exitosos mantienen 12 meses de gastos en efectivo antes de lanzarse.',
+  },
+  {
+    id: 'investor',
+    icon: '🏦',
+    title: 'Inversor / Rentista',
+    subtitle: 'El dinero trabaja para ti',
+    salary: 0,
+    salaryRange: 'Ingresos pasivos: €1.000 – €50.000+/mes',
+    lifestyleExtra: 1500,
+    xpRequired: 3000,
+    description: 'Has alcanzado la independencia financiera. Vives de dividendos, rentas y plusvalías. No necesitas trabajar pero sigues tomando decisiones de inversión de alto impacto.',
+    pros: ['Libertad total de tiempo', 'Ingresos escalables sin límite', 'Acceso a club deals y private equity'],
+    cons: ['Aislamiento social posible', 'Gestión fiscal compleja', 'Riesgo de inflación en activos'],
+    unlocks: ['rental', 'lav', 'vend', 'saas', 'solar'],
+    color: '#00e5a0',
+    tasks: ['Deal flow', 'Due diligence', 'Portfolio rebalancing'],
+    lesson: 'La regla del 4%: si tienes €1.000.000 invertidos, puedes retirar €40.000/año indefinidamente.',
+  },
+];
+
+
+/* ══════════════════════════════════════════════════════════════════
+   CAREER EVENTS — Aparecen cada ~60 días de juego
+   ─────────────────────────────────────────────────────────────────
+   Cada evento tiene:
+   · trigger: función que decide si puede aparecer según el estado
+   · choices: array de decisiones, cada una con efectos en S
+   · Solo aparece si el usuario tiene userName (ha hecho onboarding)
+   · Solo se muestra cada evento UNA vez (guardado en S.seenCareerEvents)
+══════════════════════════════════════════════════════════════════ */
+const CAREER_EVENTS = [
+  {
+    id: 'negotiate_raise',
+    icon: '💼',
+    title: '¡Oportunidad de negociación!',
+    desc: 'Tu empresa está contenta con tu trabajo. Es el momento de pedir un aumento. ¿Cómo lo planteas?',
+    trigger: s => (s.career || 'junior') !== 'entrepreneur' && s.completedMods.length >= 3,
+    choices: [
+      {
+        label: '📊 Con datos y métricas',
+        desc: 'Preparas una presentación con tus logros medibles y benchmarks del sector.',
+        effect: s => { s.lifeSalary = Math.round((s.lifeSalary || 1800) * 1.18); s.xp += 150; },
+        result: '🎉 +18% de sueldo. Los datos convencen. +150 XP',
+        type: 'positive',
+      },
+      {
+        label: '🤝 Pidiendo directamente',
+        desc: 'Vas al despacho de tu jefe y pides un aumento sin preparación previa.',
+        effect: s => { s.lifeSalary = Math.round((s.lifeSalary || 1800) * 1.07); s.xp += 50; },
+        result: '👍 +7% de sueldo. Funciona, pero podrías haber conseguido más. +50 XP',
+        type: 'neutral',
+      },
+      {
+        label: '😰 No hago nada',
+        desc: 'La inflación erosiona tu sueldo real sin decir nada.',
+        effect: s => { s.lifeSalary = Math.round((s.lifeSalary || 1800) * 0.97); },
+        result: '📉 Tu sueldo real baja un 3% por la inflación. El silencio es caro.',
+        type: 'negative',
+      },
+    ],
+    lesson: '💡 Los profesionales que negocian activamente ganan un 18% más a lo largo de su carrera que los que esperan a que les suban solos.',
+  },
+  {
+    id: 'side_project',
+    icon: '🚀',
+    title: 'Una idea de proyecto paralelo',
+    desc: 'Se te ocurre una idea de negocio pequeño que podrías lanzar en tus horas libres. ¿Qué haces?',
+    trigger: s => s.completedMods.length >= 5,
+    choices: [
+      {
+        label: '⚡ Lo lanzas ahora, mínimo viable',
+        desc: 'Dedicas 10h/semana a lanzar una versión simple lo antes posible.',
+        effect: s => {
+          s.cash    = (s.cash    || 0) + 800;
+          s.xp     += 200;
+          s.streak  = Math.max(s.streak, 5);
+        },
+        result: '🎉 +€800 primer mes, +200 XP. Primer ingreso como emprendedor.',
+        type: 'positive',
+      },
+      {
+        label: '📚 Estudias más antes de lanzar',
+        desc: 'Completas 3 módulos más de FinLearn antes de empezar.',
+        effect: s => { s.xp += 300; },
+        result: '📚 +300 XP. Más preparado, pero el tiempo también cuesta.',
+        type: 'neutral',
+      },
+      {
+        label: '🛋️ Esperas al momento perfecto',
+        desc: 'El momento perfecto nunca llega.',
+        effect: s => {},
+        result: '⏰ Sin cambios. El peor enemigo del emprendimiento es la espera perfecta.',
+        type: 'negative',
+      },
+    ],
+    lesson: '💡 El 90% de los proyectos fracasan por no empezar, no por empezar mal. Un MVP en 2 semanas enseña más que 6 meses de planificación.',
+  },
+  {
+    id: 'job_offer',
+    icon: '📨',
+    title: 'Oferta de otra empresa',
+    desc: 'Un headhunter te ofrece un puesto con +30% de sueldo pero más horas y más estrés. ¿Qué decides?',
+    trigger: s => (s.lifeSalary || 1800) >= 1800 && s.gameDay >= 60,
+    choices: [
+      {
+        label: '✅ Acepto la oferta',
+        desc: '+30% de sueldo, pero lifestyle creep y menos tiempo libre.',
+        effect: s => {
+          s.lifeSalary = Math.round((s.lifeSalary || 1800) * 1.30);
+          s.xp += 100;
+        },
+        result: '💰 +30% sueldo. Ojo con el lifestyle creep: más dinero ≠ más riqueza si gastas todo.',
+        type: 'positive',
+      },
+      {
+        label: '🤝 Uso la oferta para negociar',
+        desc: 'Se lo cuentas a tu empresa actual para conseguir una contraoferta.',
+        effect: s => {
+          s.lifeSalary = Math.round((s.lifeSalary || 1800) * 1.15);
+          s.xp += 150;
+        },
+        result: '🎯 Tu empresa iguala con +15% y mantienes tu equipo. +150 XP por la jugada.',
+        type: 'positive',
+      },
+      {
+        label: '❌ Rechazo sin negociar',
+        desc: 'Quedas igual, pero perdiste una oportunidad de palanca.',
+        effect: s => {},
+        result: '😐 Sin cambios. Las ofertas externas son tu mayor herramienta de negociación.',
+        type: 'neutral',
+      },
+    ],
+    lesson: '💡 Cambiar de empresa cada 2-3 años incrementa el sueldo un 15-20% de media. La lealtad ciega es el lujo que no te puedes permitir.',
+  },
+  {
+    id: 'training_budget',
+    icon: '🎓',
+    title: 'Presupuesto de formación',
+    desc: 'Tu empresa tiene €1.500 de presupuesto de formación para ti. ¿En qué lo usas?',
+    trigger: s => (s.career || 'junior') !== 'entrepreneur' && s.gameDay >= 90,
+    choices: [
+      {
+        label: '📊 Curso de finanzas personales',
+        desc: 'Directamente aplicable a tu vida. Conocimiento que no caduca.',
+        effect: s => { s.xp += 400; s.lifeSalary = Math.round((s.lifeSalary || 1800) * 1.05); },
+        result: '🧠 +400 XP, +5% sueldo. La educación financiera paga dividendos de por vida.',
+        type: 'positive',
+      },
+      {
+        label: '💻 Certificación técnica',
+        desc: 'Una certificación en demanda que aumenta tu valor en el mercado.',
+        effect: s => { s.xp += 250; s.lifeSalary = Math.round((s.lifeSalary || 1800) * 1.10); },
+        result: '🏆 +250 XP, +10% sueldo. Habilidades técnicas = mayor sueldo directo.',
+        type: 'positive',
+      },
+      {
+        label: '🎉 No lo uso (caduca)',
+        desc: 'Procrastinas y el presupuesto caduca al final del año.',
+        effect: s => {},
+        result: '😬 Presupuesto perdido. €1.500 de valor evaporado por no actuar.',
+        type: 'negative',
+      },
+    ],
+    lesson: '💡 Las empresas con mayor ROI de formación tienen un 218% más de ingresos por empleado. Tu formación es el activo que más controlas.',
+  },
+  {
+    id: 'burnout_risk',
+    icon: '🔥',
+    title: 'Señales de agotamiento',
+    desc: 'Llevas meses a máxima intensidad. Tu cuerpo y mente avisan. ¿Qué haces?',
+    trigger: s => s.gameDay >= 120 && (s.career === 'senior' || s.career === 'entrepreneur'),
+    choices: [
+      {
+        label: '🧘 Tomo vacaciones y desconecto',
+        desc: 'Dos semanas fuera. Productividad a largo plazo vale más que el corto plazo.',
+        effect: s => { s.xp += 100; s.streak = Math.max(s.streak, 10); },
+        result: '✨ +100 XP. Vuelves con energía renovada. La sostenibilidad es la clave.',
+        type: 'positive',
+      },
+      {
+        label: '⚡ Aguanto, el trabajo es prioridad',
+        desc: 'Pronto todo irá mejor… o no.',
+        effect: s => { s.lifeSalary = Math.round((s.lifeSalary || 1800) * 0.95); },
+        result: '📉 -5% productividad efectiva. El burnout cuesta más de lo que ahorra.',
+        type: 'negative',
+      },
+      {
+        label: '🔄 Cambio de ritmo y delego',
+        desc: 'Redistribuyes tareas y pones límites reales.',
+        effect: s => { s.xp += 200; },
+        result: '🌿 +200 XP. Delegar es una habilidad directiva, no una debilidad.',
+        type: 'positive',
+      },
+    ],
+    lesson: '💡 El burnout le cuesta a la economía española más de €6.000M/año. La prevención vale 10x el tratamiento.',
+  },
+];
+
+const BLACK_SWAN_EVENTS = [
+  {
+    name:      'Crash de las Punto-com',
+    year:      '2000–2002',
+    drop:      -49,
+    icon:      '💻',
+    context:   'El Nasdaq perdió un 78%. Las empresas .com sin beneficios cotizaban a valoraciones de ciencia ficción. La recuperación tardó 7 años.',
+    lesson:    'Los inversores que mantuvieron carteras diversificadas (S&P 500) recuperaron todo en 5 años y siguieron creciendo.',
+  },
+  {
+    name:      'Crisis Financiera Global',
+    year:      '2008–2009',
+    drop:      -56,
+    icon:      '🏦',
+    context:   'Lehman Brothers quebró. El S&P 500 cayó un 56% desde máximos. La mayor crisis desde 1929.',
+    lesson:    'Quien compró S&P 500 en el mínimo de 2009 multiplicó su dinero por 7 en los siguientes 12 años.',
+  },
+  {
+    name:      'Crisis COVID-19',
+    year:      '2020',
+    drop:      -34,
+    icon:      '🦠',
+    context:   'El mercado cayó un 34% en solo 33 días. La caída más rápida de la historia.',
+    lesson:    'Fue también la recuperación más rápida: en 6 meses el S&P 500 recuperó máximos históricos.',
+  },
+  {
+    name:      'Corrección de Inflación',
+    year:      '2022',
+    drop:      -25,
+    icon:      '📈',
+    context:   'La Fed subió tipos al ritmo más rápido en 40 años para combatir la inflación del 9%. Bonos y acciones cayeron juntos.',
+    lesson:    'Las acciones de empresas con flujo de caja real (Value) aguantaron mucho mejor que las tecnológicas especulativas.',
+  },
+  {
+    name:      'Flash Crash Cripto',
+    year:      '2022',
+    drop:      -65,
+    icon:      '₿',
+    context:   'Bitcoin perdió el 65% en un año. Terra/Luna colapsó a cero. FTX quebró con 8B$ de clientes atrapados.',
+    lesson:    'La volatilidad del 80% histórico de Bitcoin es real. Diversificación y no invertir más del 5% en crypto son reglas de oro.',
+  },
+];
+
+const BUSINESSES = [
+  // ── NIVEL BÁSICO — disponibles para todos ──────────────
+  {id:'cafe', icon:'☕', name:'Cafetería local', type:'Hostelería',
+   tier:'basic', careerRequired:null, xpRequired:0,
+   desc:'Pequeño café en zona céntrica. Flujo constante de clientes. El negocio físico más predecible.',
+   cost:8000, monthlyRevenue:1200, monthlyExpenses:600, riskLevel:'low', roi:9, xpBonus:100,
+   learnNote:'El negocio local clásico: bajo riesgo, ingresos predecibles, escalable con franquicia.',
+   upgrades:[
+     {id:'u1',name:'Máquina espresso premium',  desc:'+20% ticket medio',cost:2000, revBonus:240},
+     {id:'u2',name:'App de delivery + fidelidad',desc:'+35% pedidos',    cost:3500, revBonus:420},
+     {id:'u3',name:'Franquicia (2ª unidad)',     desc:'+80% ingresos',   cost:15000,revBonus:960},
+   ]},
+
+  {id:'ecomm', icon:'🛒', name:'Tienda online', type:'E-commerce',
+   tier:'basic', careerRequired:null, xpRequired:200,
+   desc:'Dropshipping + marca propia. Sin inventario físico. Escalable a nivel global.',
+   cost:3000, monthlyRevenue:800, monthlyExpenses:200, riskLevel:'med', roi:20, xpBonus:80,
+   learnNote:'E-commerce: margen bajo pero coste de arranque mínimo. El marketing lo es todo.',
+   upgrades:[
+     {id:'u1',name:'Meta Ads + retargeting',     desc:'+50% conversión', cost:1500, revBonus:400},
+     {id:'u2',name:'White label (marca propia)', desc:'+70% margen',     cost:5000, revBonus:560},
+     {id:'u3',name:'Canal Amazon + FBA',         desc:'+120% volumen',   cost:8000, revBonus:960},
+   ]},
+
+  {id:'yt', icon:'📺', name:'Canal de YouTube', type:'Contenido digital',
+   tier:'basic', careerRequired:null, xpRequired:800,  // requiere haber aprendido suficiente
+   desc:'Canal de finanzas personales. Empieza sin dinero pero necesitas credibilidad (XP). Ingresos variables.',
+   cost:0,  // ¡gratis para empezar!
+   monthlyRevenue:600, monthlyExpenses:60, riskLevel:'high', roi:0, xpBonus:60,
+   isVolatile:true,   // los ingresos varían ±50% cada mes (viralidad)
+   learnNote:'El creador de contenido es el negocio de menor coste inicial. El XP representa tu credibilidad y conocimiento.',
+   upgrades:[
+     {id:'u1',name:'Equipo grabación 4K + micro',desc:'+30% retención',  cost:2000, revBonus:180},
+     {id:'u2',name:'Curso premium propio',       desc:'+200% ingresos',  cost:3000, revBonus:1200},
+     {id:'u3',name:'Red de creadores + agencia', desc:'+400% escala',    cost:15000,revBonus:2400},
+   ]},
+
+  // ── NIVEL SENIOR — requiere carrera 'senior' ─────────────
+  {id:'saas', icon:'💻', name:'Producto SaaS', type:'Software B2B',
+   tier:'senior', careerRequired:'senior', xpRequired:500,
+   desc:'Herramienta B2B con suscripción mensual (MRR). Alto riesgo de fracaso los primeros meses.',
+   cost:12000, monthlyRevenue:2500, monthlyExpenses:400, riskLevel:'high', roi:25, xpBonus:150,
+   failChance:0.12,   // 12% de probabilidad de perder el mes de ingresos (cliente churn severo)
+   learnNote:'⚠️ El 90% de los SaaS fracasan antes de 2 años. El 10% superviviente genera retornos excepcionales.',
+   upgrades:[
+     {id:'u1',name:'API pública + marketplace',  desc:'+40% retención',  cost:4000, revBonus:1000},
+     {id:'u2',name:'Plan Enterprise (contratos)',desc:'+60% precio',     cost:8000, revBonus:1500},
+     {id:'u3',name:'Expansión EE.UU. + UK',      desc:'+150% MRR',       cost:20000,revBonus:3750},
+   ]},
+
+  {id:'solar', icon:'☀️', name:'Parque solar (tejados)', type:'Energía renovable',
+   tier:'senior', careerRequired:'senior', xpRequired:400,
+   desc:'Instalación fotovoltaica en edificios residenciales. Venta de excedentes a la red. Retorno predecible.',
+   cost:6000, monthlyRevenue:180, monthlyExpenses:10, riskLevel:'low', roi:3.4, xpBonus:70,
+   learnNote:'La energía solar tiene el payback más predecible de todos los activos físicos. Protegida contra inflación energética.',
+   upgrades:[
+     {id:'u1',name:'Baterías de almacenamiento',desc:'+40% autonomía',   cost:4000, revBonus:72},
+     {id:'u2',name:'Segunda instalación',       desc:'+100% ingresos',   cost:6000, revBonus:180},
+   ]},
+
+  // ── NIVEL EMPRENDEDOR — requiere carrera 'entrepreneur' ──
+  {id:'rental', icon:'🏠', name:'Inmueble en alquiler', type:'Inmobiliario',
+   tier:'entrepreneur', careerRequired:'entrepreneur', xpRequired:1000,
+   desc:'Apartamento en ciudad universitaria. Inquilinos estables 10 meses al año. Ingreso pasivo predecible.',
+   cost:45000, monthlyRevenue:900, monthlyExpenses:150, riskLevel:'low', roi:2.0, xpBonus:200,
+   learnNote:'El inmobiliario tiene el ROI más bajo en papel pero el apalancamiento bancario puede multiplicarlo ×5.',
+   upgrades:[
+     {id:'u1',name:'Reforma integral cocina-baño',desc:'+25% alquiler',  cost:8000, revBonus:225},
+     {id:'u2',name:'Plataforma Airbnb turístico', desc:'+80% ingresos',  cost:3000, revBonus:720},
+     {id:'u3',name:'Segundo piso (portfolio)',    desc:'+100% ingresos', cost:40000,revBonus:900},
+   ]},
+
+  {id:'lav', icon:'👔', name:'Lavandería automática', type:'Servicios',
+   tier:'entrepreneur', careerRequired:'entrepreneur', xpRequired:1200,
+   desc:'Local céntrico con máquinas de autoservicio 24/7. Cash flow inmediato. Sin empleados.',
+   cost:25000, monthlyRevenue:1800, monthlyExpenses:700, riskLevel:'low', roi:5.2, xpBonus:120,
+   learnNote:'Negocio de cash flow puro: sin inventario, sin empleados, sin estacionalidad. Favorito de los que buscan pasividad.',
+   upgrades:[
+     {id:'u1',name:'Zona plancha + doblado',    desc:'+25% ticket',      cost:5000, revBonus:450},
+     {id:'u2',name:'App de reservas + fidelidad',desc:'+20% ocupación',  cost:3000, revBonus:360},
+   ]},
+
+  {id:'vend', icon:'🎰', name:'Red de vending', type:'Distribución',
+   tier:'entrepreneur', careerRequired:'entrepreneur', xpRequired:1300,
+   desc:'Máquinas expendedoras en oficinas, gimnasios y colegios. Escalable por unidades.',
+   cost:5000, monthlyRevenue:700, monthlyExpenses:200, riskLevel:'med', roi:12, xpBonus:80,
+   learnNote:'El vending es un negocio de volumen: una máquina da poco, pero 20 máquinas dan mucho con el mismo esfuerzo.',
+   upgrades:[
+     {id:'u1',name:'Máquinas IoT conectadas',   desc:'+30% eficiencia',  cost:3000, revBonus:210},
+     {id:'u2',name:'Expansión a 10 máquinas',   desc:'+150% red',        cost:10000,revBonus:1050},
+   ]},
+  // ── NIVEL BÁSICO — nuevos ────────────────────────────────────
+  {id:'newsletter', icon:'📧', name:'Newsletter de pago', type:'Contenido digital',
+   tier:'basic', careerRequired:null, xpRequired:300,
+   desc:'Newsletter semanal sobre finanzas e inversión. Beehiiv o Substack. Ingresos recurrentes por suscripción mensual.',
+   cost:0, monthlyRevenue:400, monthlyExpenses:30, riskLevel:'med', roi:0, xpBonus:70,
+   isVolatile:true,
+   learnNote:'Un newsletter de 1.000 suscriptores a €5/mes = €5.000 MRR. El medio más predecible para creadores.',
+   upgrades:[
+     {id:'u1',name:'Patrocinios corporativos',  desc:'+150% ingresos',   cost:1000, revBonus:600},
+     {id:'u2',name:'Curso premium adjunto',      desc:'+200% ingresos',  cost:2500, revBonus:800},
+     {id:'u3',name:'Comunidad privada Discord',  desc:'+80% retención',  cost:1500, revBonus:320},
+   ]},
+
+  {id:'autoescuela', icon:'🚗', name:'Academia de conducción', type:'Educación',
+   tier:'basic', careerRequired:null, xpRequired:150,
+   desc:'Autoescuela en ciudad media. Demanda constante. Alta barrera de entrada por licencias. Bajo riesgo de disrupción digital.',
+   cost:18000, monthlyRevenue:3200, monthlyExpenses:1800, riskLevel:'low', roi:8, xpBonus:90,
+   learnNote:'Negocio regulado = protección frente a competencia. Las barreras de entrada son el foso de un negocio.',
+   upgrades:[
+     {id:'u1',name:'Simuladores de conducción',  desc:'+20% aprobados',  cost:8000, revBonus:640},
+     {id:'u2',name:'Segunda sede + flota',        desc:'+80% capacidad', cost:20000,revBonus:2560},
+   ]},
+
+  {id:'podcast', icon:'🎙️', name:'Podcast monetizado', type:'Contenido digital',
+   tier:'basic', careerRequired:null, xpRequired:600,
+   desc:'Podcast semanal sobre dinero y carrera. Patrocinadores desde 5.000 descargas/episodio. El formato de audio crece un 20% anual.',
+   cost:800, monthlyRevenue:350, monthlyExpenses:40, riskLevel:'high', roi:0, xpBonus:50,
+   isVolatile:true,
+   learnNote:'El podcast tiene el CAC (coste de adquisición de oyente) más bajo de todos los medios. La fidelidad es brutal.',
+   upgrades:[
+     {id:'u1',name:'Equipo Shure + estudio',     desc:'+40% calidad/retención',cost:1500,revBonus:140},
+     {id:'u2',name:'Red de patrocinadores',       desc:'+200% CPM',     cost:2000, revBonus:700},
+     {id:'u3',name:'Versión premium Patreon',     desc:'+120% ingresos',cost:500,  revBonus:420},
+   ]},
+
+  {id:'app_movil', icon:'📱', name:'App móvil (freemium)', type:'Software B2C',
+   tier:'basic', careerRequired:null, xpRequired:700,
+   desc:'App de productividad o salud con modelo freemium. Las apps top ganan el 95% de sus ingresos en el 5% de usuarios premium.',
+   cost:5000, monthlyRevenue:600, monthlyExpenses:100, riskLevel:'high', roi:10, xpBonus:100,
+   isVolatile:true,
+   failChance:0.08,
+   learnNote:'El modelo freemium funciona con volumen. Necesitas 100 usuarios gratis para conseguir 1 de pago. La retención lo es todo.',
+   upgrades:[
+     {id:'u1',name:'ASO + campaña TikTok',       desc:'+80% descargas',  cost:3000,revBonus:480},
+     {id:'u2',name:'Plan B2B para empresas',      desc:'+150% ARPU',     cost:6000,revBonus:900},
+     {id:'u3',name:'Expansión internacional',    desc:'+200% mercado',   cost:12000,revBonus:1200},
+   ]},
+
+  // ── NIVEL SENIOR — nuevos ─────────────────────────────────────
+  {id:'clinica', icon:'🏥', name:'Clínica dental privada', type:'Salud',
+   tier:'senior', careerRequired:'senior', xpRequired:600,
+   desc:'Clínica con 2 consultas. Ortodoncia + implantes = ticket alto. Clientes recurrentes de por vida. El sector salud es anticíclico.',
+   cost:60000, monthlyRevenue:8000, monthlyExpenses:3500, riskLevel:'low', roi:5.5, xpBonus:180,
+   learnNote:'Los servicios de salud son la categoría más resiliente en recesiones. La demanda es inelástica al precio.',
+   upgrades:[
+     {id:'u1',name:'Equipo radiografía digital', desc:'+25% diagnósticos', cost:15000,revBonus:2000},
+     {id:'u2',name:'3ª consulta + especialista', desc:'+60% capacidad',   cost:25000,revBonus:4800},
+     {id:'u3',name:'Franquicia modelo dental',   desc:'+200% escala',     cost:80000,revBonus:16000},
+   ]},
+
+  {id:'almacen', icon:'📦', name:'Almacén self-storage', type:'Inmobiliario',
+   tier:'senior', careerRequired:'senior', xpRequired:500,
+   desc:'30 trasteros en polígono. Contratos mensuales, alta retención. El self-storage tuvo retornos superiores al S&P500 en los últimos 20 años.',
+   cost:35000, monthlyRevenue:2800, monthlyExpenses:400, riskLevel:'low', roi:6.9, xpBonus:130,
+   learnNote:'El self-storage: sin inquilinos difíciles, sin mantenimiento de vivienda, sin estacionalidad. El negocio inmobiliario más olvidado.',
+   upgrades:[
+     {id:'u1',name:'Control acceso 24h + cámaras',desc:'+15% precio/m²',  cost:8000,revBonus:420},
+     {id:'u2',name:'Módulos climatizados',         desc:'+40% ticket',    cost:15000,revBonus:1120},
+     {id:'u3',name:'Segunda nave (50 trasteros)',  desc:'+100% ingresos', cost:30000,revBonus:2800},
+   ]},
+
+  {id:'agencia_ia', icon:'🤖', name:'Agencia de automatización IA', type:'Consultoría tech',
+   tier:'senior', careerRequired:'senior', xpRequired:800,
+   desc:'Implementas flujos de IA (n8n, Make, GPT APIs) para PYMEs. Proyectos de €2k-10k más mantenimiento mensual. El sector más caliente de 2024-2030.',
+   cost:2000, monthlyRevenue:3500, monthlyExpenses:300, riskLevel:'med', roi:65, xpBonus:160,
+   isVolatile:true,
+   learnNote:'La IA no elimina empleos, elimina empresas que no la usan. Las agencias de automatización tienen ROI infinito si te especializas.',
+   upgrades:[
+     {id:'u1',name:'Equipo de 2 devs freelance',  desc:'+120% capacidad', cost:5000,revBonus:4200},
+     {id:'u2',name:'Producto SaaS propio con IA',  desc:'+200% MRR',     cost:10000,revBonus:7000},
+   ]},
+
+  // ── NIVEL EMPRENDEDOR — nuevos ─────────────────────────────────
+  {id:'hotel', icon:'🏨', name:'Apartahotel boutique', type:'Hostelería premium',
+   tier:'entrepreneur', careerRequired:'entrepreneur', xpRequired:1500,
+   desc:'6 habitaciones en ciudad turística. RevPAR de €85. Booking + Airbnb. El sector turístico español bate récords consecutivos.',
+   cost:90000, monthlyRevenue:7000, monthlyExpenses:2500, riskLevel:'med', roi:5.5, xpBonus:250,
+   learnNote:'El revenue management hotelero: precio dinámico que maximiza el RevPAR. Herramienta usada por Marriott, aplicable en 6 habitaciones.',
+   upgrades:[
+     {id:'u1',name:'Canal directo (web propia)',   desc:'+20% margen',    cost:4000,revBonus:1400},
+     {id:'u2',name:'Experiencias premium (tours)', desc:'+30% ticket',    cost:6000,revBonus:2100},
+     {id:'u3',name:'Segunda propiedad',            desc:'+100% ingresos', cost:85000,revBonus:7000},
+   ]},
+
+  {id:'holding', icon:'🏛️', name:'Holding de inversión familiar', type:'Estructura fiscal',
+   tier:'entrepreneur', careerRequired:'entrepreneur', xpRequired:2000,
+   desc:'Sociedad holding que agrupa tus negocios e inversiones. Tributación al 15% vs 47% IRPF personal. El vehículo que usan todos los grandes patrimonios.',
+   cost:3000, monthlyRevenue:0, monthlyExpenses:200, riskLevel:'low', roi:0, xpBonus:300,
+   learnNote:'Un holding no genera ingresos directos, pero reduce tu factura fiscal un 30-40% sobre los dividendos de tus otros negocios. El activo más rentable a largo plazo.',
+   upgrades:[
+     {id:'u1',name:'Asesor fiscal especializado',  desc:'−20% tributación', cost:5000,revBonus:500},
+     {id:'u2',name:'Expansión internacional (BV)', desc:'−35% tributación', cost:15000,revBonus:1500},
+   ]},
+
+  {id:'fondo_inversion', icon:'📊', name:'Fondo de inversión privado', type:'Finanzas',
+   tier:'entrepreneur', careerRequired:'entrepreneur', xpRequired:2500,
+   desc:'Gestión de capital de 5-10 inversores privados. Comisión de gestión 2% + 20% de rentabilidad (carried interest). El modelo Berkshire a escala mini.',
+   cost:10000, monthlyRevenue:1200, monthlyExpenses:300, riskLevel:'med', roi:11, xpBonus:400,
+   learnNote:'El carried interest es el secreto de la riqueza de los gestores de fondos: ganas el 20% de los beneficios sin arriesgar ese capital.',
+   upgrades:[
+     {id:'u1',name:'Registro CNMV (EAF)',          desc:'+50% credibilidad/AUM',cost:8000,revBonus:600},
+     {id:'u2',name:'Fondo II (10M€ AUM)',           desc:'+200% comisiones',cost:20000,revBonus:2400},
+   ]},
+
+];
+
+const LIFE_EVENTS = [
+  {id:'promotion',icon:'🎯',title:'Negociar un aumento de sueldo',desc:'Preparas una presentación con tus logros y pides un 20% de aumento.',type:'positive',
+    condition:e=>e.lifeAge>=26,
+    effects:{salaryMultiplier:1.2,happiness:10,xp:120,cost:0},
+    narrative:'Conseguiste el aumento. Tu sueldo sube a €{salary}/mes. El mercado laboral premia a quien se valora.'},
+  {id:'invest_start',icon:'📈',title:'Abrir cuenta de inversión',desc:'Destinas 100€/mes a un ETF global indexado. El primer paso es el más importante.',type:'positive',
+    condition:e=>true,
+    effects:{monthlyContrib:100,xp:150,happiness:5,cost:0},
+    narrative:'Empezaste a invertir 100€/mes. En 20 años, a un 7% anual, tendrás €52.000.'},
+  {id:'emergency_fund',icon:'🛡️',title:'Crear fondo de emergencia',desc:'Apartas 3 meses de gastos en una cuenta remunerada. La base de todo plan financiero.',type:'positive',
+    condition:e=>true,
+    effects:{balanceBonus:3000,xp:100,happiness:15,cost:1500},
+    narrative:'Tienes 3 meses de colchón. Duermes mejor. El estrés financiero desaparece un 40%.'},
+  {id:'side_hustle',icon:'💻',title:'Crear un proyecto secundario',desc:'Empiezas a freelancear en tu área de expertise. Potencial de €500-2000/mes extra.',type:'positive',
+    condition:e=>e.lifeAge>=25,
+    effects:{salaryBonus:600,xp:90,happiness:8,cost:500},
+    narrative:'Tu proyecto lateral genera €600/mes extra. La diversificación de ingresos cambia todo.'},
+  {id:'move_city',icon:'🏙️',title:'Mudarte a una ciudad con más oportunidades',desc:'Madrid o Barcelona ofrecen salarios un 30% más altos. El coste de vida sube, pero el neto también.',type:'neutral',
+    condition:e=>e.lifeAge>=23,
+    effects:{salaryMultiplier:1.3,expenseIncrease:400,xp:80,happiness:-5,cost:2000},
+    narrative:'La mudanza fue dura pero el sueldo compensó. Nuevas oportunidades, nuevas personas.'},
+  {id:'buy_car',icon:'🚗',title:'Comprar un coche nuevo',desc:'12.000€ de depreciación en 3 años. Alternativa: coche de segunda mano por 8.000€.',type:'negative',
+    condition:e=>true,
+    effects:{cost:12000,expenseIncrease:300,happiness:10,xp:30},
+    narrative:'El coche te da libertad pero consume una parte importante de tu patrimonio.'},
+  {id:'buy_house',icon:'🏠',title:'Comprar tu primera vivienda',desc:'Con hipoteca al 3.5% a 25 años. El sueño español con matemáticas reales.',type:'neutral',
+    condition:e=>(S.cash||0)>=30000,
+    effects:{cost:30000,expenseChange:-200,happiness:20,xp:125,balanceGrowth:0.02},
+    narrative:'Firmaste la hipoteca. Cuota de €1.000/mes. El inmueble puede valer más en 20 años.'},
+  {id:'kids',icon:'👶',title:'Tener un hijo',desc:'El mayor cambio de vida. +€800/mes de gastos. Inconmensurablemente más que eso.',type:'neutral',
+    condition:e=>e.lifeAge>=28,
+    effects:{expenseIncrease:800,happiness:25,xp:100,cost:0},
+    narrative:'La perspectiva cambia. Inviertes más pensando en el futuro. La constancia se vuelve más fácil.'},
+  {id:'divorce',icon:'💔',title:'Separación o divorcio',desc:'Impacto financiero real: reparto de patrimonio, gastos judiciales, reestructuración.',type:'negative',
+    condition:e=>e.lifeAge>=30,
+    effects:{patrimonyCut:0.4,expenseIncrease:200,happiness:-30,xp:50,cost:5000},
+    narrative:'Una de las peores decisiones financieras involuntarias. Resiliencia y reconstrucción.'},
+  {id:'health_insurance',icon:'🏥',title:'Contratar seguro de salud privado',desc:'€120/mes pero evitas esperas en pública y proteges tu mayor activo: tu salud.',type:'positive',
+    condition:e=>true,
+    effects:{expenseIncrease:120,happiness:10,xp:60,cost:0},
+    narrative:'Protegiste tu salud. Los problemas médicos son el #1 de quiebras personales en EE.UU.'},
+  {id:'pension_plan',icon:'💼',title:'Abrir plan de pensiones',desc:'1.500€/año deducibles en IRPF. Ahorro fiscal inmediato mientras construyes el futuro.',type:'positive',
+    condition:e=>e.lifeAge>=28,
+    effects:{salaryBonus:300,xp:130,happiness:8,cost:1500},
+    narrative:'La deducción fiscal de 1.500€ te ahorra entre 285€ y 405€ en IRPF este año.'},
+  {id:'retire_early',icon:'🏝️',title:'Retiro anticipado a los 50',desc:'Tienes suficiente patrimonio para vivir de rentas. La libertad financiera real.',type:'positive',
+    condition:e=>e.lifeAge>=45&&(S.patrimony||0)>=500000,
+    effects:{xp:1000,happiness:50,cost:0,salaryMultiplier:0},
+    narrative:'Lo lograste. El 4% anual de tu patrimonio cubre todos tus gastos. Eres financieramente libre.'},
+  {id:'masters_degree',icon:'🎓',title:'Hacer un máster',desc:'Un MBA o máster técnico puede aumentar tu salario un 30-40%. Coste: 15.000€.',type:'positive',
+    condition:e=>e.lifeAge>=24&&e.lifeAge<=40,
+    effects:{salaryMultiplier:1.35,xp:200,happiness:10,cost:15000},
+    narrative:'Terminaste el máster. Tu empleabilidad sube y consigues un puesto mejor pagado.'},
+  {id:'startup_exit',icon:'🚀',title:'Exit de startup',desc:'Vendiste tu participación en una startup. Recibes 80.000€ neto tras impuestos.',type:'positive',
+    condition:e=>e.lifeAge>=30&&(S.career==='entrepreneur'),
+    effects:{xp:400,happiness:30,cost:0,balanceBonus:80000},
+    narrative:'Tu salida de la startup te da 80.000€ netos. Úsalo para invertir, no para gastar.'},
+  {id:'inheritance',icon:'💼',title:'Recibir herencia familiar',desc:'Un familiar te deja 30.000€. ¿Lo inviertes o lo gastas?',type:'neutral',
+    condition:e=>e.lifeAge>=30,
+    effects:{balanceBonus:30000,xp:100,happiness:0,cost:0},
+    narrative:'Tienes 30.000€ extra. La decisión sobre qué hacer con ellos definirá tu futuro financiero.'},
+  {id:'lottery_small',icon:'🎰',title:'Premio pequeño de lotería',desc:'Te toca 5.000€ en un sorteo de empresa. Suerte que no cambia vidas, pero suma.',type:'positive',
+    condition:e=>e.lifeAge>=22,
+    effects:{balanceBonus:5000,xp:50,happiness:20,cost:0},
+    narrative:'5.000€ inesperados. Los inversores los meten a ETFs. Los demás, de viaje.'},
+  {id:'job_loss',icon:'💔',title:'Perder el empleo',desc:'Despido inesperado. Tienes subsidio por 6 meses pero tu salario baja un 40% hasta encontrar otro.',type:'negative',
+    condition:e=>e.lifeAge>=25&&e.lifeAge<=55,
+    effects:{salaryMultiplier:0.6,xp:80,happiness:-25,cost:0},
+    narrative:'Despido. El fondo de emergencia que tenías (o no tenías) determina cómo sobrellevas estos meses.'},
+  {id:'medical_emergency',icon:'🏥',title:'Emergencia médica',desc:'Gastos médicos imprevistos de 4.000€. La sanidad privada tiene coste.',type:'negative',
+    condition:e=>e.lifeAge>=35,
+    effects:{cost:4000,xp:30,happiness:-15,expenseIncrease:50},
+    narrative:'La emergencia médica muestra por qué el fondo de emergencia no es opcional.'},
+  {id:'sell_house',icon:'🏡',title:'Vender la vivienda',desc:'Tu casa se ha revalorizado un 35%. Vendes y liberas 60.000€ de plusvalía.',type:'positive',
+    condition:e=>e.lifeAge>=40&&(S.mortgages||[]).length>0,
+    effects:{balanceBonus:60000,xp:150,happiness:10,cost:0},
+    narrative:'Vendiste con plusvalía. Ahora decides: reinvertir, comprar algo más barato o alquilar.'},
+  {id:'international_move',icon:'✈️',title:'Mudanza internacional',desc:'Aceptas un puesto fuera. Salario 50% más alto pero coste de vida también sube.',type:'positive',
+    condition:e=>e.lifeAge>=27&&e.lifeAge<=50,
+    effects:{salaryMultiplier:1.5,expenseIncrease:400,xp:250,happiness:5,cost:3000},
+    narrative:'Nueva ciudad, nueva vida. Tu carrera acelera pero también tus gastos.'},
+  {id:'career_change',icon:'🔄',title:'Cambio de carrera',desc:'Cambiar de sector te motiva. Salario inicial 30% menor pero crecimiento potencial.',type:'neutral',
+    condition:e=>e.lifeAge>=28,
+    effects:{salaryMultiplier:0.7,xp:200,happiness:15,cost:0},
+    narrative:'Cambio de sector. Los primeros meses son duros pero la motivación renace.'},
+];
+
+
+// ═══ DATA — Rankings, logros, config ═══
+/* ══════════════════════════════════════════════════════════════════
+   data-config.js — Configuración y Meta-datos FinLearn
+   ─ RANKINGS          → tabla de líderes (estáticos, el jugador se inserta dinámicamente)
+   ─ CHALLENGE         → datos del reto semanal
+   ─ ACHIEVEMENTS      → logros desbloqueables
+   ─ TICKERS           → mensajes del ticker de actividad social
+   ─ SOCIAL_PROOF      → notificaciones de prueba social
+   ─ FINANCIAL_FACTS   → datos financieros para la sección educativa
+   ─ DAILY_QUESTIONS   → preguntas diarias de micro-lección
+   ─ REWARDS           → cofres y badges de recompensa
+   ─ IDENTITY_STAGES   → etapas de identidad del inversor
+   ─ EXAM_QUESTION_POOL → pool de preguntas para el examen final
+   ─ Sin dependencias externas.
+══════════════════════════════════════════════════════════════════ */
+
+const RANKINGS = [
+  {n:'María S.',   em:'🦊', xp:8420, str:28, cl:'#ff6b35', pos:1 },
+  {n:'Carlos M.',  em:'🐻', xp:7890, str:21, cl:'#0091ff', pos:2 },
+  {n:'Ana P.',     em:'🦋', xp:7340, str:15, cl:'#a855f7', pos:3 },
+  {n:'David R.',   em:'🦅', xp:6980, str:19, cl:'#00e5a0', pos:4 },
+  {n:'Laura G.',   em:'🦁', xp:6450, str:12, cl:'#fbbf24', pos:5 },
+  {n:'Pablo T.',   em:'🐯', xp:6100, str:9,  cl:'#ef4444', pos:6 },
+  {n:'Elena V.',   em:'🦚', xp:5800, str:14, cl:'#10b981', pos:7 },
+  {n:'Javier H.',  em:'🐺', xp:5650, str:8,  cl:'#6366f1', pos:8 },
+  {n:'Lucía B.',   em:'🦜', xp:5420, str:11, cl:'#ec4899', pos:9 },
+  {n:'Miguel A.',  em:'🦈', xp:5200, str:7,  cl:'#14b8a6', pos:10},
+  {n:'Sofía N.',   em:'🦊', xp:5050, str:6,  cl:'#f59e0b', pos:11},
+  {n:'Roberto C.', em:'🐸', xp:4950, str:5,  cl:'#84cc16', pos:12},
+  {n:'Isabel M.',  em:'🦋', xp:4870, str:8,  cl:'#a855f7', pos:13},
+  {n:'Fernando R.',em:'🦁', xp:4500, str:4,  cl:'#fbbf24', pos:14},
+  {n:'Natalia P.', em:'🐉', xp:4200, str:3,  cl:'#6366f1', pos:15},
+  // Note: the real user is inserted dynamically by _getLiveRankings()
+  // based on their actual S.xp — they start at the bottom with 0 XP
+  // and climb as they complete modules. No fake position.
+];
+
+const CHALLENGE = [
+  {n:'María S.',em:'🦊',pct:86},{n:'Carlos M.',em:'🐻',pct:71},
+  {n:'Tú',em:'🌱',pct:57,me:true},{n:'Laura G.',em:'🦁',pct:43},{n:'Pablo T.',em:'🐯',pct:29},
+];
+
+const ACHIEVEMENTS = [
+  /* ── Aprendizaje ────────────────────────────────────────── */
+  { id:'first_module', i:'💡', n:'Primer paso',
+    desc:'Completa tu primer módulo de aprendizaje.',
+    cat:'learn',  reward:{xp:100},
+    check: s => s.completedMods.length >= 1 },
+  { id:'mods_3',       i:'📖', n:'Estudiante curioso',
+    desc:'Completa 3 módulos de aprendizaje.',
+    cat:'learn',  reward:{xp:200},
+    check: s => s.completedMods.length >= 3 },
+  { id:'mods_5',       i:'📚', n:'Estudiante',
+    desc:'Completa 5 módulos.',
+    cat:'learn',  reward:{xp:300, cash:200},
+    check: s => s.completedMods.length >= 5 },
+  { id:'mods_10',      i:'🎓', n:'Analista',
+    desc:'Completa 10 módulos.',
+    cat:'learn',  reward:{xp:300, cash:300},
+    check: s => s.completedMods.length >= 10 },
+  { id:'mods_15',      i:'🧑‍🏫', n:'Consultor',
+    desc:'Completa 15 módulos — vas por buen camino.',
+    cat:'learn',  reward:{xp:500, cash:500},
+    check: s => s.completedMods.length >= 15 },
+  { id:'mods_all',     i:'🏆', n:'Maestro financiero',
+    desc:'Completa todos los módulos disponibles.',
+    cat:'learn',  reward:{xp:400, cash:1000},
+    check: s => s.completedMods.length >= 30 },
+
+  /* ── Racha ──────────────────────────────────────────────── */
+  { id:'streak_3',     i:'🔥', n:'En racha',
+    desc:'3 días consecutivos de aprendizaje.',
+    cat:'streak', reward:{xp:75},
+    check: s => s.streak >= 3 },
+  { id:'streak_7',     i:'🔥', n:'Semana de fuego',
+    desc:'7 días seguidos sin fallar.',
+    cat:'streak', reward:{xp:150, cash:200},
+    check: s => s.streak >= 7 },
+  { id:'streak_14',    i:'🌋', n:'Dos semanas',
+    desc:'14 días seguidos — constancia de élite.',
+    cat:'streak', reward:{xp:300, cash:400},
+    check: s => s.streak >= 14 },
+  { id:'streak_30',    i:'🌋', n:'Imparable',
+    desc:'30 días de racha. Leyenda.',
+    cat:'streak', reward:{xp:500, cash:800},
+    check: s => s.streak >= 30 },
+  { id:'streak_60',    i:'💫', n:'Dos meses sin parar',
+    desc:'60 días consecutivos. Solo el 0.1% llega aquí.',
+    cat:'streak', reward:{xp:300, cash:600},
+    check: s => s.streak >= 60 },
+
+  /* ── XP / Nivel ─────────────────────────────────────────── */
+  { id:'xp_500',       i:'⚡', n:'500 XP',
+    desc:'Primera marca de experiencia acumulada.',
+    cat:'xp',     reward:{xp:25},
+    check: s => (s.xp||0) >= 500 },
+  { id:'xp_1k',        i:'⚡', n:'1.000 XP',
+    desc:'Acumula 1.000 puntos de experiencia.',
+    cat:'xp',     reward:{xp:75},
+    check: s => (s.xp||0) >= 1000 },
+  { id:'xp_5k',        i:'💎', n:'5.000 XP',
+    desc:'Acumula 5.000 XP — mente de inversor.',
+    cat:'xp',     reward:{xp:300, cash:500},
+    check: s => (s.xp||0) >= 5000 },
+  { id:'xp_10k',       i:'👑', n:'Élite',
+    desc:'10.000 XP — top absoluto.',
+    cat:'xp',     reward:{xp:600, cash:1000},
+    check: s => (s.xp||0) >= 10000 },
+  { id:'xp_25k',       i:'🌟', n:'Leyenda viva',
+    desc:'25.000 XP — solo el 1% llega aquí.',
+    cat:'xp',     reward:{xp:300, cash:800},
+    check: s => (s.xp||0) >= 25000 },
+
+  /* ── Inversión ──────────────────────────────────────────── */
+  { id:'first_stock',  i:'📈', n:'Primer inversor',
+    desc:'Compra tu primera acción en la bolsa simulada.',
+    cat:'invest', reward:{xp:150, cash:200},
+    check: s => Object.keys(s.portfolio||{}).length >= 1 },
+  { id:'first_sell',   i:'💵', n:'Realiza beneficios',
+    desc:'Vende una posición — toma tus primeras ganancias.',
+    cat:'invest', reward:{xp:150, cash:300},
+    check: s => (s._totalSells||0) >= 1 },
+  { id:'portfolio_5k', i:'💰', n:'Cartera €5k',
+    desc:'Patrimonio total supera €5.000.',
+    cat:'invest', reward:{xp:400, cash:500},
+    check: s => (s.cash||0) + (s.invested||0) >= 5000 },
+  { id:'portfolio_10k',i:'💰', n:'Cartera €10k',
+    desc:'Patrimonio total supera €10.000.',
+    cat:'invest', reward:{xp:800, cash:1000},
+    check: s => (s.cash||0) + (s.invested||0) >= 10000 },
+  { id:'portfolio_50k',i:'🚀', n:'Cartera €50k',
+    desc:'Patrimonio total supera €50.000.',
+    cat:'invest', reward:{xp:400, cash:1000},
+    check: s => (s.cash||0) + (s.invested||0) >= 50000 },
+  { id:'portfolio_100k',i:'🦁', n:'Cartera €100k',
+    desc:'Seis cifras — el sueño de muchos, la realidad de pocos.',
+    cat:'invest', reward:{xp:800, cash:2000},
+    check: s => (s.cash||0) + (s.invested||0) >= 100000 },
+  { id:'full_diversify',i:'🌐', n:'Cartera diversificada',
+    desc:'5 activos distintos en cartera simultáneamente.',
+    cat:'invest', reward:{xp:600, cash:1000},
+    check: s => Object.keys(s.portfolio||{}).length >= 5 },
+  { id:'first_div',    i:'💸', n:'Primer dividendo',
+    desc:'Cobra tu primer dividendo pasivo.',
+    cat:'invest', reward:{xp:200, cash:100},
+    check: s => Object.values(s.portfolio||{}).some(p => (p.dividendsCollected||0) > 0) },
+  { id:'div_100',      i:'💰', n:'€100 en dividendos',
+    desc:'€100 acumulados en dividendos — renta pasiva real.',
+    cat:'invest', reward:{xp:500, cash:500},
+    check: s => (s.totalDividends||0) >= 100 },
+  { id:'div_1000',     i:'🏦', n:'€1.000 en dividendos',
+    desc:'€1.000 acumulados — la cartera ya trabaja para ti.',
+    cat:'invest', reward:{xp:300, cash:400},
+    check: s => (s.totalDividends||0) >= 1000 },
+  { id:'beat_bogle',   i:'🤖', n:'Mejor que Bogle-Bot',
+    desc:'Superaste el patrimonio del bot indexado.',
+    cat:'invest', reward:{xp:400, cash:1000},
+    check: s => (s.patrimony||0) > (SHADOW_INVESTORS.find(b=>b.id==='bogle')?.patrimony||99999) },
+
+  /* ── Negocios ───────────────────────────────────────────── */
+  { id:'first_biz',    i:'🏪', n:'Emprendedor',
+    desc:'Abre tu primer negocio.',
+    cat:'biz',    reward:{xp:300, cash:500},
+    check: s => Object.keys(s.businesses||{}).length >= 1 },
+  { id:'biz_2',        i:'🏬', n:'Dos negocios',
+    desc:'Opera 2 negocios simultáneos.',
+    cat:'biz',    reward:{xp:600, cash:1000},
+    check: s => Object.keys(s.businesses||{}).length >= 2 },
+  { id:'biz_3',        i:'🏙️', n:'Imperio',
+    desc:'Opera 3 negocios simultáneos.',
+    cat:'biz',    reward:{xp:250, cash:500},
+    check: s => Object.keys(s.businesses||{}).length >= 3 },
+  { id:'biz_income_10k',i:'🤑', n:'Flujo de caja',
+    desc:'Genera €10.000 acumulados en ingresos de negocios.',
+    cat:'biz',    reward:{xp:300, cash:600},
+    check: s => Object.values(s.businesses||{}).reduce((a,b)=>a+(b.totalRevenue||0),0) >= 10000 },
+  { id:'biz_income_50k',i:'👑', n:'Magnate',
+    desc:'€50.000 acumulados en negocios — máquina de ingresos.',
+    cat:'biz',    reward:{xp:700, cash:1500},
+    check: s => Object.values(s.businesses||{}).reduce((a,b)=>a+(b.totalRevenue||0),0) >= 50000 },
+
+  /* ── Tiempo de juego ────────────────────────────────────── */
+  { id:'day_30',       i:'📅', n:'Mes jugado',
+    desc:'30 días de juego completados.',
+    cat:'time',   reward:{xp:400, cash:500},
+    check: s => (s.gameDay||0) >= 30 },
+  { id:'day_90',       i:'📆', n:'Trimestre',
+    desc:'90 días de juego — un trimestre completo.',
+    cat:'time',   reward:{xp:800, cash:1000},
+    check: s => (s.gameDay||0) >= 90 },
+  { id:'day_365',      i:'🌟', n:'Un año simulado',
+    desc:'Completa un año completo de juego.',
+    cat:'time',   reward:{xp:500, cash:1000},
+    check: s => (s.gameDay||0) >= 365 },
+  { id:'day_730',      i:'🎂', n:'Dos años',
+    desc:'Dos años de juego — inversión a largo plazo.',
+    cat:'time',   reward:{xp:1000, cash:2000},
+    check: s => (s.gameDay||0) >= 730 },
+
+  /* ── Vida financiera ────────────────────────────────────── */
+  { id:'savings_goal', i:'🏦', n:'Fondo sólido',
+    desc:'€10.000 acumulados en el fondo de ahorro.',
+    cat:'life',   reward:{xp:500, cash:800},
+    check: s => (s.balance||0) >= 10000 },
+  { id:'homeowner',    i:'🏠', n:'Propietario',
+    desc:'Has pagado tu primera hipoteca completamente.',
+    cat:'life',   reward:{xp:300, cash:400},
+    check: s => (s.mortgages||[]).some(m => m.paid) },
+  { id:'debt_free',    i:'🔓', n:'Libre de Deudas',
+    desc:'Cero deudas y cero hipotecas — libertad total.',
+    cat:'life',   reward:{xp:400, cash:700},
+    check: s => (s.debts||[]).length === 0 && (s.mortgages||[]).filter(m=>!m.paid).length === 0 && ((s._hadDebts||false) || (s._hadMortgages||false)) },
+
+  /* ── Comportamental ─────────────────────────────────────── */
+  { id:'paper_hands',  i:'🧻', n:'Manos de Papel',
+    desc:'Vendiste durante un flash crash — la peor decisión que existe.',
+    cat:'invest', reward:{},
+    check: s => (s.paperHandsCount||0) >= 1 },
+  { id:'diamond_hands',i:'💎', n:'Manos de Diamante',
+    desc:'Mantuviste durante 2 crisis de mercado sin vender.',
+    cat:'invest', reward:{xp:300, cash:500},
+    check: s => (s.crisesSurvived||0) >= 2 },
+  { id:'crisis_buyer', i:'🛒', n:'Comprador en Pánico',
+    desc:'Compraste activos durante una crisis de mercado.',
+    cat:'invest', reward:{xp:800, cash:1000},
+    check: s => (s.crisisBuys||0) >= 1 },
+];
+
+const TICKERS = [
+  'Alguien acaba de completar su primer módulo 🎉',
+  'Nuevo usuario se unió al reto de 7 días 🔥',
+  'Se acaba de obtener un certificado de Interés Compuesto 📜',
+  'Alguien alcanzó la racha de 5 días consecutivos ⚡',
+  'Nuevo inversor simuló su cartera por primera vez 📈',
+  'Un usuario llegó al nivel Analista esta semana 💡',
+];
+
+const SOCIAL_PROOF = [
+  ['👤 Carlos de Madrid','Acaba de completar ETFs · +200 XP','t-social'],
+  ['🔥 ¡Racha legendaria!','María S. lleva 28 días consecutivos','t-fire'],
+  ['📈 Nuevo en top 10','Elena ha subido del 12 al 7 esta semana','t-social'],
+  ['🎯 1.200 completados hoy','Interés Compuesto: módulo más estudiado','t-success'],
+  ['🏆 Certificado obtenido','Lucía de Sevilla completó su primer módulo','t-success'],
+  ['⚡ Nivel subido','David acaba de alcanzar Nivel 13 · Inversor Elite','t-fire'],
+];
+
+const FINANCIAL_FACTS = [
+  {
+    text:   'El <em>S&P 500</em> ha rentado un <em>+10% anual</em> de media en los últimos 100 años, convirtiendo €1.000 en €117.000 con paciencia.',
+    source: 'Fuente: Standard & Poors, 1926–2024',
+  },
+  {
+    text:   'Una inflación del <em>3% anual</em> reduce el poder adquisitivo de €10.000 a <em>€7.374</em> en tan solo 10 años si no están invertidos.',
+    source: 'Fuente: Banco Central Europeo, media 1999–2024',
+  },
+  {
+    text:   'El <em>90% de los fondos activos</em> no bate al índice en períodos de 15+ años. Los ETF indexados de bajo coste ganan a los expertos.',
+    source: 'Fuente: SPIVA Report, S&P Global 2024',
+  },
+  {
+    text:   'Invertir <em>€200/mes</em> desde los 25 años al 7% genera <em>€525.000</em> a los 65. Esperar hasta los 35 te deja en solo €242.000.',
+    source: 'Cálculo: interés compuesto mensual, 7% nominal anual',
+  },
+  {
+    text:   'El <em>Oro</em> ha subido un <em>+8% anual</em> los últimos 20 años y tiene correlación negativa con bolsa: sube cuando los mercados caen.',
+    source: 'Fuente: London Bullion Market Association, 2004–2024',
+  },
+  {
+    text:   '<em>Bitcoin</em> ha caído más del <em>80% en tres ocasiones</em> distintas y aun así es el activo con mayor retorno de los últimos 10 años.',
+    source: 'Fuente: CoinGecko, Bloomberg 2014–2024',
+  },
+  {
+    text:   'La Regla del <em>72</em>: divide 72 entre tu rentabilidad anual y sabrás en cuántos años doblas tu dinero. Al 9%, son 8 años.',
+    source: 'Matemática financiera — usada por Buffett y gestores de fondos',
+  },
+  {
+    text:   'El <em>47% de los españoles</em> no podría hacer frente a un gasto imprevisto de €1.000. El fondo de emergencia es la prioridad número 1.',
+    source: 'Fuente: Banco de España, Encuesta Financiera 2023',
+  },
+  {
+    text:   '<em>Warren Buffett</em> generó el <em>97% de su riqueza</em> después de los 65 años. El interés compuesto necesita tiempo para hacer su magia.',
+    source: 'Fuente: Berkshire Hathaway Annual Letter 2022',
+  },
+  {
+    text:   'Las empresas que han pagado dividendos crecientes durante <em>50+ años</em> consecutivos se llaman "Dividend Kings" — existen 53 en EE.UU.',
+    source: 'Fuente: S&P Dividend Aristocrats Index, 2024',
+  },
+  {
+    text: 'Invertir <em>€200/mes</em> desde los 25 años al 7% genera <em>€525.000</em> a los 65. Empezar a los 35 con el mismo aporte solo genera <em>€243.000</em>.',
+    source: 'Fuente: Cálculo de interés compuesto estándar',
+  },
+  {
+    text: 'El <em>88% de los millonarios</em> en EE.UU. se hicieron ricos de forma gradual, no por herencias ni loterías, sino por ahorro constante e inversión indexada.',
+    source: 'Fuente: National Study of Millionaires, Ramsey Solutions 2023',
+  },
+  {
+    text: 'Una comisión del <em>2% anual</em> en un fondo de inversión puede consumir hasta el <em>40% de tu rentabilidad total</em> en 30 años frente a un indexado al 0,1%.',
+    source: 'Fuente: Vanguard Research, 2023',
+  },
+  {
+    text: 'El <em>70% de los españoles</em> no tiene ningún tipo de inversión. Solo el 12% invierte en bolsa directamente o a través de fondos.',
+    source: 'Fuente: CNMV, Encuesta de Competencias Financieras 2023',
+  },
+  {
+    text: 'La deuda en tarjeta revolving al <em>24% TAE</em>: €5.000 pagando solo el mínimo mensual tarda <em>más de 10 años</em> en liquidarse y cuesta el doble en intereses.',
+    source: 'Fuente: Banco de España, simulador de crédito',
+  },
+  {
+    text: 'El <em>50-30-20</em>: destina el 50% a necesidades, 30% a deseos y 20% a ahorro e inversión. Simple, pero solo el 23% de españoles lo cumple.',
+    source: 'Fuente: ING Direct, Estudio de Ahorro Europeo 2023',
+  },
+  {
+    text: 'La vivienda en España ha rentado un <em>+3,2% anual real</em> desde 1985, frente al <em>+7,5% real</em> del S&P 500 en el mismo período.',
+    source: 'Fuente: Banco de España / Bloomberg, datos históricos',
+  },
+  {
+    text: 'Un <em>fondo de emergencia</em> de 6 meses reduce la probabilidad de endeudarse en una crisis en un <em>68%</em>, según estudios de comportamiento financiero.',
+    source: 'Fuente: Urban Institute, Financial Health Study 2022',
+  },
+  {
+    text: 'El <em>interés compuesto</em> no es lineal: €1.000 al 10% durante 30 años son €17.449. Los últimos 10 años generan más que los primeros 20.',
+    source: 'Fuente: Cálculo estándar de interés compuesto',
+  },
+  {
+    text: 'España tiene <em>más bares por habitante</em> que cualquier país de Europa, y también una de las tasas de ahorro más bajas: solo el <em>8,1% del PIB</em>.',
+    source: 'Fuente: Eurostat, Household Saving Rate 2023',
+  },
+  {
+    text: 'Los <em>gestores activos</em> cobran de media un 1,5% de comisión anual. En 20 años, eso representa <em>€30.000 de diferencia</em> en una cartera de €100.000.',
+    source: 'Fuente: Morningstar Active/Passive Barometer 2023',
+  },
+  {
+    text: 'La <em>independencia financiera</em> no requiere ser rico: con gastos de €1.500/mes necesitas €450.000. Con €1.000/mes, solo €300.000.',
+    source: 'Fuente: Regla del 4%, Trinity Study',
+  },
+  {
+    text: 'El <em>82% de las personas</em> que fijan metas financieras específicas (con número y fecha) las consiguen. Sin metas concretas, solo el 23%.',
+    source: 'Fuente: Dominican University Goal-Setting Study',
+  },
+  {
+    text: 'Retrasar la compra de un smartphone de €1.000 un año e invertir ese dinero al 7% anual durante 20 años genera <em>€3.870</em>.',
+    source: 'Fuente: Cálculo de coste de oportunidad estándar',
+  },
+  {
+    text: 'El <em>Euríbor a 12 meses</em> ha oscilado entre el -0,5% (2021) y el +4,2% (2023), afectando a más de <em>4 millones de hipotecas variables</em> en España.',
+    source: 'Fuente: Banco de España, 2023',
+  },
+];
+
+const DAILY_QUESTIONS = [
+  {
+    title: 'Micro-lección: Regla del 72',
+    sub:   'Responde para desbloquear los módulos de hoy',
+    xp: 40,
+    q: 'Si una inversión rinde el 9% anual, ¿cuántos años tarda en doblar tu dinero según la Regla del 72?',
+    opts: ['6 años', '8 años', '10 años', '12 años'],
+    correct: 1,
+    explain: '72 ÷ 9 = 8 años. Esta regla mental es usada por todos los inversores profesionales para estimaciones rápidas.',
+  },
+  {
+    title: 'Micro-lección: Interés Compuesto',
+    sub:   '30 segundos para ganar tu XP diario',
+    xp: 40,
+    q: '¿Cuál es el principal motivo por el que la inflación destruye el ahorro en cuentas sin rentabilidad?',
+    opts: ['Los bancos roban el dinero', 'El dinero pierde poder adquisitivo con el tiempo', 'Los tipos de interés suben', 'El gobierno cobra impuestos'],
+    correct: 1,
+    explain: 'Con inflación del 3.5%, 10.000€ valen solo 6.756€ en 10 años. El dinero parado se deprecia automáticamente.',
+  },
+  {
+    title: 'Micro-lección: ETFs vs Fondos',
+    sub:   'Un dato clave para empezar el día',
+    xp: 40,
+    q: '¿Qué porcentaje de fondos de gestión activa supera al índice de referencia en períodos de 15+ años?',
+    opts: ['Menos del 10%', 'Alrededor del 30%', 'Aproximadamente el 50%', 'Más del 70%'],
+    correct: 0,
+    explain: 'Solo el ~10% de gestores activos supera al índice a largo plazo. Por eso los ETF indexados baten a la mayoría.',
+  },
+  {
+    title: 'Micro-lección: Regla 50/30/20',
+    sub:   'La base de toda libertad financiera',
+    xp: 40,
+    q: 'En la regla de presupuesto 50/30/20, ¿qué representa el 20%?',
+    opts: ['Gastos de ocio', 'Alquiler o hipoteca', 'Ahorro e inversión obligatorio', 'Impuestos y seguros'],
+    correct: 2,
+    explain: 'El 20% es el ahorro e inversión no negociable. Págarte a ti primero, antes que a cualquier otro gasto.',
+  },
+  {
+    title: 'Micro-lección: Diversificación',
+    sub:   'Entiende el riesgo para ganar más',
+    xp: 40,
+    q: '¿Qué significa diversificar una cartera de inversión?',
+    opts: ['Invertir todo en el activo más rentable', 'Distribuir el riesgo entre diferentes tipos de activos', 'Cambiar de inversión cada semana', 'Guardar efectivo en varios bancos'],
+    correct: 1,
+    explain: 'Diversificar = no poner todos los huevos en la misma cesta. Si un activo cae, los otros compensan. La base del riesgo controlado.',
+  },
+  {
+    title: 'Micro-lección: Fondo de Emergencia',
+    sub:   'El escudo financiero que todos necesitan',
+    xp: 40,
+    q: '¿Cuántos meses de gastos fijos debe cubrir un fondo de emergencia adecuado?',
+    opts: ['1 mes', '3–6 meses', '12 meses', 'No es necesario si tienes tarjeta de crédito'],
+    correct: 1,
+    explain: '3–6 meses de gastos en liquidez inmediata. Te protege de despidos, reparaciones inesperadas y enfermedades sin tocar tus inversiones.',
+  },
+  {
+    title: 'Micro-lección: Deuda vs Inversión',
+    sub:   '¿Pagar deuda o invertir primero?',
+    xp: 40,
+    q: 'Tienes una deuda al 18% TAE y una inversión que rinde el 8% anual. ¿Qué deberías priorizar?',
+    opts: ['Invertir, porque el mercado siempre sube', 'Pagar la deuda primero, su coste supera el rendimiento de la inversión', 'Hacer las dos cosas en partes iguales siempre', 'Refinanciar la deuda indefinidamente'],
+    correct: 1,
+    explain: 'Eliminar una deuda al 18% es equivalente a una inversión garantizada al 18% — ningún mercado te da eso sin riesgo. Primero elimina la deuda cara.',
+  },
+  {
+    title: 'Micro-lección: Inflación Real',
+    sub:   'El impuesto invisible que nadie ve',
+    xp: 40,
+    q: 'Si la inflación es del 4% anual y tu cuenta de ahorro da el 1%, ¿cuál es tu rentabilidad real?',
+    opts: ['5% positivo', '3% positivo', '-3% negativo', '0% — se compensan'],
+    correct: 2,
+    explain: 'Rentabilidad real = rendimiento nominal − inflación = 1% − 4% = −3%. Pierdes poder adquisitivo aunque el saldo nominal crezca.',
+  },
+  {
+    title: 'Micro-lección: Coste de Oportunidad',
+    sub:   'El precio invisible de cada decisión',
+    xp: 40,
+    q: 'Gastas 200€/mes en suscripciones que no usas. Si los invirtieras al 8% durante 20 años, ¿cuánto perderías?',
+    opts: ['48.000€ (solo lo aportado)', 'Unos 60.000€', 'Aproximadamente 118.000€', 'Más de 200.000€'],
+    correct: 2,
+    explain: '200€/mes × 240 meses al 8% anual = ≈118.589€. El coste de oportunidad de gastos prescindibles es siempre mucho mayor de lo que parece.',
+  },
+  {
+    title: 'Micro-lección: Rebalanceo de Cartera',
+    sub:   'Mantén el rumbo cuando el mercado fluctúa',
+    xp: 40,
+    q: 'Tu cartera objetivo es 80% renta variable / 20% renta fija. Tras un año el mercado sube y queda en 90/10. ¿Qué haces?',
+    opts: ['Nada, dejar correr las ganancias', 'Rebalancear vendiendo variable y comprando fija hasta volver al 80/20', 'Vender todo para asegurar ganancias', 'Doblar la posición en variable porque está subiendo'],
+    correct: 1,
+    explain: 'Rebalancear significa vender lo que más ha subido (caro) y comprar lo que ha bajado (barato) para mantener el riesgo objetivo. Es disciplina, no emoción.',
+  },
+  {
+    title: 'Micro-lección: Fondo de Emergencia',
+    sub: 'Responde para ganar tu XP diario',
+    xp: 40,
+    q: '¿Cuántos meses de gastos deberías tener en tu fondo de emergencia?',
+    opts: ['1 mes', '2 meses', '3-6 meses', '12 meses'],
+    correct: 2,
+    explain: '3-6 meses es el estándar recomendado. Menos te deja expuesto; más puede ser exceso de liquidez sin rentabilidad.',
+  },
+  {
+    title: 'Micro-lección: Inflación',
+    sub: '30 segundos para tu racha',
+    xp: 40,
+    q: 'Si la inflación es del 3% anual, ¿cuánto valdrán €100 de hoy en 10 años?',
+    opts: ['€130', '€100', '€74', '€56'],
+    correct: 2,
+    explain: '€100 × (1-0.03)^10 ≈ €74. La inflación destruye el poder adquisitivo silenciosamente.',
+  },
+  {
+    title: 'Micro-lección: ETF vs Fondo Activo',
+    sub: 'Responde y mantén tu racha',
+    xp: 40,
+    q: '¿Qué porcentaje de fondos de gestión activa baten al índice en 10 años?',
+    opts: ['Menos del 10%', 'Alrededor del 25%', 'Alrededor del 50%', 'Más del 75%'],
+    correct: 0,
+    explain: 'Según SPIVA, menos del 10% de fondos activos superan a su índice de referencia en un horizonte de 10 años.',
+  },
+  {
+    title: 'Micro-lección: Deuda',
+    sub: 'Tu acción financiera del día',
+    xp: 40,
+    q: 'Tienes €5.000 en deuda al 18% TAE. ¿Cuánto pagas en intereses al año si no reduces el principal?',
+    opts: ['€500', '€900', '€1.800', '€2.500'],
+    correct: 1,
+    explain: '€5.000 × 18% = €900 al año solo en intereses. Eliminar deuda cara es la mejor inversión garantizada.',
+  },
+  {
+    title: 'Micro-lección: Pensión Pública',
+    sub: '30 segundos para tu XP',
+    xp: 40,
+    q: '¿Qué tasa de sustitución tiene de media la pensión pública española respecto al último salario?',
+    opts: ['40%', '55%', '72%', '90%'],
+    correct: 2,
+    explain: 'España tiene una tasa de sustitución del ~72%, una de las más altas de Europa. Aun así, complementarla con ahorro privado es recomendable.',
+  },
+  {
+    title: 'Micro-lección: Bolsa a largo plazo',
+    sub: 'Responde para mantener tu racha',
+    xp: 40,
+    q: '¿Cuántos años consecutivos ha tenido rentabilidad negativa el S&P 500 como máximo en su historia?',
+    opts: ['1 año', '2 años', '3 años', '5 años'],
+    correct: 2,
+    explain: 'El peor período fue 2000-2002 (3 años consecutivos negativos). En ningún período de 15+ años ha dado pérdidas.',
+  },
+  {
+    title: 'Micro-lección: Regla del 4%',
+    sub: 'Tu micro-test de hoy',
+    xp: 40,
+    q: 'Según la regla del 4%, si gastas €2.000/mes, ¿qué patrimonio necesitas para la independencia financiera?',
+    opts: ['€240.000', '€360.000', '€600.000', '€1.200.000'],
+    correct: 2,
+    explain: '€2.000 × 12 × 25 = €600.000. La regla del 4% dice que puedes retirar el 4% anual indefinidamente.',
+  },
+  {
+    title: 'Micro-lección: Euríbor',
+    sub: 'Responde y gana XP',
+    xp: 40,
+    q: '¿Qué es el Euríbor?',
+    opts: ['El tipo de cambio €/$ oficial', 'El índice al que se referencian las hipotecas variables en Europa', 'El IPC de la eurozona', 'El tipo de interés del BCE'],
+    correct: 1,
+    explain: 'El Euríbor (Euro Interbank Offered Rate) es el tipo al que los bancos europeos se prestan dinero entre sí, y al que se referencian la mayoría de hipotecas variables españolas.',
+  },
+  {
+    title: 'Micro-lección: Coste de Oportunidad',
+    sub: '30 segundos para tu racha financiera',
+    xp: 40,
+    q: 'Compras un coche de €20.000 al contado. ¿Cuál es el coste de oportunidad en 10 años al 7% de rentabilidad?',
+    opts: ['€14.000', '€19.000', '€39.000', '€60.000'],
+    correct: 2,
+    explain: '€20.000 al 7% durante 10 años = €39.343. Ese es el coste real del coche: lo que no ganarás por haber gastado ese capital.',
+  },
+  {
+    title: 'Micro-lección: Diversificación Geográfica',
+    sub: 'Tu acción del día',
+    xp: 40,
+    q: '¿Qué porcentaje del PIB mundial representa el mercado bursátil estadounidense aproximadamente?',
+    opts: ['25%', '40%', '60%', '75%'],
+    correct: 2,
+    explain: 'EE.UU. representa ~60% de la capitalización mundial. Un ETF global como MSCI World tiene exposición mayoritaria a EE.UU.',
+  },
+  {
+    title: 'Micro-lección: Tipos de Interés',
+    sub: 'Responde para ganar tu XP',
+    xp: 40,
+    q: 'Cuando el Banco Central Europeo sube los tipos de interés, ¿qué ocurre generalmente con los precios de los bonos?',
+    opts: ['Suben', 'Se mantienen igual', 'Bajan', 'Depende del emisor'],
+    correct: 2,
+    explain: 'Tipos y precios de bonos tienen relación inversa. Si los tipos suben, los bonos existentes (con tipos más bajos) valen menos en el mercado secundario.',
+  },
+  {
+    title: 'Micro-lección: Ahorro Automático',
+    sub: '30 segundos para tu racha',
+    xp: 40,
+    q: '¿Qué estrategia de ahorro tiene mayor tasa de éxito según estudios de comportamiento financiero?',
+    opts: ['Ahorrar lo que sobra a fin de mes', 'Pagar todas las deudas antes de ahorrar', 'Automatizar el ahorro el día de cobro', 'Revisar gastos semanalmente'],
+    correct: 2,
+    explain: 'Págarte a ti primero (Pay yourself first): automatizar el ahorro elimina la fricción y el sesgo del presente que nos hace gastar en lugar de ahorrar.',
+  },
+  {
+    title: 'Micro-lección: TAE vs TIN',
+    sub: 'Tu micro-test financiero',
+    xp: 40,
+    q: '¿Cuál es la diferencia entre TIN y TAE?',
+    opts: ['Son lo mismo', 'TAE incluye comisiones y frecuencia de liquidación; TIN no', 'TIN incluye más costes que TAE', 'TAE es solo para hipotecas'],
+    correct: 1,
+    explain: 'La TAE (Tasa Anual Equivalente) incluye comisiones y la frecuencia de capitalización. Siempre compara por TAE, no por TIN.',
+  },
+  {
+    title: 'Micro-lección: Dividendos',
+    sub: 'Responde y mantén tu racha',
+    xp: 40,
+    q: '¿Qué retención fiscal aplica Hacienda sobre los dividendos en España (tramo base)?',
+    opts: ['10%', '15%', '19%', '21%'],
+    correct: 2,
+    explain: 'Los dividendos tributan como rendimientos del capital mobiliario al 19% hasta €6.000, 21% de €6.000 a €50.000 y 23% a partir de €50.000.',
+  },
+  {
+    title: 'Micro-lección: FIRE Movement',
+    sub: 'Tu acción del día',
+    xp: 40,
+    q: '¿Qué significa el acrónimo FIRE en finanzas personales?',
+    opts: ['Financial Independence, Retire Early', 'Fixed Income, Real Estate', 'Funds, Investments, Returns, Equity', 'Financial Index, Retire Efficiently'],
+    correct: 0,
+    explain: 'FIRE es un movimiento que busca la independencia financiera y jubilación anticipada mediante ahorro agresivo (50-70% del ingreso) e inversión pasiva.',
+  },
+  {
+    title: 'Micro-lección: Plan de Pensiones',
+    sub: 'Responde para ganar XP',
+    xp: 40,
+    q: '¿Cuál es el límite anual de aportación a un plan de pensiones individual en España (2024)?',
+    opts: ['€1.500', '€3.000', '€8.000', '€10.000'],
+    correct: 0,
+    explain: 'Desde 2022 el límite es €1.500/año para planes individuales. Aportar hasta ese límite reduce tu base imponible del IRPF.',
+  },
+  {
+    title: 'Micro-lección: Sesgo del Presente',
+    sub: '30 segundos de educación financiera',
+    xp: 40,
+    q: '¿Qué sesgo cognitivo nos hace preferir €100 hoy a €150 en un año aunque la tasa implícita sea del 50%?',
+    opts: ['Sesgo de confirmación', 'Efecto manada', 'Descuento hiperbólico', 'Aversión a la pérdida'],
+    correct: 2,
+    explain: 'El descuento hiperbólico nos hace sobrevalorar el presente frente al futuro. Es el principal enemigo del ahorro a largo plazo.',
+  },
+  {
+    title: 'Micro-lección: Inflación vs Salario',
+    sub: 'Tu micro-test de hoy',
+    xp: 40,
+    q: 'Si tu salario sube un 2% pero la inflación es del 4%, ¿qué ha pasado con tu poder adquisitivo real?',
+    opts: ['Ha subido un 2%', 'Se ha mantenido igual', 'Ha bajado un 2%', 'Ha bajado un 4%'],
+    correct: 2,
+    explain: 'Salario real = (1+0.02)/(1+0.04) - 1 ≈ -1.9%. Tu poder de compra ha bajado aunque cobres más euros nominales.',
+  },
+  {
+    title: 'Micro-lección: Índice de Precios',
+    sub: 'Responde y gana tu XP diario',
+    xp: 40,
+    q: '¿Qué mide el IPC (Índice de Precios al Consumo)?',
+    opts: ['El precio de las acciones en bolsa', 'La variación de precios de una cesta representativa de bienes y servicios', 'El tipo de cambio del euro', 'El coste de la vivienda'],
+    correct: 1,
+    explain: 'El IPC mide la variación de precios de una cesta de bienes y servicios representativa del consumo familiar. Es el indicador principal de la inflación.',
+  },
+];
+
+const REWARDS = {
+  chests: [
+    {icon:'🎁', name:'Cofre de bronce', desc:'Una recompensa modesta pero merecida', xpBonus:50, color:'#c8773d'},
+    {icon:'💰', name:'Cofre de plata', desc:'¡Buena suerte! Bonus de XP especial', xpBonus:100, color:'#94a3b8'},
+    {icon:'🏆', name:'Cofre de oro', desc:'¡Rarísimo! XP de oro puro', xpBonus:200, color:'#fbbf24'},
+  ],
+  badges: [
+    {icon:'⚡', name:'Rayo del Conocimiento', desc:'Badge raro · Solo el 8% lo consigue'},
+    {icon:'🧠', name:'Mente Brillante', desc:'Badge raro · Pensamiento analítico elite'},
+    {icon:'🔮', name:'Visionario Financiero', desc:'Badge raro · Ves más allá del presente'},
+    {icon:'🦋', name:'Transformación', desc:'Badge raro · Tu mentalidad ha cambiado'},
+  ],
+};
+
+const IDENTITY_STAGES = [
+  {id:0, icon:'🌱', name:'Principiante', desc:'Empezando el camino', minMods:0, minXP:0, days:0},
+  {id:1, icon:'💰', name:'Ahorrador', desc:'Dominas las bases', minMods:2, minXP:500, days:23},
+  {id:2, icon:'📊', name:'Analista', desc:'Entiendes los mercados', minMods:5, minXP:2000, days:15},
+  {id:3, icon:'💼', name:'Inversor', desc:'Inviertes con criterio', minMods:8, minXP:5000, days:40},
+  {id:4, icon:'🏝️', name:'Independiente', desc:'Libertad financiera real', minMods:19, minXP:15000, days:120},
+];
+
+/* ── P4-B: Títulos de nivel por XP acumulado ─────────────────────── */
+const LEVEL_XP_THRESHOLDS = (function() {
+  // XP necesario para pasar de nivel N al N+1
+  // Curva bifásica: niveles 1-20 crecen a exp 1.5 (desafío inicial)
+  // niveles 21-50 cambian a exp 1.35 (más alcanzables, evita abandono tardío)
+  function xpForLevel(n) {
+    const exp = n <= 20 ? 1.5 : 1.35;
+    return Math.round(200 * Math.pow(1 + (n - 1) * 0.13, exp) / 25) * 25;
+  }
+  const t = [0]; // t[0]=0 significa que el nivel 1 empieza en 0 XP acumulado
+  for (let i = 1; i <= 50; i++) t.push(t[i - 1] + xpForLevel(i));
+  return t;
+})();
+
+// Recompensas especiales en hitos de nivel. apply(S) muta el estado; chestType da cofre adicional.
+const LEVEL_MILESTONES = {
+  5:  { label:'+10% XP permanente',          icon:'⚡', chestType: null,        apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 0.1).toFixed(2); } },
+  10: { label:'Cofre de Oro',                icon:'🏅', chestType: 'gold',       apply: null },
+  15: { label:'+2 Vidas extra',              icon:'❤️', chestType: null,        apply: s => { s._maxHearts = (s._maxHearts||5) + 2; s.hearts = Math.min((s.hearts||5) + 2, s._maxHearts||7); } },
+  20: { label:'+10% XP permanente',          icon:'⚡', chestType: null,        apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 0.1).toFixed(2); } },
+  25: { label:'Cofre de Oro',                icon:'🏅', chestType: 'gold',       apply: null },
+  30: { label:'+10% XP permanente',          icon:'⚡', chestType: null,        apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 0.1).toFixed(2); } },
+  35: { label:'Cofre Legendario',            icon:'👑', chestType: 'legendary',  apply: null },
+  40: { label:'Cofre Legendario',            icon:'👑', chestType: 'legendary',  apply: null },
+  45: { label:'+3 Vidas extra',              icon:'❤️', chestType: null,        apply: s => { s._maxHearts = (s._maxHearts||5) + 3; s.hearts = Math.min((s.hearts||5) + 3, s._maxHearts||10); } },
+  50: { label:'XP ×2 permanente + Maestro', icon:'👑', chestType: 'legendary',  apply: s => { s.xpMultiplier = +((s.xpMultiplier||1) + 1.0).toFixed(2); s._masterBadge = true; } },
+};
+
+const LEVEL_TITLES = [
+  { idx:0,  minXP:0,      title:'Aprendiz Financiero',    icon:'🌱', color:'#94a3b8', desc:'El camino comienza aquí. Cada experto fue una vez principiante.' },
+  { idx:1,  minXP:500,    title:'Ahorrador Consciente',   icon:'💰', color:'#4ade80', desc:'Primera regla: gastar menos de lo que ganas.' },
+  { idx:2,  minXP:1200,   title:'Gestor de Gastos',       icon:'📋', color:'#6ee7b7', desc:'Controlas tu dinero, no al revés.' },
+  { idx:3,  minXP:2200,   title:'Inversor Novato',        icon:'📈', color:'#60a5fa', desc:'Tu dinero empieza a trabajar para ti.' },
+  { idx:4,  minXP:3500,   title:'Cazador de Intereses',   icon:'🎯', color:'#818cf8', desc:'El interés compuesto ya es tu aliado.' },
+  { idx:5,  minXP:5200,   title:'Analista en Prácticas',  icon:'🔍', color:'#c084fc', desc:'Lees balances, entiendes ratios.' },
+  { idx:6,  minXP:7500,   title:'Estratega de Cartera',   icon:'♟️', color:'#e879f9', desc:'Diversificas con criterio propio.' },
+  { idx:7,  minXP:10500,  title:'Gestor de Patrimonio',   icon:'💼', color:'#fb923c', desc:'Construyes riqueza con estrategia.' },
+  { idx:8,  minXP:14500,  title:'Experto en ETFs',        icon:'🏦', color:'#fbbf24', desc:'Indexado, diversificado, imparable.' },
+  { idx:9,  minXP:20000,  title:'Analista Financiero',    icon:'📊', color:'#f87171', desc:'Tu análisis supera al inversor medio.' },
+  { idx:10, minXP:27000,  title:'Estratega Financiero',   icon:'🧠', color:'#00e5a0', desc:'Piensas en sistemas, no en eventos.' },
+  { idx:11, minXP:36000,  title:'Especialista en Riesgo', icon:'⚖️', color:'#38bdf8', desc:'Calculas el riesgo antes de actuar.' },
+  { idx:12, minXP:47000,  title:'Inversor de Valor',      icon:'💎', color:'#a78bfa', desc:'Compras valor, no precio.' },
+  { idx:13, minXP:61000,  title:'Maestro del Ahorro',     icon:'🏆', color:'#fcd34d', desc:'Tu tasa de ahorro es tu superpoder.' },
+  { idx:14, minXP:78000,  title:'Director de Inversiones',icon:'🏛️', color:'#f472b6', desc:'Pocos llegan aquí. Tu criterio manda.' },
+  { idx:15, minXP:99000,  title:'Arquitecto Financiero',  icon:'🔭', color:'#34d399', desc:'Diseñas carteras que duran décadas.' },
+  { idx:16, minXP:125000, title:'Gurú de los Mercados',   icon:'🌍', color:'#fb7185', desc:'Los mercados no te sorprenden.' },
+  { idx:17, minXP:157000, title:'Magnate en Construcción',icon:'🏗️', color:'#a3e635', desc:'Tu patrimonio crece sin parar.' },
+  { idx:18, minXP:196000, title:'Inversor Elite',         icon:'⚡', color:'#22d3ee', desc:'Top 5% de usuarios de FinLearn.' },
+  { idx:19, minXP:243000, title:'Leyenda Financiera',     icon:'🌟', color:'#fbbf24', desc:'Tu nombre ya es referente.' },
+  { idx:20, minXP:300000, title:'Maestro FinLearn',       icon:'👑', color:'#ff6b35', desc:'Cumbre alcanzada. El 1% del 1%.' },
+];
+
