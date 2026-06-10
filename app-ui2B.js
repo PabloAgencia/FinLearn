@@ -354,17 +354,22 @@ function completeModule() {
     S.totalStudyMinutes = (S.totalStudyMinutes || 0) + 8;
     // F29: aplicar multiplicador x2 si está activo + multiplicador de evento estacional
     const hasMultiplier = S.xpMultiplierExpiry && Date.now() < S.xpMultiplierExpiry;
-    const permMult = S.xpMultiplier || 1.0;
-    const seaMult  = (typeof SEA_getXPMult === 'function') ? SEA_getXPMult() : 1;
-    const xpGain = Math.round((hasMultiplier ? XP_PER_MODULE * 2 : XP_PER_MODULE) * permMult * seaMult);
+    const permMult  = S.xpMultiplier || 1.0;
+    const seaMult   = (typeof SEA_getXPMult === 'function') ? SEA_getXPMult() : 1;
+    const hotMult   = (S.streak || 0) >= 7 ? 1.5 : 1.0;
+    const xpGain = Math.round((hasMultiplier ? XP_PER_MODULE * 2 : XP_PER_MODULE) * permMult * seaMult * hotMult);
     S.xp           += xpGain;
     S.totalXPtoday += xpGain;
     S.streak        = Math.max(1, S.streak);
     // F34: trackear XP ganado para reto de tipo 'xp'
     if (typeof F34_onXPGained === 'function') F34_onXPGained(xpGain);
     if (typeof recalcPatrimony === 'function') recalcPatrimony();
-    if (hasMultiplier || seaMult > 1) {
-      const multLabel = hasMultiplier && seaMult > 1 ? 'doble + evento' : hasMultiplier ? 'doble' : 'evento \xd71.5';
+    if (hasMultiplier || seaMult > 1 || hotMult > 1) {
+      const multLabel = hotMult > 1 && hasMultiplier ? 'doble + racha caliente'
+        : hotMult > 1 && seaMult > 1 ? 'racha caliente + evento'
+        : hotMult > 1 ? 'racha caliente 🔥'
+        : hasMultiplier && seaMult > 1 ? 'doble + evento'
+        : hasMultiplier ? 'doble' : 'evento \xd71.5';
       toast('🚀 ¡Multiplicador activo!', '+' + xpGain + ' XP (' + multLabel + ')', 't-success');
     }
 
@@ -530,6 +535,7 @@ function completeModule() {
   if ((S.completedMods || []).length === 1) {
     NOTIFS.onFirstModule();
     NOTIFS.subscribePush();
+    if (typeof PWA_showAfterModule === 'function') PWA_showAfterModule();
   } else if (NOTIFS._granted) NOTIFS.scheduleStreakReminder();
   // Mensaje emocional de vuelta al día siguiente
   setTimeout(() => {
@@ -616,6 +622,9 @@ function _showLevelUpScreen(level) {
       <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${rankTitle.color};margin-bottom:6px;">${rankTitle.title}</div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.5;">${rankTitle.desc || ''}</div>
       ${milestoneHtml}${chestHtml}
+      <button onclick="_shareLevelUp(${level},\`${rankTitle.title}\`,\`${rankTitle.icon}\`)" style="width:100%;padding:12px;border-radius:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">
+        📤 Compartir nivel
+      </button>
       <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();if(window._celPendingAfterLevelUp){window._celPendingAfterLevelUp=false;if(typeof openModal==='function')openModal('m-cel');}if(typeof _checkShowRating==='function')_checkShowRating();"
         style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">
         ¡Seguir subiendo! 🚀
@@ -631,6 +640,17 @@ function _showLevelUpScreen(level) {
     if (el) { el.style.animation = 'fadeOutFast .3s ease forwards'; setTimeout(() => { el.remove(); if(typeof F44_render==='function') F44_render(); }, 300); }
   }, 5000);
   if (chestReward && !milestone?.chestType && typeof F44_earnChest === 'function') F44_earnChest(chestReward.type);
+}
+
+function _shareLevelUp(level, rankTitle, icon) {
+  var text = '¡Acabo de alcanzar el nivel ' + level + ' en FinLearn! ' + (icon || '🚀') + ' ' + (rankTitle || '') + '\nAprendo finanzas personales gratis → https://finlearn.app';
+  if (navigator.share) {
+    navigator.share({ title: 'FinLearn · Nivel ' + level + ' 🎉', text: text, url: 'https://finlearn.app' }).catch(function(){});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof toast === 'function') toast('✅ Copiado', 'Pégalo en tus redes sociales', 't-success');
+    });
+  }
 }
 
 function _getLevelChest(level) {
@@ -752,7 +772,8 @@ function answerQuiz(chosen) {
   if (isCorrect) {
     SFX.correct();
     HAPTIC.success();
-    const _xpGain = Math.round(20 * _cMult * (S.xpMultiplier || 1));
+    const _hotMult = (S.streak || 0) >= 7 ? 1.5 : 1.0;
+    const _xpGain = Math.round(20 * _cMult * (S.xpMultiplier || 1) * _hotMult);
     S.xp += _xpGain;
     spawnXP('+' + _xpGain + ' XP' + (_cMult > 1 ? ' ×' + _cMult : ''));
     setTimeout(() => _quizBurst('qo-' + correctIdx), 60);

@@ -277,6 +277,7 @@ function T1_calc() {
       </div>
       <div class="tool-disclaimer">⚠️ Estimación orientativa. Consulta a un asesor fiscal o la calculadora oficial de la AEAT para tu declaración real.</div>
     `;
+    if (typeof _calcGate === 'function') _calcGate('t1-result', 'Simulador IRPF 2025', '📋');
   } catch(e) { console.warn('T1_calc error', e); }
 }
 
@@ -463,6 +464,7 @@ function T2_calc() {
       </div>
       <div class="tool-disclaimer">⚠️ Estimación orientativa. La decisión de comprar o alquilar depende también de tu estabilidad laboral y horizonte temporal.</div>
     `;
+    if (typeof _calcGate === 'function') _calcGate('t2-result', 'Hipoteca vs Alquiler', '🏠');
   } catch(e) { console.warn('T2_calc', e); }
 }
 
@@ -560,6 +562,7 @@ function T3_calc() {
       } else {
         bar.innerHTML = `<div class="t3-fire-noreach">⚠️ Con estas condiciones no se alcanza FIRE en 40 años. Aumenta la aportación o reduce gastos.</div>`;
       }
+      if (typeof _calcGate === 'function') _calcGate('t3-result-bar', 'Proyector FIRE', '🔥');
     }
 
     // Chart.js
@@ -720,6 +723,7 @@ function T4_calc() {
         </div>
         <div class="t4-summary">Deuda total: <strong>${_fmt(totalDebt)}€</strong> · Con ${extra}€ extra/mes quedarás libre en <strong>${Math.min(snowball.months, avalanche.months)} meses</strong></div>
       `;
+      if (typeof _calcGate === 'function') _calcGate('t4-result', 'Bola de Nieve de Deudas', '❄️');
     }
 
     // Chart comparativo
@@ -869,6 +873,7 @@ function T5_update() {
         <div class="t5-stat-lbl">Multiplicador</div>
       </div>
   `;
+  if (typeof _calcGate === 'function') _calcGate('t5-stats', 'Interés Compuesto', '📈');
 
   if (typeof Chart === 'undefined') return;
   const ctx = document.getElementById('t5-chart');
@@ -986,6 +991,7 @@ function T6_calc() {
           <div class="t6-break-item"><span>Ratio deuda/activos</span><strong>${debtRatio.toFixed(1)}%</strong></div>
         </div>
       `;
+      if (typeof _calcGate === 'function') _calcGate('t6-result', 'Net Worth Tracker', '💎');
     }
   } catch(e) { console.warn('T6_calc', e); }
 }
@@ -1273,6 +1279,7 @@ function T7_calc() {
       </table>
     `;
   }
+  if (typeof _calcGate === 'function') _calcGate('t7-result', 'Simulador Hipoteca', '🏡');
 }
 
 function T7_svgBar(loan, interest, costs) {

@@ -87,7 +87,7 @@ function executeBuy() {
   pos.avgPrice = (prev + total) / pos.shares;
   S.invested += total;
   // Crisis buyer tracking
-  if (_crisisActive) { S.crisisBuys = (S.crisisBuys || 0) + 1; checkAchievements(); }
+  if (_crisisActive) { S.crisisBuys = (S.crisisBuys || 0) + 1; }
   _trackFlashCrashBuy();
   recalcPatrimony();
   _ledgerAdd('out', 'buy', `Compra ${GAME.stockQty}× ${tk}`, total);
@@ -524,7 +524,7 @@ function takeLifeEvent(eventId) {
   }
 
   // Aplicar efectos
-  if (fx.xp)              { S.xp += fx.xp; F34_onXPGained(fx.xp); spawnXP('+' + fx.xp + ' XP'); }
+  if (fx.xp)              { S.xp += fx.xp; if (typeof F34_onXPGained === 'function') F34_onXPGained(fx.xp); if (typeof spawnXP === 'function') spawnXP('+' + fx.xp + ' XP'); }
   if (fx.salaryMultiplier) { S.lifeSalary   = Math.round((S.lifeSalary || 1800) * fx.salaryMultiplier); }
   if (fx.salaryBonus)      { S.lifeSalary   = (S.lifeSalary || 1800) + fx.salaryBonus; }
   if (fx.expenseIncrease) {
@@ -594,6 +594,7 @@ function respondToBlackSwan(decision) {
   outcomeEl.style.display = 'block';
   document.querySelector('.crisis-actions')?.style?.setProperty('display', 'none');
   saveState();
+  checkAchievements();
 }
 
 
@@ -831,9 +832,35 @@ let _deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _deferredInstallPrompt = e;
-  const banner = document.getElementById('pwa-install-banner');
-  if (banner) banner.style.display = 'flex';
+  _PWA_maybeShowBanner();
 });
+
+function _PWA_maybeShowBanner() {
+  if (!_deferredInstallPrompt) return;
+  if (localStorage.getItem('fl_pwa_dismissed')) return;
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  var visits = parseInt(localStorage.getItem('fl_pwa_visits') || '0', 10) + 1;
+  localStorage.setItem('fl_pwa_visits', visits);
+  // Mostrar en la 2ª visita o más, con 30s de delay para no interrumpir
+  if (visits >= 2) {
+    setTimeout(function() {
+      if (!_deferredInstallPrompt) return;
+      const banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.style.display = 'flex';
+    }, 30000);
+  }
+}
+
+/** PWA_showAfterModule — Llamar tras completar el primer módulo para mostrar el banner. */
+function PWA_showAfterModule() {
+  if (!_deferredInstallPrompt) return;
+  if (localStorage.getItem('fl_pwa_dismissed')) return;
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
+  setTimeout(function() {
+    const banner = document.getElementById('pwa-install-banner');
+    if (banner) banner.style.display = 'flex';
+  }, 2000);
+}
 
 /** PWA_triggerInstall — Activa el prompt nativo del navegador para instalar la PWA. */
 function PWA_triggerInstall() {
@@ -845,10 +872,11 @@ function PWA_triggerInstall() {
   });
 }
 
-/** PWA_dismissBanner — Oculta el banner de instalación PWA. */
+/** PWA_dismissBanner — Oculta el banner de instalación PWA y recuerda la decisión. */
 function PWA_dismissBanner() {
   const banner = document.getElementById('pwa-install-banner');
   if (banner) banner.style.display = 'none';
+  localStorage.setItem('fl_pwa_dismissed', '1');
 }
 
 
@@ -1355,7 +1383,7 @@ var _FC = {
     st.doneToday.push(tod);
     st.doneToday=st.doneToday.filter(function(d){ return d===tod; });
     S._flashcards=st;
-    S.xp+=5; F34_onXPGained(5); saveState(); spawnXP('+5 XP');
+    S.xp+=5; if (typeof F34_onXPGained === 'function') F34_onXPGained(5); saveState(); if (typeof spawnXP === 'function') spawnXP('+5 XP');
     var m=document.getElementById('m-flashcard');
     if (m) this._render(m);
   },
@@ -1504,7 +1532,7 @@ _FC.answer = function(cardId, quality) {
   st.doneToday.push(tod);
   st.doneToday = st.doneToday.filter(function(d) { return d === tod; });
   S._flashcards = st;
-  S.xp += 5; F34_onXPGained(5); saveState(); spawnXP('+5 XP');
+  S.xp += 5; if (typeof F34_onXPGained === 'function') F34_onXPGained(5); saveState(); if (typeof spawnXP === 'function') spawnXP('+5 XP');
   this._sessionXP = (this._sessionXP || 0) + 5;
   this._sessionCards = (this._sessionCards || 0) + 1;
   var m = document.getElementById('m-flashcard');

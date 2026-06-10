@@ -4,7 +4,7 @@
    versión), Cache First para fuentes y assets binarios.
    ══════════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME  = 'finlearn-v2.2.0';
+const CACHE_NAME  = 'finlearn-v2.3.0';
 const OFFLINE_URL = 'index.html';
 
 const PRECACHE_ASSETS = [
@@ -89,9 +89,55 @@ self.addEventListener('fetch', event => {
   );
 });
 
+// ── Scheduled notifications storage (in-memory, survives while SW alive) ──
+let _scheduledNotifs = {};
+
 self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+  if (!event.data) return;
+
+  if (event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+    return;
+  }
+
+  // Guardar schedule de notificaciones para disparar en background
+  if (event.data.type === 'SCHEDULE_NOTIFICATIONS') {
+    const items = event.data.schedule || [];
+    items.forEach(item => {
+      if (_scheduledNotifs[item.id]) clearTimeout(_scheduledNotifs[item.id].timer);
+      const delay = Math.max(0, item.fireAt - Date.now());
+      const timer = setTimeout(() => {
+        self.registration.showNotification(item.title, {
+          body:    item.body,
+          icon:    './icons/icon-192.png',
+          badge:   './icons/icon-96.png',
+          tag:     item.tag || 'finlearn',
+          vibrate: [120, 60, 120],
+          data:    { url: item.url || './' },
+        });
+        delete _scheduledNotifs[item.id];
+      }, delay);
+      _scheduledNotifs[item.id] = { timer, item };
+    });
+    return;
+  }
+
+  // Cancelar notificaciones pendientes (usuario abrió la app)
+  if (event.data.type === 'CANCEL_NOTIFICATIONS') {
+    const ids = event.data.ids || [];
+    ids.forEach(id => {
+      if (_scheduledNotifs[id]) {
+        clearTimeout(_scheduledNotifs[id].timer);
+        delete _scheduledNotifs[id];
+      }
+    });
+    // Cerrar notificaciones del sistema ya mostradas
+    self.registration.getNotifications().then(notifs => {
+      notifs.forEach(n => {
+        if (ids.some(id => id.startsWith(n.tag))) n.close();
+      });
+    });
+    return;
   }
 });
 

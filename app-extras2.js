@@ -78,6 +78,7 @@ function T8_calc() {
       <div style="margin-top:10px;text-align:center;font-size:12px;color:var(--text3);">
         Capital invertido: ${fmt(capital)}€ · ${years} años · ${rate*100}% anual
       </div>`;
+    if (typeof _calcGate === 'function') _calcGate('t8-result', 'DCA vs Lump Sum', '📊');
   } catch(e) {}
 }
 window.T8_open = T8_open; window.T8_calc = T8_calc;
@@ -178,6 +179,7 @@ function T9_calc() {
       <div class="t9-insight">💡 El S&P 500 histórico (~7% real) dobla cada ~10 años. Un depósito al 2% tarda 36 años.</div>
     `;
   }
+  if (typeof _calcGate === 'function') _calcGate('t9-result', 'Regla del 72', '⚡');
 }
 
 window.T9_open = T9_open; window.T9_calc = T9_calc; window.T9_setTab = T9_setTab;
@@ -268,6 +270,7 @@ function T10_calc() {
         <div class="t10-done-sub">Tienes ${_fmt(Math.round(saved))}€ guardados (${_t10Months} meses de gastos). El excedente puede ir a inversión.</div>
       </div>
     `;
+    if (typeof _calcGate === 'function') _calcGate('t10-result', 'Fondo de Emergencia', '🛡️');
     return;
   }
 
@@ -299,6 +302,7 @@ function T10_calc() {
     </div>
     <div class="t9-insight">💡 Guárdalo en cuenta de alta rentabilidad (Openbank, MyInvestor, CUEN). Accesible en 24–48h, nunca en fondos de inversión.</div>
   `;
+  if (typeof _calcGate === 'function') _calcGate('t10-result', 'Fondo de Emergencia', '🛡️');
 }
 
 window.T10_open = T10_open; window.T10_calc = T10_calc; window.T10_setMonths = T10_setMonths;
@@ -432,6 +436,7 @@ function T11_calc() {
       💡 ${costPct >= 30 ? `Esta deuda te cuesta un <strong>${costPct}%</strong> extra. Prioriza pagarla antes que invertir.` : `Coste razonable. Subir la cuota a ${_fmt(Math.round(payment * 1.5))}€ reduciría el tiempo notablemente.`}
     </div>
   `;
+  if (typeof _calcGate === 'function') _calcGate('t11-result', 'Coste Real de la Deuda', '💳');
 }
 
 window.T11_open = T11_open; window.T11_calc = T11_calc; window.T11_preset = T11_preset;
@@ -907,7 +912,7 @@ function BOSS_showResult() {
         </div>
         ${won ? '<div class="boss-reward-badge">+300 XP · 🏆 Cofre Legendario</div>' : ''}
         <div class="boss-result-btns">
-          ${won ? '' : `<button class="btn btn-boss" onclick="BOSS_open('${_bossState.branchId}')">🔄 Reintentar</button>`}
+          ${won ? `<button class="btn btn-ghost btn-sm" onclick="_bossShare('${boss.name.replace(/'/g,"\\'")}','${_bossState.branchId}')" style="margin-bottom:8px;width:100%;">📤 Compartir victoria</button>` : `<button class="btn btn-boss" onclick="BOSS_open('${_bossState.branchId}')">🔄 Reintentar</button>`}
           <button class="btn ${won ? 'btn-boss' : 'btn-ghost btn-sm'}" onclick="BOSS_close()">
             ${won ? '🎁 ¡Reclamar recompensa!' : 'Volver al juego'}
           </button>
@@ -915,6 +920,17 @@ function BOSS_showResult() {
       </div>
     </div>
   `;
+}
+
+function _bossShare(bossName, branchId) {
+  var text = '¡Acabo de derrotar a "' + bossName + '" en FinLearn! 🏆 +300 XP ganados en el modo más difícil.\n¿Puedes tú también? → https://finlearn.app';
+  if (navigator.share) {
+    navigator.share({ title: 'FinLearn · Boss Derrotado 🏆', text: text, url: 'https://finlearn.app' }).catch(function(){});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof toast === 'function') toast('✅ Copiado', 'Pégalo en tus redes sociales', 't-success');
+    });
+  }
 }
 
 function BOSS_close() {
@@ -931,6 +947,7 @@ window.BOSS_open         = BOSS_open;
 window.BOSS_startQuiz    = BOSS_startQuiz;
 window.BOSS_answer       = BOSS_answer;
 window.BOSS_close        = BOSS_close;
+window._bossShare        = _bossShare;
 
 /* ══════════════════════════════════════════════════════════════════
    PRIORIDAD 2B — FINANCIAL PERSONALITY TEST

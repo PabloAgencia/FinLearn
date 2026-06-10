@@ -204,7 +204,7 @@
           <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="obNext(3)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
         </div>
 
-        <!-- STEP 3: Nivel de conocimiento (auto-avanza al seleccionar) -->
+        <!-- STEP 3: Mini-quiz de nivel financiero -->
         <div class="ob-step" id="ob-s3">
           <div class="ob-logo">FinLearn</div>
           <div class="ob-dots">
@@ -215,29 +215,10 @@
             <div class="ob-dot"></div>
           </div>
           <div class="ob-emoji">🧠</div>
-          <div class="ob-title">¿Cuánto sabes de finanzas?</div>
-          <div class="ob-sub">Sin juicios — esto personaliza tu ruta de aprendizaje.</div>
-          <div class="ob-level-grid">
-            <div class="ob-level-card" id="lvl-zero" onclick="_obLevelSelect('zero',this)">
-              <div class="ob-lc-icon">🌱</div>
-              <div class="ob-lc-title">Desde cero</div>
-              <div class="ob-lc-desc">No conozco el mundo financiero</div>
-            </div>
-            <div class="ob-level-card" id="lvl-saving" onclick="_obLevelSelect('saving',this)">
-              <div class="ob-lc-icon">🏦</div>
-              <div class="ob-lc-title">Tengo ahorros</div>
-              <div class="ob-lc-desc">Ahorro pero no sé dónde invertir</div>
-            </div>
-            <div class="ob-level-card" id="lvl-investing" onclick="_obLevelSelect('investing',this)">
-              <div class="ob-lc-icon">📊</div>
-              <div class="ob-lc-title">Ya invierto</div>
-              <div class="ob-lc-desc">ETFs o acciones — quiero mejorar</div>
-            </div>
-            <div class="ob-level-card" id="lvl-active" onclick="_obLevelSelect('active',this)">
-              <div class="ob-lc-icon">🚀</div>
-              <div class="ob-lc-title">Inversor activo</div>
-              <div class="ob-lc-desc">Gestiono mi cartera y quiero optimizarla</div>
-            </div>
+          <div class="ob-title">Test rápido de nivel</div>
+          <div class="ob-sub">3 preguntas para personalizar tu ruta. Sin trampa — todas las respuestas son válidas.</div>
+          <div id="ob-quiz-wrap" style="margin-top:16px;">
+            <!-- Renderizado por _obQuizInit() -->
           </div>
         </div>
 
@@ -2617,6 +2598,7 @@
 <script src="app-tools2C.js?v=2.1.0"></script>
 <script src="app-tools3.js?v=2.1.0"></script>
 <script src="app-tools3B.js?v=2.1.0"></script>
+<script src="app-calc-gate.js?v=1.0.0"></script>
 <script src="app-extras.js?v=2.1.0"></script>
 <script src="app-extrasB.js?v=2.1.0"></script>
 <script src="app-extras2.js?v=2.1.0"></script>

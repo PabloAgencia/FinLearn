@@ -30,6 +30,97 @@
 .nav-back:active { transform: scale(.93); }
 body.light-mode .nav-back { background: rgba(0,0,0,.06); border-color: rgba(0,0,0,.1); color: var(--text); }
 
+/* ── Racha caliente badge ── */
+.sc-hot-streak {
+  background: linear-gradient(90deg, rgba(251,146,60,.15), rgba(239,68,68,.1));
+  border: 1px solid rgba(251,146,60,.35);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fb923c;
+  text-align: center;
+  margin: 6px 0 2px;
+  letter-spacing: .04em;
+  animation: hotPulse 2.5s ease-in-out infinite;
+}
+@keyframes hotPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251,146,60,0); }
+  50%       { box-shadow: 0 0 0 4px rgba(251,146,60,.12); }
+}
+
+/* ── Calendario de racha ── */
+.sc-calendar {
+  margin: 10px 0 6px;
+  padding: 10px 12px 8px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+}
+.sc-cal-header { margin-bottom: 6px; }
+.sc-cal-month {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: capitalize;
+  color: var(--text3);
+  letter-spacing: .06em;
+}
+.sc-cal-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 8px;
+  color: var(--text3);
+  margin-bottom: 4px;
+  letter-spacing: .05em;
+}
+.sc-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.sc-cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  border-radius: 50%;
+  color: rgba(255,255,255,.2);
+  font-weight: 500;
+}
+.sc-cal-empty { pointer-events: none; }
+.sc-cal-active {
+  background: var(--accent);
+  color: #000 !important;
+  font-weight: 800;
+}
+.sc-cal-today:not(.sc-cal-active) {
+  border: 1.5px solid rgba(255,255,255,.45);
+  color: #fff;
+}
+.sc-cal-past { color: rgba(255,255,255,.15); }
+body.light-mode .sc-calendar { background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.07); }
+body.light-mode .sc-cal-active { color: #fff !important; }
+body.light-mode .sc-cal-today:not(.sc-cal-active) { border-color: rgba(0,0,0,.4); color: #000; }
+
+/* ── Wrapped mensual stat cards ── */
+.mw-stat-card {
+  border-radius: 16px;
+  padding: 16px 12px;
+}
+.mw-stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.mw-stat-label {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 4px;
+}
+
 /* ══════════════════════════════════════════════════════════════════
    GUIDES — Pantalla de artículos de lectura libre
    Prefijo: .guide-
@@ -1320,3 +1411,172 @@ body.light-mode .sim-buy-box { background: #fff; }
   transition: color .15s;
 }
 .streak-milestone-close:hover { color: var(--text); }
+
+/* ══════════════════════════════════════════════════════════════════
+   CALC GATE — Auth gate inline dentro de la tool modal
+══════════════════════════════════════════════════════════════════ */
+.calc-gate-panel {
+  position: relative;
+  margin-top: -48px;
+  z-index: 10;
+}
+
+.cg-fade-bar {
+  height: 64px;
+  background: linear-gradient(to bottom, transparent, var(--surface, #0d1220));
+  pointer-events: none;
+}
+
+.cg-card {
+  background: var(--card, #111827);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+  padding: 20px 18px 22px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+
+.cg-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.cg-icon {
+  font-size: 30px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.cg-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--text1, #e8eaf0);
+  line-height: 1.3;
+}
+
+.cg-sub {
+  font-size: 12px;
+  color: var(--text2, #a0a8c0);
+  margin-top: 3px;
+}
+
+.cg-perks {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cg-perks li {
+  font-size: 13px;
+  color: var(--text2, #a0a8c0);
+  padding-left: 2px;
+}
+
+#cg-form-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cg-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  background: var(--surface, rgba(255,255,255,0.05));
+  color: var(--text1, #e8eaf0);
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cg-input:focus {
+  border-color: var(--accent, #00e5a0);
+}
+
+.cg-error {
+  font-size: 12px;
+  color: #ef4444;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.cg-btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--accent, #00e5a0);
+  border: none;
+  color: #000;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+
+.cg-btn-primary:hover  { opacity: 0.9; }
+.cg-btn-primary:active { transform: scale(0.98); }
+.cg-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.cg-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text3, rgba(255,255,255,0.3));
+  font-size: 12px;
+}
+
+.cg-divider::before,
+.cg-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border, rgba(255,255,255,0.1));
+}
+
+.cg-btn-google {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--surface, rgba(255,255,255,0.06));
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text1, #e8eaf0);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.cg-btn-google:hover { background: rgba(255,255,255,0.1); }
+
+.cg-login-row {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text2, #a0a8c0);
+  padding-top: 2px;
+}
+
+.cg-link-btn {
+  background: none;
+  border: none;
+  color: var(--accent, #00e5a0);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

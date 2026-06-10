@@ -766,6 +766,34 @@ function renderStreakCard() {
     ctaHTML = '<button class="sc-cta-btn sc-cta-available sc-cta-pulse" onclick="showDailyRewardModal(' + dayCount + ')">🎁 Reclamar recompensa del d\xEDa</button>';
   }
 
+  // Racha caliente
+  var hotBadge = streak >= 7
+    ? '<div class="sc-hot-streak">🔥 RACHA CALIENTE &middot; +50% XP activo</div>'
+    : '';
+
+  // Calendario del mes
+  var _now = new Date();
+  var _y = _now.getFullYear(), _mo = _now.getMonth(), _d = _now.getDate();
+  var _MNAMES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var _dim = new Date(_y, _mo + 1, 0).getDate();
+  var _fdow = (new Date(_y, _mo, 1).getDay() + 6) % 7; // Lun=0
+  var _mStr = _y + '-' + String(_mo + 1).padStart(2, '0');
+  var _calCells = '';
+  for (var _i = 0; _i < _fdow; _i++) _calCells += '<span class="sc-cal-day sc-cal-empty"></span>';
+  for (var _dd = 1; _dd <= _dim; _dd++) {
+    var _ds = _mStr + '-' + String(_dd).padStart(2, '0');
+    var _act = S.activityLog && S.activityLog[_ds];
+    var _cls = 'sc-cal-day'
+      + (_dd === _d ? ' sc-cal-today' : '')
+      + (_act ? ' sc-cal-active' : (_dd < _d ? ' sc-cal-past' : ''));
+    _calCells += '<span class="' + _cls + '">' + _dd + '</span>';
+  }
+  var calendarHTML = '<div class="sc-calendar">'
+    + '<div class="sc-cal-header"><span class="sc-cal-month">' + _MNAMES[_mo] + ' ' + _y + '</span></div>'
+    + '<div class="sc-cal-days-header"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>'
+    + '<div class="sc-cal-grid">' + _calCells + '</div>'
+    + '</div>';
+
   el.innerHTML = '<div class="sc-card">'
     + '<div class="sc-card-top">'
     +   '<div class="sc-card-streak-wrap">'
@@ -780,7 +808,9 @@ function renderStreakCard() {
     +     '<div class="sc-shield-label">' + (shields > 0 ? 'Escudos: ' + shields + '/3' : 'Sin escudos') + '</div>'
     +   '</div>'
     + '</div>'
+    + hotBadge
     + '<div class="sc-dots-wrap">' + dotsHTML + '</div>'
+    + calendarHTML
     + ctaHTML
     + '<div class="sc-share-row">'
     +   '<button class="sc-share-btn" onclick="shareStats()">📸 Compartir racha</button>'
@@ -789,6 +819,124 @@ function renderStreakCard() {
     + '</div>';
 }
 window.renderStreakCard = renderStreakCard;
+
+/* ══════════════════════════════════════════════════════════════════
+   WRAPPED MENSUAL — resumen del mes + share al cambiar de mes
+══════════════════════════════════════════════════════════════════ */
+
+function _getCurrentMonthKey() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+
+function _checkMonthlyWrapped() {
+  var mk = _getCurrentMonthKey();
+  if (!S.monthlyKey) {
+    S.monthlyKey          = mk;
+    S.monthlyXPBase       = S.xp || 0;
+    S.monthlyModsBase     = (S.completedMods || []).length;
+    S.monthlyMaxStreak    = S.streak || 0;
+    S.monthlyLeague       = S.league || 'bronze';
+    return;
+  }
+  // Update monthly max streak
+  if ((S.streak || 0) > (S.monthlyMaxStreak || 0)) S.monthlyMaxStreak = S.streak;
+
+  if (S.monthlyKey === mk) return; // mismo mes, nada que hacer
+
+  // Mes nuevo — mostrar wrapped del mes anterior si no se mostró aún
+  if (S.monthlyWrappedKey !== S.monthlyKey) {
+    var xpEarned      = Math.max(0, (S.xp || 0) - (S.monthlyXPBase || 0));
+    var modsCompleted = Math.max(0, (S.completedMods || []).length - (S.monthlyModsBase || 0));
+    var maxStr        = S.monthlyMaxStreak || 0;
+    var lg            = S.monthlyLeague || 'bronze';
+    var prevKey       = S.monthlyKey;
+
+    S.monthlyWrappedKey = prevKey;
+    S.monthlyKey        = mk;
+    S.monthlyXPBase     = S.xp || 0;
+    S.monthlyModsBase   = (S.completedMods || []).length;
+    S.monthlyMaxStreak  = S.streak || 0;
+    S.monthlyLeague     = S.league || 'bronze';
+    saveState();
+
+    setTimeout(function() {
+      _showMonthlyWrapped(prevKey, xpEarned, modsCompleted, maxStr, lg);
+    }, 3000);
+  } else {
+    // Ya se mostró — solo actualiza la base
+    S.monthlyKey        = mk;
+    S.monthlyXPBase     = S.xp || 0;
+    S.monthlyModsBase   = (S.completedMods || []).length;
+    S.monthlyMaxStreak  = S.streak || 0;
+    S.monthlyLeague     = S.league || 'bronze';
+  }
+}
+
+function _showMonthlyWrapped(monthKey, xpEarned, modsCompleted, maxStreak, league) {
+  var MN = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var parts = (monthKey || '').split('-');
+  var mName = parts[1] ? MN[parseInt(parts[1], 10) - 1] || '' : '';
+  var yr    = parts[0] || '';
+  var curMonthName = MN[new Date().getMonth()] || 'este mes';
+  var LG = { bronze:'Bronce 🥉', silver:'Plata 🥈', gold:'Oro 🥇', diamond:'Diamante 💎' };
+
+  var ov = document.getElementById('monthly-wrapped-overlay');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'monthly-wrapped-overlay'; document.body.appendChild(ov); }
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.95);backdrop-filter:blur(16px);animation:fadeInFast .3s ease;';
+
+  ov.innerHTML = '<div style="text-align:center;padding:28px 20px;max-width:340px;width:100%;animation:levelUpPop .5s cubic-bezier(.34,1.56,.64,1) both;">'
+    + '<div style="font-size:10px;font-weight:800;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">RESUMEN DE MES</div>'
+    + '<div style="font-family:\'Syne\',sans-serif;font-size:30px;font-weight:900;color:#fff;text-transform:capitalize;margin-bottom:4px;">' + mName + ' ' + yr + '</div>'
+    + '<div style="font-size:13px;color:var(--text2);margin-bottom:22px;">Así fue tu mes financiero 📊</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">'
+    +   '<div class="mw-stat-card" style="background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);">'
+    +     '<div class="mw-stat-val" style="color:#00e5a0;">' + (xpEarned > 0 ? '+' + xpEarned.toLocaleString('es') : '0') + '</div>'
+    +     '<div class="mw-stat-label">XP ganados</div>'
+    +   '</div>'
+    +   '<div class="mw-stat-card" style="background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.2);">'
+    +     '<div class="mw-stat-val" style="color:#818cf8;">' + modsCompleted + '</div>'
+    +     '<div class="mw-stat-label">Módulos</div>'
+    +   '</div>'
+    +   '<div class="mw-stat-card" style="background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);">'
+    +     '<div class="mw-stat-val" style="color:#fbbf24;">' + maxStreak + '🔥</div>'
+    +     '<div class="mw-stat-label">Racha máx.</div>'
+    +   '</div>'
+    +   '<div class="mw-stat-card" style="background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);">'
+    +     '<div class="mw-stat-val" style="color:#f87171;font-size:22px;">' + (LG[league] || 'Bronce') + '</div>'
+    +     '<div class="mw-stat-label">Liga</div>'
+    +   '</div>'
+    + '</div>'
+    + '<button onclick="_shareMonthlyWrapped(\'' + mName + '\',\'' + yr + '\',' + xpEarned + ',' + modsCompleted + ',' + maxStreak + ',\'' + league + '\')" '
+    +   'style="width:100%;padding:12px;border-radius:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);color:#fff;font-family:\'Syne\',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">📤 Compartir mi mes</button>'
+    + '<button onclick="document.getElementById(\'monthly-wrapped-overlay\').remove()" '
+    +   'style="width:100%;padding:14px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:\'Syne\',sans-serif;font-weight:800;font-size:15px;cursor:pointer;">🚀 ¡A por ' + curMonthName + '!</button>'
+    + '</div>';
+
+  if (typeof confetti === 'function') confetti({ particleCount: 80, spread: 70, origin: { y: 0.5 } });
+  if (typeof SFX !== 'undefined' && SFX.levelUp) SFX.levelUp();
+}
+
+function _shareMonthlyWrapped(mName, yr, xp, mods, streak, league) {
+  var LG = { bronze: 'Bronce', silver: 'Plata', gold: 'Oro', diamond: 'Diamante' };
+  var text = '📊 Mi ' + mName + ' ' + yr + ' en FinLearn:\n'
+    + '⚡ +' + (xp || 0).toLocaleString('es') + ' XP\n'
+    + '📚 ' + mods + ' módulos completados\n'
+    + '🔥 Racha máx. ' + streak + ' días\n'
+    + '🏆 Liga ' + (LG[league] || league) + '\n'
+    + '→ https://finlearn.app';
+  if (navigator.share) {
+    navigator.share({ title: 'FinLearn — Mi mes de ' + mName, text: text, url: 'https://finlearn.app' }).catch(function(){});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof toast === 'function') toast('✅ Copiado', 'Comparte en tus redes', 't-success');
+    });
+  }
+}
+
+window._checkMonthlyWrapped  = _checkMonthlyWrapped;
+window._showMonthlyWrapped   = _showMonthlyWrapped;
+window._shareMonthlyWrapped  = _shareMonthlyWrapped;
 
 function _rouletteSpinAndClaim(winIdx, dayCount) {
   const btn  = document.getElementById('rl-spin-btn');
@@ -1215,7 +1363,7 @@ window._firstPathDismiss = function() {
 ══════════════════════════════════════════════════════════════════ */
 const STREAK_MILESTONES = [
   { day: 3,   xp: 75,   cash: 0,    shield: 0, label: '🔥 ¡Racha de 3 días!',   msg: 'Empiezas a crear el hábito. +75 XP.' },
-  { day: 7,   xp: 150,  cash: 300,  shield: 1, label: '🛡️ ¡Semana completa!',   msg: 'Una semana sin fallo. +150 XP, €300 y un Escudo de Racha.' },
+  { day: 7,   xp: 150,  cash: 300,  shield: 1, label: '🛡️ ¡Semana completa!',   msg: 'Una semana sin fallo. +150 XP, €300, escudo de racha — y el bono Racha Caliente (+50% XP) ahora está activo.' },
   { day: 14,  xp: 300,  cash: 0,    shield: 1, label: '🏆 ¡Dos semanas!',       msg: '14 días constante. Eres del top 15%. +300 XP y un escudo.' },
   { day: 30,  xp: 500,  cash: 500,  shield: 2, label: '💎 ¡Racha de 30 días!',  msg: 'Un mes sin fallar. Top 5% global. +500 XP, €500 y 2 escudos.' },
   { day: 100, xp: 1500, cash: 2000, shield: 2, label: '👑 ¡100 días seguidos!', msg: 'Leyenda absoluta. +1.500 XP, €2.000 y 2 escudos.' },
@@ -1500,6 +1648,12 @@ function checkDailyLogin() {
 
   // Streak milestone check
   _checkStreakMilestones(S.streak || 0);
+
+  // Actualizar racha máxima del mes
+  if ((S.streak || 0) > (S.monthlyMaxStreak || 0)) S.monthlyMaxStreak = S.streak;
+
+  // Wrapped mensual (comprueba si cambió el mes)
+  if (typeof _checkMonthlyWrapped === 'function') _checkMonthlyWrapped();
 
   // Streak-in-danger toast: if streak >= 3 and lastVisit was yesterday
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);

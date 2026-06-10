@@ -190,9 +190,10 @@ async function sbHandleAuth(mode) {
   if (!email || !pass) { if(errEl){errEl.textContent='Rellena email y contraseña';errEl.style.display='block';} return; }
   const btn = document.querySelector('#m-auth button');
   try {
-    if (mode === 'register') await sbSignUp(email, pass);
+    if (mode === 'register') { await sbSignUp(email, pass); await sbSignIn(email, pass); }
     else await sbSignIn(email, pass);
     document.getElementById('m-auth').style.display = 'none';
+    if (typeof _calcGateRemove === 'function') _calcGateRemove();
     const hasCloud = await sbLoadState();
     if (!hasCloud && S.userName) await sbSaveState();
     if (S.userName) {

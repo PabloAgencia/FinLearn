@@ -988,6 +988,10 @@
 .ob-lc-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; margin-bottom: 5px; line-height: 1.2; }
 .ob-lc-desc  { font-size: 11px; color: var(--text2); line-height: 1.4; }
 
+/* Onboarding micro-quiz options */
+.ob-quiz-opt:hover { border-color: rgba(255,255,255,.3) !important; background: rgba(255,255,255,.1) !important; }
+.ob-quiz-opt:active { transform: scale(.98); }
+
 /* Monthly investment slider step */
 .ob-monthly-display {
   text-align: center;

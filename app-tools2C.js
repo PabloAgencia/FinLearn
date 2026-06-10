@@ -785,8 +785,9 @@ window.SAAS_startPayment  = SAAS_startPayment;
 window.SAAS_confirmSuccess= SAAS_confirmSuccess;
 
 // ── PWA
-window.PWA_triggerInstall = PWA_triggerInstall;
-window.PWA_dismissBanner  = PWA_dismissBanner;
+window.PWA_triggerInstall  = PWA_triggerInstall;
+window.PWA_dismissBanner   = PWA_dismissBanner;
+window.PWA_showAfterModule = PWA_showAfterModule;
 
 // ── B2B
 window.B2B_submitForm     = B2B_submitForm;

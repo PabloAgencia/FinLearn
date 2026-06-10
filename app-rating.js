@@ -6,13 +6,14 @@
 var _ratScore = 0;
 
 function _checkShowRating() {
-  if (S.ratingShown) return;
   if (window._ratingShownThisSession) return;
   var level  = S.level  || 1;
   var streak = S.streak || 0;
   var isMilestoneLevel = level > 1 && level % 5 === 0;
   var isStreakMilestone = streak === 7 || streak === 14 || streak === 30;
   if (!isMilestoneLevel && !isStreakMilestone) return;
+  // Permitir nuevo prompt en cada milestone de nivel
+  if (isMilestoneLevel && (S.ratingShownAtLevel || 0) >= level) return;
   window._ratingShownThisSession = true;
   setTimeout(_showRatingModal, 1400);
 }
@@ -62,6 +63,7 @@ function _ratSelect(n) {
 
 function _ratSubmit() {
   S.ratingShown = true;
+  S.ratingShownAtLevel = S.level || 1;
   S.ratingScore = _ratScore;
   saveState();
   closeModal('m-rating');

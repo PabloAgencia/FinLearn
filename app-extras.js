@@ -190,15 +190,16 @@ function F44_onModuleComplete() {
   const prem = isPremium();
 
   if (prem) {
-    // Premium: cofres mejores y más frecuentes
-    if (completed % 5 === 0 && completed > 0)  F44_earnChest('bronze');
-    if (completed % 10 === 0 && completed > 0) { F44_earnChest('silver'); return; }
-    if (completed % 25 === 0 && completed > 0)  F44_earnChest('gold');
+    // Premium: cofres mejores y más frecuentes (uso else-if para evitar cofres dobles)
+    if (completed % 25 === 0 && completed > 0)       F44_earnChest('gold');
+    else if (completed % 10 === 0 && completed > 0)  F44_earnChest('silver');
+    else if (completed % 5 === 0 && completed > 0)   F44_earnChest('bronze');
+    // Bonus de racha independiente del módulo
     if ((S.streak||0) > 0 && (S.streak||0) % 7 === 0) F44_earnChest('silver');
   } else {
     // Gratis: bronce cada 5, plata cada 20, oro casi nunca
-    if (completed % 20 === 0 && completed > 0) { F44_earnChest('silver'); return; }
-    if (completed % 5 === 0 && completed > 0)   F44_earnChest('bronze');
+    if (completed % 20 === 0 && completed > 0)       F44_earnChest('silver');
+    else if (completed % 5 === 0 && completed > 0)   F44_earnChest('bronze');
     // Sin cofres por racha en plan gratis
   }
 }

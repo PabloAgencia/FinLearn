@@ -224,6 +224,18 @@ const DEFAULTS = {
   sim: null,                    // cartera de inversión virtual { cash, holdings, startValue, startDate }
   ratingShown: false,           // si ya se mostró el prompt de valoración
   ratingScore: 0,               // puntuación dada (1-5)
+  ratingShownAtLevel: 0,        // nivel en que se mostró por última vez (permite nuevos milestones)
+  weeklyToolsUsed: [],          // herramientas usadas esta semana
+  weeklyToolsDate: '',          // lunes ISO de la semana actual para weeklyToolsUsed
+  /* ── Push Notifications ── */
+  pushAsked: false,             // si ya se preguntó permiso (evita repetir)
+  pushDismissedAt: 0,           // timestamp de último dismiss del sheet
+  /* ── Boss Battle Semanal ── */
+  weeklyBossKey: '',            // 'YYYY-Www' del boss combatido
+  weeklyBossWon: false,         // si se ganó el boss de esa semana
+  /* ── Eventos de Actualidad ── */
+  newsReadKey: '',              // fecha 'YYYY-MM-DD' del evento leído
+  newsReadId: '',               // id del evento leído
   /* ── Campos internos (no mostrar al usuario) ── */
   _budget: null,
   _totalSells: 0,
@@ -247,6 +259,13 @@ const DEFAULTS = {
   dailyQuestsBonus: false,  // true si se reclamó el cofre bonus por completar las 3
   /* ── F50 Power-up shop ── */
   quizHints: 0,             // pistas de quiz disponibles (cada una elimina 2 opciones)
+  /* ── Wrapped Mensual ── */
+  monthlyKey: '',           // 'YYYY-MM' del mes en curso
+  monthlyXPBase: 0,         // S.xp al inicio del mes
+  monthlyModsBase: 0,       // módulos completados al inicio del mes
+  monthlyMaxStreak: 0,      // racha máxima del mes
+  monthlyLeague: 'bronze',  // liga al inicio del mes
+  monthlyWrappedKey: '',    // último mes cuyo wrapped ya se mostró
 };
 
 

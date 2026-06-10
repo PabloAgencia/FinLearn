@@ -1542,12 +1542,7 @@ function obNext(step) {
   if (next) next.classList.add('active');
 
   if (step === 3) {
-    const slider = document.getElementById('ob-monthly-slider');
-    if (slider) {
-      slider.value = S.monthlyContribution || 100;
-      _ob_updateMonthlySlider();
-    }
-    setTimeout(_ob_initNumericInputs, 50);
+    if (typeof _obQuizInit === 'function') _obQuizInit();
   } else if (step === 4) {
     _renderProjectionStepFinal();
     if (typeof _ob_renderProfessions === 'function') _ob_renderProfessions();
