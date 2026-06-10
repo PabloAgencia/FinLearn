@@ -1147,8 +1147,8 @@ function _openLab() {
     <div class="modal-box" style="max-width:420px;padding:24px 20px;max-height:85vh;overflow-y:auto;">
       <button class="modal-close" onclick="closeModal('m-lab')" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;">✕</button>
       <div style="text-align:center;margin-bottom:6px;">
-        <div style="font-size:36px;margin-bottom:6px;">🧪</div>
-        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text1);">Laboratorio</div>
+        <div style="font-size:36px;margin-bottom:6px;">🧮</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--text1);">Calculadoras</div>
         <div style="font-size:12px;color:var(--text2);margin-top:4px;">Practica con simuladores y retos</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:18px;">

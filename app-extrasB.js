@@ -45,7 +45,7 @@ function renderToolsScreen() {
 
   el.innerHTML = `
     <div class="lab-header">
-      <div class="lab-header-title">🧪 Laboratorio</div>
+      <div class="lab-header-title">🧮 Calculadoras</div>
       <div class="lab-header-sub">11 herramientas para tomar mejores decisiones financieras</div>
     </div>
     <div class="lab-section-pad">
@@ -103,7 +103,7 @@ function renderLabShortcut() {
   el.innerHTML = `
     <div class="lab-shortcut-card">
       <div class="lab-sc-head">
-        <div class="lab-sc-title">🧪 Calculadoras</div>
+        <div class="lab-sc-title">🧮 Calculadoras</div>
         <button class="lab-sc-all" onclick="goTo('tools')">Ver todas (11) →</button>
       </div>
       <div class="lab-sc-row">
@@ -1015,7 +1015,7 @@ function T6_save() {
     if (S.nwHistory.length > 24) S.nwHistory = S.nwHistory.slice(-24);
     saveState();
     T6_renderHistory();
-    showToast('💎 Snapshot guardado');
+    toast('💎 Snapshot guardado', '', 't-success');
   } catch(e) { console.warn('T6_save', e); }
 }
 

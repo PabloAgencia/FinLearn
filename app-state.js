@@ -1115,7 +1115,7 @@ function tickMission(type, amount) {
       S.xp = (S.xp || 0) + m.xp;
       checkTitleUpgrade();
       spawnXP('🏆 Misión completada · +' + m.xp + ' XP');
-      toast('🏆 ' + m.label, 't-success');
+      toast('🏆 ' + m.label, '', 't-success');
       changed = true;
     }
   });
@@ -1212,7 +1212,7 @@ function checkStreakMission() {
         S.xp = (S.xp || 0) + m.xp;
         checkTitleUpgrade();
         spawnXP('🏆 Misión completada · +' + m.xp + ' XP');
-        toast('🏆 ' + m.label, 't-success');
+        toast('🏆 ' + m.label, '', 't-success');
         saveState();
       }
     }

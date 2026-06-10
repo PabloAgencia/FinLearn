@@ -539,7 +539,7 @@ function takeJobChoice(idx) {
   checkAchievements();
   renderCareerCard?.();
 
-  toast(job.icon + ' ' + job.title, choice.result, 'default');
+  toast(job.icon + ' ' + job.title, choice.result, 't-social');
   SFX.correct();
   HAPTIC.success();
 }

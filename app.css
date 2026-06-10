@@ -297,6 +297,12 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .toast.t-social .toast-t{color:var(--accent4);}
 .toast.t-danger{border-color:var(--danger);}
 .toast.t-danger .toast-t{color:var(--danger);}
+.toast.t-warn{border-color:#eab308;}
+.toast.t-warn .toast-t{color:#eab308;}
+.toast.t-error{border-color:var(--danger);}
+.toast.t-error .toast-t{color:var(--danger);}
+.toast.t-info{border-color:var(--accent4);}
+.toast.t-info .toast-t{color:var(--accent4);}
 @keyframes toastIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:none;}}
 @keyframes toastOut{to{opacity:0;transform:translateX(40px);}}
 

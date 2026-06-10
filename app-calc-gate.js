@@ -22,6 +22,16 @@ function _calcGate(resultId, toolName, emoji) {
   el.style.overflow  = 'hidden';
   el.dataset.gated   = '1';
 
+  // Ocultar todos los elementos hermanos que vengan después (tablas, charts, secciones extra)
+  var sib = el.nextElementSibling;
+  while (sib) {
+    if (!sib.id || sib.id !== 'calc-gate-panel') {
+      sib.dataset.cgHide = '1';
+      sib.style.display  = 'none';
+    }
+    sib = sib.nextElementSibling;
+  }
+
   // Inyectar panel de conversión justo después del resultado
   var panel = document.createElement('div');
   panel.id        = 'calc-gate-panel';
@@ -150,22 +160,18 @@ function _cgError(msg) {
 /* ── Callback tras auth exitosa ── */
 async function _cgOnSuccess() {
   try {
-    if (!getSBUser()) {
-      const { data: { session } } = await getSB().auth.getSession();
-      if (session?.user) window._sbUser = session.user;
-    }
     var hasCloud = await sbLoadState();
     if (!hasCloud && typeof S !== 'undefined' && S.userName) await sbSaveState();
     _calcGateRemove();
     if (typeof updateUIFromState === 'function') updateUIFromState();
-    if (typeof showToast === 'function') showToast('✅ Análisis completo desbloqueado');
+    if (typeof toast === 'function') toast('✅ ¡Cuenta creada!', 'Análisis completo desbloqueado.', 't-success');
   } catch(e) {
     _calcGateRemove();
-    if (typeof showToast === 'function') showToast('✅ Sesión iniciada');
+    if (typeof toast === 'function') toast('✅ Sesión iniciada', '', 't-success');
   }
 }
 
-/* ── Eliminar el gate y revelar el resultado ── */
+/* ── Eliminar el gate y revelar el resultado completo ── */
 function _calcGateRemove() {
   var panel = document.getElementById('calc-gate-panel');
   if (panel) panel.remove();
@@ -179,6 +185,13 @@ function _calcGateRemove() {
     }
     _cgCurrentResult = null;
   }
+
+  // Restaurar todos los elementos ocultados (tablas, charts, secciones extra)
+  document.querySelectorAll('[data-cg-hide]').forEach(function(el) {
+    el.style.display = '';
+    delete el.dataset.cgHide;
+  });
+
   _cgMode = 'register';
 }
 
