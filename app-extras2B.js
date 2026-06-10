@@ -1038,22 +1038,99 @@ window.AUDIO = AUDIO;
    Estilo: pixel-art (RPG financiero). Sin API key, sin coste.
 ══════════════════════════════════════════════════════════════════ */
 const AVATAR_AI = (function() {
-  var STYLE   = 'pixel-art';
-  var BASE    = 'https://api.dicebear.com/9.x/' + STYLE + '/svg';
-  var BG      = '07101f';   // fondo oscuro del app
+  var STYLE = 'pixel-art';
+  var BASE  = 'https://api.dicebear.com/9.x/' + STYLE + '/svg';
+  var BG    = '07101f';
+
+  // Mapa nombre normalizado → sprite local
+  var SPRITE_MAP = {
+    'novato':     'icons/sprites/novato.png',
+    'aprendiz':   'icons/sprites/novato.png',
+    'estratega':  'icons/sprites/estratega.png',
+    'visionario': 'icons/sprites/visionario.png',
+    'cristal':    'icons/sprites/cristal.png',
+    'llama':      'icons/sprites/llama.png',
+    'cohete':     'icons/sprites/cohete.png',
+    'dragon':     'icons/sprites/dragon.png',
+    'rayo':       'icons/sprites/rayo.png',
+    'relampago':  'icons/sprites/rayo.png'
+  };
+
+  function _normalize(name) {
+    return name.trim().toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
 
   function _key(name) {
-    return 'fl_av3_' + name.trim().toLowerCase().slice(0, 24);
+    return 'fl_av3_' + _normalize(name).slice(0, 24);
   }
 
   function _url(name) {
     return BASE + '?seed=' + encodeURIComponent(name) +
-      '&backgroundColor=' + BG +
-      '&scale=88&radius=12';
+      '&backgroundColor=' + BG + '&scale=88&radius=12';
   }
 
+  // Flood-fill desde los 4 bordes para quitar fondo blanco/casi-blanco
+  function _removeWhiteBg(src, cb) {
+    var img = new Image();
+    img.onload = function() {
+      var c = document.createElement('canvas');
+      c.width = img.naturalWidth || img.width;
+      c.height = img.naturalHeight || img.height;
+      var ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      var data = ctx.getImageData(0, 0, c.width, c.height);
+      var d = data.data, w = c.width, h = c.height;
+      var visited = new Uint8Array(w * h);
+      var stack = [];
+      function isLight(i) { return d[i*4+3] > 0 && d[i*4] > 220 && d[i*4+1] > 220 && d[i*4+2] > 220; }
+      function push(i) { if (i >= 0 && i < w*h && !visited[i] && isLight(i)) { visited[i] = 1; stack.push(i); } }
+      for (var x = 0; x < w; x++) { push(x); push((h-1)*w+x); }
+      for (var y = 0; y < h; y++) { push(y*w); push(y*w+w-1); }
+      while (stack.length) {
+        var p = stack.pop();
+        d[p*4+3] = 0;
+        var px = p % w, py = Math.floor(p / w);
+        if (px > 0)   push(p-1);
+        if (px < w-1) push(p+1);
+        if (py > 0)   push(p-w);
+        if (py < h-1) push(p+w);
+      }
+      ctx.putImageData(data, 0, 0);
+      cb(c.toDataURL('image/png'));
+    };
+    img.src = src;
+  }
+
+  // Inyecta sprite (face-crop en nav, face-crop en prof-av)
+  function _injectSprite(src) {
+    var targets = [
+      { id: 'home-nav-av', sz: '32px', pos: 'center 10%' },
+      { id: 'prof-av',     sz: '76px', pos: 'center 12%' }
+    ];
+    targets.forEach(function(t) {
+      var el = document.getElementById(t.id);
+      if (!el) return;
+      var img = el.querySelector('.fl-gen-av');
+      if (!img) {
+        img = document.createElement('img');
+        img.className = 'fl-gen-av';
+        img.alt = '';
+        el.insertBefore(img, el.firstChild);
+      }
+      img.src = src;
+      img.style.cssText = 'display:block;width:' + t.sz + ';height:' + t.sz
+        + ';border-radius:50%;object-fit:cover;object-position:' + t.pos
+        + ';pointer-events:none;image-rendering:pixelated;';
+      Array.from(el.childNodes).forEach(function(n) {
+        if (n.nodeType === 3) n.textContent = '';
+      });
+    });
+  }
+
+  // Inyecta DiceBear (círculo estándar)
   function _inject(src) {
-    [['home-nav-av', '28px'], ['prof-av', '100%']].forEach(function(t) {
+    [['home-nav-av', '28px'], ['prof-av', '76px']].forEach(function(t) {
       var el = document.getElementById(t[0]);
       if (!el) return;
       var img = el.querySelector('.fl-gen-av');
@@ -1066,14 +1143,12 @@ const AVATAR_AI = (function() {
       }
       img.src = src;
       img.style.width = img.style.height = t[1];
-      // Ocultar emoji original
       Array.from(el.childNodes).forEach(function(n) {
         if (n.nodeType === 3) n.textContent = '';
       });
     });
   }
 
-  // Fallback procedural si no hay red ni caché
   function _fallback(name) {
     var PALS = [
       ['#00e5a0','#0091ff'],['#c084fc','#f87171'],['#fbbf24','#fb923c'],
@@ -1087,7 +1162,7 @@ const AVATAR_AI = (function() {
     var c = document.createElement('canvas'); c.width = c.height = sz;
     var x = c.getContext('2d');
     x.fillStyle = '#07101f'; x.fillRect(0, 0, sz, sz);
-    [[.3,.3,pal[0]],[.65,.55,pal[1]],[.45,.7,pal[0]]].forEach(function(o,i) {
+    [[.3,.3,pal[0]],[.65,.55,pal[1]],[.45,.7,pal[0]]].forEach(function(o) {
       var g = x.createRadialGradient(o[0]*sz,o[1]*sz,0,o[0]*sz,o[1]*sz,sz*.42);
       g.addColorStop(0, o[2]+'99'); g.addColorStop(1,'transparent');
       x.fillStyle = g; x.fillRect(0,0,sz,sz);
@@ -1101,33 +1176,75 @@ const AVATAR_AI = (function() {
 
   function apply(name) {
     if (!name) return;
-    var key = _key(name);
-    // 1. Si está cacheado, inyectar inmediatamente (offline-first)
+    var key = _normalize(name);
+    var spritePath = SPRITE_MAP[key];
+
+    if (spritePath) {
+      var cKey = 'fl_sprite_' + key;
+      try {
+        var cached = localStorage.getItem(cKey);
+        if (cached) { _injectSprite(cached); return; }
+      } catch(e) {}
+      // novato necesita eliminar fondo blanco; el resto ya son transparentes
+      if (key === 'novato' || key === 'aprendiz') {
+        _removeWhiteBg(spritePath, function(dataUrl) {
+          _injectSprite(dataUrl);
+          try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
+        });
+      } else {
+        _injectSprite(spritePath);
+      }
+      return;
+    }
+
+    // Fallback DiceBear para nombres no mapeados
+    var lsKey = _key(name);
     try {
-      var cached = localStorage.getItem(key);
-      if (cached) { _inject(cached); return; }
+      var cached2 = localStorage.getItem(lsKey);
+      if (cached2) { _inject(cached2); return; }
     } catch(e) {}
-    // 2. Inyectar URL directa (el navegador cachea con HTTP cache)
     var direct = _url(name);
     _inject(direct);
-    // 3. Fetch + guardar en localStorage para siguiente visita offline
     fetch(direct).then(function(r) {
       return r.ok ? r.text() : Promise.reject();
     }).then(function(svg) {
       try {
         var encoded = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-        localStorage.setItem(key, encoded);
+        localStorage.setItem(lsKey, encoded);
         _inject(encoded);
       } catch(e) {}
     }).catch(function() {
-      // Sin red y sin caché → fallback procedural
       _inject(_fallback(name));
     });
   }
 
-  return { apply: apply, url: _url };
+  // Procesa novato al iniciar para que el grid muestre bg transparente
+  function init() {
+    var cKey = 'fl_sprite_novato';
+    function updateGridImgs(src) {
+      document.querySelectorAll('img.av-sprite[data-sprite="novato"]').forEach(function(img) {
+        img.src = src;
+      });
+    }
+    try {
+      var cached = localStorage.getItem(cKey);
+      if (cached) { updateGridImgs(cached); return; }
+    } catch(e) {}
+    _removeWhiteBg('icons/sprites/novato.png', function(dataUrl) {
+      try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
+      updateGridImgs(dataUrl);
+    });
+  }
+
+  return { apply: apply, url: _url, init: init };
 })();
 window.AVATAR_AI = AVATAR_AI;
+// Procesar sprites que necesitan bg removal en cuanto el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() { AVATAR_AI.init(); });
+} else {
+  setTimeout(function() { AVATAR_AI.init(); }, 80);
+}
 
 /* ══════════════════════════════════════════════════════════════════
    MICRO-ANIMATIONS — XP counter, streak glow, home stagger

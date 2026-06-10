@@ -823,6 +823,7 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .av-opt.sel{border-color:var(--accent);background:rgba(0,229,160,.06);}
 .av-opt .av-em{font-size:28px;display:block;margin-bottom:4px;}
 .av-opt .av-nm{font-size:10px;color:var(--text2);}
+.av-opt .av-sprite{width:56px;height:56px;display:block;margin:0 auto 4px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;}
 
 /* Util */
 .mb4{margin-bottom:4px;} .mb8{margin-bottom:8px;} .mb12{margin-bottom:12px;}
