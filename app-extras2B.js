@@ -1130,7 +1130,7 @@ const AVATAR_AI = (function() {
 
   // Inyecta DiceBear (círculo estándar)
   function _inject(src) {
-    [['home-nav-av', '28px'], ['prof-av', '76px']].forEach(function(t) {
+    [['home-nav-av', '32px'], ['prof-av', '76px']].forEach(function(t) {
       var el = document.getElementById(t[0]);
       if (!el) return;
       var img = el.querySelector('.fl-gen-av');

@@ -1461,12 +1461,16 @@ function renderStreakBadges() {
 }
 window.renderStreakBadges = renderStreakBadges;
 
-// Devuelve la clave "YYYY-MM-DD" de la ventana 9am actual
+// Devuelve la clave "YYYY-MM-DD" LOCAL de la ventana 9am actual
 // (antes de las 9am = ventana del día anterior)
+// IMPORTANTE: usa fecha local, no UTC (toISOString daría fecha UTC errónea en España)
 function _get9amWindowKey() {
   var d = new Date();
   if (d.getHours() < 9) d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
 }
 
 // Ms que faltan para la próxima ventana (9am)

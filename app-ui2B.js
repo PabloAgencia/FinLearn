@@ -1235,8 +1235,11 @@ function _rmUpdate() {
     tierBadge.textContent = tier[1];
     tierBadge.style.display = 'inline-block';
     tierBadge.style.color = ringColor;
-    tierBadge.style.borderColor = ringColor.replace(')', ',.3)').replace('rgb', 'rgba');
-    tierBadge.style.background = ringColor.replace(')', ',.08)').replace('rgb', 'rgba');
+    tierBadge.style.borderColor = ringColor;
+    tierBadge.style.opacity = '1';
+    tierBadge.style.background = 'transparent';
+    tierBadge.style.boxShadow = '0 0 0 1.5px ' + ringColor + '40';
+    tierBadge.style.border = '1.5px solid ' + ringColor + '50';
   } else if (tierBadge) {
     tierBadge.style.display = 'none';
   }
