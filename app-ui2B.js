@@ -1197,25 +1197,48 @@ function _rmUpdate() {
   // Hero values
   var valEl = document.getElementById('rm-savings-val');
   var pctEl = document.getElementById('rm-savings-pct');
-  if (valEl) valEl.textContent = '€' + savings.toLocaleString('es');
+  if (valEl) {
+    var newTxt = '€' + savings.toLocaleString('es');
+    if (valEl.textContent !== newTxt) {
+      valEl.textContent = newTxt;
+      valEl.classList.remove('rm-val-pop');
+      void valEl.offsetWidth; // reflow
+      valEl.classList.add('rm-val-pop');
+    }
+  }
   if (pctEl) {
-    if (inc === 0) pctEl.textContent = 'Introduce tus datos →';
+    if (inc === 0) pctEl.textContent = 'Introduce tus datos para empezar';
     else if (totalExp > inc) pctEl.textContent = '⚠️ Gastas más de lo que ingresas';
-    else pctEl.textContent = pct >= 20 ? '🔥 Tasa excelente' : pct >= 10 ? '✓ Tasa correcta' : '⚠️ Tasa baja';
+    else pctEl.textContent = pct >= 20 ? 'Ahorrando el ' + pct + '% de tus ingresos' : pct >= 10 ? 'Ahorrando el ' + pct + '% de tus ingresos' : 'Ahorrando el ' + pct + '% de tus ingresos';
   }
 
-  // Rate bar
-  var rateBar = document.getElementById('rm-rate-bar');
+  // Gauge ring
+  var ring = document.getElementById('rm-rate-ring');
   var rateLbl = document.getElementById('rm-rate-lbl');
-  if (rateBar) {
-    var barW = Math.min(100, pct * 2.5); // 40% → 100%
-    var barColor = pct >= 20 ? '#00e5a0' : pct >= 10 ? '#f5a623' : '#ef4444';
-    rateBar.style.width = barW + '%';
-    rateBar.style.background = barColor;
+  var ringColor = pct >= 20 ? '#00e5a0' : pct >= 10 ? '#f5a623' : '#ef4444';
+  if (ring) {
+    var circ = 314;
+    var dashOffset = inc > 0 ? (circ - Math.min(pct / 40, 1) * circ) : circ;
+    ring.style.strokeDashoffset = dashOffset;
+    ring.style.stroke = inc > 0 ? ringColor : 'rgba(255,255,255,.07)';
   }
   if (rateLbl) {
     rateLbl.textContent = inc > 0 ? pct + '%' : '—';
-    rateLbl.style.color = pct >= 20 ? '#00e5a0' : pct >= 10 ? '#f5a623' : '#ef4444';
+    rateLbl.style.color = inc > 0 ? ringColor : 'var(--text3)';
+  }
+
+  // Tier badge
+  var tierBadge = document.getElementById('rm-tier-badge');
+  if (tierBadge && inc > 0) {
+    var tiers = [[30,'🔥 Maestro FIRE'],[20,'⭐ Ahorrador Élite'],[10,'✓ En el buen camino'],[0,'⚠️ Empieza a ahorrar']];
+    var tier = tiers.find(function(t){ return pct >= t[0]; }) || tiers[tiers.length - 1];
+    tierBadge.textContent = tier[1];
+    tierBadge.style.display = 'inline-block';
+    tierBadge.style.color = ringColor;
+    tierBadge.style.borderColor = ringColor.replace(')', ',.3)').replace('rgb', 'rgba');
+    tierBadge.style.background = ringColor.replace(')', ',.08)').replace('rgb', 'rgba');
+  } else if (tierBadge) {
+    tierBadge.style.display = 'none';
   }
 
   // Total strip
@@ -1407,7 +1430,20 @@ function _rmSaveMonth() {
   else S._realMoneyHistory.push(entry);
   S._realMoneyTotal = S._realMoneyHistory.reduce((a,h) => a + h.savings, 0);
   saveState();
-  toast('✓ Mes guardado', `Ahorro total acumulado: €${S._realMoneyTotal.toLocaleString('es')}`, 't-success');
+  const pctSaved = inc > 0 ? Math.round((savings / inc) * 100) : 0;
+  // Milestone celebrations
+  if (pctSaved >= 20 && existingIdx < 0) {
+    setTimeout(function() {
+      if (typeof confetti === 'function') confetti();
+      if (typeof toast === 'function') toast('🔥 ¡Tasa Élite!', 'Ahorrando el ' + pctSaved + '% de tus ingresos. ¡Eres un maestro!', 't-success');
+    }, 600);
+  } else if (pctSaved >= 10 && existingIdx < 0) {
+    setTimeout(function() {
+      if (typeof toast === 'function') toast('⭐ ¡Buen trabajo!', 'Superaste el 10% de ahorro. ¡Sigue así!', 't-success');
+    }, 600);
+  } else {
+    toast('✓ Mes guardado', `Ahorro total acumulado: €${S._realMoneyTotal.toLocaleString('es')}`, 't-success');
+  }
   // XP por usar el tracker real
   if (existingIdx < 0) {
     S.xp = (S.xp || 0) + 50;

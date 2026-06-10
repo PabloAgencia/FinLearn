@@ -5,6 +5,14 @@
    Seguir añadiendo aquí estilos nuevos.
 ══════════════════════════════════════════════════════════════════ */
 
+/* ── Mi Dinero Real — hero amount pop animation ── */
+@keyframes rmValPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+.rm-val-pop { animation: rmValPop .35s cubic-bezier(.4,0,.2,1); }
+
 /* ── Nav back button — bonita ── */
 .nav-back {
   width: 34px; height: 34px;
