@@ -648,7 +648,7 @@ function showDailyRewardModal(dayCount) {
   var winIdx   = _rouletteRoll(today, streak);
   var reward   = ROULETTE_SEGS[winIdx];
   var cycleDay = ((dayCount - 1) % 7) + 1;
-  var claimed  = (S.claimedDays || []).includes(dayCount);
+  var claimed  = (S.lastClaimWindowKey === _get9amWindowKey());
 
   var modal = document.getElementById('m-daily-reward');
   if (!modal) {
@@ -690,8 +690,7 @@ function showDailyRewardModal(dayCount) {
     : '';
 
   if (claimed) {
-    var nextTs = (S.lastLoginTimestamp || 0) + 86400000;
-    var msLeft = Math.max(0, nextTs - Date.now());
+    var msLeft = _msToNext9am();
     var hh = Math.floor(msLeft / 3600000), mm = Math.floor((msLeft % 3600000) / 60000);
     var cdStr = hh > 0 ? hh + 'h ' + (mm < 10 ? '0' : '') + mm + 'm' : mm + 'm';
     modal.innerHTML = '<div class="sc-modal-backdrop" onclick="closeModal(\'m-daily-reward\')">'
@@ -738,7 +737,7 @@ function renderStreakCard() {
   var streak   = S.streak || 0;
   var dayCount = S.loginDayCount || 1;
   var cycleDay = ((dayCount - 1) % 7) + 1;
-  var claimed  = (S.claimedDays || []).includes(dayCount);
+  var claimed  = (S.lastClaimWindowKey === _get9amWindowKey());
   var shields  = S.streakShields || 0;
   var today    = new Date().toISOString().slice(0, 10);
   var reward   = ROULETTE_SEGS[_rouletteRoll(today, streak)];
@@ -759,11 +758,10 @@ function renderStreakCard() {
 
   var ctaHTML;
   if (claimed) {
-    var nextTs = (S.lastLoginTimestamp || 0) + 86400000;
-    var msLeft = Math.max(0, nextTs - Date.now());
+    var msLeft = _msToNext9am();
     var hh = Math.floor(msLeft / 3600000), mm = Math.floor((msLeft % 3600000) / 60000);
     var cdStr = hh > 0 ? hh + 'h ' + (mm < 10 ? '0' : '') + mm + 'm' : (mm > 0 ? mm + 'm' : 'pronto');
-    ctaHTML = '<button class="sc-cta-btn sc-cta-done" onclick="showDailyRewardModal(' + dayCount + ')">✅ Reclamado \xB7 vuelve en ' + cdStr + '</button>';
+    ctaHTML = '<button class="sc-cta-btn sc-cta-done" onclick="showDailyRewardModal(' + dayCount + ')">✅ Reclamado \xB7 vuelve a las 9am</button>';
   } else {
     ctaHTML = '<button class="sc-cta-btn sc-cta-available sc-cta-pulse" onclick="showDailyRewardModal(' + dayCount + ')">🎁 Reclamar recompensa del d\xEDa</button>';
   }
@@ -848,8 +846,7 @@ function claimDailyReward(winIdx, dayCount) {
     if (typeof spawnXP === 'function') spawnXP('\uD83D\uDEE1 Escudo ganado!');
   }
 
-  if (!Array.isArray(S.claimedDays)) S.claimedDays = [];
-  S.claimedDays.push(dayCount);
+  S.lastClaimWindowKey = _get9amWindowKey();
 
   // Login bonus escalado: bonuses garantizados en d\u00EDas 3 y 7 del ciclo
   const _cycleDay = ((dayCount - 1) % 7) + 1;
@@ -1464,20 +1461,36 @@ function renderStreakBadges() {
 }
 window.renderStreakBadges = renderStreakBadges;
 
+// Devuelve la clave "YYYY-MM-DD" de la ventana 9am actual
+// (antes de las 9am = ventana del día anterior)
+function _get9amWindowKey() {
+  var d = new Date();
+  if (d.getHours() < 9) d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+// Ms que faltan para la próxima ventana (9am)
+function _msToNext9am() {
+  var now = new Date();
+  var n9  = new Date(now);
+  if (now.getHours() >= 9) n9.setDate(n9.getDate() + 1);
+  n9.setHours(9, 0, 0, 0);
+  return Math.max(0, n9.getTime() - now.getTime());
+}
+
 function checkDailyLogin() {
   if (!S.userName) return;
   const now = Date.now();
-  const last = S.lastLoginTimestamp || 0;
-  const hoursSince = (now - last) / 3600000;
 
-  // Already shown in last 24h
-  if (last > 0 && hoursSince < 24) {
+  // Ya entramos en esta ventana 9am → no repetir
+  if (S.lastLoginWindowKey === _get9amWindowKey()) {
     _updateShieldUI();
     return;
   }
 
   S.loginDayCount       = (S.loginDayCount || 0) + 1;
-  S.lastLoginTimestamp  = now;
+  S.lastLoginWindowKey  = _get9amWindowKey();
+  S.lastLoginTimestamp  = now; // mantener para compat
   S.lastLoginDate       = new Date().toISOString().slice(0, 10); // mantener para compatibilidad
   if (!Array.isArray(S.claimedDays)) S.claimedDays = [];
 
