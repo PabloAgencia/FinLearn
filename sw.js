@@ -4,7 +4,7 @@
    versión), Cache First para fuentes y assets binarios.
    ══════════════════════════════════════════════════════════════════ */
 
-const CACHE_NAME  = 'finlearn-v2.6.0';
+const CACHE_NAME  = 'finlearn-v2.7.0';
 const OFFLINE_URL = 'index.html';
 
 const PRECACHE_ASSETS = [

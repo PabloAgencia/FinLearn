@@ -355,17 +355,22 @@ function renderAchievements() {
   if (!el) return;
 
   const unlocked = S.unlockedAchs || [];
+  const claimed  = S.claimedAchs  || [];
   const total    = ACHIEVEMENTS.length;
   const doneCount= unlocked.length;
 
   el.className = 'ach-grid-v2';
   el.innerHTML = ACHIEVEMENTS.map(a => {
-    const ok = unlocked.includes(a.id) || (a.check && a.check(S));
-    return `<div class="ach-v2 ${ok ? 'unlocked' : 'locked'}">
-      ${ok ? '<div class="ach-v2-check">✓</div>' : ''}
+    const ok         = unlocked.includes(a.id) || (a.check && a.check(S));
+    const isClaimed  = claimed.includes(a.id);
+    const canClaim   = ok && !isClaimed;
+    const rewardTxt  = a.reward ? ((a.reward.xp ? '+' + a.reward.xp + ' XP' : '') + (a.reward.cash ? ' +€' + a.reward.cash : '')).trim() : '';
+    return `<div class="ach-v2 ${ok ? (canClaim ? 'unlocked ach-claim' : 'unlocked') : 'locked'}" ${canClaim ? `onclick="claimAchievement('${a.id}')" style="cursor:pointer;"` : ''}>
+      ${canClaim ? '<div class="ach-v2-check" style="background:#ef4444;animation:achPulse 1s ease-in-out infinite;">!</div>' : ok ? '<div class="ach-v2-check">✓</div>' : ''}
       <div class="ach-v2-icon">${ok ? a.i : '🔒'}</div>
       <div class="ach-v2-name">${a.n}</div>
       <div class="ach-v2-desc">${a.desc}</div>
+      ${canClaim && rewardTxt ? `<div style="margin-top:4px;font-size:10px;font-weight:700;color:#00e5a0;background:rgba(0,229,160,.12);border-radius:6px;padding:3px 6px;">${rewardTxt} — Reclamar →</div>` : ''}
     </div>`;
   }).join('');
 
@@ -374,6 +379,7 @@ function renderAchievements() {
   if (summary && summary.classList.contains('ach-summary')) {
     summary.textContent = `${doneCount} de ${total} desbloqueados`;
   }
+  if (typeof _updateAchBadge === 'function') _updateAchBadge();
 }
 
 
@@ -854,6 +860,7 @@ function renderHomeScreen() {
   const skeleton = document.getElementById('home-skeleton');
   if (skeleton) skeleton.style.display = 'none';
   updateUIFromState();
+  if (typeof _updateAchBadge === 'function') _updateAchBadge();
   renderModules();
   renderHomeRank();
   // renderChallengeMembers(); — chal-members removed from home
@@ -973,8 +980,28 @@ function renderDailyHub() {
 
   // Calcular cuántas acciones diarias quedan
   const actions = [];
-  if (!dcaDone) actions.push({ icon:'💰', label:'Pregunta del día pendiente', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
-  if (nextMod)  actions.push({ icon:'📖', label:`Módulo: ${nextMod.title}`, onclick:`startModule(${nextMod.id})` });
+  if (!dcaDone) actions.push({ icon:'💡', label:'Pregunta del día sin responder', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
+
+  // Problema del día F42
+  const f42State = S._f42State;
+  if (!f42State || f42State.date !== new Date().toISOString().slice(0,10)) {
+    actions.push({ icon:'🧩', label:'Problema del día sin resolver', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('f42-daily-problem');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
+  }
+
+  // Logros por reclamar
+  const unclaimedAchs = (S.unlockedAchs || []).filter(id => !(S.claimedAchs || []).includes(id));
+  if (unclaimedAchs.length > 0) {
+    actions.push({ icon:'🏆', label:`${unclaimedAchs.length} logro${unclaimedAchs.length > 1 ? 's' : ''} por reclamar`, onclick:"goTo('profile');setTimeout(function(){var el=document.getElementById('ach-grid');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},400)" });
+  }
+
+  if (nextMod) actions.push({ icon:'📖', label:`Módulo: ${nextMod.title}`, onclick:`startModule(${nextMod.id})` });
+
+  // Racha en riesgo si ayer hiciste algo pero hoy aún no
+  const today = new Date().toISOString().slice(0, 10);
+  if ((S.streak || 0) > 0 && S.dcaDate !== today && dcaDone === false) {
+    actions.push({ icon:'🔥', label:'Racha en riesgo — ¡responde hoy!', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
+  }
+
   if (nearMission) {
     const pct = Math.round((nearMission.progress / nearMission.goal) * 100);
     actions.push({ icon:'🎯', label:`${nearMission.title} (${pct}%)`, onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('missions-card');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},400)" });

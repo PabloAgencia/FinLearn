@@ -2238,32 +2238,56 @@ function _roundRect(ctx, x, y, w, h, r) {
 function checkAchievements() {
   if (!S.userName) return;
   if (!S.unlockedAchs) S.unlockedAchs = [];
+  if (!S.claimedAchs)  S.claimedAchs  = [];
 
   let newUnlock = false;
   ACHIEVEMENTS.forEach(ach => {
-    if (S.unlockedAchs.includes(ach.id)) return; // ya desbloqueado
+    if (S.unlockedAchs.includes(ach.id)) return;
     try {
       if (ach.check(S)) {
         S.unlockedAchs.push(ach.id);
         newUnlock = true;
         if (typeof _FEED !== 'undefined') _FEED.write('achievement', { title: ach.n });
-        // ── Aplicar recompensa ──────────────────────────────
-        if (ach.reward) {
-          if (ach.reward.xp)   { S.xp   = (S.xp   || 0) + ach.reward.xp;   }
-          if (ach.reward.cash) {
-            S.cash = (S.cash || 0) + ach.reward.cash;
-            _ledgerAdd('in', 'achievement', `Logro: ${ach.n}`, ach.reward.cash);
+        // Mostrar mini-toast invitando a reclamar en perfil
+        const delay = (S.unlockedAchs.length - 1) * 600;
+        setTimeout(() => {
+          if (typeof toast === 'function') {
+            toast('🏆 Nuevo logro: ' + ach.n, 'Ve a Perfil → Logros para reclamar tu recompensa', 't-success');
           }
-        }
-        // ── Popup con delay escalonado ──────────────────────
-        const delay = S.unlockedAchs.length * 400;
-        setTimeout(() => showAchievementPopup(ach), delay);
+          _updateAchBadge();
+        }, delay);
       }
     } catch(e) {}
   });
 
   if (newUnlock) saveState();
+  _updateAchBadge();
 }
+
+function _updateAchBadge() {
+  const badge = document.getElementById('ach-badge');
+  if (!badge) return;
+  const unclaimed = (S.unlockedAchs || []).filter(id => !(S.claimedAchs || []).includes(id));
+  badge.style.display = unclaimed.length > 0 ? 'block' : 'none';
+}
+
+function claimAchievement(id) {
+  if (!S.claimedAchs) S.claimedAchs = [];
+  if (S.claimedAchs.includes(id)) return;
+  const ach = (typeof ACHIEVEMENTS !== 'undefined' ? ACHIEVEMENTS : []).find(a => a.id === id);
+  if (!ach) return;
+  S.claimedAchs.push(id);
+  if (ach.reward) {
+    if (ach.reward.xp)   { S.xp   = (S.xp   || 0) + ach.reward.xp;   spawnXP && spawnXP('+' + ach.reward.xp + ' XP'); }
+    if (ach.reward.cash) { S.cash = (S.cash || 0) + ach.reward.cash;  _ledgerAdd && _ledgerAdd('in', 'achievement', 'Logro: ' + ach.n, ach.reward.cash); }
+  }
+  saveState();
+  _updateAchBadge();
+  if (typeof renderProfileScreen === 'function') renderProfileScreen();
+  if (typeof toast === 'function') toast('🏆 Logro reclamado', (ach.reward?.xp ? '+' + ach.reward.xp + ' XP ' : '') + (ach.reward?.cash ? '+€' + ach.reward.cash : ''), 't-success');
+}
+window.claimAchievement = claimAchievement;
+window._updateAchBadge  = _updateAchBadge;
 
 
 /* ══════════════════════════════════════════════════════════════════

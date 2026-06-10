@@ -68,7 +68,7 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <!-- Nuestros estilos -->
-<link rel="stylesheet" href="app.css?v=2.3.0">
+<link rel="stylesheet" href="app.css?v=2.5.0">
 <link rel="stylesheet" href="appB.css?v=2.3.0">
 <link rel="stylesheet" href="appC.css?v=2.3.0">
 <link rel="stylesheet" href="appD.css?v=2.3.0">
@@ -689,6 +689,9 @@
           </div>
         </div>
 
+        <!-- F42 — PROBLEMA DEL DÍA ─────────────────────────── -->
+        <div id="f42-daily-problem" class="mb16"></div>
+
         <!-- F29 — CAJA SORPRESA DIARIA ────────────────────── -->
         <div id="f29-surprise-box" class="f29-wrap mb16"></div>
 
@@ -700,9 +703,6 @@
 
         <!-- F32 — LIGA SEMANAL (home) ───────────────────────── -->
         <div id="f32-league-widget" class="mb16"></div>
-
-        <!-- F42 — PROBLEMA DEL DÍA ─────────────────────────── -->
-        <div id="f42-daily-problem" class="mb16"></div>
         <!-- F46 — HEARTS ────────────────────────────────────── -->
         <div id="f46-hearts-row" class="mb8"></div>
 
@@ -1105,7 +1105,6 @@
                 oninput="CALC.update()">
               <div class="calc-slider-fill" id="calc-monthly-fill" style="width:7.89%;"></div>
             </div>
-            <div class="calc-slider-labels"><span>50€</span><span>2.000€</span></div>
           </div>
 
           <!-- Slider: Años -->
@@ -1120,7 +1119,6 @@
                 oninput="CALC.update()">
               <div class="calc-slider-fill" id="calc-years-fill" style="width:47.5%;"></div>
             </div>
-            <div class="calc-slider-labels"><span>1 año</span><span>40 años</span></div>
           </div>
 
           <!-- Slider: Rentabilidad anual -->
@@ -1135,7 +1133,6 @@
                 oninput="CALC.update()">
               <div class="calc-slider-fill" id="calc-rate-fill" style="width:42.86%;"></div>
             </div>
-            <div class="calc-slider-labels"><span>1%</span><span>15%</span></div>
           </div>
 
           <!-- Resultado visual -->
@@ -1889,7 +1886,7 @@
     <button class="bn-item" id="bn-guides"    onclick="goTo('guides')">    <span class="bn-icon">📖</span>Aprende</button>
     <button class="bn-item" id="bn-realmoney" onclick="goTo('realmoney')"><span class="bn-icon">💰</span>Mi Dinero</button>
     <button class="bn-item" id="bn-tools"     onclick="goTo('tools')">     <span class="bn-icon">🧮</span>Calculadoras</button>
-    <button class="bn-item" id="bn-profile"   onclick="goTo('profile')">   <span class="bn-icon">👤</span>Perfil</button>
+    <button class="bn-item" id="bn-profile"   onclick="goTo('profile')">   <span class="bn-icon" style="position:relative;">👤<span id="ach-badge" style="display:none;position:absolute;top:-4px;right:-6px;width:10px;height:10px;border-radius:50%;background:#ef4444;border:2px solid var(--bg);"></span></span>Perfil</button>
   </nav>
 
   <!-- FinAI FAB — botón flotante tipo WhatsApp -->
@@ -2621,17 +2618,17 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app-data.js?v=2.3.0"></script>
 <script src="app-data-m.js?v=2.3.0"></script>
-<script src="app-data2.js?v=2.3.0"></script>
+<script src="app-data2.js?v=2.5.0"></script>
 <script src="app-data2-m.js?v=2.3.0"></script>
 <script src="app-state.js?v=2.3.0"></script>
 <script src="app-supabase.js?v=2.3.0"></script>
 <script src="app-ui.js?v=2.3.0"></script>
-<script src="app-uiB.js?v=2.3.0"></script>
+<script src="app-uiB.js?v=2.5.0"></script>
 <script src="app-ui2.js?v=2.5.0"></script>
 <script src="app-ui2B.js?v=2.3.0"></script>
 <script src="app-game.js?v=2.3.0"></script>
 <script src="app-game2.js?v=2.3.0"></script>
-<script src="app-tools.js?v=2.3.0"></script>
+<script src="app-tools.js?v=2.5.0"></script>
 <script src="app-toolsB.js?v=2.3.0"></script>
 <script src="app-toolsC.js?v=2.3.0"></script>
 <script src="app-tools2.js?v=2.3.0"></script>
