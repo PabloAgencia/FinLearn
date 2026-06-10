@@ -1291,13 +1291,10 @@ function pickAvatar2(emoji, name) {
     [...document.querySelectorAll('#m-avatar .av-opt')]
       .find(o => o.querySelector('.av-em')?.textContent === emoji);
   if (opt) opt.classList.add('sel');
-  // Actualizar avatar visible en header y perfil sin refrescar toda la UI
-  const av = document.getElementById('home-nav-av');
-  if (av) av.textContent = emoji;
-  const profAv = document.getElementById('prof-av');
-  if (profAv) profAv.textContent = emoji;
   saveState();
   closeModal('m-avatar');
+  // Inyectar sprite nuevo (quita emoji anterior, aplica sprite sin fondo)
+  if (typeof AVATAR_AI !== 'undefined') AVATAR_AI.apply(name);
   toast('✅ Avatar actualizado', 'Tu nuevo avatar está activo', 't-success');
 }
 

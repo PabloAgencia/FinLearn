@@ -1208,21 +1208,27 @@ const AVATAR_AI = (function() {
     });
   }
 
-  // Procesa novato al iniciar para que el grid muestre bg transparente
+  // Procesa TODOS los sprites del grid al iniciar para quitar fondo blanco
   function init() {
-    var cKey = 'fl_sprite2_novato';
-    function updateGridImgs(src) {
-      document.querySelectorAll('img.av-sprite[data-sprite="novato"]').forEach(function(img) {
-        img.src = src;
+    var seen = {};
+    document.querySelectorAll('img.av-sprite[data-sprite]').forEach(function(img) {
+      var sprite = img.getAttribute('data-sprite');
+      var path   = SPRITE_MAP[sprite];
+      if (!path) return;
+      var cKey = 'fl_sprite2_' + sprite;
+      try {
+        var cached = localStorage.getItem(cKey);
+        if (cached) { img.src = cached; seen[sprite] = cached; return; }
+      } catch(e) {}
+      if (seen[sprite] !== undefined) { if (seen[sprite]) img.src = seen[sprite]; return; }
+      seen[sprite] = null;
+      _removeWhiteBg(path, function(dataUrl) {
+        seen[sprite] = dataUrl;
+        document.querySelectorAll('img.av-sprite[data-sprite="' + sprite + '"]').forEach(function(el) {
+          el.src = dataUrl;
+        });
+        try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
       });
-    }
-    try {
-      var cached = localStorage.getItem(cKey);
-      if (cached) { updateGridImgs(cached); return; }
-    } catch(e) {}
-    _removeWhiteBg('icons/Sprites/novato.png', function(dataUrl) {
-      try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
-      updateGridImgs(dataUrl);
     });
   }
 
