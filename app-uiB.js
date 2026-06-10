@@ -943,11 +943,11 @@ function _getNextRecommendedMod() {
   // Prioridad 2: primer módulo no completado de la rama activa
   const activeBranch = S._activeBranch || 'fundamentos';
   const branchMod = MODULES.find(m =>
-    (m.branch || m.category || '') === activeBranch && !S.completedMods.includes(m.id)
+    m && (m.branch || m.category || '') === activeBranch && !S.completedMods.includes(m.id)
   );
   if (branchMod) return branchMod;
   // Prioridad 3: cualquier módulo no completado
-  return MODULES.find(m => !S.completedMods.includes(m.id)) || null;
+  return MODULES.find(m => m && !S.completedMods.includes(m.id)) || null;
 }
 
 function renderDailyHub() {
