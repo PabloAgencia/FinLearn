@@ -90,6 +90,7 @@ function finishOnboarding() {
   }
   S.onboardingDone = true;
   if (!S.joinDate) S.joinDate = Date.now();
+  ph('onboarding_completed', { profile: S.finLevel || 'zero', fin_level: S.investorLevel || null, has_income: (parseFloat(document.getElementById('ob-income')?.value) || 0) > 0, has_debt: (parseFloat(document.getElementById('ob-debt-total')?.value) || 0) > 0 });
   // Pedir permiso de notificaciones si el usuario eligió una hora
   if (typeof S._reminderHour === 'number' && S._reminderHour >= 0 && typeof NOTIFS !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
     setTimeout(() => {
@@ -222,6 +223,7 @@ function startModule(id) {
   S.lessonDone   = false;
   _comboReset();
   saveState();
+  ph('module_started', { module_id: mod.id, module_title: mod.title });
 
   goTo('lesson');
   renderStep();
@@ -350,6 +352,7 @@ function completeModule() {
 
   if (!S.completedMods.includes(mod.id)) {
     S.completedMods.push(mod.id);
+    ph('module_completed', { module_id: mod.id, module_title: mod.title, total_completed: S.completedMods.length });
     // P3-B: acumular minutos de estudio (8 min estimados por módulo)
     S.totalStudyMinutes = (S.totalStudyMinutes || 0) + 8;
     // F29: aplicar multiplicador x2 si está activo + multiplicador de evento estacional

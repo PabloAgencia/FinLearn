@@ -1536,6 +1536,8 @@ function obNext(step) {
   const inp = document.getElementById('ob-name-input');
   if (inp && inp.value.trim()) S.userName = inp.value.trim();
 
+  if (step === 2) ph('onboarding_started');
+
   document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
 
   const next = document.getElementById('ob-s' + step);

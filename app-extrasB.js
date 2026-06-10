@@ -122,6 +122,7 @@ window.renderLabShortcut = renderLabShortcut;
 function openTool(id) {
   const fns = { irpf: T1_open, hipoteca: T2_open, fire: T3_open, snowball: T4_open, compound: T5_open, networth: T6_open, simhipoteca: T7_open, dca: T8_open, regla72: T9_open, emergencia: T10_open, deuda: T11_open };
   if (fns[id]) {
+    ph('calculator_opened', { tool_id: id });
     fns[id]();
     // P4-C: registrar herramienta usada (tracker de herramientas únicas esta semana)
     if (typeof tickMissionTool === 'function') tickMissionTool(id);

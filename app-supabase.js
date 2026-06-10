@@ -25,6 +25,7 @@ async function sbSignIn(email, password) {
   const { data, error } = await getSB().auth.signInWithPassword({ email, password });
   if (error) throw error;
   _sbUser = data.user;
+  if (_sbUser) phIdentify(_sbUser.id, _sbUser.email);
   return data;
 }
 
@@ -107,11 +108,13 @@ async function sbInit() {
   const { data: { session } } = await getSB().auth.getSession();
   if (session?.user) {
     _sbUser = session.user;
+    phIdentify(_sbUser.id, _sbUser.email);
     return true;
   }
   // Escuchar cambios de sesión (OAuth redirect)
   getSB().auth.onAuthStateChange((_event, session) => {
     _sbUser = session?.user || null;
+    if (_sbUser) phIdentify(_sbUser.id, _sbUser.email);
   });
   return false;
 }

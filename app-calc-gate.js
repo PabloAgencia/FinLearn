@@ -13,6 +13,8 @@ function _calcGate(resultId, toolName, emoji) {
   if (!el) return;
   if (!el.innerHTML.trim() || el.classList.contains('hidden')) return;
   if (document.getElementById('calc-gate-panel')) return; // ya activo
+  ph('calc_gate_shown', { tool_name: toolName || 'unknown' });
+  ph('signup_started', { source: 'calc_gate', tool_name: toolName || 'unknown' });
 
   _cgCurrentResult = resultId;
   _cgMode = 'register';
@@ -120,6 +122,7 @@ async function _cgSubmit() {
     } else {
       await sbSignIn(email, pass);
     }
+    ph('signup_completed', { method: 'email', mode: _cgMode });
     _cgOnSuccess();
   } catch(e) {
     var msg = e.message || 'Error de autenticación';
@@ -142,6 +145,7 @@ async function _cgSubmit() {
 /* ── Google OAuth ── */
 async function _cgGoogle() {
   try {
+    ph('signup_completed', { method: 'google', mode: 'register' });
     await sbSignInGoogle();
     // OAuth redirige — al volver sbInit detecta la sesión
   } catch(e) {

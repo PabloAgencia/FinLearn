@@ -1247,6 +1247,7 @@ function tickMissionTool(toolId) {
     S.weeklyToolsUsed.push(toolId);
     tickMission('tools', 1);
     if (typeof _FEED !== 'undefined') _FEED.write('calc_used', { name: toolId });
+    ph('calculator_calculated', { tool_id: toolId });
   }
 }
 window.tickMissionTool = tickMissionTool;
