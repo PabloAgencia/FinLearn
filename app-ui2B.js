@@ -1417,6 +1417,136 @@ function _rmUpdate() {
   } else if (fireCard) {
     fireCard.style.display = 'none';
   }
+
+  // 50/30/20 analysis
+  _rmRender503020(inc, expHome, expFood, expTransport, expFun, expOther);
+}
+
+// ─── 50/30/20 VISUAL ANALYSIS ────────────────────────────────────────────────
+function _rmRender503020(inc, expHome, expFood, expTransport, expFun, expOther) {
+  var card = document.getElementById('rm-503020-card');
+  if (!card) return;
+
+  if (inc <= 0) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  var needs   = expHome + expFood + expTransport;
+  var wants   = expFun + expOther;
+  var savings = Math.max(0, inc - needs - wants);
+
+  var needsPct   = Math.round((needs   / inc) * 100);
+  var wantsPct   = Math.round((wants   / inc) * 100);
+  var savingsPct = Math.round((savings / inc) * 100);
+
+  var TARGET_NEEDS = 50, TARGET_WANTS = 30, TARGET_SAVINGS = 20;
+
+  // Verdict badge
+  var overspendTotal = needs + wants > inc;
+  var verdictKey, verdictColor, verdictIcon;
+  if (overspendTotal) {
+    verdictKey = 'Gasto mayor que ingreso'; verdictColor = '#ef4444'; verdictIcon = '🚨';
+  } else if (savingsPct >= 30 && needsPct <= 50) {
+    verdictKey = 'FIRE Track';              verdictColor = '#00e5a0'; verdictIcon = '🔥';
+  } else if (needsPct <= 52 && wantsPct <= 32 && savingsPct >= 18) {
+    verdictKey = 'Equilibrado';             verdictColor = '#00e5a0'; verdictIcon = '✅';
+  } else if (needsPct > 60) {
+    verdictKey = 'Necesidades altas';       verdictColor = '#f5a623'; verdictIcon = '⚠️';
+  } else if (savingsPct < 10) {
+    verdictKey = 'Ahorro crítico';          verdictColor = '#ef4444'; verdictIcon = '🚨';
+  } else {
+    verdictKey = 'Ajuste recomendado';      verdictColor = '#f5a623'; verdictIcon = '💡';
+  }
+
+  function barHTML(label, emoji, actual, target, amount, color) {
+    var fill = Math.min(100, actual);
+    var overTarget = actual > target;
+    var fillColor = overTarget ? '#ef4444' : (Math.abs(actual - target) <= 5 ? '#00e5a0' : '#f5a623');
+    if (label === 'Ahorro' && !overTarget) {
+      fillColor = actual >= target ? '#00e5a0' : (actual >= target * 0.5 ? '#f5a623' : '#ef4444');
+    }
+    var deltaVal = actual - target;
+    var deltaStr = (deltaVal > 0 ? '+' : '') + deltaVal + '%';
+    var deltaColor = label === 'Ahorro'
+      ? (deltaVal >= 0 ? '#00e5a0' : '#ef4444')
+      : (deltaVal <= 0 ? '#00e5a0' : '#ef4444');
+    var targetPx = Math.min(100, target);
+    return '<div class="rm50-row">' +
+      '<div class="rm50-row-head">' +
+        '<span class="rm50-row-label">' + emoji + ' ' + label + '</span>' +
+        '<span class="rm50-row-meta">' +
+          '<span style="color:var(--text2);font-size:12px;">€' + Math.round(amount).toLocaleString('es') + '</span>' +
+          '<span class="rm50-delta" style="color:' + deltaColor + ';">' + deltaStr + '</span>' +
+        '</span>' +
+      '</div>' +
+      '<div class="rm50-track">' +
+        '<div class="rm50-fill" style="width:' + fill + '%;background:' + fillColor + ';"></div>' +
+        '<div class="rm50-target-line" style="left:' + targetPx + '%;"></div>' +
+      '</div>' +
+      '<div class="rm50-target-lbl" style="left:' + targetPx + '%;">' + target + '%</div>' +
+    '</div>';
+  }
+
+  // Compound interest "improvement tip" — what redirecting 10% of wants saves in 20yr
+  var redirectable = Math.max(0, wants - inc * (TARGET_WANTS / 100));
+  var tipHTML = '';
+  if (redirectable >= 50) {
+    var months = 240, rate = 0.07 / 12;
+    var fv = redirectable * ((Math.pow(1 + rate, months) - 1) / rate) * (1 + rate);
+    tipHTML = '<div class="rm50-tip">' +
+      '💡 Si redirigeras los <strong>€' + Math.round(redirectable).toLocaleString('es') + '/mes</strong> extra de Deseos a inversión ' +
+      '(7% anual), tendrías <strong style="color:#00e5a0;">€' + Math.round(fv / 1000).toLocaleString('es') + 'k</strong> en 20 años.' +
+    '</div>';
+  } else if (savingsPct < TARGET_SAVINGS) {
+    var gap = Math.round(inc * (TARGET_SAVINGS / 100)) - savings;
+    tipHTML = '<div class="rm50-tip">' +
+      '💡 Te faltan <strong>€' + gap.toLocaleString('es') + '/mes</strong> para alcanzar el objetivo del 20% de ahorro.' +
+    '</div>';
+  }
+
+  // Monthly history trend (last 4 months)
+  var histHTML = '';
+  var hist = (typeof S !== 'undefined' && S._realMoneyHistory) ? S._realMoneyHistory : [];
+  if (hist.length > 0) {
+    var last4 = hist.slice(-4);
+    histHTML = '<div class="rm50-hist-title">Historial 50/30/20</div><div class="rm50-hist">';
+    last4.forEach(function(h) {
+      var hInc = h.income || 0;
+      if (hInc <= 0) return;
+      var hNeeds = (h.expenses ? (h.expenses.home || 0) + (h.expenses.food || 0) + (h.expenses.transport || 0) : 0);
+      var hWants = (h.expenses ? (h.expenses.fun || 0) + (h.expenses.other || 0) : 0);
+      var hSav   = Math.max(0, hInc - hNeeds - hWants);
+      var nP = Math.round((hNeeds / hInc) * 100);
+      var wP = Math.round((hWants / hInc) * 100);
+      var sP = Math.round((hSav   / hInc) * 100);
+      var ok = nP <= 52 && wP <= 32 && sP >= 18;
+      var dot = ok ? '🟢' : '🟡';
+      var monthLbl = h.month ? h.month.slice(0, 7) : '';
+      histHTML += '<div class="rm50-hist-row">' +
+        '<span class="rm50-hist-month">' + dot + ' ' + monthLbl + '</span>' +
+        '<span class="rm50-hist-pct" style="color:#f5a623;">' + nP + '%</span>' +
+        '<span class="rm50-hist-pct" style="color:#818cf8;">' + wP + '%</span>' +
+        '<span class="rm50-hist-pct" style="color:#00e5a0;">' + sP + '%</span>' +
+      '</div>';
+    });
+    histHTML += '</div><div class="rm50-hist-legend">' +
+      '<span style="color:#f5a623;">■ Nec</span>' +
+      '<span style="color:#818cf8;">■ Des</span>' +
+      '<span style="color:#00e5a0;">■ Aho</span>' +
+    '</div>';
+  }
+
+  card.innerHTML =
+    '<div class="rm50-card">' +
+      '<div class="rm50-header">' +
+        '<span class="rm50-title">Regla 50/30/20</span>' +
+        '<span class="rm50-verdict" style="background:' + verdictColor + '22;color:' + verdictColor + ';">' + verdictIcon + ' ' + verdictKey + '</span>' +
+      '</div>' +
+      barHTML('Necesidades', '🏠', needsPct,   TARGET_NEEDS,    needs,   '#f5a623') +
+      barHTML('Deseos',      '🎮', wantsPct,   TARGET_WANTS,    wants,   '#818cf8') +
+      barHTML('Ahorro',      '💰', savingsPct, TARGET_SAVINGS,  savings, '#00e5a0') +
+      tipHTML +
+      histHTML +
+    '</div>';
 }
 
 function _rmToggleEdit() {

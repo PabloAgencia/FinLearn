@@ -1978,3 +1978,135 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
   letter-spacing: .05em;
   margin-top: 4px;
 }
+
+/* ─── 50/30/20 VISUAL ANALYSIS ─────────────────────────────────────────────── */
+.rm50-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 18px 16px 14px;
+}
+.rm50-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.rm50-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text1);
+  letter-spacing: .02em;
+}
+.rm50-verdict {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.rm50-row {
+  position: relative;
+  margin-bottom: 18px;
+}
+.rm50-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.rm50-row-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text1);
+}
+.rm50-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rm50-delta {
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 34px;
+  text-align: right;
+}
+.rm50-track {
+  position: relative;
+  height: 10px;
+  background: rgba(255,255,255,.06);
+  border-radius: 8px;
+  overflow: visible;
+}
+.rm50-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+  min-width: 4px;
+}
+.rm50-target-line {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: rgba(255,255,255,.35);
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+.rm50-target-lbl {
+  position: absolute;
+  top: 16px;
+  font-size: 10px;
+  color: var(--text3);
+  transform: translateX(-50%);
+}
+.rm50-tip {
+  background: rgba(255,255,255,.04);
+  border-left: 3px solid #00e5a0;
+  border-radius: 0 10px 10px 0;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+.rm50-hist-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+.rm50-hist {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rm50-hist-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.rm50-hist-month {
+  font-size: 12px;
+  color: var(--text2);
+  flex: 1;
+}
+.rm50-hist-pct {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 38px;
+  text-align: right;
+}
+.rm50-hist-legend {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  font-size: 10px;
+  margin-top: 4px;
+  color: var(--text3);
+}
