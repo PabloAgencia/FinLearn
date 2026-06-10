@@ -815,8 +815,8 @@
 
 .bgt-slider {
   -webkit-appearance: none; appearance: none; width: 100%;
-  height: 4px; border-radius: 2px; outline: none; cursor: pointer;
-  background: rgba(255,255,255,.1);
+  height: 6px; border-radius: 3px; outline: none; cursor: pointer;
+  background: linear-gradient(to right, var(--track-color, var(--accent)) 0%, var(--track-color, var(--accent)) var(--val, 0%), rgba(255,255,255,.12) var(--val, 0%), rgba(255,255,255,.12) 100%);
 }
 .bgt-slider::-webkit-slider-thumb {
   -webkit-appearance: none; width: 18px; height: 18px;

@@ -453,14 +453,14 @@ const BOSS_DATA = {
       {
         q: '¿Cuánto capital necesitas para que el 4% anual cubra 30.000€ de gastos anuales?',
         opts: ['600.000€', '750.000€', '450.000€', '1.000.000€'],
-        correct: 0,
+        correct: 1,
         exp: 'Regla del 4%: 30.000 / 0.04 = 750.000€. El número FIRE.'
       },
       {
-        q: 'Si inviertes 300€/mes al 8% anual durante 30 años, ¿cuánto tendrás aproximadamente?',
-        opts: ['480.000€', '108.000€', '270.000€', '650.000€'],
-        correct: 0,
-        exp: 'El interés compuesto multiplica x4.4 lo aportado: 300×12×30 = 108k€ aportados → ~435k€ final.'
+        q: 'Inviertes 300€/mes al 8% anual durante 30 años. Aportas en total 108.000€. ¿Cuánto tendrás?',
+        opts: ['~216.000€ (×2 inflación)', '~447.000€ (interés compuesto)', '~108.000€ (lo aportado)', '~1.200.000€ (exagerado)'],
+        correct: 1,
+        exp: 'El IC no duplica ni mantiene: PMT 300 × factor 1490 ÷ tipo mensual ≈ 447k€. La clave es no tocar el capital.'
       },
       {
         q: 'Tienes 20.000€ de deuda al 18% TAE y 15.000€ en un depósito al 3%. ¿Qué haces?',
@@ -469,10 +469,10 @@ const BOSS_DATA = {
         exp: '18% > 3%: cada euro que cancelas la deuda "gana" un 18% garantizado. Cancela siempre.'
       },
       {
-        q: '¿Cuál es el orden correcto para optimizar tu dinero en España?',
-        opts: ['Fondo emergencia → PP hasta máximo si tipo >30% → ETFs acumulación', 'ETFs primero → luego emergencia', 'PP siempre antes que todo', 'Inmueble antes que mercado'],
-        correct: 0,
-        exp: 'Primero liquidez (emergencia), luego fiscalidad (PP si compensa), luego crecimiento (ETFs).'
+        q: 'Tu tipo marginal IRPF es el 37%. ¿Cuál es el orden financiero correcto en España?',
+        opts: ['ETFs globales primero → PP después → emergencia si sobra', 'Emergencia 3-6 meses → PP hasta límite deducible → ETFs acumulación', 'PP al máximo primero → luego todo a ETFs', 'Primero invertir, la emergencia es para los miedosos'],
+        correct: 1,
+        exp: 'Liquidez primero (emergencia): sin ella vendes inversiones en el peor momento. Luego PP (37% deducción es brutal). Luego ETFs.'
       },
       {
         q: 'El coste real de un piso de 200.000€ a 30 años (hipoteca al 3.5%) es aproximadamente:',
@@ -513,10 +513,10 @@ const BOSS_DATA = {
         exp: 'La inflación erosiona el poder adquisitivo. Un 7% con 3% de inflación son solo 4% de ganancia real.'
       },
       {
-        q: 'Tienes 50.000€ de plusvalías en ETFs. ¿Cuánto pagas de IRPF en España 2024?',
-        opts: ['6.000×19% + 44.000×21% = 10.380€', '50.000×21% = 10.500€', '50.000×19% = 9.500€', '50.000×23% = 11.500€'],
+        q: 'ETF acumulación vs fondo de inversión en España. ¿Cuál tiene más ventaja fiscal y por qué?',
+        opts: ['El fondo: permite traspasos sin tributar. El ETF no tiene ese beneficio', 'El ETF: opera en bolsa y es más eficiente', 'Son exactamente iguales fiscalmente', 'El fondo tributa al 10%, el ETF al 19%'],
         correct: 0,
-        exp: 'Tramos del ahorro: primeros 6.000€ al 19%, los siguientes 44.000€ al 21% = 10.380€.'
+        exp: 'Los fondos permiten traspasar entre sí sin hecho imponible (diferimiento). Los ETFs tributan al vender aunque reinviertas en otro ETF.'
       }
     ]
   },
@@ -589,10 +589,10 @@ const BOSS_DATA = {
         exp: 'El PP difiere impuestos al futuro. Si en jubilación tributas más que hoy, el PP te perjudica.'
       },
       {
-        q: 'Eres autónomo en módulos con 40.000€ de ingresos. ¿Qué ventaja fiscal tienes vs asalariado?',
-        opts: ['Puedes deducir gastos reales: material, parte del hogar, formación, transporte, reduciendo base imponible', 'Pagas menos seguridad social', 'Tienes tipo fijo del 15%', 'No tienes ventajas'],
-        correct: 0,
-        exp: 'Un autónomo con 10.000€ de gastos deducibles paga IRPF solo sobre 30.000€ vs los 40.000€ del asalariado.'
+        q: 'Vendes acciones con 8.000€ de ganancia pero tienes 3.000€ de pérdidas de años anteriores pendientes de compensar. ¿Qué pagas?',
+        opts: ['19% sobre 8.000€ = 1.520€ (las pérdidas antiguas no compensan ganancias del año)', '19% sobre 5.000€ = 950€ (compensas las pérdidas)', '0€ porque las pérdidas cubren todo', '21% sobre 8.000€ = 1.680€'],
+        correct: 1,
+        exp: 'Las pérdidas de capital de ejercicios anteriores (hasta 4 años) sí compensan ganancias del mismo tipo en el año actual. 8.000 - 3.000 = 5.000 × 19% = 950€.'
       }
     ]
   },
@@ -665,10 +665,10 @@ const BOSS_DATA = {
         exp: 'Los REITs reparten al menos el 90% de beneficios como dividendos por ley. Permiten diversificación inmobiliaria desde 100€.'
       },
       {
-        q: '¿Qué define a un millonario de primera generación según Thomas Stanley?',
-        opts: ['Gasta muy por debajo de sus ingresos, invierte consistentemente y vive en vecindarios de clase media', 'Tiene ingresos altísimos', 'Hereda capital o negocio familiar', 'Tiene título universitario de prestigio'],
-        correct: 0,
-        exp: '"The Millionaire Next Door": la mayoría de millonarios self-made son frugales, disciplinados e invisibles. El lujo visible es anti-riqueza.'
+        q: 'Cartera 100% MSCI World vs All-Weather de Dalio. Crash del 50% de bolsa global. ¿Cuál pierde menos?',
+        opts: ['MSCI World: más concentrada pero históricamente se recupera antes', 'All-Weather: correlación negativa de bonos/oro amortigua la caída a ~15-20%', 'Son iguales en crashes severos', 'All-Weather nunca pierde en crashes'],
+        correct: 1,
+        exp: 'All-Weather usa decorrelación: cuando acciones caen, bonos L/P suben. En 2008: MSCI -50%, All-Weather -14%. No es inmune, pero amortigua brutalmente.'
       }
     ]
   },
@@ -757,9 +757,10 @@ function BOSS_renderIntro(branchId) {
         <div class="boss-branch" style="color:${boss.color}">${branchId.charAt(0).toUpperCase()+branchId.slice(1)}</div>
         <div class="boss-intro-text">${boss.intro}</div>
         <div class="boss-rules">
-          <div class="boss-rule">⏱️ 45 segundos por pregunta</div>
-          <div class="boss-rule">5 preguntas difíciles</div>
-          <div class="boss-rule">5/5 correctas → cofre legendario 🏆</div>
+          <div class="boss-rule">⏱️ 15 segundos por pregunta</div>
+          <div class="boss-rule">5 preguntas de nivel experto</div>
+          <div class="boss-rule" style="color:#f87171;font-weight:800;">💀 Un error = derrota inmediata</div>
+          <div class="boss-rule">5/5 perfectas → cofre legendario 🏆</div>
         </div>
         <button class="btn btn-boss" onclick="BOSS_startQuiz('${branchId}')">⚔️ ¡Comenzar batalla!</button>
         <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="BOSS_close()">No estoy listo</button>
@@ -792,7 +793,7 @@ function BOSS_renderQuestion() {
           </div>
           <div class="boss-quiz-info">
             <span style="color:${boss.color}">${boss.emoji} ${boss.name}</span>
-            <span class="boss-timer" id="boss-timer">45</span>
+            <span class="boss-timer" id="boss-timer">15</span>
           </div>
         </div>
         <div class="boss-q-num">Pregunta ${qNum} / ${total}</div>
@@ -810,14 +811,14 @@ function BOSS_renderQuestion() {
 
 function BOSS_startTimer() {
   if (_bossTimer) clearInterval(_bossTimer);
-  let secs = 45;
+  let secs = 15;
   _bossTimer = setInterval(() => {
     secs--;
     const el = document.getElementById('boss-timer');
     if (el) {
       el.textContent = secs;
-      if (secs <= 10) el.style.color = '#f87171';
-      if (secs <= 5)  el.style.animation = 'bossTimerPulse 0.5s infinite alternate';
+      if (secs <= 8) el.style.color = '#f87171';
+      if (secs <= 4) el.style.animation = 'bossTimerPulse 0.5s infinite alternate';
     }
     if (secs <= 0) {
       clearInterval(_bossTimer);
@@ -853,13 +854,18 @@ function BOSS_answer(chosen) {
   }
 
   setTimeout(() => {
+    if (!correct) {
+      // Un fallo = game over inmediato
+      BOSS_showResult();
+      return;
+    }
     _bossState.qIdx++;
     if (_bossState.qIdx >= boss.questions.length) {
       BOSS_showResult();
     } else {
       BOSS_renderQuestion();
     }
-  }, 2200);
+  }, 1800);
 }
 
 function BOSS_showResult() {

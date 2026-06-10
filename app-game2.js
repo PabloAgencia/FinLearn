@@ -716,6 +716,13 @@ var _BUDGET = (function() {
 
       + '<button class="btn btn-primary btn-block" style="margin-top:14px;" onclick="_BUDGET.save()">Guardar presupuesto</button>'
       + '</div>';
+    // Set --val on each slider so track fill matches thumb position
+    setTimeout(function() {
+      BUDGET_CATS.forEach(function(c) {
+        var sl = document.getElementById('bcat-sl-' + c.id);
+        if (sl) sl.style.setProperty('--val', Math.min(((b.cats[c.id] || 0) / c.max) * 100, 100) + '%');
+      });
+    }, 0);
   }
 
   function _buildDonut(b) {
@@ -810,18 +817,11 @@ var _BUDGET = (function() {
     // Update tip
     var tipBox = document.getElementById('bgt-tip-box');
     if (tipBox) tipBox.innerHTML = _buildTip(b);
-    // Update bar
+    // Update slider track fill
     var barEl = document.getElementById('bcat-sl-' + catId);
     if (barEl) {
-      var pct = b.income > 0 ? Math.min(Math.round((b.cats[catId]/b.income)*100), 100) : 0;
-      // just rely on CSS for bar width
-      var actualFill = document.querySelector('#bcat-' + catId + ' .bgt-actual-fill');
-      if (actualFill && b.income > 0) {
-        var pct2 = Math.min(Math.round((b.cats[catId] / b.income) * 100), 100);
-        actualFill.style.width = pct2 + '%';
-        var c2 = BUDGET_CATS ? BUDGET_CATS.find(function(x){return x.id===catId;}) : null;
-        actualFill.style.background = c2 ? c2.color : 'var(--accent)';
-      }
+      var c2 = BUDGET_CATS ? BUDGET_CATS.find(function(x) { return x.id === catId; }) : null;
+      if (c2) barEl.style.setProperty('--val', Math.min((b.cats[catId] / c2.max) * 100, 100) + '%');
     }
   }
 
