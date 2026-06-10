@@ -1255,7 +1255,7 @@ function selectGoal(key, label) {
  * Marca visualmente el avatar seleccionado y actualiza S.avatar.
  */
 function pickAvatar(emoji, name) {
-  S.avatar = emoji;
+  S.avatar = emoji; S.avatarName = name;
   document.querySelectorAll('.av-opt').forEach(o => o.classList.remove('sel'));
   const opt = document.querySelector(`.av-opt[data-av="${emoji}"]`);
   if (opt) opt.classList.add('sel');
@@ -1271,7 +1271,7 @@ function pickAvatar(emoji, name) {
  * visibles en el nav y el perfil, y cierra el modal.
  */
 function pickAvatar2(emoji, name) {
-  S.avatar = emoji;
+  S.avatar = emoji; S.avatarName = name;
   document.querySelectorAll('#m-avatar .av-opt').forEach(o => o.classList.remove('sel'));
   const opt = document.querySelector(`#m-avatar .av-opt[data-av="${emoji}"]`) ||
     [...document.querySelectorAll('#m-avatar .av-opt')]

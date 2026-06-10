@@ -732,7 +732,7 @@ function startTutorial() {
   _tutStep = 0;
   S.hasSeenTutorial = true;
   saveState();
-  document.getElementById('tutorial-overlay').style.display = 'block';
+  document.getElementById('tutorial-overlay').style.display = 'flex';
   _renderTutStep();
 }
 

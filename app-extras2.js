@@ -30,6 +30,7 @@ function T8_open() {
         </div>
       </div>
     </div>`;
+  modal.classList.add('active');
   T8_calc();
 }
 

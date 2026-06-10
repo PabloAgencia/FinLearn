@@ -108,7 +108,7 @@ function showReferralSheet() {
     if (typeof saveState === 'function') saveState();
   }
 
-  var shareUrl = location.origin + location.pathname + '?ref=' + S.referralCode;
+  var shareUrl = location.origin + '/?ref=' + S.referralCode;
 
   var modal = document.getElementById('m-referral');
   if (!modal) {
@@ -118,8 +118,8 @@ function showReferralSheet() {
     document.body.appendChild(modal);
   }
 
-  modal.innerHTML = '<div class="sc-modal-backdrop" onclick="closeModal(\'m-referral\')">'
-    + '<div class="sc-modal-box ref-modal-box" onclick="event.stopPropagation()">'
+  modal.innerHTML = '<div class="sc-modal-backdrop" style="align-items:center;padding:20px;" onclick="closeModal(\'m-referral\')">'
+    + '<div class="sc-modal-box ref-modal-box" style="border-radius:20px;max-height:90vh;" onclick="event.stopPropagation()">'
     + '<button class="sc-modal-close" onclick="closeModal(\'m-referral\')">&#x2715;</button>'
     + '<div style="font-size:48px;text-align:center;margin-bottom:8px;">🎁</div>'
     + '<div style="font-size:20px;font-weight:900;color:var(--text);text-align:center;margin-bottom:6px;">Invita a tus amigos</div>'

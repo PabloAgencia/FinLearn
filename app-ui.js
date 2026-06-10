@@ -262,7 +262,7 @@ function updateUIFromState() {
     '</div>';
   })();
   setEl('home-nav-av', S.avatar);
-  if (S.userName && typeof AVATAR_AI !== 'undefined') AVATAR_AI.apply(S.userName);
+  if (S.userName && typeof AVATAR_AI !== 'undefined') AVATAR_AI.apply(S.avatarName || S.userName);
 
   // ── Profile hero ───────────────────────────────────────────────────
   setEl('prof-av',    S.avatar);

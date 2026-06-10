@@ -1150,31 +1150,34 @@ body.scenario-active #finai-fab {
 }
 .dca-q-title {
   font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--text1);
-  margin-bottom: 12px;
-  line-height: 1.45;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text);
+  margin-bottom: 14px;
+  line-height: 1.4;
+  letter-spacing: -.01em;
 }
 .dca-q-text {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text2);
-  margin-bottom: 10px;
-  line-height: 1.5;
+  margin-bottom: 12px;
+  line-height: 1.55;
 }
-.dca-opts { display: flex; flex-direction: column; gap: 7px; }
+.dca-opts { display: flex; flex-direction: column; gap: 8px; }
 .dca-opt {
   width: 100%;
   text-align: left;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.1);
-  color: var(--text1);
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 13px;
+  background: var(--surface);
+  border: 1.5px solid rgba(255,255,255,.1);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background .15s, border-color .15s;
+  transition: background .15s, border-color .15s, transform .1s;
 }
+.dca-opt:active { transform: scale(.99); }
 .dca-opt:hover:not([disabled]) {
   background: rgba(99,102,241,.15);
   border-color: rgba(99,102,241,.4);

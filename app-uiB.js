@@ -777,6 +777,8 @@ function goTo(screen) {
   if (screen === 'profile')   { renderProfileScreen(); }
   if (screen === 'stats')     { renderStatsScreen(); }
   if (screen === 'portfolio') {
+    const sp = document.getElementById('s-portfolio');
+    if (sp) sp.scrollTop = 0;
     renderPortfolioSummary(); renderStockList(); renderMyPositions();
     setTimeout(() => { if (typeof CHART !== 'undefined' && typeof CHART.init === 'function') CHART.init(); }, 50); setTimeout(renderPortfolioDonut, 120);
     // Refresh datos reales al entrar en bolsa
@@ -790,7 +792,7 @@ function goTo(screen) {
   if (screen === 'realmoney') {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const el = document.getElementById('s-realmoney');
-    if (el) el.classList.add('active');
+    if (el) { el.classList.add('active'); el.scrollTop = 0; }
     if (typeof _rmLoad === 'function') _rmLoad();
   }
 }

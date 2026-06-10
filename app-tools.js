@@ -881,6 +881,7 @@ function claimDailyReward(winIdx, dayCount) {
   if (isMega && typeof confetti === 'function') confetti();
   if (typeof toast === 'function') toast('\uD83C\uDF81 \u00a1Premio reclamado!', reward.label, 't-success');
   if (typeof updateUIFromState === 'function') updateUIFromState();
+  if (typeof renderStreakCard === 'function') renderStreakCard();
 }
 
 
