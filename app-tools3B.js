@@ -1044,7 +1044,7 @@ function F32_challengeFriend() {
     all.sort(function(a,b) { return b.xp - a.xp; });
     yourPos = all.findIndex(function(u) { return u.isYou; }) + 1;
   } catch(e) {}
-  var text = '🏆 Estoy en posici\xF3n ' + (yourPos || '?') + ' en la liga ' + league.label + ' de FinLearn con ' + weekXP.toLocaleString('es') + ' XP esta semana. \xBFPuedes superarme? → finlearn.app';
+  var text = '🏆 Estoy en posici\xF3n ' + (yourPos || '?') + ' en la liga ' + league.label + ' de FinLearn con ' + weekXP.toLocaleString('es') + ' XP esta semana. \xBFPuedes superarme? → ' + window.location.origin;
   if (navigator.share) {
     navigator.share({ title: 'Te reto en FinLearn', text: text }).catch(function() {});
   } else if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1894,7 +1894,7 @@ function F42_share() {
   const idx   = _f42_problemIndex();
   const dp    = S.dailyProblem;
   if (!dp || dp.date !== today) return;
-  const text = `FinLearn Problema del Día #${idx + 1} 💰\nResuelto en ${dp.attempts} intento(s)\n${dp.emojis}\n¿Lo consigues tú? finlearn.app`;
+  const text = `FinLearn Problema del Día #${idx + 1} 💰\nResuelto en ${dp.attempts} intento(s)\n${dp.emojis}\n¿Lo consigues tú? ${window.location.origin}`;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => toast('📋 Copiado', 'Pega el resultado donde quieras.', 't-success'));
   } else {

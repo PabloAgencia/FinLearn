@@ -935,7 +935,7 @@ function F48_showReview(prev, cur) {
 }
 
 function F48_shareWeek(xpGained, modsWeek, streak) {
-  const text = `Mi semana en FinLearn 💰\n+${xpGained} XP ganados\n📚 ${modsWeek} módulos completados\n🔥 ${streak} días de racha\n¿Y la tuya? finlearn.app`;
+  const text = `Mi semana en FinLearn 💰\n+${xpGained} XP ganados\n📚 ${modsWeek} módulos completados\n🔥 ${streak} días de racha\n¿Y la tuya? ${window.location.origin}`;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => toast('📋 Copiado', 'Comparte tu semana financiera.', 't-success'));
   } else {

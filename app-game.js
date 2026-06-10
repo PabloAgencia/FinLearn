@@ -912,11 +912,11 @@ function B2B_submitForm() {
  */
 function doShare(platform) {
   const user = S.userName || 'Un usuario';
-  const text = encodeURIComponent(`${user} está mejorando sus finanzas con FinLearn 🚀 Únete gratis: finlearn.app`);
+  const text = encodeURIComponent(`${user} está mejorando sus finanzas con FinLearn 🚀 Únete gratis: ${window.location.origin}`);
   const urls = {
     twitter:  `https://twitter.com/intent/tweet?text=${text}`,
     whatsapp: `https://api.whatsapp.com/send?text=${text}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://finlearn.app`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}`,
   };
   window.open(urls[platform] || urls.twitter, '_blank');
   closeModal('m-viral');
@@ -924,7 +924,7 @@ function doShare(platform) {
 
 /** doCopyLink — Copia el enlace de la app al portapapeles. */
 function doCopyLink() {
-  navigator.clipboard?.writeText('https://finlearn.app').catch(() => { });
+  navigator.clipboard?.writeText(window.location.origin).catch(() => { });
   toast('🔗 ¡Enlace copiado!', 'Pégalo donde quieras', 't-success');
   closeModal('m-viral');
 }

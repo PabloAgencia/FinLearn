@@ -937,9 +937,9 @@ function _shareMonthlyWrapped(mName, yr, xp, mods, streak, league) {
     + '📚 ' + mods + ' módulos completados\n'
     + '🔥 Racha máx. ' + streak + ' días\n'
     + '🏆 Liga ' + (LG[league] || league) + '\n'
-    + '→ https://finlearn.app';
+    + '→ ' + window.location.origin;
   if (navigator.share) {
-    navigator.share({ title: 'FinLearn — Mi mes de ' + mName, text: text, url: 'https://finlearn.app' }).catch(function(){});
+    navigator.share({ title: 'FinLearn — Mi mes de ' + mName, text: text, url: window.location.origin }).catch(function(){});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function() {
       if (typeof toast === 'function') toast('✅ Copiado', 'Comparte en tus redes', 't-success');
@@ -2196,12 +2196,12 @@ function _shareAchievementCard(ach) {
 
   canvas.toBlob(function(blob) {
     var file = new File([blob], 'logro-finlearn.png', { type: 'image/png' });
-    var text = '¡Acabo de desbloquear "' + ach.n + '" en @FinLearn! 🏆\nAprende finanzas personales gratis 👇\nhttps://finlearn.app';
+    var text = '¡Acabo de desbloquear "' + ach.n + '" en @FinLearn! 🏆\nAprende finanzas personales gratis 👇\n' + window.location.origin;
     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({ files: [file], title: '¡Logro desbloqueado!', text: text })
         .catch(function() { _achDownload(canvas, ach.n); });
     } else if (navigator.share) {
-      navigator.share({ title: '¡Logro desbloqueado!', text: text, url: 'https://finlearn.app' })
+      navigator.share({ title: '¡Logro desbloqueado!', text: text, url: window.location.origin })
         .catch(function() { _achDownload(canvas, ach.n); });
     } else {
       _achDownload(canvas, ach.n);

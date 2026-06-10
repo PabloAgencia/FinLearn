@@ -131,7 +131,7 @@ function CERT_download(branchId, branchLabel, emoji, color) {
 function CERT_shareBranch(branchId) {
   const branch = F28_BRANCHES.find(b => b.id === branchId);
   if (!branch) return;
-  const text = `🏆 Acabo de completar la rama "${branch.label}" ${branch.emoji} en FinLearn. ${branch.mods.length} módulos dominados. ¿Tú dónde estás? 👉 finlearn.app`;
+  const text = `🏆 Acabo de completar la rama "${branch.label}" ${branch.emoji} en FinLearn. ${branch.mods.length} módulos dominados. ¿Tú dónde estás? 👉 ${window.location.origin}`;
   if (navigator.share) {
     navigator.share({ title: 'Certificado FinLearn', text });
   } else if (navigator.clipboard) {
@@ -1185,15 +1185,11 @@ const AVATAR_AI = (function() {
         var cached = localStorage.getItem(cKey);
         if (cached) { _injectSprite(cached); return; }
       } catch(e) {}
-      // novato necesita eliminar fondo blanco; el resto ya son transparentes
-      if (key === 'novato' || key === 'aprendiz') {
-        _removeWhiteBg(spritePath, function(dataUrl) {
-          _injectSprite(dataUrl);
-          try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
-        });
-      } else {
-        _injectSprite(spritePath);
-      }
+      // todos los sprites necesitan eliminar fondo blanco
+      _removeWhiteBg(spritePath, function(dataUrl) {
+        _injectSprite(dataUrl);
+        try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
+      });
       return;
     }
 

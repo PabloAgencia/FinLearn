@@ -974,7 +974,7 @@ function shareCharCard() {
   const completed = (S.completedMods || []).length;
   const achs      = (S.unlockedAchs || []).length;
 
-  const text = `🏆 Mi carta de personaje en FinLearn\n\n👤 ${name} — ${titleData.icon} ${titleData.title}\n⚡ ${(S.xp||0).toLocaleString('es')} XP · 🔥 ${streak} días de racha\n📚 ${completed} módulos completados · 🏅 ${achs} logros\n\n¡Aprende finanzas reales y compite conmigo! → finlearn.app`;
+  const text = `🏆 Mi carta de personaje en FinLearn\n\n👤 ${name} — ${titleData.icon} ${titleData.title}\n⚡ ${(S.xp||0).toLocaleString('es')} XP · 🔥 ${streak} días de racha\n📚 ${completed} módulos completados · 🏅 ${achs} logros\n\n¡Aprende finanzas reales y compite conmigo! → ${window.location.origin}`;
 
   if (navigator.share) {
     navigator.share({ title: 'Mi carta FinLearn', text }).catch(() => {});

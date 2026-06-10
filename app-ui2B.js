@@ -647,9 +647,9 @@ function _showLevelUpScreen(level) {
 }
 
 function _shareLevelUp(level, rankTitle, icon) {
-  var text = '¡Acabo de alcanzar el nivel ' + level + ' en FinLearn! ' + (icon || '🚀') + ' ' + (rankTitle || '') + '\nAprendo finanzas personales gratis → https://finlearn.app';
+  var text = '¡Acabo de alcanzar el nivel ' + level + ' en FinLearn! ' + (icon || '🚀') + ' ' + (rankTitle || '') + '\nAprendo finanzas personales gratis → ' + window.location.origin;
   if (navigator.share) {
-    navigator.share({ title: 'FinLearn · Nivel ' + level + ' 🎉', text: text, url: 'https://finlearn.app' }).catch(function(){});
+    navigator.share({ title: 'FinLearn · Nivel ' + level + ' 🎉', text: text, url: window.location.origin }).catch(function(){});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function() {
       if (typeof toast === 'function') toast('✅ Copiado', 'Pégalo en tus redes sociales', 't-success');
@@ -693,10 +693,10 @@ function toggleFocusMode() {
  */
 function shareCert(platform) {
   const modName = S.currentMod ? S.currentMod.title : 'un módulo';
-  const text = encodeURIComponent(`¡Acabo de completar "${modName}" en FinLearn! 🎓📈 Mejora tus finanzas personales en finlearn.app`);
+  const text = encodeURIComponent(`¡Acabo de completar "${modName}" en FinLearn! 🎓📈 Mejora tus finanzas personales en ${window.location.origin}`);
   const urls = {
     twitter:  `https://twitter.com/intent/tweet?text=${text}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=https://finlearn.app`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}`,
   };
   window.open(urls[platform] || urls.twitter, '_blank');
 }
@@ -708,7 +708,7 @@ function shareCert(platform) {
 function quickShare(platform) {
   const modName = S.currentMod ? S.currentMod.title : 'un módulo';
   const streakTxt = S.streak >= 3 ? ` 🔥 ${S.streak} días de racha.` : '';
-  const text = encodeURIComponent(`Acabo de completar "${modName}" en FinLearn 🚀${streakTxt} finlearn.app`);
+  const text = encodeURIComponent(`Acabo de completar "${modName}" en FinLearn 🚀${streakTxt} ${window.location.origin}`);
   const url  = platform === 'whatsapp'
     ? `https://api.whatsapp.com/send?text=${text}`
     : `https://twitter.com/intent/tweet?text=${text}`;

@@ -923,9 +923,9 @@ function BOSS_showResult() {
 }
 
 function _bossShare(bossName, branchId) {
-  var text = '¡Acabo de derrotar a "' + bossName + '" en FinLearn! 🏆 +300 XP ganados en el modo más difícil.\n¿Puedes tú también? → https://finlearn.app';
+  var text = '¡Acabo de derrotar a "' + bossName + '" en FinLearn! 🏆 +300 XP ganados en el modo más difícil.\n¿Puedes tú también? → ' + window.location.origin;
   if (navigator.share) {
-    navigator.share({ title: 'FinLearn · Boss Derrotado 🏆', text: text, url: 'https://finlearn.app' }).catch(function(){});
+    navigator.share({ title: 'FinLearn · Boss Derrotado 🏆', text: text, url: window.location.origin }).catch(function(){});
   } else if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(function() {
       if (typeof toast === 'function') toast('✅ Copiado', 'Pégalo en tus redes sociales', 't-success');
@@ -1162,7 +1162,7 @@ function PERS_share() {
   try {
     const type = PERSONALITY_TYPES[S.personalityType];
     if (!type) return;
-    const text = `Soy "${type.name}" ${type.emoji} según el test de FinLearn. ${type.subtitle}. ¿Y tú? 👉 finlearn.app`;
+    const text = `Soy "${type.name}" ${type.emoji} según el test de FinLearn. ${type.subtitle}. ¿Y tú? 👉 ${window.location.origin}`;
     if (navigator.share) {
       navigator.share({ title: 'Mi perfil financiero en FinLearn', text });
     } else if (navigator.clipboard) {

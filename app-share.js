@@ -88,7 +88,7 @@ function shareStats() {
       navigator.share({ files: [file], title: 'Mi racha en FinLearn', text: shareText })
         .catch(function() {});
     } else if (navigator.share) {
-      navigator.share({ title: 'Mi racha en FinLearn', text: shareText + ' finlearn.app' })
+      navigator.share({ title: 'Mi racha en FinLearn', text: shareText + ' ' + window.location.origin })
         .catch(function() {});
     } else {
       var url = URL.createObjectURL(blob);
