@@ -76,7 +76,7 @@
 <link rel="stylesheet" href="app2B.css?v=2.1.0">
 <link rel="stylesheet" href="app2C.css?v=2.1.0">
 <link rel="stylesheet" href="app2D.css?v=2.1.0">
-<link rel="stylesheet" href="app-extra.css?v=2.1.0">
+<link rel="stylesheet" href="app-extra.css?v=2.2.0">
 </head>
 <body>
 
@@ -318,9 +318,6 @@
           <div id="streak-shield-icon" style="display:inline-flex;align-items:center;margin-left:6px;"></div>
           <div id="nav-shield-wrap" class="nav-pill shield-pill" style="display:none;">🛡️ <span class="pv" id="nav-shields">0</span></div>
           <div class="nav-pill xpill" onclick="showXPPanel()" style="cursor:pointer;">⚡ <span class="pv" id="nav-xp">0 XP</span></div>
-          <div class="nav-pill xpill" id="game-clock-pill" style="font-size:10px;color:var(--text2);">📅 —</div>
-          <div id="game-clock" class="nav-pill" style="font-size:10px;letter-spacing:.02em;">📅 Año 1</div>
-<!-- music-control-removed-duplicate -->
           <button id="mute-all-btn" class="nav-pill" onclick="toggleMuteAll()" title="Silencio total" style="background:rgba(255,255,255,.06);border:none;padding:4px 8px;border-radius:20px;cursor:pointer;font-size:13px;color:var(--text3);">🔔</button>
           <div id="rpg-multiplier-badge" class="rpg-mult-badge" style="display:none;"><span id="rpg-mult-val">×1.0</span> 🔥</div>
           <button class="nav-pill theme-toggle-btn" onclick="toggleTheme()" title="Cambiar tema claro/oscuro" style="background:rgba(255,255,255,.06);border:none;padding:4px 8px;border-radius:20px;cursor:pointer;font-size:13px;color:var(--text3);">🌙</button>
@@ -412,7 +409,11 @@
         <div id="sim-widget" class="mb16"></div>
 
         <!-- F3X — Ruta de aprendizaje personalizada ─────────── -->
-        <div id="learning-path-card" class="mb16" style="display:none;"></div>
+        <div id="learning-path-card" class="mb16"></div>
+
+
+        <!-- EVENTOS DE ACTUALIDAD ──────────────────────────── -->
+        <div id="news-card" class="mb16"></div>
 
         <!-- REAL ACTIONS AREA (weekly action + real money) ─── -->
         <div id="home-actions-area"></div>
@@ -903,6 +904,7 @@
         <button class="btn btn-secondary btn-sm" onclick="shareProgress()">📸 Compartir</button>
         <button class="btn btn-ghost btn-sm" id="streamer-btn" onclick="STREAMER.toggle()" style="font-size:11px;">👁️ Streamer</button>
         <button class="btn btn-ghost btn-sm theme-toggle-btn" data-label="1" onclick="toggleTheme()" style="font-size:11px;">🌙&nbsp;Tema</button>
+        <button class="btn btn-ghost btn-sm" onclick="if(typeof PUSH_openSettings==='function')PUSH_openSettings()" style="font-size:11px;" title="Notificaciones">🔔&nbsp;Notifs</button>
       </div>
 
       <div class="prof-inner" id="profile-inner">
@@ -2604,7 +2606,7 @@
 <script src="app-ui2B.js?v=2.1.0"></script>
 <script src="app-game.js?v=2.1.0"></script>
 <script src="app-game2.js?v=2.1.0"></script>
-<script src="app-tools.js?v=2.1.0"></script>
+<script src="app-tools.js?v=2.2.0"></script>
 <script src="app-toolsB.js?v=2.1.0"></script>
 <script src="app-toolsC.js?v=2.1.0"></script>
 <script src="app-tools2.js?v=2.1.0"></script>
@@ -2620,6 +2622,8 @@
 <script src="app-share.js?v=2.1.0"></script>
 <script src="app-simulator.js?v=2.1.0"></script>
 <script src="app-rating.js?v=2.1.0"></script>
+<script src="app-news.js?v=2.1.0"></script>
+<script src="app-push.js?v=2.1.0"></script>
 
 
 <!-- ══ MODAL: CAREER ══ -->

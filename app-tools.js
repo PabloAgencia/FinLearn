@@ -294,6 +294,10 @@ function _initAppWithState(hasState) {
   // Comprobar regalo diario de login
   checkDailyLogin();
 
+  // Push notifications: cancelar recordatorios (ya entró) y re-inicializar
+  if (typeof PUSH_cancelToday === 'function') PUSH_cancelToday();
+  if (typeof PUSH_init === 'function') setTimeout(PUSH_init, 1000);
+
   // Modal de bienvenida de regreso (>2h fuera)
   checkWelcomeBack();
 
@@ -393,7 +397,7 @@ function _checkReferralReward() {
   S._referralRewarded = true;
   const xpBonus = 200;
   S.xp += xpBonus;
-  F34_onXPGained(xpBonus);
+  if (typeof F34_onXPGained === 'function') F34_onXPGained(xpBonus);
   recalcPatrimony();
   saveState();
   toast('🎁 ¡Bono de referido!', `+${xpBonus} XP por unirte con el código de un amigo.`, 't-success');
@@ -699,7 +703,7 @@ function showDailyRewardModal(dayCount) {
       + '<div class="sc-modal-msg">' + streakMsg + '</div>'
       + '<div class="sc-cal-row">' + calHTML + '</div>'
       + '<div class="sc-claimed-state">✅ Ya reclamaste hoy</div>'
-      + '<div class="sc-next-reward-cd">Siguiente ruleta en <strong>' + cdStr + '</strong></div>'
+      + '<div class="sc-next-reward-cd">Siguiente recompensa en <strong>' + cdStr + '</strong></div>'
       + nextHTML
       + '</div></div>';
   } else {
@@ -712,17 +716,12 @@ function showDailyRewardModal(dayCount) {
       + '<div class="sc-modal-msg">' + streakMsg + '</div>'
       + '<div class="sc-cal-row">' + calHTML + '</div>'
       + bonusHTML
-      + '<div class="sc-wheel-wrap">'
-      +   '<div class="rl-wheel-wrap" style="margin:0 auto">'
-      +     '<div class="rl-pointer">▼</div>'
-      +     '<div id="rl-wheel-container">' + _buildRouletteSVG() + '</div>'
-      +   '</div>'
-      +   '<div id="rl-prize-reveal" style="display:none;flex-direction:column;align-items:center;gap:4px;margin-top:8px;">'
-      +     '<div class="rl-prize-icon">' + reward.icon + '</div>'
-      +     '<div class="rl-prize-label" style="color:' + reward.color + '">' + reward.label + '</div>'
-      +   '</div>'
+      + '<div class="sc-reward-card">'
+      +   '<div class="sc-reward-icon-big">' + reward.icon + '</div>'
+      +   '<div class="sc-reward-value" style="color:' + reward.color + '">' + reward.label + '</div>'
+      +   '<div class="sc-reward-hint">Recompensa de hoy</div>'
       + '</div>'
-      + '<button id="rl-spin-btn" class="sc-spin-btn" onclick="_rouletteSpinAndClaim(' + winIdx + ',' + dayCount + ')">🎰 \xA1Girar la ruleta!</button>'
+      + '<button class="sc-spin-btn" onclick="claimDailyReward(' + winIdx + ',' + dayCount + ')">✨ \xA1Reclamar recompensa!</button>'
       + nextHTML
       + '</div></div>';
   }
@@ -766,7 +765,7 @@ function renderStreakCard() {
     var cdStr = hh > 0 ? hh + 'h ' + (mm < 10 ? '0' : '') + mm + 'm' : (mm > 0 ? mm + 'm' : 'pronto');
     ctaHTML = '<button class="sc-cta-btn sc-cta-done" onclick="showDailyRewardModal(' + dayCount + ')">✅ Reclamado \xB7 vuelve en ' + cdStr + '</button>';
   } else {
-    ctaHTML = '<button class="sc-cta-btn sc-cta-available sc-cta-pulse" onclick="showDailyRewardModal(' + dayCount + ')">🎰 Girar ruleta del d\xEDa</button>';
+    ctaHTML = '<button class="sc-cta-btn sc-cta-available sc-cta-pulse" onclick="showDailyRewardModal(' + dayCount + ')">🎁 Reclamar recompensa del d\xEDa</button>';
   }
 
   el.innerHTML = '<div class="sc-card">'
@@ -778,7 +777,10 @@ function renderStreakCard() {
     +       '<div class="sc-card-sublabel">d\xEDas de racha' + bonusTag + '</div>'
     +     '</div>'
     +   '</div>'
-    +   (shields > 0 ? '<div class="sc-card-shields">🛡️ \xD7' + shields + '</div>' : '<div class="sc-card-shields sc-shields-empty">Sin escudos</div>')
+    +   '<div class="sc-shields-row">'
+    +     [1,2,3].map(function(i){ return '<span class="sc-shield-pip' + (i <= shields ? '' : ' sc-shield-pip-off') + '">🛡️</span>'; }).join('')
+    +     '<div class="sc-shield-label">' + (shields > 0 ? 'Escudos: ' + shields + '/3' : 'Sin escudos') + '</div>'
+    +   '</div>'
     + '</div>'
     + '<div class="sc-dots-wrap">' + dotsHTML + '</div>'
     + ctaHTML
@@ -801,17 +803,19 @@ function _rouletteSpinAndClaim(winIdx, dayCount) {
 
   const deg = _rouletteTargetDeg(winIdx);
   svg.style.transform = 'rotate(' + deg + 'deg)';
-  SFX.xp();
+  if (typeof SFX !== 'undefined' && SFX.xp) SFX.xp();
 
   // After animation: reveal prize + claim
   setTimeout(function() {
+    btn.dataset.spinning = '0';
     const reward  = ROULETTE_SEGS[winIdx];
+    if (!reward) return;
     const reveal  = document.getElementById('rl-prize-reveal');
     if (reveal) reveal.style.display = 'flex';
     if (btn) { btn.textContent = '\uD83C\uDF81 \u00a1Reclamar ' + reward.label + '!'; btn.disabled = false; }
     btn.onclick = function() { claimDailyReward(winIdx, dayCount); };
-    SFX.achievement();
-    spawnXP(reward.label);
+    if (typeof SFX !== 'undefined' && SFX.achievement) SFX.achievement();
+    if (typeof spawnXP === 'function') spawnXP(reward.label);
   }, 3200);
 }
 
@@ -823,24 +827,25 @@ function claimDailyReward(winIdx, dayCount) {
     winIdx = _rouletteRoll(today, S.streak || 0);
   }
   const reward = ROULETTE_SEGS[winIdx];
+  if (!reward) { if (typeof toast === 'function') toast('\u274C Error', 'Premio inv\xE1lido', 't-danger'); return; }
 
   // Apply reward
   if (reward.type === 'xp') {
     S.xp += reward.amount;
-    F34_onXPGained(reward.amount);
-    spawnXP('+' + reward.amount + ' XP');
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(reward.amount);
+    if (typeof spawnXP === 'function') spawnXP('+' + reward.amount + ' XP');
   } else if (reward.type === 'cash') {
     S.cash += reward.amount;
-    _ledgerAdd('in', 'reward', 'Ruleta d\xeda ' + dayCount, reward.amount);
-    spawnXP('+\u20ac' + reward.amount.toLocaleString('es'));
+    _ledgerAdd('in', 'reward', 'Recompensa d\xeda ' + dayCount, reward.amount);
+    if (typeof spawnXP === 'function') spawnXP('+\u20ac' + reward.amount.toLocaleString('es'));
   } else if (reward.type === 'invest') {
     S.invested += reward.amount;
     recalcPatrimony();
-    spawnXP('+\u20ac' + reward.amount.toLocaleString('es') + ' invertido');
+    if (typeof spawnXP === 'function') spawnXP('+\u20ac' + reward.amount.toLocaleString('es') + ' invertido');
   } else if (reward.type === 'shield') {
     S.streakShields = Math.min(3, (S.streakShields || 0) + 1);
-    _updateShieldUI();
-    spawnXP('\uD83D\uDEE1 Escudo ganado!');
+    if (typeof _updateShieldUI === 'function') _updateShieldUI();
+    if (typeof spawnXP === 'function') spawnXP('\uD83D\uDEE1 Escudo ganado!');
   }
 
   if (!Array.isArray(S.claimedDays)) S.claimedDays = [];
@@ -851,32 +856,31 @@ function claimDailyReward(winIdx, dayCount) {
   if (_cycleDay === 3) {
     S.xp += 100;
     if (typeof F34_onXPGained === 'function') F34_onXPGained(100);
-    spawnXP('+100 XP \uD83C\uDFAF');
+    if (typeof spawnXP === 'function') spawnXP('+100 XP \uD83C\uDFAF');
     setTimeout(function() {
-      toast('\uD83C\uDFAF \u00a1Bonus D\u00EDa 3!', '+100 XP extra por tu constancia. \u00a1Sigue as\u00ED!', 't-success');
+      if (typeof toast === 'function') toast('\uD83C\uDFAF \u00a1Bonus D\u00EDa 3!', '+100 XP extra por tu constancia. \u00a1Sigue as\u00ED!', 't-success');
     }, 500);
   } else if (_cycleDay === 7) {
     S.xp += 300;
     if (typeof F34_onXPGained === 'function') F34_onXPGained(300);
     S.streakShields = Math.min(3, (S.streakShields || 0) + 1);
     if (typeof _updateShieldUI === 'function') _updateShieldUI();
-    spawnXP('+300 XP \uD83D\uDC51');
+    if (typeof spawnXP === 'function') spawnXP('+300 XP \uD83D\uDC51');
     setTimeout(function() {
       if (typeof confetti === 'function') confetti();
-      toast('\uD83D\uDC51 \u00a1MEGA BONUS D\u00EDa 7!', '+300 XP + \uD83D\uDEE1\uFE0F Escudo de Racha por tu semana completa. \u00a1Eres una m\u00E1quina!', 't-success');
+      if (typeof toast === 'function') toast('\uD83D\uDC51 \u00a1MEGA BONUS D\u00EDa 7!', '+300 XP + \uD83D\uDEE1\uFE0F Escudo de Racha por tu semana completa. \u00a1Eres una m\u00E1quina!', 't-success');
     }, 500);
   }
 
   saveState();
-  checkAchievements();
+  if (typeof checkAchievements === 'function') checkAchievements();
 
-  const modal = document.getElementById('m-daily-reward');
-  if (modal) modal.style.display = 'none';
+  closeModal('m-daily-reward');
 
   const isMega = reward.type === 'shield' || reward.amount >= 1000 || _cycleDay === 7;
-  if (isMega) confetti();
-  toast('\uD83C\uDF81 \u00a1Premio reclamado!', reward.label, 't-success');
-  updateUIFromState();
+  if (isMega && typeof confetti === 'function') confetti();
+  if (typeof toast === 'function') toast('\uD83C\uDF81 \u00a1Premio reclamado!', reward.label, 't-success');
+  if (typeof updateUIFromState === 'function') updateUIFromState();
 }
 
 
@@ -1231,13 +1235,177 @@ function _checkStreakMilestones(streak) {
       if (m.cash > 0)  _ledgerAdd('in', 'reward', 'Milestone racha ' + m.day + 'd: ' + m.label, m.cash);
       recalcPatrimony();
       saveState();
-      setTimeout(function() {
-        toast(m.label, m.msg + (m.shield > 0 ? ' 🛡️ Escudo' + (m.shield > 1 ? 's' : '') + ' añadido' + (m.shield > 1 ? 's' : '') + '.' : ''), 't-success');
-        if (m.xp >= 500) { if (typeof SFX !== 'undefined') SFX.levelUp(); if (typeof confetti === 'function') confetti(); }
-        _updateShieldUI();
-      }, 2000);
+      var delay = m.day >= 7 ? 2000 : 2000;
+      setTimeout(function(mil) {
+        return function() {
+          if (mil.xp >= 150) {
+            if (typeof SFX !== 'undefined') SFX.levelUp();
+            if (typeof confetti === 'function') confetti();
+            _showStreakMilestoneModal(mil);
+          } else {
+            toast(mil.label, mil.msg + (mil.shield > 0 ? ' 🛡️ Escudo añadido.' : ''), 't-success');
+          }
+          _updateShieldUI();
+        };
+      }(m), delay);
     }
   });
+}
+
+function _showStreakMilestoneModal(m) {
+  var ICONS  = { 3:'🔥', 7:'🛡️', 14:'🏆', 30:'💎', 100:'👑', 365:'🌟' };
+  var COLORS = { 3:'#fb923c', 7:'#60a5fa', 14:'#fbbf24', 30:'#c084fc', 100:'#f87171', 365:'#00e5a0' };
+  var icon  = ICONS[m.day]  || '🔥';
+  var color = COLORS[m.day] || '#00e5a0';
+
+  var chips = [];
+  if (m.xp)     chips.push('⚡ +' + m.xp.toLocaleString() + ' XP');
+  if (m.cash)   chips.push('💶 +€' + m.cash.toLocaleString());
+  if (m.shield) chips.push('🛡️ ×' + m.shield + ' Escudo');
+
+  var existing = document.getElementById('streak-milestone-modal');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = 'streak-milestone-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn .25s ease;';
+  overlay.innerHTML =
+    '<div class="streak-milestone-box">'
+    + '<div class="streak-milestone-glow">' + icon + '</div>'
+    + '<div class="streak-milestone-label">' + m.label + '</div>'
+    + '<div class="streak-milestone-sub">' + m.msg + '</div>'
+    + '<div class="streak-milestone-rewards">'
+    + chips.map(function(c){ return '<span class="streak-reward-chip">' + c + '</span>'; }).join('')
+    + '</div>'
+    + '<button class="streak-milestone-share" id="streak-share-btn">📤 Compartir mi logro</button>'
+    + '<button class="streak-milestone-close" id="streak-close-btn">Continuar</button>'
+    + '</div>';
+
+  document.body.appendChild(overlay);
+  overlay.querySelector('#streak-share-btn').onclick = function() { _shareStreakCard(m, icon, color); };
+  overlay.querySelector('#streak-close-btn').onclick = function() {
+    overlay.style.animation = 'fadeOut .2s ease forwards';
+    setTimeout(function() { overlay.remove(); }, 210);
+  };
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.querySelector('#streak-close-btn').click();
+  });
+}
+
+function _shareStreakCard(m, icon, color) {
+  var canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1080;
+  var ctx = canvas.getContext('2d');
+  color = color || '#00e5a0';
+
+  // Fondo
+  var bg = ctx.createLinearGradient(0, 0, 1080, 1080);
+  bg.addColorStop(0, '#0a0a1a');
+  bg.addColorStop(1, '#12122a');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Glow radial
+  var glow = ctx.createRadialGradient(540, 420, 0, 540, 420, 480);
+  glow.addColorStop(0, color.replace(')', ', .18)').replace('rgb', 'rgba').replace('#', 'rgba(').replace('rgba(', 'rgba(') );
+  glow.addColorStop(1, 'transparent');
+  // Use simpler approach for hex color
+  ctx.save();
+  ctx.globalAlpha = .22;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(540, 420, 480, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Marco decorativo
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = .3;
+  ctx.lineWidth = 4;
+  _roundRect(ctx, 40, 40, 1000, 1000, 40);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // "FinLearn" arriba
+  ctx.font = 'bold 32px system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText('FinLearn', 540, 110);
+
+  // Icono grande
+  ctx.font = '220px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(icon || '🔥', 540, 440);
+
+  // Label del hito
+  ctx.font = 'bold 64px system-ui, sans-serif';
+  ctx.fillStyle = color;
+  ctx.fillText(m.label, 540, 560);
+
+  // Subtítulo / descripción
+  var words = m.msg.split(' ');
+  var lines = []; var line = '';
+  words.forEach(function(w) {
+    var test = line ? line + ' ' + w : w;
+    ctx.font = '34px system-ui, sans-serif';
+    if (ctx.measureText(test).width > 880 && line) { lines.push(line); line = w; }
+    else line = test;
+  });
+  if (line) lines.push(line);
+  ctx.font = '34px system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.7)';
+  var startY = 630;
+  lines.slice(0, 3).forEach(function(l, i) { ctx.fillText(l, 540, startY + i * 46); });
+
+  // Chips de recompensa
+  var chips = [];
+  if (m.xp)   chips.push('⚡ +' + m.xp.toLocaleString() + ' XP');
+  if (m.cash) chips.push('💶 +€' + m.cash.toLocaleString());
+  if (m.shield) chips.push('🛡️ ×' + m.shield);
+  ctx.font = 'bold 30px system-ui, sans-serif';
+  var chipY = startY + lines.slice(0,3).length * 46 + 40;
+  var totalW = chips.reduce(function(a, c) { return a + ctx.measureText(c).width + 60; }, 0) - 20;
+  var cx = 540 - totalW / 2;
+  chips.forEach(function(c) {
+    var w = ctx.measureText(c).width + 48;
+    ctx.fillStyle = 'rgba(255,255,255,.08)';
+    _roundRect(ctx, cx, chipY - 26, w, 44, 22);
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = .4;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = color;
+    ctx.textAlign = 'left';
+    ctx.fillText(c, cx + 24, chipY + 4);
+    cx += w + 16;
+  });
+
+  // Usuario abajo
+  ctx.textAlign = 'center';
+  ctx.font = '28px system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.45)';
+  var userLine = (S.userName || 'Inversor') + '  ·  ' + (S.streak || m.day) + ' días de racha';
+  ctx.fillText(userLine, 540, 970);
+
+  // Intentar compartir
+  canvas.toBlob(function(blob) {
+    var name = 'racha-' + m.day + 'd.png';
+    if (navigator.canShare && navigator.share) {
+      var file = new File([blob], name, { type: 'image/png' });
+      if (navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: m.label, text: m.msg + '\n\nDescarga FinLearn y sigue tu camino financiero.' })
+          .catch(function() { _achDownload(canvas, name); });
+        return;
+      }
+    }
+    if (navigator.share) {
+      navigator.share({ title: m.label, text: m.msg + '\n\nDescarga FinLearn.' }).catch(function(){});
+    } else {
+      _achDownload(canvas, name);
+    }
+  }, 'image/png');
 }
 
 function _updateShieldUI() {
@@ -1733,31 +1901,148 @@ function showAchievementPopup(ach) {
   document.getElementById('ach-popup-name').textContent = ach.n;
   document.getElementById('ach-popup-desc').textContent = ach.desc;
 
-  // Mostrar recompensa
+  // Recompensa
   const rewardEl = document.getElementById('ach-popup-reward');
   if (rewardEl) {
     const parts = [];
     if (ach.reward?.xp)   parts.push('+' + ach.reward.xp   + ' XP');
     if (ach.reward?.cash) parts.push('+€' + ach.reward.cash.toLocaleString('es'));
-    if (parts.length) {
-      rewardEl.textContent = '🎁 Recompensa: ' + parts.join(' · ');
-      rewardEl.style.display = '';
-    } else {
-      rewardEl.style.display = 'none';
-    }
+    rewardEl.textContent = parts.length ? '🎁 ' + parts.join(' · ') : '';
+    rewardEl.style.display = parts.length ? '' : 'none';
   }
+
+  // Botón compartir logro
+  let shareEl = document.getElementById('ach-popup-share');
+  if (!shareEl) {
+    shareEl = document.createElement('button');
+    shareEl.id = 'ach-popup-share';
+    shareEl.className = 'ach-share-btn';
+    document.getElementById('ach-popup-inner').appendChild(shareEl);
+  }
+  shareEl.textContent = '📤 Compartir logro';
+  shareEl.onclick = function() { _shareAchievementCard(ach); };
 
   const popup = document.getElementById('ach-popup');
   popup.classList.remove('ach-popup-out');
   popup.classList.add('ach-popup-in');
 
-  SFX.achievement();
-  confetti();
+  if (typeof SFX !== 'undefined' && SFX.achievement) SFX.achievement();
+  if (typeof confetti === 'function') confetti();
 
-  setTimeout(() => {
+  // Auto-dismiss tras 6s (más tiempo para que lean y compartan)
+  if (popup._autoHide) clearTimeout(popup._autoHide);
+  popup._autoHide = setTimeout(() => {
     popup.classList.remove('ach-popup-in');
     popup.classList.add('ach-popup-out');
-  }, 3800);
+  }, 6000);
+}
+
+function _shareAchievementCard(ach) {
+  var canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1080;
+  var ctx = canvas.getContext('2d');
+
+  // Fondo degradado oscuro con acento
+  var grd = ctx.createLinearGradient(0, 0, 1080, 1080);
+  grd.addColorStop(0, '#0a0a1a');
+  grd.addColorStop(1, '#12122a');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Glow central
+  var glw = ctx.createRadialGradient(540, 480, 0, 540, 480, 400);
+  glw.addColorStop(0, 'rgba(0,229,160,.18)');
+  glw.addColorStop(1, 'rgba(0,229,160,0)');
+  ctx.fillStyle = glw;
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Marco decorativo
+  ctx.strokeStyle = 'rgba(0,229,160,.3)';
+  ctx.lineWidth = 3;
+  _roundRect(ctx, 40, 40, 1000, 1000, 32);
+  ctx.stroke();
+
+  // "LOGRO DESBLOQUEADO"
+  ctx.fillStyle = '#00e5a0';
+  ctx.font = 'bold 36px Arial';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '6px';
+  ctx.fillText('LOGRO DESBLOQUEADO', 540, 160);
+
+  // Línea decorativa
+  ctx.strokeStyle = 'rgba(0,229,160,.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(180, 185); ctx.lineTo(900, 185); ctx.stroke();
+
+  // Icono del logro
+  ctx.font = '200px Arial';
+  ctx.fillText(ach.i || '🏆', 540, 440);
+
+  // Nombre del logro
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 64px Arial';
+  ctx.fillText(ach.n || 'Logro', 540, 560);
+
+  // Descripción
+  ctx.fillStyle = 'rgba(255,255,255,.6)';
+  ctx.font = '32px Arial';
+  var descWords = (ach.desc || '').split(' ');
+  var descLine = ''; var descY = 625;
+  descWords.forEach(function(word) {
+    var test = descLine + word + ' ';
+    if (ctx.measureText(test).width > 800 && descLine !== '') {
+      ctx.fillText(descLine.trim(), 540, descY); descY += 46; descLine = word + ' ';
+    } else { descLine = test; }
+  });
+  if (descLine.trim()) ctx.fillText(descLine.trim(), 540, descY);
+
+  // Usuario + nivel
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.font = '28px Arial';
+  ctx.fillText((S.userName || 'Inversor') + ' · Nivel ' + (S.level || 1), 540, 820);
+
+  // Logo FinLearn
+  ctx.fillStyle = '#00e5a0';
+  ctx.font = 'bold 34px Arial';
+  ctx.fillText('FinLearn', 540, 900);
+  ctx.fillStyle = 'rgba(255,255,255,.3)';
+  ctx.font = '22px Arial';
+  ctx.fillText('finlearn.app', 540, 940);
+
+  canvas.toBlob(function(blob) {
+    var file = new File([blob], 'logro-finlearn.png', { type: 'image/png' });
+    var text = '¡Acabo de desbloquear "' + ach.n + '" en @FinLearn! 🏆\nAprende finanzas personales gratis 👇\nhttps://finlearn.app';
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: '¡Logro desbloqueado!', text: text })
+        .catch(function() { _achDownload(canvas, ach.n); });
+    } else if (navigator.share) {
+      navigator.share({ title: '¡Logro desbloqueado!', text: text, url: 'https://finlearn.app' })
+        .catch(function() { _achDownload(canvas, ach.n); });
+    } else {
+      _achDownload(canvas, ach.n);
+    }
+  }, 'image/png');
+}
+
+function _achDownload(canvas, name) {
+  var a = document.createElement('a');
+  a.download = 'logro-' + (name || 'finlearn').toLowerCase().replace(/\s+/g, '-') + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function _roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
 }
 
 /* ══════════════════════════════════════════════════════════════════
