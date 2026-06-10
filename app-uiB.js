@@ -772,19 +772,19 @@ function goTo(screen) {
   }
 
   // Renderizado específico por pantalla
-  if (screen === 'home')      { renderHomeScreen(); if ((Date.now() - _appStartTime) > 30000) setTimeout(() => AI_COACH.proactiveCheck(), 2000); }
+  if (screen === 'home')      { renderHomeScreen(); if ((Date.now() - _appStartTime) > 30000) setTimeout(() => { if (typeof AI_COACH !== 'undefined' && typeof AI_COACH.proactiveCheck === 'function') AI_COACH.proactiveCheck(); }, 2000); }
   if (screen === 'rank')      { renderFullRank(); renderPodium(); }
   if (screen === 'profile')   { renderProfileScreen(); }
   if (screen === 'stats')     { renderStatsScreen(); }
   if (screen === 'portfolio') {
     renderPortfolioSummary(); renderStockList(); renderMyPositions();
-    setTimeout(() => CHART.init(), 50); setTimeout(renderPortfolioDonut, 120);
+    setTimeout(() => { if (typeof CHART !== 'undefined' && typeof CHART.init === 'function') CHART.init(); }, 50); setTimeout(renderPortfolioDonut, 120);
     // Refresh datos reales al entrar en bolsa
     if (typeof MARKET !== 'undefined') MARKET.init();
   }
   if (screen === 'business')  { renderBusinesses(); renderBizCashflow(); }
   if (screen === 'life')      { renderLifeScreen(); renderCareerCard(); renderLifeEvents(); }
-  if (screen === 'lifestyle') { setTimeout(renderLifestyleComparator, 60); }
+  if (screen === 'lifestyle') { setTimeout(function() { if (typeof renderLifestyleComparator === 'function') renderLifestyleComparator(); }, 60); }
   if (screen === 'tools')     { if (typeof renderToolsScreen === 'function') renderToolsScreen(); }
   if (screen === 'guides')    { if (typeof renderGuidesScreen === 'function') renderGuidesScreen(); }
   if (screen === 'realmoney') {
@@ -861,6 +861,10 @@ function renderHomeScreen() {
   _f24_highlightSuggestedModule();
   // F3X: Rutas de aprendizaje personalizadas
   if (typeof renderLearningPathCard === 'function') renderLearningPathCard();
+  // Laboratorio shortcut card
+  if (typeof renderLabShortcut === 'function') renderLabShortcut();
+  // Eventos de Actualidad
+  if (typeof NEWS_renderCard === 'function') NEWS_renderCard();
   // F27: plan de acción personalizado
   if (typeof F27_render === 'function') F27_render();
   // F28: Skill Tree / vista módulos

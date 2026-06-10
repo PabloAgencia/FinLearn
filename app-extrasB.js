@@ -1,103 +1,123 @@
 function renderToolsScreen() {
   const el = document.getElementById('s-tools');
   if (!el) return;
+
+  const featured = [
+    { id:'fire',     icon:'🔥', q:'¿Cuándo me libero?',    sub:'Proyector FIRE' },
+    { id:'hipoteca', icon:'🏠', q:'¿Compro o alquilo?',    sub:'Hipoteca vs Alquiler' },
+    { id:'compound', icon:'📈', q:'¿Cuánto puede crecer?', sub:'Interés Compuesto' },
+  ];
+
+  const groups = [
+    {
+      title: '🏡 Planifica tu dinero',
+      tools: [
+        { id:'irpf',        icon:'🧾', name:'Simulador IRPF 2025',  desc:'Tu cuota y tipo efectivo' },
+        { id:'hipoteca',    icon:'🏠', name:'Hipoteca vs Alquiler',  desc:'¿Cuándo sale rentable comprar?' },
+        { id:'simhipoteca', icon:'🏦', name:'Simulador Hipoteca',    desc:'Cuota, amortización y TAE real' },
+        { id:'emergencia',  icon:'🛡️', name:'Fondo de Emergencia',   desc:'Cuánto guardar y cuándo llegas' },
+      ]
+    },
+    {
+      title: '📈 Haz crecer tu dinero',
+      tools: [
+        { id:'compound', icon:'📈', name:'Interés Compuesto', desc:'El poder del tiempo y el ahorro' },
+        { id:'fire',     icon:'🔥', name:'Proyector FIRE',    desc:'Gráfico a 30 años + año de libertad' },
+        { id:'dca',      icon:'📆', name:'DCA vs Lump Sum',   desc:'¿Invertir poco a poco o de golpe?' },
+        { id:'regla72',  icon:'⚡', name:'Regla del 72',      desc:'¿En cuántos años doblas tu dinero?' },
+      ]
+    },
+    {
+      title: '💳 Controla tus deudas',
+      tools: [
+        { id:'snowball', icon:'❄️', name:'Bola de Nieve',           desc:'Snowball vs Avalanche: elige tu estrategia' },
+        { id:'deuda',    icon:'💳', name:'Coste Real de la Deuda',  desc:'Lo que realmente te cuesta tu tarjeta' },
+        { id:'networth', icon:'💎', name:'Net Worth Tracker',       desc:'Tu patrimonio neto real con histórico' },
+      ]
+    },
+  ];
+
+  const sims = [
+    { icon:'📊', label:'Bolsa',    desc:'Invierte virtual',  action:"goTo('portfolio')" },
+    { icon:'🌍', label:'Vida',     desc:'Simula tu futuro',  action:"goTo('life')" },
+    { icon:'🏪', label:'Negocios', desc:'Ingresos pasivos',  action:"goTo('business')" },
+  ];
+
   el.innerHTML = `
-    <div class="tools-header">
-      <h2 class="tools-title">🔧 Herramientas Reales</h2>
-      <p class="tools-subtitle">Calcula, proyecta y decide con datos reales</p>
+    <div class="lab-header">
+      <div class="lab-header-title">🧪 Laboratorio</div>
+      <div class="lab-header-sub">11 herramientas para tomar mejores decisiones financieras</div>
     </div>
-    <div class="tools-grid">
-      <button class="tool-card" onclick="openTool('irpf')">
-        <span class="tool-icon">🧾</span>
-        <div class="tool-info">
-          <div class="tool-name">Simulador IRPF 2025</div>
-          <div class="tool-desc">Calcula tu cuota y tipo efectivo</div>
+    <div class="lab-section-pad">
+      <div class="lab-feat-row">
+        ${featured.map(f => `
+          <button class="lab-feat-btn" onclick="openTool('${f.id}')">
+            <span class="lab-feat-icon">${f.icon}</span>
+            <div class="lab-feat-q">${f.q}</div>
+            <div class="lab-feat-sub">${f.sub}</div>
+          </button>
+        `).join('')}
+      </div>
+      ${groups.map(g => `
+        <div class="lab-group">
+          <div class="lab-group-title">${g.title}</div>
+          <div class="lab-tools-list">
+            ${g.tools.map(t => `
+              <button class="tool-card" onclick="openTool('${t.id}')">
+                <span class="tool-icon">${t.icon}</span>
+                <div class="tool-info">
+                  <div class="tool-name">${t.name}</div>
+                  <div class="tool-desc">${t.desc}</div>
+                </div>
+                <span class="tool-arrow">›</span>
+              </button>
+            `).join('')}
+          </div>
         </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('hipoteca')">
-        <span class="tool-icon">🏠</span>
-        <div class="tool-info">
-          <div class="tool-name">Hipoteca vs Alquiler</div>
-          <div class="tool-desc">Break-even, costes reales, ITP</div>
+      `).join('')}
+      <div class="lab-group">
+        <div class="lab-group-title">📊 Simuladores</div>
+        <div class="lab-sim-row">
+          ${sims.map(s => `
+            <button class="lab-sim-btn" onclick="${s.action}">
+              <span class="lab-sim-icon">${s.icon}</span>
+              <div class="lab-sim-label">${s.label}</div>
+              <div class="lab-sim-desc">${s.desc}</div>
+            </button>
+          `).join('')}
         </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('fire')">
-        <span class="tool-icon">🔥</span>
-        <div class="tool-info">
-          <div class="tool-name">Proyector FIRE</div>
-          <div class="tool-desc">Gráfico a 30 años + año de independencia</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('snowball')">
-        <span class="tool-icon">❄️</span>
-        <div class="tool-info">
-          <div class="tool-name">Bola de Nieve</div>
-          <div class="tool-desc">Snowball vs Avalanche: elige tu estrategia</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('compound')">
-        <span class="tool-icon">📈</span>
-        <div class="tool-info">
-          <div class="tool-name">Interés Compuesto</div>
-          <div class="tool-desc">Visualiza el poder del tiempo</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('networth')">
-        <span class="tool-icon">💎</span>
-        <div class="tool-info">
-          <div class="tool-name">Net Worth Tracker</div>
-          <div class="tool-desc">Patrimonio neto real con histórico</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('simhipoteca')">
-        <span class="tool-icon">🏦</span>
-        <div class="tool-info">
-          <div class="tool-name">Simulador Hipoteca</div>
-          <div class="tool-desc">Cuota, amortización, ITP y comparativas</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('dca')">
-        <span class="tool-icon">📆</span>
-        <div class="tool-info">
-          <div class="tool-name">DCA vs Lump Sum</div>
-          <div class="tool-desc">¿Invertir poco a poco o todo de golpe?</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('regla72')">
-        <span class="tool-icon">⚡</span>
-        <div class="tool-info">
-          <div class="tool-name">Regla del 72</div>
-          <div class="tool-desc">¿En cuántos años doblas tu dinero?</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('emergencia')">
-        <span class="tool-icon">🛡️</span>
-        <div class="tool-info">
-          <div class="tool-name">Fondo de Emergencia</div>
-          <div class="tool-desc">Cuánto necesitas guardar y cuándo llegas</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
-      <button class="tool-card" onclick="openTool('deuda')">
-        <span class="tool-icon">💳</span>
-        <div class="tool-info">
-          <div class="tool-name">Coste Real de la Deuda</div>
-          <div class="tool-desc">Cuánto te cuesta realmente tu tarjeta</div>
-        </div>
-        <span class="tool-arrow">›</span>
-      </button>
+      </div>
     </div>
   `;
 }
+
+function renderLabShortcut() {
+  const el = document.getElementById('lab-shortcut-card');
+  if (!el || !S.userName) return;
+  const shortcuts = [
+    { id:'fire',     icon:'🔥', label:'FIRE' },
+    { id:'compound', icon:'📈', label:'Compuesto' },
+    { id:'hipoteca', icon:'🏠', label:'Hipoteca' },
+    { id:'irpf',     icon:'🧾', label:'IRPF' },
+  ];
+  el.innerHTML = `
+    <div class="lab-shortcut-card">
+      <div class="lab-sc-head">
+        <div class="lab-sc-title">🧪 Calculadoras</div>
+        <button class="lab-sc-all" onclick="goTo('tools')">Ver todas (11) →</button>
+      </div>
+      <div class="lab-sc-row">
+        ${shortcuts.map(s => `
+          <button class="lab-sc-btn" onclick="openTool('${s.id}')">
+            <span>${s.icon}</span>
+            <span class="lab-sc-lbl">${s.label}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+window.renderLabShortcut = renderLabShortcut;
 
 function openTool(id) {
   const fns = { irpf: T1_open, hipoteca: T2_open, fire: T3_open, snowball: T4_open, compound: T5_open, networth: T6_open, simhipoteca: T7_open, dca: T8_open, regla72: T9_open, emergencia: T10_open, deuda: T11_open };
