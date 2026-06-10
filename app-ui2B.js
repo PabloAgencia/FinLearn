@@ -387,6 +387,8 @@ function completeModule() {
       S.level = newLevel;
       SFX.levelUp && SFX.levelUp();
       window._celPendingAfterLevelUp = true;
+      // Community feed: registrar subida de nivel
+      if (typeof _FEED !== 'undefined') _FEED.write('level_up', { level: newLevel });
       _showLevelUpScreen(newLevel);
     } else {
       window._celPendingAfterLevelUp = false;
@@ -401,6 +403,8 @@ function completeModule() {
     if (typeof checkStreakMission === 'function') checkStreakMission();
     // Referral: comprobar recompensa de referido al completar primer módulo
     if (typeof _checkReferralReward === 'function') _checkReferralReward();
+    // Community feed: registrar módulo completado
+    if (typeof _FEED !== 'undefined') _FEED.write('module_complete', { title: mod.title, xp: xpGain });
   }
 
   saveState();
@@ -1472,6 +1476,8 @@ function _rmSaveMonth() {
   if (existingIdx < 0) {
     S.xp = (S.xp || 0) + 50;
     if (typeof spawnXPv2 === 'function') spawnXPv2('+50 XP', 'Mi Dinero Real');
+    // Community feed: registrar ahorro del mes
+    if (typeof _FEED !== 'undefined') _FEED.write('savings', { amount: savings, pct: pctSaved });
     saveState();
   }
   // Refresh home card immediately

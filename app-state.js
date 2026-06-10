@@ -266,6 +266,8 @@ const DEFAULTS = {
   monthlyMaxStreak: 0,      // racha máxima del mes
   monthlyLeague: 'bronze',  // liga al inicio del mes
   monthlyWrappedKey: '',    // último mes cuyo wrapped ya se mostró
+  /* ── Community Feed ── */
+  _feedEvents: [],          // [{id,type,payload,ts,me,name,av}] — eventos del usuario para el feed
 };
 
 
@@ -1244,6 +1246,7 @@ function tickMissionTool(toolId) {
   if (!S.weeklyToolsUsed.includes(toolId)) {
     S.weeklyToolsUsed.push(toolId);
     tickMission('tools', 1);
+    if (typeof _FEED !== 'undefined') _FEED.write('calc_used', { name: toolId });
   }
 }
 window.tickMissionTool = tickMissionTool;

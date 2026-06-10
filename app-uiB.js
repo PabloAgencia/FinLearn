@@ -735,7 +735,8 @@ function goTo(screen) {
     lifestyle: 's-lifestyle',
     tools:     's-tools',
     guides:    's-guides',
-    realmoney: 's-realmoney',
+    realmoney:  's-realmoney',
+    community:  's-community',
   };
   const id = map[screen] || screen;
   document.querySelectorAll('.modal-overlay').forEach(m => {
@@ -794,6 +795,15 @@ function goTo(screen) {
     const el = document.getElementById('s-realmoney');
     if (el) { el.classList.add('active'); el.scrollTop = 0; }
     if (typeof _rmLoad === 'function') _rmLoad();
+  }
+  if (screen === 'community') {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('s-community');
+    if (el) { el.classList.add('active'); el.scrollTop = 0; }
+    if (typeof _FEED !== 'undefined') _FEED.renderScreen();
+    // Mostrar CTA de registro si no autenticado
+    const ctaEl = document.getElementById('community-auth-cta');
+    if (ctaEl) ctaEl.style.display = window._sbUser ? 'none' : 'block';
   }
 }
 
@@ -929,6 +939,8 @@ function renderHomeScreen() {
   _renderWeeklyActionCard();
   // misión grupal pasa a Laboratorio
   renderHomeCTA();
+  // Community feed (preview de 5 eventos en home)
+  if (typeof _FEED !== 'undefined') setTimeout(function() { _FEED.render('home-community-feed', 5); }, 100);
   // Micro-animation: stagger de cards al entrar al home
   if (typeof _staggerHomeItems === 'function') setTimeout(_staggerHomeItems, 40);
 }

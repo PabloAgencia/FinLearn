@@ -746,6 +746,14 @@
           <div id="id-prog-fill"></div>
           <div id="id-current-tag-old"></div>
         </div>
+
+        <!-- ── COMUNIDAD (feed de actividad) ─────────────────── -->
+        <div class="sec-head mb8" style="margin-top:4px;">
+          <div class="sec-title">👥 Comunidad</div>
+          <button class="btn btn-ghost btn-sm" onclick="goTo('community')" style="font-size:11px;padding:4px 10px;">Ver todo →</button>
+        </div>
+        <div id="home-community-feed" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:4px 14px 4px;margin-bottom:20px;"></div>
+
       </div><!-- /home-inner -->
     </div>
     <!-- ══════════════════════════════════════
@@ -1325,6 +1333,35 @@
               <button class="btn btn-primary btn-block" style="margin-top:18px;" onclick="_rmSaveMonth()">✓ Guardar mes</button>
             </div>
           </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         SCREEN: COMUNIDAD
+    ══════════════════════════════════════ -->
+    <div class="screen" id="s-community" style="overflow-y:auto;">
+      <div class="nav">
+        <button class="nav-back" onclick="goTo('home')">←</button>
+        <div class="nav-title">👥 Comunidad</div>
+        <div></div>
+      </div>
+      <div class="sc-body" style="padding-bottom:32px;">
+
+        <!-- Stats strip -->
+        <div id="community-stats" style="display:flex;gap:8px;margin-bottom:16px;"></div>
+
+        <!-- Feed completo -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:4px 14px 4px;">
+          <div id="community-feed-full"></div>
+        </div>
+
+        <!-- Supabase CTA (si no está autenticado) -->
+        <div id="community-auth-cta" style="display:none;margin-top:16px;background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(0,229,160,.03));border:1px solid rgba(0,229,160,.2);border-radius:14px;padding:18px;text-align:center;">
+          <div style="font-size:14px;font-weight:700;color:var(--text1);margin-bottom:6px;">🌐 Aparece en el feed global</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Crea una cuenta gratuita para que tu actividad sea visible en la comunidad real de FinLearn.</div>
+          <button class="btn btn-primary" onclick="sbHandleAccountBtn()">Crear cuenta gratis</button>
         </div>
 
       </div>
@@ -2609,6 +2646,7 @@
 <script src="app-rating.js?v=2.1.0"></script>
 <script src="app-news.js?v=2.1.0"></script>
 <script src="app-push.js?v=2.1.0"></script>
+<script src="app-community.js?v=1.0.0"></script>
 
 
 <!-- ══ MODAL: CAREER ══ -->

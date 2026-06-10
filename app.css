@@ -1951,3 +1951,30 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
   transition: opacity .4s ease;
   pointer-events: auto;
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   MODULE: COMMUNITY — Feed de actividad y pantalla comunidad
+═══════════════════════════════════════════════════════════ */
+.comm-stat {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 8px;
+  text-align: center;
+}
+.comm-stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text1);
+  line-height: 1;
+}
+.comm-stat-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-top: 4px;
+}

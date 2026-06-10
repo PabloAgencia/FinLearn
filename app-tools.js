@@ -340,6 +340,7 @@ function _initAppWithState(hasState) {
   setTimeout(_checkLegalDisclaimer, 1800);
   // Referidos: detectar parámetro ?ref=CODE en URL
   _checkReferralParam();
+  _checkDuelParam();
 
   // App iniciada
   _initAmbient();
@@ -388,6 +389,18 @@ function _checkReferralParam() {
   S._referredBy = ref.toUpperCase();
   history.replaceState({}, '', window.location.pathname);
   saveState();
+}
+
+function _checkDuelParam() {
+  const params  = new URLSearchParams(window.location.search);
+  const encoded = params.get('duel');
+  if (!encoded) return;
+  history.replaceState({}, '', window.location.pathname);
+  setTimeout(function() {
+    if (typeof DUEL !== 'undefined' && typeof DUEL.acceptChallenge === 'function') {
+      DUEL.acceptChallenge(encoded);
+    }
+  }, 1500); // espera a que la app esté lista
 }
 
 function _checkReferralReward() {
@@ -2233,6 +2246,7 @@ function checkAchievements() {
       if (ach.check(S)) {
         S.unlockedAchs.push(ach.id);
         newUnlock = true;
+        if (typeof _FEED !== 'undefined') _FEED.write('achievement', { title: ach.n });
         // ── Aplicar recompensa ──────────────────────────────
         if (ach.reward) {
           if (ach.reward.xp)   { S.xp   = (S.xp   || 0) + ach.reward.xp;   }

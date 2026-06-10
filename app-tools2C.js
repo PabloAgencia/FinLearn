@@ -251,6 +251,7 @@ const DUEL = (() => {
   }
 
   function _showResult() {
+    if (window._duelChallengeMode) { _showChallengeResult(); return; }
     const won   = _score > _botScore;
     const draw  = _score === _botScore;
     const xp    = _score * 30 + (won ? 200 : draw ? 80 : 20);
@@ -279,8 +280,9 @@ const DUEL = (() => {
         </div>
         <div style="display:flex;gap:8px;margin-top:16px;">
           <button class="btn btn-primary" style="flex:1;" onclick="DUEL.start()">🔄 Revancha</button>
-          <button class="btn btn-secondary" style="flex:1;" onclick="document.getElementById('m-duel').style.display='none'">Cerrar</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="DUEL.createChallenge()">⚔️ Retar a alguien</button>
         </div>
+        <button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;" onclick="document.getElementById('m-duel').style.display='none'">Cerrar</button>
       </div>`;
   }
 
@@ -288,8 +290,111 @@ const DUEL = (() => {
     if (_timer) clearInterval(_timer);
     const modal = document.getElementById('m-duel');
     if (modal) modal.style.display = 'none';
+    window._duelChallengeMode = false;
   }
-  return { start, answer, close };
+
+  /* ── Async Challenge: crear link con preguntas + resultado propio ── */
+  function createChallenge() {
+    const qIndices = _questions.map(q => DUEL_QUESTIONS.indexOf(q));
+    const payload = { v:1, c:(S.userName||'Jugador').slice(0,20), a:S.avatar||'🌱', s:_score, q:qIndices };
+    let encoded;
+    try { encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload)))); }
+    catch (_) { encoded = btoa(JSON.stringify(payload)); }
+    const link = window.location.origin + window.location.pathname + '?duel=' + encoded;
+
+    const modal = document.getElementById('m-duel');
+    if (!modal) return;
+    const escapedLink = link.replace(/'/g, "\\'");
+    modal.innerHTML = `
+      <div class="modal-box" style="max-width:360px;">
+        <button onclick="DUEL.close()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);">✕</button>
+        <div style="text-align:center;font-size:42px;margin-bottom:8px;">⚔️</div>
+        <div style="font-size:18px;font-weight:800;text-align:center;margin-bottom:4px;">Reta a un amigo</div>
+        <div style="font-size:12px;color:var(--text2);text-align:center;margin-bottom:16px;">Tu puntuación: <strong style="color:var(--accent);">${_score}/10</strong> · Comparte el link</div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:10px;font-family:monospace;word-break:break-all;color:var(--text3);margin-bottom:12px;">${link.slice(0,80)}…</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="navigator.clipboard&&navigator.clipboard.writeText('${escapedLink}').then(()=>toast('📋 Link copiado','','t-success'))">📋 Copiar</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="navigator.share?navigator.share({title:'¡Te reto en FinLearn!',text:'Supera mi ${_score}/10 en el Duelo de Finanzas',url:'${escapedLink}'}):navigator.clipboard&&navigator.clipboard.writeText('${escapedLink}').then(()=>toast('📋 Copiado','','t-success'))">🔗 Compartir</button>
+        </div>
+        <button class="btn btn-ghost btn-block btn-sm" style="margin-top:8px;" onclick="DUEL.close()">Cerrar</button>
+      </div>`;
+
+    if (typeof _FEED !== 'undefined') _FEED.write('duel_win', { score: _score, total: 10 });
+  }
+
+  /* ── Async Challenge: aceptar reto desde URL param ── */
+  function acceptChallenge(encoded) {
+    let payload;
+    try { payload = JSON.parse(decodeURIComponent(escape(atob(encoded)))); }
+    catch (_) { try { payload = JSON.parse(atob(encoded)); } catch (__) { return; } }
+    if (!payload || !Array.isArray(payload.q) || payload.q.length < 8) return;
+
+    const challengeQs = payload.q.map(idx => DUEL_QUESTIONS[idx]).filter(q => !!q);
+    if (challengeQs.length < 8) return;
+
+    window._pendingChallenge = { name: payload.c || 'Desconocido', avatar: payload.a || '🌱', score: payload.s || 0 };
+    _questions = challengeQs.slice(0, 10);
+    _current = _score = _botScore = 0;
+    window._duelChallengeMode = true;
+
+    let modal = document.getElementById('m-duel');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'm-duel';
+      modal.className = 'modal-overlay';
+      document.body.appendChild(modal);
+    }
+    modal.style.display = 'flex';
+
+    const ch = window._pendingChallenge;
+    modal.innerHTML = `
+      <div class="modal-box" style="max-width:360px;text-align:center;padding:32px 24px;">
+        <button onclick="DUEL.close()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);">✕</button>
+        <div style="font-size:48px;margin-bottom:8px;">${ch.avatar}</div>
+        <div style="font-size:17px;font-weight:800;margin-bottom:4px;">${ch.name} te reta</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">Su puntuación: <strong style="color:var(--gold);">${ch.score}/10</strong><br><span style="font-size:11px;color:var(--text3);">¿Puedes superarla?</span></div>
+        <button class="btn btn-primary btn-block" onclick="DUEL._startChallengeRound()">⚔️ ¡Aceptar reto!</button>
+      </div>`;
+  }
+
+  function _startChallengeRound() {
+    _showModal();
+    _showQuestion();
+  }
+
+  function _showChallengeResult() {
+    const ch  = window._pendingChallenge || {};
+    const won  = _score > (ch.score || 0);
+    const draw = _score === (ch.score || 0);
+    const xp = _score * 30 + (won ? 200 : draw ? 80 : 20);
+    S.xp += xp;
+    if (typeof F34_onXPGained === 'function') F34_onXPGained(xp);
+    saveState();
+    if (won) { if (typeof confetti === 'function') confetti(); SFX.levelUp && SFX.levelUp(); }
+    if (typeof _FEED !== 'undefined') _FEED.write('duel_win', { score: _score, total: 10 });
+
+    const modal = document.getElementById('m-duel');
+    if (!modal) return;
+    modal.innerHTML = `
+      <div class="modal-box duel-result">
+        <div class="duel-result-icon">${won?'🏆':draw?'🤝':'📚'}</div>
+        <div class="duel-result-title">${won?'¡Ganaste el reto!':draw?'¡Empate!':'Sigue practicando'}</div>
+        <div class="duel-result-scores">
+          <div class="duel-rs"><span>${S.userName||'Tú'}</span><span class="duel-rs-val ${won?'g':''}">${_score}/10</span></div>
+          <div class="duel-vs-small">VS</div>
+          <div class="duel-rs"><span>${ch.name||'Retador'}</span><span class="duel-rs-val ${!won&&!draw?'g':''}">${ch.score||0}/10</span></div>
+        </div>
+        <div class="duel-xp-award">+${xp} XP ganados</div>
+        <div style="display:flex;gap:8px;margin-top:16px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="DUEL.start()">⚔️ Crear mi reto</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="DUEL.close()">Cerrar</button>
+        </div>
+      </div>`;
+    window._duelChallengeMode = false;
+    window._pendingChallenge = null;
+  }
+
+  return { start, answer, close, createChallenge, acceptChallenge, _startChallengeRound };
 })();
 
 /* ── FinAI API Key Configuration ─────────────────────────── */
