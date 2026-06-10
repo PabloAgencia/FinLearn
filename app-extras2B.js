@@ -1044,16 +1044,16 @@ const AVATAR_AI = (function() {
 
   // Mapa nombre normalizado → sprite local
   var SPRITE_MAP = {
-    'novato':     'icons/sprites/novato.png',
-    'aprendiz':   'icons/sprites/novato.png',
-    'estratega':  'icons/sprites/estratega.png',
-    'visionario': 'icons/sprites/visionario.png',
-    'cristal':    'icons/sprites/cristal.png',
-    'llama':      'icons/sprites/llama.png',
-    'cohete':     'icons/sprites/cohete.png',
-    'dragon':     'icons/sprites/dragon.png',
-    'rayo':       'icons/sprites/rayo.png',
-    'relampago':  'icons/sprites/rayo.png'
+    'novato':     'icons/Sprites/novato.png',
+    'aprendiz':   'icons/Sprites/novato.png',
+    'estratega':  'icons/Sprites/estratega.png',
+    'visionario': 'icons/Sprites/visionario.png',
+    'cristal':    'icons/Sprites/cristal.png',
+    'llama':      'icons/Sprites/llama.png',
+    'cohete':     'icons/Sprites/cohete.png',
+    'dragon':     'icons/Sprites/dragon.png',
+    'rayo':       'icons/Sprites/rayo.png',
+    'relampago':  'icons/Sprites/rayo.png'
   };
 
   function _normalize(name) {
@@ -1230,7 +1230,7 @@ const AVATAR_AI = (function() {
       var cached = localStorage.getItem(cKey);
       if (cached) { updateGridImgs(cached); return; }
     } catch(e) {}
-    _removeWhiteBg('icons/sprites/novato.png', function(dataUrl) {
+    _removeWhiteBg('icons/Sprites/novato.png', function(dataUrl) {
       try { localStorage.setItem(cKey, dataUrl); } catch(e) {}
       updateGridImgs(dataUrl);
     });
