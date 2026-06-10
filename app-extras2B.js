@@ -1070,35 +1070,29 @@ const AVATAR_AI = (function() {
       '&backgroundColor=' + BG + '&scale=88&radius=12';
   }
 
-  // Flood-fill desde los 4 bordes para quitar fondo blanco/casi-blanco
+  // Redimensiona al máx 300px y elimina píxeles claros (R,G,B > 220)
   function _removeWhiteBg(src, cb) {
     var img = new Image();
     img.onload = function() {
+      var MAX = 300;
+      var ratio = Math.min(MAX / (img.naturalWidth || img.width), MAX / (img.naturalHeight || img.height), 1);
+      var w = Math.round((img.naturalWidth  || img.width)  * ratio) || 1;
+      var h = Math.round((img.naturalHeight || img.height) * ratio) || 1;
       var c = document.createElement('canvas');
-      c.width = img.naturalWidth || img.width;
-      c.height = img.naturalHeight || img.height;
+      c.width = w; c.height = h;
       var ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      var data = ctx.getImageData(0, 0, c.width, c.height);
-      var d = data.data, w = c.width, h = c.height;
-      var visited = new Uint8Array(w * h);
-      var stack = [];
-      function isLight(i) { return d[i*4+3] > 0 && d[i*4] > 220 && d[i*4+1] > 220 && d[i*4+2] > 220; }
-      function push(i) { if (i >= 0 && i < w*h && !visited[i] && isLight(i)) { visited[i] = 1; stack.push(i); } }
-      for (var x = 0; x < w; x++) { push(x); push((h-1)*w+x); }
-      for (var y = 0; y < h; y++) { push(y*w); push(y*w+w-1); }
-      while (stack.length) {
-        var p = stack.pop();
-        d[p*4+3] = 0;
-        var px = p % w, py = Math.floor(p / w);
-        if (px > 0)   push(p-1);
-        if (px < w-1) push(p+1);
-        if (py > 0)   push(p-w);
-        if (py < h-1) push(p+w);
-      }
-      ctx.putImageData(data, 0, 0);
-      cb(c.toDataURL('image/png'));
+      ctx.drawImage(img, 0, 0, w, h);
+      try {
+        var data = ctx.getImageData(0, 0, w, h);
+        var d = data.data;
+        for (var i = 0; i < d.length; i += 4) {
+          if (d[i] > 220 && d[i+1] > 220 && d[i+2] > 220) d[i+3] = 0;
+        }
+        ctx.putImageData(data, 0, 0);
+        cb(c.toDataURL('image/png'));
+      } catch(e) { cb(src); }
     };
+    img.onerror = function() { cb(src); };
     img.src = src;
   }
 
@@ -1180,7 +1174,7 @@ const AVATAR_AI = (function() {
     var spritePath = SPRITE_MAP[key];
 
     if (spritePath) {
-      var cKey = 'fl_sprite_' + key;
+      var cKey = 'fl_sprite2_' + key;
       try {
         var cached = localStorage.getItem(cKey);
         if (cached) { _injectSprite(cached); return; }
@@ -1216,7 +1210,7 @@ const AVATAR_AI = (function() {
 
   // Procesa novato al iniciar para que el grid muestre bg transparente
   function init() {
-    var cKey = 'fl_sprite_novato';
+    var cKey = 'fl_sprite2_novato';
     function updateGridImgs(src) {
       document.querySelectorAll('img.av-sprite[data-sprite="novato"]').forEach(function(img) {
         img.src = src;

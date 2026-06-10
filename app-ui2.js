@@ -1082,6 +1082,20 @@ function answerDCA(chosen, correct, explanation) {
 }
 
 
+function shareDCA() {
+  var streak = (typeof S !== 'undefined' && S.streak) || 0;
+  var text = '🎯 He completado el reto financiero del día en FinLearn. Llevo ' + streak + ' días de racha. ¡Aprende finanzas en 1 minuto al día!';
+  var url = window.location.origin;
+  if (navigator.share) {
+    navigator.share({ title: 'FinLearn — Reto diario', text: text, url: url }).catch(function() {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text + ' ' + url).then(function() {
+      if (typeof toast === 'function') toast('📋 Copiado', 'Pega el mensaje donde quieras compartirlo', 't-success');
+    });
+  }
+}
+window.shareDCA = shareDCA;
+
 /* ══════════════════════════════════════════════════════════════════
    WIDGETS DE HOME
 ══════════════════════════════════════════════════════════════════ */
