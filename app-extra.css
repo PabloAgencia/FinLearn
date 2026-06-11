@@ -311,6 +311,219 @@ body.light-mode .guide-reader-title { color: #111; }
 body.light-mode .guide-reader-body { color: #333; }
 body.light-mode .guide-reader-body h3 { color: #111; }
 
+/* ── Full-screen Guide Reader (reemplaza modal) ── */
+.guide-reader-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .32s cubic-bezier(.4,0,.2,1);
+  will-change: transform;
+}
+.guide-reader-screen.open { transform: translateX(0); }
+.guide-reader-screen.closing { transform: translateX(100%); }
+
+.guide-reader-scrollbar {
+  position: absolute;
+  top: 0; left: 0;
+  height: 3px;
+  background: var(--accent);
+  width: 0%;
+  transition: width .08s linear;
+  z-index: 10;
+  border-radius: 0 2px 2px 0;
+  pointer-events: none;
+}
+.guide-reader-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+  position: relative;
+}
+.guide-reader-back-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 12px;
+  flex-shrink: 0;
+}
+.guide-reader-topcat {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text3);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.guide-reader-toptime {
+  font-size: 11px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.guide-reader-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 20px 120px;
+}
+.guide-reader-big-icon {
+  font-size: 56px;
+  text-align: center;
+  margin-bottom: 16px;
+  animation: guideIconIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes guideIconIn {
+  from { transform: scale(0) rotate(-20deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.guide-reader-h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text1);
+  line-height: 1.25;
+  margin: 0 0 20px;
+  animation: fadeUp .4s ease both;
+  animation-delay: .08s;
+}
+.guide-stat-callout {
+  background: linear-gradient(135deg,rgba(0,229,160,.13),rgba(0,229,160,.04));
+  border: 1px solid rgba(0,229,160,.3);
+  border-radius: 18px;
+  padding: 22px 16px;
+  text-align: center;
+  margin: 0 0 24px;
+  animation: fadeUp .4s ease both;
+  animation-delay: .14s;
+}
+.guide-stat-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 54px;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+.guide-stat-label {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 8px;
+  line-height: 1.45;
+}
+.guide-key-takeaway {
+  background: rgba(99,102,241,.08);
+  border-left: 3px solid #818cf8;
+  border-radius: 0 12px 12px 0;
+  padding: 16px;
+  margin: 28px 0 0;
+}
+.guide-key-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: #818cf8;
+  margin-bottom: 8px;
+}
+.guide-key-text {
+  font-size: 14px;
+  color: var(--text1);
+  font-style: italic;
+  line-height: 1.6;
+}
+.guide-done-area {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.guide-done-btn {
+  font-size: 16px !important;
+  padding: 16px !important;
+  font-family: 'Syne', sans-serif !important;
+  font-weight: 800 !important;
+}
+.guide-share-btn {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  color: var(--text2);
+  font-size: 14px;
+  padding: 12px;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Card read-time + XP chip */
+.guide-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+.guide-card-time {
+  font-size: 10px;
+  color: var(--text3);
+}
+.guide-card-xp {
+  font-size: 10px;
+  color: var(--accent);
+  background: rgba(0,229,160,.1);
+  border-radius: 8px;
+  padding: 2px 7px;
+  font-weight: 700;
+}
+.guide-card-right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 36px;
+}
+.guide-card-status-read {
+  font-size: 18px;
+}
+
+/* Staggered card entrance */
+@keyframes guideCardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.guide-card-anim {
+  animation: guideCardIn .35s ease both;
+}
+
+/* Category completion banner */
+.guide-cat-complete {
+  background: linear-gradient(135deg,rgba(0,229,160,.14),rgba(0,229,160,.04));
+  border: 1px solid rgba(0,229,160,.3);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  animation: fadeUp .4s ease both;
+}
+.guide-cat-complete-icon { font-size: 28px; }
+.guide-cat-complete-text { font-size: 13px; font-weight: 700; color: var(--accent); }
+.guide-cat-complete-sub { font-size: 11px; color: var(--text2); }
+
+body.light-mode .guide-reader-screen { background: #fff; }
+body.light-mode .guide-reader-topbar { border-color: #e5e5e5; }
+body.light-mode .guide-reader-back-btn { border-color: #ddd; color: var(--accent); }
+body.light-mode .guide-reader-h1 { color: #111; }
+body.light-mode .guide-key-text { color: #222; }
+body.light-mode .guide-stat-label { color: #555; }
+
 /* ══════════════════════════════════════════════════════════════════
    INCOME PANEL — Panel de ingresos simulados en home
    Prefijo: .income-

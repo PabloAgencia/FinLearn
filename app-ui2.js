@@ -1070,9 +1070,9 @@ function answerDCA(chosen, correct, explanation) {
   setTimeout(() => {
     document.getElementById('dca-not-done')?.style?.setProperty('display', 'none');
     const done = document.getElementById('dca-done');
-    if (done) done.style.display = 'block';
     setEl('dca-done-msg', isCorrect ? '¡Correcto! 🎯' : '❌ Respuesta incorrecta');
     setEl('dca-done-sub', isCorrect ? `Has ganado +${xpGained} XP · Racha: 🔥${S.streak}` : `Sin XP hoy. Vuelve mañana y acierta para +80 XP y mantener tu racha.`);
+    if (done) done.style.display = 'block';
     if (xpGained > 0) spawnXP('+' + xpGained + ' XP');
     if (isCorrect) toast('🎯 ¡Correcto!', '+' + xpGained + ' XP ganados', 't-success');
     else toast('❌ Incorrecto', 'Sin XP · Vuelve mañana para mantener tu racha', 't-error');

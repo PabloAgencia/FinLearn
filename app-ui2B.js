@@ -1672,16 +1672,18 @@ function _renderStreakDangerBanner() {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   GUIDES — Artículos de lectura libre (sin quiz, sin XP)
+   GUIDES — Artículos de lectura libre
    renderGuidesScreen() — punto de entrada desde goTo('guides')
 ══════════════════════════════════════════════════════════════════ */
 
 const GUIDE_ARTICLES = [
   /* ── FUNDAMENTOS ── */
   {
-    id: 'guide_ahorro', cat: 'fundamentos', icon: '💰',
+    id: 'guide_ahorro', cat: 'fundamentos', icon: '💰', readTime: 3,
     title: 'El poder del ahorro: por qué el 20% lo cambia todo',
     summary: 'La regla del 20% y cómo aplicarla desde hoy.',
+    stat: { value: '480k€', label: 'acumularías ahorrando 400€/mes al 7% durante 30 años' },
+    key: 'Empieza con el 10% si el 20% es imposible hoy. Auméntalo un 1% cada 3 meses. La automatización es el único truco que funciona de verdad.',
     body: `
       <h3>¿Por qué el 20%?</h3>
       <p>La regla 50/30/20 divide tus ingresos en tres bloques: 50% para necesidades (alquiler, comida, suministros), 30% para deseos (ocio, ropa, salidas) y 20% para ahorro e inversión. El 20% no es caprichoso: es el mínimo que los estudios de planificación financiera señalan para alcanzar independencia económica en unos 30-35 años de vida laboral.</p>
@@ -1694,9 +1696,11 @@ const GUIDE_ARTICLES = [
     `
   },
   {
-    id: 'guide_presupuesto', cat: 'fundamentos', icon: '📊',
+    id: 'guide_presupuesto', cat: 'fundamentos', icon: '📊', readTime: 3,
     title: 'Cómo hacer un presupuesto que realmente funcione',
     summary: 'Método envelope, apps y el único hábito que importa.',
+    stat: { value: '10 min', label: 'es todo lo que necesitas cada semana para controlar tu dinero' },
+    key: 'No anotes cada café. Usa 8 categorías grandes y revisa una vez a la semana. El sistema sencillo que cumples supera al sistema perfecto que abandonas.',
     body: `
       <h3>El problema con los presupuestos clásicos</h3>
       <p>La mayoría de presupuestos fracasan porque son demasiado detallados. Nadie tiene tiempo de anotar cada café. La clave es trabajar con grandes categorías y revisar una vez a la semana, no cada gasto individual.</p>
@@ -1709,25 +1713,46 @@ const GUIDE_ARTICLES = [
     `
   },
   {
-    id: 'guide_fondo_emergencia', cat: 'fundamentos', icon: '🛡️',
+    id: 'guide_fondo_emergencia', cat: 'fundamentos', icon: '🛡️', readTime: 3,
     title: 'El fondo de emergencia: tu primera línea de defensa',
     summary: 'Cuánto necesitas, dónde guardarlo y cuándo usarlo.',
+    stat: { value: '3-6 m', label: 'meses de gastos esenciales es lo que necesitas tener siempre disponible' },
+    key: 'Una oportunidad en bolsa no es una emergencia. Unas vacaciones no son una emergencia. Úsalo solo en urgencias reales y repónlo de inmediato.',
     body: `
       <h3>¿Para qué sirve exactamente?</h3>
       <p>El fondo de emergencia no es un ahorro para vacaciones ni para el coche nuevo. Es exclusivamente para situaciones imprevistas que afectan a tus ingresos o generan un gasto urgente: pérdida de empleo, avería del coche en la que dependes para trabajar, reparación de vivienda, emergencia médica.</p>
       <h3>¿Cuánto necesitas?</h3>
-      <p>La regla general es entre 3 y 6 meses de gastos esenciales. Si eres autónomo, trabajas por proyectos o tienes ingresos variables, apunta a 9-12 meses. Un empleado con contrato indefinido en un sector estable puede quedarse en 3 meses.</p>
+      <p>La regla general es entre 3 y 6 meses de gastos esenciales. Si eres autónomo, trabajas por proyectos o tienes ingresos variables, apunta a 9-12 meses. Un empleado con contrato indefiniente en un sector estable puede quedarse en 3 meses.</p>
       <h3>Dónde guardarlo</h3>
       <p>En una cuenta de ahorro remunerada o depósito a corto plazo. No en bolsa (puede caer justo cuando más lo necesitas), no bajo el colchón (inflación) y no en el mismo banco que tu cuenta corriente (demasiado tentador). Cuentas como Trade Republic o MyInvestor ofrecen actualmente entre el 2% y el 3,5% sin permanencia.</p>
       <h3>Cuándo usarlo</h3>
       <p>Sólo en emergencias reales. Una oportunidad de compra en bolsa no es una emergencia. Unas vacaciones no son una emergencia. Si lo usas, la prioridad número uno vuelve a ser reponerlo antes de cualquier otro objetivo financiero.</p>
     `
   },
+  {
+    id: 'guide_fin_de_mes', cat: 'fundamentos', icon: '😤', readTime: 4,
+    title: 'Cómo romper el ciclo de "llego justo a fin de mes"',
+    summary: 'El orden correcto del dinero y por qué casi nadie lo aplica.',
+    stat: { value: '63%', label: 'de españoles no aguantaría 3 meses sin ingresos (CNMV 2023)' },
+    key: 'No es un problema de ingresos, es un problema de orden. Págate primero a ti mismo — el futuro tú — antes de pagar nada más.',
+    body: `
+      <h3>Por qué siempre parece que falta dinero</h3>
+      <p>El ciclo "cobro → gasto → ahorro lo que queda" es el patrón más común y el más destructivo. El problema: casi nunca queda nada. El gasto se expande para llenar cualquier ingreso disponible. Es lo que los economistas llaman inflación de lifestyle.</p>
+      <h3>El orden correcto: págate primero</h3>
+      <p>En cuanto cobras, la primera transferencia es para ti: un 10-20% directo a una cuenta de ahorro o inversión separada. Después pagas el alquiler, suministros, y lo que reste es para vivir. Si el resto no alcanza, el problema es visible y manejable. Si primero gastas, el problema es invisible hasta que es tarde.</p>
+      <h3>Dónde suele perderse el dinero sin saberlo</h3>
+      <p>Suscripciones olvidadas (Netflix, Spotify, apps), comida a domicilio cotidiana, "pequeñas" compras impulsivas online, y el coste invisible de las tarjetas de crédito con pago aplazado. Una auditoría de un mes —revisar cada cargo— suele revelar entre 100 € y 300 € "desaparecidos".</p>
+      <h3>El plan de 90 días</h3>
+      <p>Mes 1: auditar y eliminar gastos invisibles. Mes 2: automatizar el ahorro del 10% el día de cobro. Mes 3: aumentar al 15%. En 90 días puedes pasar de llegar justo a tener un pequeño colchón y la sensación de control que cambia completamente la relación con el dinero.</p>
+    `
+  },
   /* ── INVERSIÓN ── */
   {
-    id: 'guide_indexados', cat: 'inversion', icon: '📈',
+    id: 'guide_indexados', cat: 'inversion', icon: '📈', readTime: 4,
     title: 'Fondos indexados: la estrategia que bate al 90% de los gestores',
     summary: 'Qué son, por qué funcionan y cómo empezar con 100 €.',
+    stat: { value: '+31k€', label: 'de diferencia entre un indexado al 0,1% y un fondo activo al 2% en 30 años' },
+    key: 'No necesitas ser listo para ganar más que la mayoría de gestores profesionales. Solo necesitas un indexado barato y paciencia.',
     body: `
       <h3>La evidencia que nadie puede ignorar</h3>
       <p>Según el informe SPIVA de S&P Global, más del 90% de los fondos de gestión activa no superan a su índice de referencia en un período de 15 años. No es que los gestores sean malos, es que el mercado es enormemente eficiente y los costes de gestión (1,5-2,5% anual) se comen la diferencia.</p>
@@ -1740,9 +1765,11 @@ const GUIDE_ARTICLES = [
     `
   },
   {
-    id: 'guide_dca', cat: 'inversion', icon: '🔄',
+    id: 'guide_dca', cat: 'inversion', icon: '🔄', readTime: 3,
     title: 'DCA: por qué invertir todos los meses es mejor que esperar',
     summary: 'El método que elimina la ansiedad de "comprar en el momento equivocado".',
+    stat: { value: '118k€', label: 'acumularías invirtiendo 200€/mes al 8% durante 20 años' },
+    key: 'Configura la orden periódica en tu broker el día de cobro. Así no tienes que tomar ninguna decisión. La consistencia supera a la inteligencia.',
     body: `
       <h3>El problema del market timing</h3>
       <p>Nadie sabe cuándo es el mejor momento para invertir. Ni los profesionales. Un estudio de Fidelity analizó sus mejores clientes y descubrió que eran personas que habían muerto o se habían olvidado de que tenían cuenta. El intento de sincronizar el mercado destruye rentabilidad.</p>
@@ -1755,9 +1782,11 @@ const GUIDE_ARTICLES = [
     `
   },
   {
-    id: 'guide_diversificacion', cat: 'inversion', icon: '🌍',
+    id: 'guide_diversificacion', cat: 'inversion', icon: '🌍', readTime: 3,
     title: 'Diversificación: no pongas todos los huevos en la misma cesta',
     summary: 'Cómo distribuir tus inversiones para reducir riesgo sin perder rentabilidad.',
+    stat: { value: '1.500', label: 'empresas en 23 países cubre un MSCI World — eso es diversificación real' },
+    key: 'Tres o cuatro fondos bien elegidos son suficientes para la mayoría de inversores. Sobre-diversificar añade complejidad sin reducir más el riesgo.',
     body: `
       <h3>Por qué diversificar</h3>
       <p>En 2000 las acciones de Enron valían 90 dólares. En 2002 valían 0. Sus empleados, que tenían el 100% de sus ahorros en acciones de la empresa, lo perdieron todo. La diversificación no elimina el riesgo de mercado, pero sí el riesgo específico de empresa o sector.</p>
@@ -1769,11 +1798,30 @@ const GUIDE_ARTICLES = [
       <p>Sobre-diversificar también es un error. Tener 20 fondos que replican índices similares no reduce más el riesgo, solo añade complejidad y costes. Tres o cuatro fondos bien elegidos son suficientes para la mayoría de inversores particulares.</p>
     `
   },
+  {
+    id: 'guide_acciones_vs_etf', cat: 'inversion', icon: '⚖️', readTime: 4,
+    title: 'Acciones individuales vs ETFs: la decisión más importante',
+    summary: 'Por qué la mayoría pierde eligiendo acciones y cuándo tiene sentido hacerlo.',
+    stat: { value: '15%', label: 'de seleccionadores de acciones individuales baten al índice en 10 años' },
+    key: 'Elegir acciones es apostar a que eres mejor que los mejores analistas del mundo. Los ETFs no requieren tener razón — solo paciencia.',
+    body: `
+      <h3>El atractivo de las acciones individuales</h3>
+      <p>Comprar Apple o Amazon en el momento justo suena emocionante. El problema es que ese momento solo lo conoces en retrospectiva. Para cada persona que compró Amazon en 2010, hubo decenas que compraron Nokia, Blackberry o Kodak convencidos de estar eligiendo bien.</p>
+      <h3>Por qué es tan difícil batir al mercado</h3>
+      <p>Los mercados modernos están llenos de analistas con modelos matemáticos, acceso privilegiado a management de empresas y equipos enteros dedicados a analizar cada detalle. La información pública ya está descontada en el precio. Tú, invirtiendo desde casa, no tienes ventaja informacional.</p>
+      <h3>Cuándo tiene sentido elegir acciones</h3>
+      <p>Si tienes un conocimiento profundo y diferencial de un sector específico (eres médico y entiendes biotecnología, eres ingeniero y entiendes semiconductores), puedes tener una ventaja real en ese nicho. Y si lo haces, no más del 10-20% de tu cartera. El resto en índices.</p>
+      <h3>La regla práctica</h3>
+      <p>Si no puedes explicar en dos frases por qué una empresa vale más de lo que cotiza hoy y cuál es el catalizador que hará que el mercado lo reconozca, no deberías comprar esa acción. Tener una "buena empresa" no significa que esté barata.</p>
+    `
+  },
   /* ── DEUDA ── */
   {
-    id: 'guide_deuda_buena', cat: 'deuda', icon: '🏦',
+    id: 'guide_deuda_buena', cat: 'deuda', icon: '🏦', readTime: 3,
     title: 'Deuda buena vs. deuda mala: la distinción que te cambia la vida',
     summary: 'No toda deuda es igual. Saber distinguirlas es clave.',
+    stat: { value: '2x', label: 'acabas pagando en una tarjeta revolving al 24% si solo haces el pago mínimo' },
+    key: 'Si el interés de tu deuda supera el 8%, págala antes de invertir. Liquidar una deuda al 24% equivale a una rentabilidad garantizada del 24%.',
     body: `
       <h3>La definición práctica</h3>
       <p>La deuda buena te ayuda a adquirir activos que se aprecian o generan ingresos: una hipoteca sobre un inmueble en zona con demanda, un préstamo para estudiar una carrera con buenas salidas o financiar un negocio rentable. La deuda mala te endeuda para consumir: tarjetas de crédito, préstamos personales para vacaciones, financiación de coches nuevos.</p>
@@ -1785,11 +1833,30 @@ const GUIDE_ARTICLES = [
       <p>Primero el fondo de emergencia (3 meses). Segundo, eliminar deudas de alto coste (>10%). Tercero, aprovechar cualquier ventaja fiscal de tu empresa (plan de pensiones con match). Cuarto, inversión a largo plazo. Este orden puede representar una diferencia de cientos de miles de euros a lo largo de una vida.</p>
     `
   },
+  {
+    id: 'guide_bola_nieve', cat: 'deuda', icon: '⛄', readTime: 3,
+    title: 'Bola de nieve vs. avalancha: el mejor método para salir de deudas',
+    summary: 'Dos estrategias opuestas. Cuál elegir depende de cómo funciona tu cabeza.',
+    stat: { value: '23%', label: 'más rápido sales de deudas con avalancha vs bola de nieve en términos matemáticos' },
+    key: 'La bola de nieve gana psicológicamente. La avalancha gana matemáticamente. La mejor estrategia es la que realmente cumples.',
+    body: `
+      <h3>El método bola de nieve (Dave Ramsey)</h3>
+      <p>Ordena tus deudas de menor a mayor importe, independientemente del tipo de interés. Paga el mínimo en todas excepto en la más pequeña, a la que destinas todo el dinero extra disponible. Cuando la eliminas, añades ese pago a la siguiente. La bola crece con cada deuda eliminada.</p>
+      <h3>El método avalancha</h3>
+      <p>Ordena tus deudas de mayor a menor tipo de interés. Paga el mínimo en todas excepto en la de mayor interés. Matemáticamente, ahorras más dinero porque atacas primero la deuda que más te cuesta. Es la estrategia óptima en papel.</p>
+      <h3>¿Cuál funciona mejor?</h3>
+      <p>Estudios de comportamiento financiero (Harvard Business Review, 2016) demuestran que la bola de nieve tiene mayor tasa de éxito en la práctica porque las victorias rápidas generan motivación. La avalancha es mejor si eres disciplinado y no necesitas refuerzo positivo inmediato.</p>
+      <h3>La regla de aplicación</h3>
+      <p>Si la diferencia de tipos de interés entre tus deudas es pequeña (menos de 5 puntos), usa bola de nieve. Si tienes una deuda con un tipo muy superior al resto (una revolving al 24% frente a un préstamo al 5%), usa avalancha para esa primero independientemente del importe.</p>
+    `
+  },
   /* ── PSICOLOGÍA ── */
   {
-    id: 'guide_sesgos', cat: 'psicologia', icon: '🧠',
+    id: 'guide_sesgos', cat: 'psicologia', icon: '🧠', readTime: 5,
     title: 'Los 5 sesgos cognitivos que destruyen tus inversiones',
     summary: 'Tu cerebro no está diseñado para invertir. Estos son sus errores más costosos.',
+    stat: { value: '6,4%', label: 'de rentabilidad anual pierde el inversor medio por errores de comportamiento (DALBAR)' },
+    key: 'Conocer un sesgo no te hace inmune a él, pero sí te da un segundo antes de actuar. En inversión, ese segundo puede valer miles de euros.',
     body: `
       <h3>1. Sesgo de confirmación</h3>
       <p>Buscamos información que confirme lo que ya creemos. Si crees que Bitcoin llegará a 200.000 $, solo lees artículos bullish. La solución: busca activamente el mejor argumento contrario a tu posición antes de tomar cualquier decisión de inversión.</p>
@@ -1803,11 +1870,30 @@ const GUIDE_ARTICLES = [
       <p>Compramos cuando todos compran (máximos de mercado) y vendemos cuando todos venden (mínimos). Warren Buffett lo resumió perfectamente: "Sé temeroso cuando otros son codiciosos, y codicioso cuando otros son temerosos."</p>
     `
   },
+  {
+    id: 'guide_no_mirar', cat: 'psicologia', icon: '🙈', readTime: 3,
+    title: 'Cómo no arruinarse mirando el portfolio cada día',
+    summary: 'La paradoja: cuanto más miras, peores decisiones tomas.',
+    stat: { value: '95%', label: 'de probabilidad de ver pérdidas si miras tu cartera cada día, aunque sea año bueno' },
+    key: 'El S&P 500 sube el ~70% de los días, pero la volatilidad diaria activa el sistema de alarma del cerebro. Mirar menos no es ignorancia, es disciplina.',
+    body: `
+      <h3>La tiranía de la pantalla</h3>
+      <p>Si miras tu cartera a diario, un año con rentabilidad del +15% se percibe como una pesadilla: días rojos, semanas de bajada, noticias alarmantes. El cerebro registra cada pérdida con más intensidad que cada ganancia. El resultado: decisiones emocionales en el peor momento.</p>
+      <h3>La matemática del dolor</h3>
+      <p>En un año con rentabilidad positiva del 10%, hay aproximadamente 120 días de bajada. Si miras cada día, experimentas ese dolor 120 veces. Si miras cada mes, quizás 3 o 4. Si miras cada trimestre, probablemente ninguno. Misma rentabilidad, distinto sufrimiento.</p>
+      <h3>El experimento de Benartzi y Thaler</h3>
+      <p>Demostraron que inversores que solo revisan su cartera anualmente invierten más agresivamente (y obtienen mayor rentabilidad) que los que la revisan mensualmente. La frecuencia de revisión determina el apetito al riesgo, no al revés.</p>
+      <h3>Protocolo práctico</h3>
+      <p>Configura tus alertas solo para bajadas superiores al 20% (que requieren revisión real) y para el día que toca rebalancear (una vez al año). Elimina la app del broker de la pantalla principal del móvil. No mirar no es ignorancia, es disciplina activa.</p>
+    `
+  },
   /* ── FISCALIDAD ── */
   {
-    id: 'guide_irpf_inversion', cat: 'fiscalidad', icon: '📋',
+    id: 'guide_irpf_inversion', cat: 'fiscalidad', icon: '📋', readTime: 4,
     title: 'IRPF y tus inversiones: lo que Hacienda se lleva (y cómo minimizarlo)',
     summary: 'Plusvalías, dividendos, tramos 2024 y estrategias legales de optimización.',
+    stat: { value: '19%', label: 'retención mínima en ganancias de capital — empieza aquí la base del ahorro 2024' },
+    key: 'En España los fondos de inversión permiten traspasar sin tributar. Ese diferimiento fiscal compuesto puede valer más que la diferencia de rentabilidad entre fondos.',
     body: `
       <h3>Las ganancias patrimoniales en 2024</h3>
       <p>Las plusvalías por venta de acciones o fondos tributan en la base del ahorro: 19% hasta 6.000 €, 21% entre 6.000 € y 50.000 €, 23% entre 50.000 € y 200.000 €, y 27% a partir de 200.000 €. Los dividendos tributan igual.</p>
@@ -1819,11 +1905,30 @@ const GUIDE_ARTICLES = [
       <p>Las aportaciones reducen tu base imponible del IRPF (tributas menos ahora). El límite en 2024 es el menor entre 1.500 € anuales y el 30% de los rendimientos del trabajo. Ideal para personas en tramos marginales altos (>37%). La pega: el dinero queda bloqueado hasta jubilación, invalidez u otras contingencias.</p>
     `
   },
+  {
+    id: 'guide_declarar_renta', cat: 'fiscalidad', icon: '📝', readTime: 4,
+    title: 'Cómo declarar tus inversiones en la Renta (sin errores)',
+    summary: 'Casillas, plazos y los errores más comunes que cuestan dinero.',
+    stat: { value: '4 años', label: 'tiene Hacienda para revisar tu declaración — no improvises' },
+    key: 'Las pérdidas no declaradas son dinero tirado. Puedes compensarlas durante 4 años. Muchos inversores desconocen este derecho y pagan de más.',
+    body: `
+      <h3>Qué tienes que declarar</h3>
+      <p>Todo lo que hayas vendido durante el año: acciones, fondos, ETFs, criptomonedas. También los dividendos recibidos aunque vengan ya con retención del 19%. Y los intereses de cuentas de ahorro o depósitos. Si no vendiste nada durante el año, no hay ganancia patrimonial que declarar.</p>
+      <h3>Las casillas que importan</h3>
+      <p>Las ganancias y pérdidas de acciones y fondos van en la casilla 1624 (rendimientos de capital mobiliario) o en la casilla 1800 (ganancias y pérdidas patrimoniales). Los dividendos en la 0029. La app Renta Web de la AEAT rellena automáticamente los datos de brokers españoles; los brokers extranjeros como Interactive Brokers o Degiro requieren más cuidado.</p>
+      <h3>El error más caro: no declarar pérdidas</h3>
+      <p>Si vendiste con pérdidas, decláralo aunque no "tengas que" hacerlo. Esas pérdidas compensan ganancias futuras durante los próximos 4 años. Es dinero que te devuelve Hacienda en el futuro. No declarar las pérdidas es perder ese derecho.</p>
+      <h3>Brokers extranjeros</h3>
+      <p>Degiro, Interactive Brokers y similares no comunican automáticamente a la AEAT. Eres responsable de declarar. Además, si tienes más de 50.000 € en el extranjero, debes presentar el modelo 720. La ignorancia no exime de sanciones.</p>
+    `
+  },
   /* ── VIVIENDA ── */
   {
-    id: 'guide_hipoteca', cat: 'vivienda', icon: '🏠',
+    id: 'guide_hipoteca', cat: 'vivienda', icon: '🏠', readTime: 4,
     title: 'Hipoteca en 2024: todo lo que debes saber antes de firmar',
     summary: 'Euríbor, tipos fijos vs. variables, TAE real y gastos ocultos.',
+    stat: { value: '60k€', label: 'necesitas ahorrados mínimo para comprar un piso de 200.000 € (entrada + gastos)' },
+    key: 'Compara siempre TAE, nunca TIN. Y recuerda: el banco no es tu amigo en la negociación — lleva ofertas de al menos tres entidades.',
     body: `
       <h3>El Euríbor y las hipotecas variables</h3>
       <p>El Euríbor a 12 meses, al que se referencian la mayoría de hipotecas variables en España, ha pasado del -0,5% en 2021 al entorno del 3-4% en 2024. Una hipoteca variable de 200.000 € a 30 años puede suponer 400-600 € más al mes respecto a cuando los tipos estaban en negativo.</p>
@@ -1832,38 +1937,59 @@ const GUIDE_ARTICLES = [
       <h3>La TAE real: el número que importa</h3>
       <p>El TIN (tipo nominal) no incluye comisiones ni gastos. La TAE (tasa anual equivalente) sí los incluye y es la cifra que permite comparar correctamente entre ofertas. Siempre compara TAE, nunca TIN.</p>
       <h3>Los gastos que nadie menciona</h3>
-      <p>Tasación (300-600 €), gestoría, registro de la propiedad, notaría y el IAJD (Impuesto de Actos Jurídicos Documentados, que desde 2018 paga el banco). Además, la entrada: los bancos suelen financiar el 80% del valor de tasación, lo que significa que necesitas el 20% más un 10-12% para gastos. Para un piso de 200.000 €, necesitas tener ahorrados unos 60.000 €.</p>
+      <p>Tasación (300-600 €), gestoría, registro de la propiedad, notaría y el IAJD (que desde 2018 paga el banco). Además, la entrada: los bancos suelen financiar el 80% del valor de tasación. Para un piso de 200.000 €, necesitas tener ahorrados unos 60.000 €.</p>
     `
   },
   /* ── AVANZADO ── */
   {
-    id: 'guide_interes_compuesto', cat: 'avanzado', icon: '🚀',
+    id: 'guide_interes_compuesto', cat: 'avanzado', icon: '🚀', readTime: 4,
     title: 'El interés compuesto: la octava maravilla del mundo',
-    summary: 'Por qué Einstein (supuestamente) llamó así al interés compuesto y cómo aprovecharlo.',
+    summary: 'Por qué Einstein llamó así al interés compuesto y cómo aprovecharlo.',
+    stat: { value: '149k€', label: 'se convierten 10.000€ al 7% en 40 años. En 20 años solo 38.697€.' },
+    key: 'El coste de esperar 10 años para empezar a invertir puede superar el coste de las comisiones de toda una vida. Empieza hoy, aunque sea con poco.',
     body: `
       <h3>La fórmula mágica</h3>
-      <p>Capital final = Capital inicial × (1 + rentabilidad)^años. Parece simple, pero sus implicaciones son contraintuitivas. 10.000 € al 7% durante 10 años = 19.672 €. Durante 20 años = 38.697 €. Durante 40 años = 149.745 €. No duplicas el dinero cada 10 años, te cuadriuplicas porque los intereses también generan intereses.</p>
+      <p>Capital final = Capital inicial × (1 + rentabilidad)^años. Parece simple, pero sus implicaciones son contraintuitivas. 10.000 € al 7% durante 10 años = 19.672 €. Durante 20 años = 38.697 €. Durante 40 años = 149.745 €. No duplicas el dinero cada 10 años, te cuadruiplicas porque los intereses también generan intereses.</p>
       <h3>La regla del 72</h3>
       <p>Para saber en cuántos años se duplica una inversión, divide 72 entre la rentabilidad anual. Al 6%, tarda 12 años. Al 8%, tarda 9 años. Al 12%, tarda 6 años. Esta regla mental te permite hacer cálculos rápidos sin calculadora.</p>
       <h3>El coste de esperar</h3>
       <p>Ana invierte 200 €/mes desde los 25 hasta los 35 (10 años, 24.000 € totales) y luego no aporta nada más. Carlos invierte 200 €/mes desde los 35 hasta los 65 (30 años, 72.000 € totales). A los 65 años, Ana tiene más dinero que Carlos, habiendo aportado tres veces menos. Esto es el interés compuesto y el tiempo.</p>
       <h3>Lo que frena el interés compuesto</h3>
-      <p>Las interrupciones: retirar dinero antes de tiempo destruye el efecto compuesto. Los impuestos: tributar cada año por las ganancias reduce la base que genera nuevos intereses. Las comisiones: un 1% extra de comisión anual puede costar el 25% del capital final en 40 años. Por eso los fondos indexados de bajo coste y la inversión a largo plazo son tan potentes juntos.</p>
+      <p>Las interrupciones: retirar dinero antes de tiempo destruye el efecto compuesto. Los impuestos: tributar cada año por las ganancias reduce la base que genera nuevos intereses. Las comisiones: un 1% extra de comisión anual puede costar el 25% del capital final en 40 años.</p>
     `
   },
   {
-    id: 'guide_independencia', cat: 'avanzado', icon: '🏝️',
+    id: 'guide_independencia', cat: 'avanzado', icon: '🏝️', readTime: 4,
     title: 'FIRE: independencia financiera y retiro anticipado',
     summary: 'La regla del 4%, el número mágico y cómo calcular el tuyo.',
+    stat: { value: '25x', label: 'tus gastos anuales: ese es el patrimonio que necesitas para ser financieramente libre' },
+    key: 'Reducir gastos tiene doble efecto: ahorras más rápido Y necesitas menos capital para ser libre. Es el mayor acelerador del camino FIRE.',
     body: `
       <h3>¿Qué es el movimiento FIRE?</h3>
-      <p>FIRE (Financial Independence, Retire Early) es una filosofía que busca acumular suficiente patrimonio para vivir de las rentas sin necesitar trabajar. No implica necesariamente jubilarse a los 35 ni vivir en una cabaña; muchos FIRE siguen trabajando en lo que les apasiona, simplemente porque quieren, no porque necesiten el dinero.</p>
+      <p>FIRE (Financial Independence, Retire Early) es una filosofía que busca acumular suficiente patrimonio para vivir de las rentas sin necesitar trabajar. No implica jubilarse a los 35 ni vivir en una cabaña; muchos FIRE siguen trabajando en lo que les apasiona, simplemente porque quieren, no porque necesiten el dinero.</p>
       <h3>La regla del 4%</h3>
-      <p>Basada en el Trinity Study (1998), establece que puedes retirar el 4% de tu cartera cada año sin agotarla en un horizonte de 30 años, asumiendo una cartera 50% renta variable / 50% renta fija. Tu número FIRE es tu gasto anual × 25 (que equivale a tener 25 veces tus gastos, permitiendo retirar el 4%).</p>
+      <p>Basada en el Trinity Study (1998), establece que puedes retirar el 4% de tu cartera cada año sin agotarla en un horizonte de 30 años, asumiendo una cartera 50% renta variable / 50% renta fija. Tu número FIRE es tu gasto anual × 25.</p>
       <h3>Calcula tu número FIRE</h3>
       <p>Si gastas 2.000 €/mes (24.000 €/año), necesitas 24.000 × 25 = 600.000 € en activos financieros. Si reduces tus gastos a 1.500 €/mes, el número cae a 450.000 €. Reducir gastos tiene un doble efecto: ahorras más rápido Y necesitas menos capital para ser libre.</p>
       <h3>Las variantes de FIRE</h3>
-      <p>Lean FIRE: vivir con el mínimo (para quienes no necesitan grandes comodidades). Fat FIRE: independencia con estilo de vida elevado. Barista FIRE: un trabajo a tiempo parcial cubre gastos básicos y la cartera solo necesita cubrir el exceso. Coast FIRE: ya tienes suficiente acumulado y el interés compuesto hará el resto sin nuevas aportaciones.</p>
+      <p>Lean FIRE: vivir con el mínimo. Fat FIRE: independencia con estilo de vida elevado. Barista FIRE: un trabajo a tiempo parcial cubre gastos básicos. Coast FIRE: ya tienes suficiente acumulado y el interés compuesto hará el resto sin nuevas aportaciones.</p>
+    `
+  },
+  {
+    id: 'guide_4_activos', cat: 'avanzado', icon: '🎯', readTime: 4,
+    title: 'Los 4 activos que debes conocer (y cuánto de cada uno)',
+    summary: 'Renta variable, fija, inmobiliario y liquidez: el mapa completo de las inversiones.',
+    stat: { value: '4', label: 'tipos de activos principales que determinan el 90% del resultado de cualquier cartera' },
+    key: 'La asignación de activos (qué porcentaje de cada tipo) determina más del 90% de tu rentabilidad a largo plazo. Elegir qué acciones comprar es lo de menos.',
+    body: `
+      <h3>1. Renta variable (acciones)</h3>
+      <p>Propiedades de empresas. Mayor rentabilidad histórica (~7-10% anual) pero mayor volatilidad. Ideal para horizontes de inversión largos (>10 años). Un MSCI World o S&P 500 te da exposición a las mejores empresas del mundo con un solo instrumento y mínimas comisiones.</p>
+      <h3>2. Renta fija (bonos)</h3>
+      <p>Préstamos a gobiernos o empresas que pagan un interés fijo. Menor rentabilidad pero mayor estabilidad. Funcionan como amortiguador en carteras mixtas: cuando la bolsa cae, los bonos suelen subir. Recomendados para inversores conservadores o con horizonte temporal corto.</p>
+      <h3>3. Inmobiliario (REITs o directo)</h3>
+      <p>Acceso a ingresos por alquiler y revalorización del inmueble. Los REITs (fondos inmobiliarios cotizados) permiten invertir en inmobiliario desde 1 € sin gestión directa. El inmobiliario directo tiene ventajas fiscales en España pero requiere capital elevado y gestión activa.</p>
+      <h3>4. Liquidez (cash y equivalentes)</h3>
+      <p>Cuentas remuneradas, fondos monetarios, letras del tesoro. Rentabilidad baja pero capital disponible de inmediato. Imprescindible para el fondo de emergencia y para oportunidades de mercado. Demasiada liquidez en cartera es un coste de oportunidad real.</p>
     `
   },
 ];
@@ -1880,7 +2006,6 @@ const GUIDE_CATS = [
 ];
 
 let _guideCat = 'all';
-let _guideOpenId = null;
 
 function renderGuidesScreen() {
   const el = document.getElementById('s-guides');
@@ -1890,16 +2015,33 @@ function renderGuidesScreen() {
     ? GUIDE_ARTICLES
     : GUIDE_ARTICLES.filter(a => a.cat === _guideCat);
 
+  const pct = Math.round(read.length / GUIDE_ARTICLES.length * 100);
+
+  // Category completion banner
+  let catBanner = '';
+  if (_guideCat !== 'all') {
+    const catArticles = GUIDE_ARTICLES.filter(a => a.cat === _guideCat);
+    const readInCat = catArticles.filter(a => read.includes(a.id));
+    if (catArticles.length > 0 && readInCat.length === catArticles.length) {
+      const catInfo = GUIDE_CATS.find(c => c.id === _guideCat);
+      catBanner = `<div class="guide-cat-complete">
+        <div class="guide-cat-complete-icon">🏆</div>
+        <div><div class="guide-cat-complete-text">¡Categoría completada!</div>
+        <div class="guide-cat-complete-sub">Todas las guías de ${catInfo?.label || _guideCat} leídas</div></div>
+      </div>`;
+    }
+  }
+
   el.innerHTML = `
     <div class="guide-screen">
       <div class="top-nav">
         <button class="btn btn-ghost btn-sm" onclick="goTo('home')" style="padding:8px 12px;">← Volver</button>
         <div class="logo">📖 Guías</div>
-        <div style="opacity:.5;font-size:12px;">${read.length}/${GUIDE_ARTICLES.length} leídas</div>
+        <div style="font-size:12px;color:var(--text3);">${read.length}/${GUIDE_ARTICLES.length} <span style="color:var(--accent);font-weight:700;">${pct}%</span></div>
       </div>
 
       <div class="guide-progress-bar">
-        <div class="guide-progress-fill" style="width:${Math.round(read.length/GUIDE_ARTICLES.length*100)}%"></div>
+        <div class="guide-progress-fill" style="width:${pct}%;transition:width .6s ease;"></div>
       </div>
 
       <div class="guide-cats">
@@ -1911,19 +2053,27 @@ function renderGuidesScreen() {
       </div>
 
       <div class="guide-list">
+        ${catBanner}
         ${filtered.length === 0
           ? '<p class="guide-empty">No hay artículos en esta categoría.</p>'
-          : filtered.map(a => {
+          : filtered.map((a, i) => {
               const isRead = read.includes(a.id);
               return `
-                <div class="guide-card ${isRead ? 'guide-card-read' : ''}"
+                <div class="guide-card ${isRead ? 'guide-card-read' : ''} guide-card-anim"
+                     style="animation-delay:${i * 55}ms"
                      onclick="openGuide('${a.id}')">
                   <div class="guide-card-icon">${a.icon}</div>
                   <div class="guide-card-body">
                     <div class="guide-card-title">${a.title}</div>
                     <div class="guide-card-summary">${a.summary}</div>
+                    <div class="guide-card-meta">
+                      <span class="guide-card-time">⏱ ${a.readTime || 3} min</span>
+                      ${!isRead ? '<span class="guide-card-xp">+30 XP</span>' : ''}
+                    </div>
                   </div>
-                  <div class="guide-card-status">${isRead ? '✅' : '→'}</div>
+                  <div class="guide-card-right">
+                    ${isRead ? '<span class="guide-card-status-read">✅</span>' : '<span style="font-size:14px;color:var(--text3);">→</span>'}
+                  </div>
                 </div>`;
             }).join('')}
       </div>
@@ -1939,33 +2089,117 @@ function openGuide(id) {
   const article = GUIDE_ARTICLES.find(a => a.id === id);
   if (!article) return;
 
-  // Marcar como leído
+  const isFirstRead = !S.readGuides || !S.readGuides.includes(id);
   if (!S.readGuides) S.readGuides = [];
-  if (!S.readGuides.includes(id)) {
+  if (isFirstRead) {
     S.readGuides = [...S.readGuides, id];
     saveState();
   }
 
-  let modal = document.getElementById('m-guide-reader');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'm-guide-reader';
-    modal.className = 'modal-overlay guide-modal-overlay';
-    document.body.appendChild(modal);
+  let reader = document.getElementById('guide-reader-screen');
+  if (!reader) {
+    reader = document.createElement('div');
+    reader.id = 'guide-reader-screen';
+    reader.className = 'guide-reader-screen';
+    document.body.appendChild(reader);
   }
-  modal.innerHTML = `
-    <div class="modal-box guide-reader-box">
-      <button class="guide-reader-close" onclick="closeModal('m-guide-reader');renderGuidesScreen()">✕</button>
-      <div class="guide-reader-cat-badge">${GUIDE_CATS.find(c=>c.id===article.cat)?.icon || ''} ${article.cat}</div>
-      <h2 class="guide-reader-title">${article.icon} ${article.title}</h2>
+
+  const catInfo = GUIDE_CATS.find(c => c.id === article.cat);
+  const statBlock = article.stat ? `
+    <div class="guide-stat-callout">
+      <div class="guide-stat-value">${article.stat.value}</div>
+      <div class="guide-stat-label">${article.stat.label}</div>
+    </div>` : '';
+  const keyBlock = article.key ? `
+    <div class="guide-key-takeaway">
+      <div class="guide-key-label">💡 DATO CLAVE</div>
+      <div class="guide-key-text">"${article.key}"</div>
+    </div>` : '';
+
+  reader.innerHTML = `
+    <div class="guide-reader-scrollbar" id="guide-reader-scrollbar"></div>
+    <div class="guide-reader-topbar">
+      <button class="guide-reader-back-btn" onclick="closeGuideReader()">← Volver</button>
+      <div class="guide-reader-topcat">${catInfo?.icon || ''} ${catInfo?.label || article.cat}</div>
+      <div class="guide-reader-toptime">⏱ ${article.readTime || 3} min</div>
+    </div>
+    <div class="guide-reader-scroll-area" id="guide-reader-scroll-area">
+      <div class="guide-reader-big-icon">${article.icon}</div>
+      <h1 class="guide-reader-h1">${article.title}</h1>
+      ${statBlock}
       <div class="guide-reader-body">${article.body}</div>
-      <button class="btn btn-primary btn-block mt8" onclick="closeModal('m-guide-reader');renderGuidesScreen()">
-        ✅ Entendido
-      </button>
+      ${keyBlock}
+      <div class="guide-done-area">
+        <button class="btn btn-primary btn-block guide-done-btn" onclick="finishGuide('${id}',${isFirstRead})">
+          ${isFirstRead ? '✅ Entendido · +30 XP' : '✅ Entendido'}
+        </button>
+        <button class="guide-share-btn" onclick="_shareGuide('${id}')">📤 Compartir esta guía</button>
+      </div>
     </div>`;
-  openModal('m-guide-reader');
+
+  requestAnimationFrame(() => { reader.classList.add('open'); });
+
+  const scrollArea = document.getElementById('guide-reader-scroll-area');
+  const bar = document.getElementById('guide-reader-scrollbar');
+  if (scrollArea && bar) {
+    scrollArea.addEventListener('scroll', function() {
+      const max = scrollArea.scrollHeight - scrollArea.clientHeight;
+      if (max > 0) bar.style.width = Math.min(100, (scrollArea.scrollTop / max) * 100) + '%';
+    }, { passive: true });
+  }
 }
 
-window.setGuideCat   = setGuideCat;
-window.openGuide     = openGuide;
+function closeGuideReader() {
+  const reader = document.getElementById('guide-reader-screen');
+  if (!reader) return;
+  reader.classList.remove('open');
+  reader.classList.add('closing');
+  setTimeout(() => { reader.classList.remove('closing'); }, 320);
+  renderGuidesScreen();
+}
+
+function finishGuide(id, isFirstRead) {
+  if (isFirstRead) {
+    const xp = 30;
+    if (typeof S !== 'undefined') {
+      S.xp = (S.xp || 0) + xp;
+      if (typeof F34_onXPGained === 'function') F34_onXPGained(xp);
+      if (typeof saveState === 'function') saveState();
+    }
+    if (typeof spawnXP === 'function') spawnXP('+' + xp + ' XP');
+    if (typeof toast === 'function') toast('📖 Guía completada', '+' + xp + ' XP ganados', 't-success');
+    // Check category completion
+    const article = GUIDE_ARTICLES.find(a => a.id === id);
+    if (article) {
+      const catArticles = GUIDE_ARTICLES.filter(a => a.cat === article.cat);
+      const nowRead = catArticles.filter(a => (S.readGuides || []).includes(a.id));
+      if (nowRead.length === catArticles.length) {
+        const catInfo = GUIDE_CATS.find(c => c.id === article.cat);
+        setTimeout(() => {
+          if (typeof toast === 'function') toast('🏆 Categoría completada', 'Todas las guías de ' + (catInfo?.label || article.cat) + ' leídas', 't-success');
+        }, 1200);
+      }
+    }
+  }
+  closeGuideReader();
+}
+
+function _shareGuide(id) {
+  const article = GUIDE_ARTICLES.find(a => a.id === id);
+  if (!article) return;
+  const text = '📖 Acabo de leer "' + article.title + '" en FinLearn. Aprende finanzas personales gratis 👉 ' + window.location.origin;
+  if (navigator.share) {
+    navigator.share({ title: 'FinLearn — Guía financiera', text }).catch(function() {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      if (typeof toast === 'function') toast('📋 Copiado', 'Pégalo donde quieras compartirlo', 't-success');
+    });
+  }
+}
+
+window.setGuideCat        = setGuideCat;
+window.openGuide          = openGuide;
+window.closeGuideReader   = closeGuideReader;
+window.finishGuide        = finishGuide;
+window._shareGuide        = _shareGuide;
 window.renderGuidesScreen = renderGuidesScreen;

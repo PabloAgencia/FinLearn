@@ -980,12 +980,12 @@ function renderDailyHub() {
 
   // Calcular cuántas acciones diarias quedan
   const actions = [];
-  if (!dcaDone) actions.push({ icon:'💡', label:'Pregunta del día sin responder', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
+  if (!dcaDone) actions.push({ icon:'💡', label:'Pregunta del día sin responder', onclick:"var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});" });
 
   // Problema del día F42
   const f42State = S._f42State;
   if (!f42State || f42State.date !== new Date().toISOString().slice(0,10)) {
-    actions.push({ icon:'🧩', label:'Problema del día sin resolver', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('f42-daily-problem');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
+    actions.push({ icon:'🧩', label:'Problema del día sin resolver', onclick:"var el=document.getElementById('f42-daily-problem');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});" });
   }
 
   // Logros por reclamar
@@ -999,12 +999,14 @@ function renderDailyHub() {
   // Racha en riesgo si ayer hiciste algo pero hoy aún no
   const today = new Date().toISOString().slice(0, 10);
   if ((S.streak || 0) > 0 && S.dcaDate !== today && dcaDone === false) {
-    actions.push({ icon:'🔥', label:'Racha en riesgo — ¡responde hoy!', onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});},400)" });
+    actions.push({ icon:'🔥', label:'Racha en riesgo — ¡responde hoy!', onclick:"var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});" });
   }
 
   if (nearMission) {
     const pct = Math.round((nearMission.progress / nearMission.goal) * 100);
-    actions.push({ icon:'🎯', label:`${nearMission.title} (${pct}%)`, onclick:"goTo('home');setTimeout(function(){var el=document.getElementById('missions-card');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},400)" });
+    const _mTarget = nearMission.type === 'streak' ? 'dca-card' : 'missions-card';
+    const _mBlock  = nearMission.type === 'streak' ? 'center' : 'start';
+    actions.push({ icon:'🎯', label:`${nearMission.title} (${pct}%)`, onclick:`var el=document.getElementById('${_mTarget}');if(el)el.scrollIntoView({behavior:'smooth',block:'${_mBlock}'});` });
   }
 
   if (actions.length === 0) {
