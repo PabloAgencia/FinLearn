@@ -8,7 +8,7 @@
 
 // Clave pública VAPID — generar con: npx web-push generate-vapid-keys
 // Sustituir con la clave real antes de desplegar
-var PUSH_VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjZEHlLM5BIhh5LnFZAkNY0Xd8Gw';
+var PUSH_VAPID_PUBLIC_KEY = 'BJF4LPNgqIETDRWanXAdXpMTp-rWUc-nY7L_U7VfL6zUNCSnKIxy3n8LllsdcxIMitR7L1CCP3DjuaQekogGodU';
 
 var _pushTimers = []; // setTimeout IDs para cancelar si el usuario abre antes de hora
 
@@ -180,12 +180,15 @@ function PUSH_subscribe() {
 
 function _pushSaveSubscription(sub) {
   try {
-    var userId = S.userName ? S.userName.replace(/\s+/g, '_').toLowerCase() : 'anon_' + (S.referralCode || '');
-    fetch('/api/push-subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subscription: sub.toJSON(), userId: userId }),
-    }).catch(function() {}); // silencioso si no hay servidor
+    var user = typeof getSBUser === 'function' ? getSBUser() : null;
+    if (!user) return;
+    var j = sub.toJSON();
+    getSB().from('push_subscriptions').upsert({
+      user_id:  user.id,
+      endpoint: j.endpoint,
+      p256dh:   j.keys.p256dh,
+      auth:     j.keys.auth,
+    }, { onConflict: 'endpoint' }).then(function() {});
   } catch(e) {}
 }
 
