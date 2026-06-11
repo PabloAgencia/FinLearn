@@ -973,60 +973,190 @@ function renderDailyHub() {
   const el = document.getElementById('daily-hub');
   if (!el) return;
 
-  const dcaDone   = !!S.dcaDone;
-  const nextMod   = _getNextRecommendedMod();
-  const missions  = (S._mw_missions || []).filter(m => !m.done);
-  const nearMission = missions.sort((a, b) => (b.progress / b.goal) - (a.progress / a.goal))[0];
+  const today      = new Date().toISOString().slice(0, 10);
+  const todaySeed  = parseInt(today.replace(/-/g, '')) % 997;
+  const dcaDone    = !!S.dcaDone;
+  const shields    = S.streakShields || 0;
+  const streak     = S.streak || 0;
+  const pool       = [];
 
-  // Calcular cuántas acciones diarias quedan
-  const actions = [];
-  if (!dcaDone) actions.push({ icon:'💡', label:'Pregunta del día sin responder', onclick:"var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});" });
-
-  // Problema del día F42
-  const f42State = S._f42State;
-  if (!f42State || f42State.date !== new Date().toISOString().slice(0,10)) {
-    actions.push({ icon:'🧩', label:'Problema del día sin resolver', onclick:"var el=document.getElementById('f42-daily-problem');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});" });
+  // ── RACHA EN RIESGO (máxima urgencia) ──────────────────────────
+  if (streak > 0 && S.dcaDate !== today && !dcaDone) {
+    pool.push({
+      pri: shields > 0 ? 92 : 100, urgent: true,
+      icon: '🔥',
+      label: shields > 0 ? `Racha en riesgo — tienes ${shields} escudo${shields > 1 ? 's' : ''}` : '¡Racha en riesgo — sin escudos!',
+      sub: `${streak} día${streak > 1 ? 's' : ''} de racha en juego`,
+      onclick: "var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
+    });
   }
 
-  // Logros por reclamar
+  // ── DCA SIN RESPONDER ──────────────────────────────────────────
+  if (!dcaDone) {
+    pool.push({
+      pri: 88, urgent: false,
+      icon: '💡',
+      label: 'Pregunta del día sin responder',
+      sub: '+80 XP si aciertas · mantiene tu racha',
+      onclick: "var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
+    });
+  }
+
+  // ── PROBLEMA F42 ───────────────────────────────────────────────
+  const f42State = S._f42State;
+  if (!f42State || f42State.date !== today) {
+    pool.push({
+      pri: 80, urgent: false,
+      icon: '🧩',
+      label: 'Problema del día sin resolver',
+      sub: 'Entrena tu mente financiera · +50 XP',
+      onclick: "var el=document.getElementById('f42-daily-problem');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
+    });
+  }
+
+  // ── LOGROS POR RECLAMAR ────────────────────────────────────────
   const unclaimedAchs = (S.unlockedAchs || []).filter(id => !(S.claimedAchs || []).includes(id));
   if (unclaimedAchs.length > 0) {
-    actions.push({ icon:'🏆', label:`${unclaimedAchs.length} logro${unclaimedAchs.length > 1 ? 's' : ''} por reclamar`, onclick:"goTo('profile');setTimeout(function(){var el=document.getElementById('ach-grid');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},400)" });
+    pool.push({
+      pri: 75, urgent: false,
+      icon: '🏆',
+      label: `${unclaimedAchs.length} logro${unclaimedAchs.length > 1 ? 's' : ''} por reclamar`,
+      sub: 'Reclama tus recompensas pendientes',
+      onclick: "goTo('profile');setTimeout(function(){var el=document.getElementById('ach-grid');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},400)"
+    });
   }
 
-  if (nextMod) actions.push({ icon:'📖', label:`Módulo: ${nextMod.title}`, onclick:`startModule(${nextMod.id})` });
-
-  // Racha en riesgo si ayer hiciste algo pero hoy aún no
-  const today = new Date().toISOString().slice(0, 10);
-  if ((S.streak || 0) > 0 && S.dcaDate !== today && dcaDone === false) {
-    actions.push({ icon:'🔥', label:'Racha en riesgo — ¡responde hoy!', onclick:"var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});" });
+  // ── ESCUDO BAJO (racha larga sin protección, ya completó el día) ─
+  if (streak >= 7 && shields === 0 && dcaDone) {
+    pool.push({
+      pri: 62, urgent: false,
+      icon: '🛡️',
+      label: `Racha de ${streak} días sin escudo`,
+      sub: 'Un fallo mañana la romperá — cómpralo ya',
+      onclick: "if(typeof F50_open==='function')F50_open();"
+    });
   }
 
+  // ── MISIÓN CERCANA (≥50%) ──────────────────────────────────────
+  const nearMission = (S._mw_missions || [])
+    .filter(m => !m.done)
+    .sort((a, b) => (b.progress / b.goal) - (a.progress / a.goal))[0];
   if (nearMission) {
     const pct = Math.round((nearMission.progress / nearMission.goal) * 100);
-    const _mTarget = nearMission.type === 'streak' ? 'dca-card' : 'missions-card';
-    const _mBlock  = nearMission.type === 'streak' ? 'center' : 'start';
-    actions.push({ icon:'🎯', label:`${nearMission.title} (${pct}%)`, onclick:`var el=document.getElementById('${_mTarget}');if(el)el.scrollIntoView({behavior:'smooth',block:'${_mBlock}'});` });
+    if (pct >= 50) {
+      const _mt = nearMission.type === 'streak' ? 'dca-card' : 'missions-card';
+      const _mb = nearMission.type === 'streak' ? 'center' : 'start';
+      pool.push({
+        pri: 55 + Math.round(pct / 20), urgent: false,
+        icon: '🎯',
+        label: `${nearMission.title} al ${pct}%`,
+        sub: `Faltan ${nearMission.goal - nearMission.progress} para +${nearMission.xp} XP`,
+        onclick: `var el=document.getElementById('${_mt}');if(el)el.scrollIntoView({behavior:'smooth',block:'${_mb}'});`
+      });
+    }
   }
 
-  if (actions.length === 0) {
+  // ── MÓDULO RECOMENDADO ─────────────────────────────────────────
+  const nextMod = _getNextRecommendedMod();
+  if (nextMod) {
+    pool.push({
+      pri: 50, urgent: false,
+      icon: '📖',
+      label: `Módulo: ${nextMod.title}`,
+      sub: `+${nextMod.xp || 100} XP · ${nextMod.tag || 'Aprende'}`,
+      onclick: `startModule(${nextMod.id})`
+    });
+  }
+
+  // ── FLASHCARDS PENDIENTES ──────────────────────────────────────
+  try {
+    if (typeof _FC !== 'undefined' && typeof _FC._due === 'function') {
+      const fcDue = _FC._due();
+      const fcDone = (_FC._st().doneToday || []).length;
+      if (fcDue.length > 0 && fcDone < (_FC._DAILY || 10)) {
+        pool.push({
+          pri: 44 + (todaySeed % 7), urgent: false,
+          icon: '🃏',
+          label: `${fcDue.length} flashcard${fcDue.length > 1 ? 's' : ''} pendiente${fcDue.length > 1 ? 's' : ''}`,
+          sub: 'Repaso espaciado · retención a largo plazo',
+          onclick: "if(typeof _FC!=='undefined')_FC.open();"
+        });
+      }
+    }
+  } catch(e) {}
+
+  // ── BOSS SEMANAL DISPONIBLE ────────────────────────────────────
+  try {
+    const _wk = (function() {
+      var d = new Date(), j = new Date(d.getFullYear(),0,1);
+      return d.getFullYear() + '-W' + String(Math.ceil(((d-j)/864e5+j.getDay()+1)/7)).padStart(2,'0');
+    })();
+    if (S.weeklyBossKey !== _wk) {
+      pool.push({
+        pri: 40 + (todaySeed % 9), urgent: false,
+        icon: '⚔️',
+        label: 'Boss semanal disponible',
+        sub: '+500 XP si lo derrotas · se reinicia el lunes',
+        onclick: "if(typeof WB_open==='function')WB_open();"
+      });
+    }
+  } catch(e) {}
+
+  // ── GUÍA SIN LEER (cambia cada día) ───────────────────────────
+  try {
+    if (typeof GUIDE_ARTICLES !== 'undefined') {
+      const unread = GUIDE_ARTICLES.filter(a => !(S.readGuides || []).includes(a.id));
+      if (unread.length > 0) {
+        const pick = unread[todaySeed % unread.length];
+        pool.push({
+          pri: 28 + (todaySeed % 12), urgent: false,
+          icon: pick.icon,
+          label: `Leer: ${pick.title}`,
+          sub: `⏱ ${pick.readTime || 3} min · +30 XP`,
+          onclick: `goTo('guides');setTimeout(function(){if(typeof openGuide==='function')openGuide('${pick.id}');},350);`
+        });
+      }
+    }
+  } catch(e) {}
+
+  // ── ORDENAR: urgentes primero, luego rotar opcionales por día ──
+  pool.sort((a, b) => b.pri - a.pri);
+  const urgent   = pool.filter(a => a.pri >= 75);
+  const optional = pool.filter(a => a.pri < 75);
+
+  // Rotación diaria: reordena las opcionales con el seed del día
+  optional.sort((a, b) => ((b.pri + todaySeed * 7) % 100) - ((a.pri + todaySeed * 7) % 100));
+
+  const selected = [...urgent, ...optional].slice(0, 3);
+
+  // ── ESTADO VACÍO ───────────────────────────────────────────────
+  if (selected.length === 0) {
     el.innerHTML = `
       <div style="background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,229,160,.04));border:1px solid rgba(0,229,160,.25);border-radius:16px;padding:14px 16px;margin:0 0 4px;display:flex;align-items:center;gap:12px;">
         <span style="font-size:28px;">✅</span>
         <div>
           <div style="font-size:13px;font-weight:700;color:var(--accent);">¡Todo completado hoy!</div>
-          <div style="font-size:11px;color:var(--text2);">Vuelve mañana para seguir tu racha.</div>
+          <div style="font-size:11px;color:var(--text2);">Vuelve mañana${streak > 0 ? ' · racha 🔥' + streak + ' días' : ''}</div>
         </div>
       </div>`;
     return;
   }
 
-  const items = actions.slice(0, 3).map(a => `
-    <button onclick="${a.onclick}" style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px;width:100%;cursor:pointer;text-align:left;margin-bottom:6px;">
-      <span style="font-size:20px;flex-shrink:0;">${a.icon}</span>
-      <span style="font-size:12px;font-weight:600;color:var(--text1);">${a.label}</span>
-      <span style="margin-left:auto;font-size:11px;color:var(--accent);">→</span>
-    </button>`).join('');
+  // ── RENDER ─────────────────────────────────────────────────────
+  const items = selected.map(a => {
+    const urgentStyle = a.urgent
+      ? 'border-color:rgba(255,107,53,.45);background:rgba(255,107,53,.07);animation:f35pulse 1.6s ease-in-out infinite;'
+      : '';
+    return `
+      <button onclick="${a.onclick}" style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px;width:100%;cursor:pointer;text-align:left;margin-bottom:6px;${urgentStyle}">
+        <span style="font-size:20px;flex-shrink:0;">${a.icon}</span>
+        <span style="flex:1;min-width:0;">
+          <span style="display:block;font-size:12px;font-weight:700;color:var(--text1);line-height:1.3;">${a.label}</span>
+          ${a.sub ? `<span style="display:block;font-size:10px;color:var(--text3);margin-top:2px;">${a.sub}</span>` : ''}
+        </span>
+        <span style="flex-shrink:0;font-size:11px;color:var(--accent);">→</span>
+      </button>`;
+  }).join('');
 
   el.innerHTML = `
     <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 14px 8px;margin:0 0 4px;">
