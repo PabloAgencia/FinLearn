@@ -675,9 +675,9 @@ function showDailyRewardModal(dayCount) {
                   streak >= 30  ? 'Racha epica. Top 1%' :
                   streak >= 14  ? 'Dos semanas seguidas. Top 5%' :
                   streak >= 7   ? 'Una semana completa. Top 15%' :
-                  streak >= 3   ? streak + ' dias seguidos. Sigue asi.' :
+                  streak >= 2   ? streak + ' dias seguidos. Sigue asi.' :
                   streak === 1  ? 'Primer dia. Empieza tu racha.' :
-                  'Completa un modulo para iniciar tu racha';
+                  'Completa la accion diaria para iniciar tu racha';
 
   var calHTML = Array.from({length:7}, function(_,i) {
     var d = i + 1, isDone = d < cycleDay, isCurr = d === cycleDay;

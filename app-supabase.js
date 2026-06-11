@@ -86,18 +86,7 @@ async function sbLoadState() {
     if (!S.patrimony && (S.cash || S.invested)) S.patrimony = recalcPatrimony();
     if (saved.currentModId != null)
       S.currentMod = MODULES.find(m => m.id === saved.currentModId) || null;
-    const today     = new Date().toISOString().slice(0, 10);
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-    if (S.lastVisit !== today) {
-      if (S.lastVisit !== yesterday) {
-        if ((S.streakShields || 0) > 0) { S.streakShields--; }
-        else { S.streak = 0; S.streakBrokeAt = Date.now(); S.streakEarnBackMods = 0; }
-      }
-      S.dcaDone = false; S.dcaDate = ''; S.totalXPtoday = 0;
-      S.daysActive = (S.daysActive || 0) + 1;
-      S.lastVisit  = today;
-      simulateMonthlyGrowth();
-    }
+    if (typeof _applyDailyRollover === 'function') _applyDailyRollover();
     return true;
   } catch(e) { console.warn('[SB] loadState exception:', e); return false; }
 }

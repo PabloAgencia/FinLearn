@@ -37,7 +37,7 @@ const NOTIFS = {
     const H23 = 23 * 60 * 60 * 1000;
     this.schedule(H23,
       '🔥 Tu racha te espera',
-      'Lleva ' + (S.streak || 1) + ' días seguidos. No lo rompas hoy.',
+      'Llevas ' + (S.streak || 1) + ' día' + ((S.streak || 1) > 1 ? 's' : '') + ' seguido' + ((S.streak || 1) > 1 ? 's' : '') + '. No lo rompas hoy.',
       'streak-reminder'
     );
   },
@@ -46,9 +46,12 @@ const NOTIFS = {
   scheduleStreakReminder() {
     if (!this._granted) return;
     const H20 = 20 * 60 * 60 * 1000;
+    const stk = S.streak || 0;
     this.schedule(H20,
       '⚡ ¡Racha en peligro!',
-      'Tu racha de ' + (S.streak || 1) + ' días termina a medianoche. 1 minuto es suficiente.',
+      stk > 0
+        ? 'Tu racha de ' + stk + ' día' + (stk > 1 ? 's' : '') + ' termina a medianoche. 1 minuto es suficiente.'
+        : 'Empieza tu racha hoy. 1 minuto es suficiente.',
       'streak-risk'
     );
   },
@@ -789,11 +792,8 @@ function endTutorial() {
   S.hasSeenTutorial = true;
   localStorage.setItem('fl_tutorial_done', '1');
   saveState();
-  // Auto-launch first recommended module
   setTimeout(() => {
-    const modId = (S.suggestedModuleId !== undefined && S.suggestedModuleId !== null) ? S.suggestedModuleId : 0;
-    toast('🎯 ¡Tu primera lección te espera!', 'Empieza ahora — son solo 5 minutos 🚀', 't-success');
-    setTimeout(() => { if (typeof startModule === 'function') startModule(modId); }, 600);
+    toast('🎯 ¡Tu primera lección te espera!', 'Elige un módulo cuando quieras — son solo 5 minutos 🚀', 't-success');
   }, 400);
 }
 

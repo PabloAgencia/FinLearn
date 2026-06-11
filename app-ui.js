@@ -261,11 +261,15 @@ function updateUIFromState() {
       '</div>' +
     '</div>';
   })();
-  setEl('home-nav-av', S.avatar);
+  // Avatar: solo poner el emoji como fallback si NO hay sprite inyectado
+  // (setEl borraría el <img class="fl-gen-av"> que inyecta AVATAR_AI.apply)
+  ['home-nav-av', 'prof-av'].forEach(function(_avId) {
+    var _avEl = document.getElementById(_avId);
+    if (_avEl && !_avEl.querySelector('.fl-gen-av')) _avEl.textContent = S.avatar || '🌱';
+  });
   if (S.userName && typeof AVATAR_AI !== 'undefined') AVATAR_AI.apply(S.avatarName || S.userName);
 
   // ── Profile hero ───────────────────────────────────────────────────
-  setEl('prof-av',    S.avatar);
   setEl('prof-name',  S.userName || 'Mi perfil');
   setEl('cert-name',  S.userName || 'Usuario');
 

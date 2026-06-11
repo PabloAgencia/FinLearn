@@ -1530,35 +1530,6 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STREAMER MODE — oculta todos los valores €
-═══════════════════════════════════════════════════════════ */
-body.streamer-mode [id*="patr"],
-body.streamer-mode [id*="cash"],
-body.streamer-mode [id*="xp"],
-body.streamer-mode [id*="invest"],
-body.streamer-mode [id*="salary"],
-body.streamer-mode [id*="balance"],
-body.streamer-mode .money-pop,
-body.streamer-mode .mort-big,
-body.streamer-mode .le-amount,
-body.streamer-mode .fire-nb-val,
-body.streamer-mode .wi-stat-val {
-  filter: blur(8px);
-  user-select: none;
-  transition: filter .3s;
-}
-body.streamer-mode [id*="patr"]:hover,
-body.streamer-mode [id*="cash"]:hover,
-body.streamer-mode .wi-stat-val:hover {
-  filter: blur(0);
-}
-#streamer-btn.streamer-on {
-  background: rgba(110,86,255,.2) !important;
-  color: #a78bfa !important;
-  border-color: rgba(110,86,255,.4) !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
    SECRET ACHIEVEMENT PILL (badge especial en pantalla logros)
 ═══════════════════════════════════════════════════════════ */
 .ach-secret-locked {

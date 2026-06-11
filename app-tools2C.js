@@ -845,7 +845,6 @@ function _restoreTheme() {
   _applyTheme(S.lightMode);
 }
 
-window.STREAMER           = STREAMER;
 window.toggleTheme        = toggleTheme;
 window.toggleMuteAll      = toggleMuteAll;
 window.AI_COACH           = AI_COACH;

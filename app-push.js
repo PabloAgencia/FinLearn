@@ -88,7 +88,7 @@ function PUSH_showPermissionSheet() {
             <span class="push-ex-appname">FinLearn</span>
             <span class="push-ex-time">ahora</span>
           </div>
-          <div class="push-ex-title">🔥 Tu racha de ${S.streak || 1} días en juego</div>
+          <div class="push-ex-title">🔥 Tu racha de ${S.streak || 0} día${(S.streak || 0) === 1 ? '' : 's'} en juego</div>
           <div class="push-ex-body">Son las 20:00 y aún no has entrado. ¡1 minuto es suficiente!</div>
         </div>
         <div class="push-ex push-ex-boss">
@@ -217,9 +217,9 @@ function PUSH_scheduleToday() {
   if (msStreak > 0 && (S.streak || 0) > 0) {
     var idStreak = setTimeout(function() {
       // Re-comprobar en el momento de disparar (podría haber entrado)
-      if (!_pushActiveToday()) {
+      if (!_pushActiveToday() && (S.streak || 0) > 0) {
         _pushFireLocal({
-          title: '🔥 Tu racha de ' + (S.streak || 1) + ' d\xEDas en peligro',
+          title: '🔥 Tu racha de ' + S.streak + ' d\xEDa' + (S.streak > 1 ? 's' : '') + ' en peligro',
           body: '¡Son las 8 pm! Únete 1 minuto y salva tu racha. El tiempo corre…',
           tag: 'streak-risk',
           url: './',
@@ -326,7 +326,7 @@ function _pushSendScheduleToSW() {
       schedule.push({
         id: 'streak-risk-' + today,
         fireAt: Date.now() + ms20,
-        title: '🔥 Tu racha de ' + (S.streak || 1) + ' d\xEDas en peligro',
+        title: '🔥 Tu racha de ' + S.streak + ' d\xEDa' + (S.streak > 1 ? 's' : '') + ' en peligro',
         body: '¡Son las 8 pm! Únete 1 minuto y salva tu racha.',
         tag: 'streak-risk',
         url: './',

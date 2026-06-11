@@ -857,34 +857,6 @@ function renderFireCalc() {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   STREAMER MODE — Oculta números reales con % y barras
-   ─────────────────────────────────────────────────────────────────
-   · Toggle global que envuelve todos los € en spans .streamer-num
-   · En modo ON → sustituye por barras de progreso relativas
-   · Ideal para TikTok/YouTube sin revelar patrimonio real
-══════════════════════════════════════════════════════════════════ */
-const STREAMER = {
-  active: false,
-  maxRef: 0, // max patrimony reference for %
-
-  toggle() {
-    this.active = !this.active;
-    this.maxRef = Math.max(S.patrimony || 0, 1000);
-    document.body.classList.toggle('streamer-mode', this.active);
-    const btn = document.getElementById('streamer-btn');
-    if (btn) {
-      btn.textContent = this.active ? '👁️ Modo Streamer ON' : '👁️ Modo Streamer';
-      btn.classList.toggle('streamer-on', this.active);
-    }
-    if (this.active) {
-      toast('👁️ Modo Streamer activado', 'Los números se ocultan. Perfecto para grabar.', 't-social');
-      HAPTIC.medium();
-    }
-  },
-};
-
-
-/* ══════════════════════════════════════════════════════════════════
    SECRET ACHIEVEMENTS — Easter eggs ocultos
    No aparecen en la lista hasta que se desbloquean.
    El jugador los descubre sin saberlo.

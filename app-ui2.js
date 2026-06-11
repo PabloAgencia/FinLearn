@@ -687,7 +687,11 @@ function renderProfileScreen() {
   const maxEl = document.getElementById('prof-max-streak-val');
   if (maxEl) maxEl.textContent = '🏅 ' + maxStr;
   setEl('prof-modules-count', S.completedMods.length);
-  setEl('prof-av',            S.avatar || '🌱');
+  // prof-av: no usar setEl — borraría el sprite inyectado por AVATAR_AI
+  (function() {
+    var _pa = document.getElementById('prof-av');
+    if (_pa && !_pa.querySelector('.fl-gen-av')) _pa.textContent = S.avatar || '🌱';
+  })();
   setEl('prof-goal-txt',      S.goalLabel || '🏝️ Libertad financiera');
 
   // P4-B: render tabla de rangos en el perfil

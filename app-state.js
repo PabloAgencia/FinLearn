@@ -114,8 +114,8 @@ const DEFAULTS = {
   _actionPlanHash: null,      // hash de datos para detectar cambios
   _actionPlanGeneratedAt: null,// ISO timestamp de generación
   /* ── Fechas ── */
-  startDate: new Date().toISOString().slice(0, 10),
-  lastVisit: new Date().toISOString().slice(0, 10),
+  startDate: new Date().toLocaleDateString('sv'),
+  lastVisit: new Date().toLocaleDateString('sv'),
   daysActive: 0,
   /* ── Viral / logros ── */
   viralMilestones: [],
@@ -441,32 +441,7 @@ function loadState() {
     }
 
     // ── Reset diario: detectar si es un día nuevo ──
-    const today     = new Date().toLocaleDateString('sv');
-    const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
-    if (S.lastVisit !== today) {
-      if (S.lastVisit !== yesterday) {
-        // Rompió la racha — consumir escudo si hay
-        if ((S.streakShields || 0) > 0) {
-          S.streakShields--;
-          // No resetear racha — el escudo la protege
-          setTimeout(function() {
-            toast('🛡️ ¡Escudo activado!',
-              'Tu racha de ' + S.streak + ' días se ha salvado. Te queda' + (S.streakShields > 0 ? 'n ' + S.streakShields : ' 0') + ' escudo' + (S.streakShields !== 1 ? 's' : '') + '.',
-              't-success');
-          }, 1500);
-        } else {
-          S.streak = 0; // sin escudo — racha perdida
-          S.streakBrokeAt      = Date.now();
-          S.streakEarnBackMods = 0;
-        }
-      }
-      S.dcaDone      = false;
-      S.dcaDate      = '';
-      S.totalXPtoday = 0;
-      S.daysActive   = (S.daysActive || 0) + 1;
-      S.lastVisit    = today;
-      simulateMonthlyGrowth(); // simula el crecimiento del día
-    }
+    _applyDailyRollover();
 
     return true;
   } catch (e) {
@@ -474,6 +449,65 @@ function loadState() {
     return false;
   }
 }
+
+/**
+ * _applyDailyRollover — Aplica el reset diario si ha cambiado el día.
+ * ─────────────────────────────────────────────────────────────────
+ * Se llama desde loadState() y también cuando la PWA vuelve a primer
+ * plano: las sesiones que sobreviven en memoria varios días no
+ * actualizaban S.lastVisit y el siguiente arranque en frío reseteaba
+ * la racha a 0 aunque el usuario hubiera sido activo cada día.
+ * Devuelve true si se aplicó el rollover (día nuevo).
+ */
+function _applyDailyRollover() {
+  const today = new Date().toLocaleDateString('sv');
+  if (S.lastVisit === today) return false;
+  const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
+  if (S.lastVisit && S.lastVisit !== yesterday && (S.streak || 0) > 0) {
+    // Rompió la racha — consumir escudo si hay
+    if ((S.streakShields || 0) > 0) {
+      S.streakShields--;
+      // No resetear racha — el escudo la protege
+      setTimeout(function() {
+        if (typeof toast === 'function') toast('🛡️ ¡Escudo activado!',
+          'Tu racha de ' + S.streak + ' días se ha salvado. Te queda' + (S.streakShields > 0 ? 'n ' + S.streakShields : ' 0') + ' escudo' + (S.streakShields !== 1 ? 's' : '') + '.',
+          't-success');
+      }, 1500);
+    } else {
+      S.streak = 0; // sin escudo — racha perdida
+      S.streakBrokeAt      = Date.now();
+      S.streakEarnBackMods = 0;
+    }
+  }
+  S.dcaDone      = false;
+  S.dcaDate      = '';
+  S.totalXPtoday = 0;
+  S.daysActive   = (S.daysActive || 0) + 1;
+  S.lastVisit    = today;
+  simulateMonthlyGrowth(); // simula el crecimiento del día
+  return true;
+}
+
+function _checkDayRollover() {
+  try {
+    if (typeof S === 'undefined' || !S.userName) return;
+    if (_applyDailyRollover()) {
+      saveState();
+      if (typeof updateUIFromState === 'function') updateUIFromState();
+      if (typeof renderDCA === 'function') renderDCA();
+      if (typeof renderDailyHub === 'function') renderDailyHub();
+    }
+  } catch (e) {}
+}
+
+// La PWA puede sobrevivir en memoria varios días: comprobar el cambio
+// de día al volver a primer plano y cada minuto mientras esté visible.
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) _checkDayRollover();
+});
+setInterval(function() {
+  if (!document.hidden) _checkDayRollover();
+}, 60000);
 
 /**
  * clearState — Borra todo y vuelve al estado cero.
@@ -485,8 +519,8 @@ function clearState() {
   ].forEach(k => { try { localStorage.removeItem(k); } catch (e) { } });
 
   Object.assign(S, DEFAULTS);
-  S.startDate = new Date().toISOString().slice(0, 10);
-  S.lastVisit = new Date().toISOString().slice(0, 10);
+  S.startDate = new Date().toLocaleDateString('sv');
+  S.lastVisit = new Date().toLocaleDateString('sv');
 }
 
 

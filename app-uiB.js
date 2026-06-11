@@ -983,9 +983,12 @@ function renderDailyHub() {
   // ── RACHA EN RIESGO (máxima urgencia) ──────────────────────────
   if (streak > 0 && S.dcaDate !== today && !dcaDone) {
     pool.push({
+      id: 'streak_risk',
       pri: shields > 0 ? 92 : 100, urgent: true,
       icon: '🔥',
-      label: shields > 0 ? `Racha en riesgo — tienes ${shields} escudo${shields > 1 ? 's' : ''}` : '¡Racha en riesgo — sin escudos!',
+      label: shields > 0
+        ? `Racha de ${streak} día${streak > 1 ? 's' : ''} en riesgo — tienes ${shields} escudo${shields > 1 ? 's' : ''}`
+        : `¡Racha de ${streak} día${streak > 1 ? 's' : ''} en riesgo — sin escudos!`,
       sub: `${streak} día${streak > 1 ? 's' : ''} de racha en juego`,
       onclick: "var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
     });
@@ -994,6 +997,7 @@ function renderDailyHub() {
   // ── DCA SIN RESPONDER ──────────────────────────────────────────
   if (!dcaDone) {
     pool.push({
+      id: 'dca',
       pri: 88, urgent: false,
       icon: '💡',
       label: 'Pregunta del día sin responder',
@@ -1006,6 +1010,7 @@ function renderDailyHub() {
   const f42State = S._f42State;
   if (!f42State || f42State.date !== today) {
     pool.push({
+      id: 'f42',
       pri: 80, urgent: false,
       icon: '🧩',
       label: 'Problema del día sin resolver',
@@ -1018,6 +1023,7 @@ function renderDailyHub() {
   const unclaimedAchs = (S.unlockedAchs || []).filter(id => !(S.claimedAchs || []).includes(id));
   if (unclaimedAchs.length > 0) {
     pool.push({
+      id: 'achs',
       pri: 75, urgent: false,
       icon: '🏆',
       label: `${unclaimedAchs.length} logro${unclaimedAchs.length > 1 ? 's' : ''} por reclamar`,
@@ -1029,6 +1035,7 @@ function renderDailyHub() {
   // ── ESCUDO BAJO (racha larga sin protección, ya completó el día) ─
   if (streak >= 7 && shields === 0 && dcaDone) {
     pool.push({
+      id: 'shield',
       pri: 62, urgent: false,
       icon: '🛡️',
       label: `Racha de ${streak} días sin escudo`,
@@ -1047,6 +1054,7 @@ function renderDailyHub() {
       const _mt = nearMission.type === 'streak' ? 'dca-card' : 'missions-card';
       const _mb = nearMission.type === 'streak' ? 'center' : 'start';
       pool.push({
+        id: 'mission_' + (nearMission.id || nearMission.title),
         pri: 55 + Math.round(pct / 20), urgent: false,
         icon: '🎯',
         label: `${nearMission.title} al ${pct}%`,
@@ -1060,6 +1068,7 @@ function renderDailyHub() {
   const nextMod = _getNextRecommendedMod();
   if (nextMod) {
     pool.push({
+      id: 'module_' + nextMod.id,
       pri: 50, urgent: false,
       icon: '📖',
       label: `Módulo: ${nextMod.title}`,
@@ -1075,6 +1084,7 @@ function renderDailyHub() {
       const fcDone = (_FC._st().doneToday || []).length;
       if (fcDue.length > 0 && fcDone < (_FC._DAILY || 10)) {
         pool.push({
+          id: 'flashcards',
           pri: 44 + (todaySeed % 7), urgent: false,
           icon: '🃏',
           label: `${fcDue.length} flashcard${fcDue.length > 1 ? 's' : ''} pendiente${fcDue.length > 1 ? 's' : ''}`,
@@ -1087,12 +1097,13 @@ function renderDailyHub() {
 
   // ── BOSS SEMANAL DISPONIBLE ────────────────────────────────────
   try {
-    const _wk = (function() {
+    const _wk = (typeof _wbGetWeekKey === 'function') ? _wbGetWeekKey() : (function() {
       var d = new Date(), j = new Date(d.getFullYear(),0,1);
-      return d.getFullYear() + '-W' + String(Math.ceil(((d-j)/864e5+j.getDay()+1)/7)).padStart(2,'0');
+      return d.getFullYear() + '-W' + Math.ceil(((d-j)/864e5+j.getDay()+1)/7);
     })();
     if (S.weeklyBossKey !== _wk) {
       pool.push({
+        id: 'boss_' + _wk,
         pri: 40 + (todaySeed % 9), urgent: false,
         icon: '⚔️',
         label: 'Boss semanal disponible',
@@ -1109,6 +1120,7 @@ function renderDailyHub() {
       if (unread.length > 0) {
         const pick = unread[todaySeed % unread.length];
         pool.push({
+          id: 'guide_' + pick.id,
           pri: 28 + (todaySeed % 12), urgent: false,
           icon: pick.icon,
           label: `Leer: ${pick.title}`,
@@ -1119,7 +1131,9 @@ function renderDailyHub() {
     }
   } catch(e) {}
 
-  // ── ORDENAR: urgentes primero, luego rotar opcionales por día ──
+  // ── SELECCIÓN FIJA DEL DÍA: 3 acciones, persistidas en el estado ──
+  // Se eligen una sola vez al día (seed diaria) y NO se sustituyen al
+  // completarse: las completadas se muestran tachadas hasta mañana.
   pool.sort((a, b) => b.pri - a.pri);
   const urgent   = pool.filter(a => a.pri >= 75);
   const optional = pool.filter(a => a.pri < 75);
@@ -1127,7 +1141,19 @@ function renderDailyHub() {
   // Rotación diaria: reordena las opcionales con el seed del día
   optional.sort((a, b) => ((b.pri + todaySeed * 7) % 100) - ((a.pri + todaySeed * 7) % 100));
 
-  const selected = [...urgent, ...optional].slice(0, 3);
+  let hub = S._dailyHub;
+  if (!hub || hub.date !== today || !Array.isArray(hub.sel) || (hub.sel.length === 0 && pool.length > 0)) {
+    const chosen = [...urgent, ...optional].slice(0, 3);
+    hub = { date: today, sel: chosen.map(a => ({ id: a.id, icon: a.icon, label: a.label, sub: a.sub })) };
+    S._dailyHub = hub;
+    if (typeof saveState === 'function') saveState();
+  }
+
+  // Una acción está completada si su id ya no aparece en el pool de pendientes
+  const selected = hub.sel.map(s => {
+    const live = pool.find(p => p.id === s.id);
+    return live ? Object.assign({}, live, { done: false }) : Object.assign({}, s, { done: true });
+  });
 
   // ── ESTADO VACÍO ───────────────────────────────────────────────
   if (selected.length === 0) {
@@ -1144,6 +1170,16 @@ function renderDailyHub() {
 
   // ── RENDER ─────────────────────────────────────────────────────
   const items = selected.map(a => {
+    if (a.done) {
+      return `
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.18);border-radius:12px;padding:10px 12px;width:100%;margin-bottom:6px;opacity:.75;">
+        <span style="font-size:20px;flex-shrink:0;">✅</span>
+        <span style="flex:1;min-width:0;">
+          <span style="display:block;font-size:12px;font-weight:700;color:var(--text2);line-height:1.3;text-decoration:line-through;">${a.label}</span>
+          <span style="display:block;font-size:10px;color:var(--text3);margin-top:2px;">Completada · vuelve mañana</span>
+        </span>
+      </div>`;
+    }
     const urgentStyle = a.urgent
       ? 'border-color:rgba(255,107,53,.45);background:rgba(255,107,53,.07);animation:f35pulse 1.6s ease-in-out infinite;'
       : '';
