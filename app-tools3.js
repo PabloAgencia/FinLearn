@@ -572,6 +572,21 @@ function toggleMissionsPanel() {
   if (chevron) chevron.textContent = open ? '▾' : '▴';
 }
 
+/**
+ * toggleHomeSection — Acordeón genérico para las secciones secundarias
+ * del home (home-sec-a/b/c/d). Colapsadas por defecto para reducir
+ * la sobrecarga de la primera sesión; el contenido no cambia, solo su visibilidad.
+ */
+function toggleHomeSection(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const open  = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  const arrow = btn && btn.querySelector('.hs-arrow');
+  if (arrow) arrow.textContent = open ? '▾' : '▴';
+}
+window.toggleHomeSection = toggleHomeSection;
+
 /* ── Hooks ───────────────────────────────────────────────────── */
 (function _hookMissions() {
   // executeBuy

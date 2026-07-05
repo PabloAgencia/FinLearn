@@ -380,6 +380,12 @@
         <!-- STREAK CARD — Racha y ruleta diaria ─────────────── -->
         <div id="streak-card-widget" class="mb16"></div>
 
+        <!-- Explorar más A: simulador, ruta, laboratorio, noticias, accion semanal -->
+        <button class="home-section-toggle" onclick="toggleHomeSection('home-sec-a', this)">
+          🔧 Simulador, ruta y noticias <span class="hs-arrow">▾</span>
+        </button>
+        <div id="home-sec-a" style="display:none;">
+
         <!-- SIMULADOR — Cartera de inversión virtual ────────── -->
         <div id="sim-widget" class="mb16"></div>
 
@@ -395,6 +401,8 @@
 
         <!-- REAL ACTIONS AREA (weekly action + real money) ─── -->
         <div id="home-actions-area"></div>
+
+        </div><!-- /home-sec-a -->
 
         <!-- ① MÓDULOS — primera sección ────────────────────── -->
         <div class="card modules-section-card">
@@ -488,6 +496,12 @@
             <div id="health-sub"></div>
           </div>
         </div>
+
+        <!-- Explorar más B: cofres, plan, graficos, retos y misiones -->
+        <button class="home-section-toggle" onclick="toggleHomeSection('home-sec-b', this)">
+          🎮 Cofres, retos y misiones <span class="hs-arrow">▾</span>
+        </button>
+        <div id="home-sec-b" style="display:none;">
 
         <!-- F44 — COFRES + F50 TIENDA ─────────────────────── -->
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:0;">
@@ -662,6 +676,8 @@
           </button>
         </div>
 
+        </div><!-- /home-sec-b -->
+
         <!-- ④d ACCIÓN DIARIA (DCA) ──────────────────────────── -->
         <div class="dca-card mb16" id="dca-card">
           <div id="dca-not-done">
@@ -682,6 +698,12 @@
             </div>
           </div>
         </div>
+
+        <!-- Explorar más C: retos diarios extra -->
+        <button class="home-section-toggle" onclick="toggleHomeSection('home-sec-c', this)">
+          ⚔️ Más retos diarios <span class="hs-arrow">▾</span>
+        </button>
+        <div id="home-sec-c" style="display:none;">
 
         <!-- F42 — PROBLEMA DEL DÍA ─────────────────────────── -->
         <div id="f42-daily-problem" class="mb16"></div>
@@ -705,6 +727,8 @@
         <!-- F30 — MISIONES GRUPALES ─────────────────────────── -->
         <div id="f30-group-mission" class="mb16"></div>
 
+        </div><!-- /home-sec-c -->
+
         <!-- ⑥ QUICK STATS ROW ─────────────────────────────── -->
         <div class="quick-stats-row mb16">
           <div class="qs-box"><div class="qs-val" id="ts-days">0</div><div class="qs-lab">Días activo</div></div>
@@ -715,6 +739,12 @@
             <div class="qs-lab">Nivel</div>
           </div>
         </div>
+
+        <!-- Explorar más D: ingresos simulados y comunidad -->
+        <button class="home-section-toggle" onclick="toggleHomeSection('home-sec-d', this)">
+          👥 Ingresos y comunidad <span class="hs-arrow">▾</span>
+        </button>
+        <div id="home-sec-d" style="display:none;">
 
         <!-- 💼 PANEL INGRESOS SIMULADOS ──────────────────────── -->
         <div id="income-summary-panel" class="income-panel mb16" onclick="openModal('m-income-explainer')" style="cursor:pointer;"></div>
@@ -748,6 +778,8 @@
           <button class="btn btn-ghost btn-sm" onclick="goTo('community')" style="font-size:11px;padding:4px 10px;">Ver todo →</button>
         </div>
         <div id="home-community-feed" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:4px 14px 4px;margin-bottom:20px;"></div>
+
+        </div><!-- /home-sec-d -->
 
       </div><!-- /home-inner -->
     </div>

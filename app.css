@@ -831,6 +831,16 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .av-opt .av-nm{font-size:10px;color:var(--text2);}
 .av-opt .av-sprite{width:56px;height:56px;display:block;margin:0 auto 4px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;}
 
+/* Home — acordeones "Explorar más" (secciones secundarias colapsadas) */
+.home-section-toggle{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:12px;
+  padding:11px 16px;margin-bottom:16px;font-size:13px;font-weight:600;color:var(--text2);
+  cursor:pointer;transition:color .2s,border-color .2s;
+}
+.home-section-toggle:hover{color:var(--text);border-color:var(--accent);}
+.home-section-toggle .hs-arrow{color:var(--accent);font-size:12px;}
+
 /* Util */
 .mb4{margin-bottom:4px;} .mb8{margin-bottom:8px;} .mb12{margin-bottom:12px;}
 .mb16{margin-bottom:16px;} .mb20{margin-bottom:20px;} .mb24{margin-bottom:24px;}
