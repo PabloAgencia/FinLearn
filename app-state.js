@@ -464,8 +464,11 @@ function _applyDailyRollover() {
   if (S.lastVisit === today) return false;
   const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('sv');
   if (S.lastVisit && S.lastVisit !== yesterday && (S.streak || 0) > 0) {
-    // Rompió la racha — consumir escudo si hay
-    if ((S.streakShields || 0) > 0) {
+    // Dias realmente saltados entre la ultima visita y hoy (1 = un solo dia de hueco)
+    const daysMissed = Math.round((new Date(today) - new Date(S.lastVisit)) / 86400000) - 1;
+    // El escudo solo cubre 1 dia de ausencia (igual que Duolingo) — 2+ dias seguidos rompen la racha
+    // aunque haya escudos disponibles, para no quitarle tension al habito diario.
+    if (daysMissed === 1 && (S.streakShields || 0) > 0) {
       S.streakShields--;
       // No resetear racha — el escudo la protege
       setTimeout(function() {
@@ -474,7 +477,7 @@ function _applyDailyRollover() {
           't-success');
       }, 1500);
     } else {
-      S.streak = 0; // sin escudo — racha perdida
+      S.streak = 0; // sin escudo, o faltaron 2+ dias seguidos — racha perdida
       S.streakBrokeAt      = Date.now();
       S.streakEarnBackMods = 0;
     }
