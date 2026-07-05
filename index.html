@@ -133,8 +133,6 @@
             <div class="ob-dot active"></div>
             <div class="ob-dot"></div>
             <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
           </div>
           <div class="ob-emoji">🎯</div>
           <div class="ob-title">¿Cuál es tu objetivo financiero?</div>
@@ -184,8 +182,6 @@
             <div class="ob-dot"></div>
             <div class="ob-dot active"></div>
             <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
           </div>
           <div class="ob-emoji" id="ob-sel-av">🌱</div>
           <div class="ob-title">¿Cómo te llamamos?</div>
@@ -201,7 +197,7 @@
             <div class="av-opt" onclick="pickAvatar('⚡','Relámpago')" data-av="⚡"><img class="av-sprite" data-sprite="rayo" src="icons/Sprites/rayo.png" alt=""><span class="av-nm">Rayo</span></div>
           </div>
           <input class="ob-input" type="text" placeholder="Tu nombre o apodo..." id="ob-name-input" maxlength="20" oninput="validateObs2()">
-          <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="obNext(3)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
+          <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="if(typeof _obShowProfile==='function')_obShowProfile();obNext(5)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
         </div>
 
         <!-- STEP 3: Mini-quiz de nivel financiero -->
@@ -264,8 +260,6 @@
         <div class="ob-step" id="ob-s5">
           <div class="ob-logo">FinLearn</div>
           <div class="ob-dots">
-            <div class="ob-dot"></div>
-            <div class="ob-dot"></div>
             <div class="ob-dot"></div>
             <div class="ob-dot"></div>
             <div class="ob-dot active"></div>
