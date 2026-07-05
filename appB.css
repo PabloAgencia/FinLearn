@@ -1283,11 +1283,12 @@ body.focus-mode .lesson-footer {
   background: var(--surface);
   border: 1.5px solid var(--border);
   border-radius: 16px;
-  padding: 18px 14px 14px;
+  padding: 18px 10px 14px;
   cursor: pointer;
   transition: all .22s cubic-bezier(.4,0,.2,1);
   position: relative;
   text-align: center;
+  min-width: 0;
 }
 .saas-plan:hover {
   border-color: var(--accent);
@@ -1313,12 +1314,15 @@ body.focus-mode .lesson-footer {
   transform: translateX(-50%);
   background: linear-gradient(135deg, var(--gold), #f59e0b);
   color: #000;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 800;
-  letter-spacing: .06em;
-  padding: 3px 10px;
+  letter-spacing: .03em;
+  padding: 3px 8px;
   border-radius: 100px;
   white-space: nowrap;
+  max-width: calc(100% - 4px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .saas-plan-period {
   font-size: 11px;
