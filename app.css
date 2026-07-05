@@ -808,6 +808,11 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .cel-stat{text-align:center;}
 .cel-val{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;color:var(--accent);}
 .cel-lab{font-size:11px;color:var(--text2);}
+/* Entrada escalonada de los stats al abrir la celebracion (retriggeada por JS en completeModule) */
+.cel-stat.cel-stat-pop{animation:celStatIn .45s cubic-bezier(.34,1.56,.64,1) both;}
+.cel-stat.cel-stat-pop:nth-of-type(2){animation-delay:.12s;}
+.cel-stat.cel-stat-pop:nth-of-type(3){animation-delay:.24s;}
+@keyframes celStatIn{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
 .share-row{display:flex;gap:8px;}
 .btn-tw{background:linear-gradient(135deg,#1da1f2,#0077b6);color:#fff;}
 .btn-wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;}
@@ -955,6 +960,16 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 }
 .patr-amount.bump{animation:amountBump .4s cubic-bezier(.34,1.56,.64,1);}
 @keyframes amountBump{0%{transform:scale(1);}50%{transform:scale(1.08);}100%{transform:scale(1);}}
+
+/* CTA "Continuar" del home — shimmer + flecha con vida */
+#home-continue-cta .cta-shimmer{
+  position:absolute;top:0;left:0;width:35%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);
+  animation:ctaShimmer 3.4s ease-in-out infinite;animation-delay:1s;pointer-events:none;
+}
+@keyframes ctaShimmer{0%{transform:translateX(-140%) skewX(-12deg);}60%,100%{transform:translateX(280%) skewX(-12deg);}}
+#home-continue-cta .cta-arrow{display:inline-block;animation:ctaArrowNudge 1.6s ease-in-out infinite;}
+@keyframes ctaArrowNudge{0%,100%{transform:translateX(0);}50%{transform:translateX(4px);}}
 .patr-change{font-family:'DM Mono',monospace;font-size:12px;color:var(--success);margin-top:3px;}
 .patr-badge{
   background:linear-gradient(135deg,rgba(251,191,36,.15),rgba(255,107,53,.1));

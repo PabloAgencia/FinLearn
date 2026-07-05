@@ -1233,12 +1233,13 @@ function renderHomeCTA() {
     'border:1.5px solid var(--accent);border-radius:16px;padding:14px 16px;' +
     'cursor:pointer;text-align:left;position:relative;overflow:hidden;' +
     'animation:ctaPulse 2.4s ease-in-out infinite;">' +
+    '<span class="cta-shimmer"></span>' +
     '<div style="font-size:36px;flex-shrink:0;line-height:1;">' + mod.icon + '</div>' +
     '<div style="flex:1;min-width:0;">' +
       '<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px;">' + ctaLabel + '</div>' +
       '<div style="font-size:15px;font-weight:800;color:var(--text1);font-family:\'Syne\',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + mod.title + '</div>' +
     '</div>' +
-    '<div style="font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0;">Continuar →</div>' +
+    '<div style="font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0;">Continuar <span class="cta-arrow">→</span></div>' +
   '</button>';
 }
 window.renderHomeCTA = renderHomeCTA;

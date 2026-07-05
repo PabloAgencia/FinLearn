@@ -534,6 +534,12 @@ function completeModule() {
     }
   }
 
+  // Retrigger del pop escalonado de las stats (XP/racha/rango) en cada apertura
+  var _celStatEls = document.querySelectorAll('#m-cel .cel-stat');
+  _celStatEls.forEach(function(elx) { elx.classList.remove('cel-stat-pop'); });
+  void document.getElementById('m-cel')?.offsetHeight;
+  _celStatEls.forEach(function(elx) { elx.classList.add('cel-stat-pop'); });
+
   if (!window._celPendingAfterLevelUp) openModal('m-cel');
   SFX.moduleComplete();
   if ((S.completedMods || []).length === 1) {

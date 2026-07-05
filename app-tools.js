@@ -742,6 +742,7 @@ function showDailyRewardModal(dayCount) {
   if (typeof SFX !== 'undefined' && SFX.achievement) SFX.achievement();
 }
 
+var _scLastRenderedStreak = null;
 function renderStreakCard() {
   var el = document.getElementById('streak-card-widget');
   if (!el) return;
@@ -830,6 +831,16 @@ function renderStreakCard() {
     +   '<button class="sc-share-btn" onclick="showReferralSheet()">🎁 Invitar amigos</button>'
     + '</div>'
     + '</div>';
+
+  // Pop del numero de racha cuando sube respecto al ultimo render
+  if (_scLastRenderedStreak !== null && streak > _scLastRenderedStreak) {
+    var numEl = el.querySelector('.sc-card-num');
+    if (numEl) {
+      numEl.classList.add('sc-num-bump');
+      setTimeout(function() { numEl.classList.remove('sc-num-bump'); }, 450);
+    }
+  }
+  _scLastRenderedStreak = streak;
 }
 window.renderStreakCard = renderStreakCard;
 
