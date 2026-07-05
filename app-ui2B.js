@@ -289,7 +289,7 @@ function _showModuleSummary(stats) {
       <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">${passed ? '¡Excelente! Dominas el tema.' : pct >= 60 ? 'Casi lo tienes. Repite para aprobarlo con 80% o más.' : 'Necesitas repetir el módulo. La repetición es clave para afianzar.'}</div>
       ${passed ? `<button class="btn btn-primary btn-block" onclick="_closeModuleSummary();completeModule();" style="margin-bottom:8px;">✓ Completar módulo</button>` : ''}
       <button class="btn ${passed ? 'btn-ghost btn-sm' : 'btn-primary'} btn-block" onclick="_retryModule()">🔄 Repetir módulo</button>
-      <button class="btn btn-ghost btn-sm btn-block" onclick="_closeModuleSummary();goTo('home');" style="margin-top:8px;">← Volver al inicio</button>
+      <button class="btn btn-ghost btn-sm btn-block" onclick="if(typeof SFX!=='undefined')SFX.back();_closeModuleSummary();goTo('home');" style="margin-top:8px;">← Volver al inicio</button>
     </div>`;
   modal.style.display = 'flex';
 }

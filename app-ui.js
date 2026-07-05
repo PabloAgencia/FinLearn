@@ -1260,7 +1260,7 @@ function renderFinalExamIntro(c, nextBtn) {
           Debes completar los 5 módulos del curso (Módulos 1-5) antes de enfrentarte al Reto Final.<br><br>
           Tu dominio actual: <strong style="color:var(--accent)">${S.completedMods.filter(id => id < 5).length}/5 módulos</strong>
         </div>
-        <button class="btn btn-secondary" style="margin-top:24px;" onclick="safeGoHome()">← Volver al inicio</button>
+        <button class="btn btn-secondary" style="margin-top:24px;" onclick="if(typeof SFX!=='undefined')SFX.back();safeGoHome()">← Volver al inicio</button>
       </div>`;
     nextBtn.disabled = true; nextBtn.style.opacity = '.3';
     return;

@@ -788,7 +788,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-lesson">
       <div class="top-nav">
-        <button class="btn btn-ghost btn-sm" onclick="safeGoHome()" style="padding:8px 12px;">🏠 Inicio</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();safeGoHome()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <button class="audio-btn" id="audio-read-btn" onclick="AUDIO.toggle()" title="Leer en voz alta">🔊</button>
         <!-- SPEEDRUN TIMER ──────────────────────────────────────── -->
         <div id="speedrun-timer-wrap" style="display:none;align-items:center;gap:6px;padding:0 8px;">
@@ -804,7 +804,7 @@
 
       <!-- Module navigation bar -->
       <div class="lesson-mod-bar" id="lesson-mod-bar">
-        <button class="lmb-back" onclick="safeGoHome()">← Módulos</button>
+        <button class="lmb-back" onclick="if(typeof SFX!=='undefined')SFX.back();safeGoHome()">← Módulos</button>
         <div class="lmb-pills" id="lmb-pills"></div>
         <div class="lmb-nav">
           <button class="lmb-btn" id="lmb-prev" onclick="lessonPrev()" disabled>‹</button>
@@ -851,7 +851,7 @@
           <button class="btn btn-primary btn-block" onclick="shareCert('twitter')">🐦 Compartir en X (Twitter)</button>
           <button class="btn btn-block" style="background:linear-gradient(135deg,#0088cc,#2ca5e0);color:#fff;" onclick="shareCert('linkedin')">💼 Compartir en LinkedIn</button>
           <button class="btn btn-secondary btn-block" onclick="toast('⬇️ Descargando…','El certificado PNG está listo','t-success')">⬇️ Descargar imagen</button>
-          <button class="btn btn-ghost btn-block" onclick="goTo('home')">Volver al inicio</button>
+          <button class="btn btn-ghost btn-block" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')">Volver al inicio</button>
         </div>
       </div>
     </div>
@@ -1794,7 +1794,7 @@
 ══════════════════════════════════════ -->
 <div class="screen" id="s-stats">
   <div class="top-nav">
-    <button class="btn btn-ghost btn-sm" onclick="goTo('profile')" style="padding:8px 12px;">← Perfil</button>
+    <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
     <div class="logo">Mis Estadísticas</div>
     <div style="width:80px;"></div>
   </div>
@@ -2647,10 +2647,10 @@
 <script src="app-data2-m.js?v=2.3.0"></script>
 <script src="app-state.js?v=2.4.3"></script>
 <script src="app-supabase.js?v=2.4.1"></script>
-<script src="app-ui.js?v=2.4.1"></script>
+<script src="app-ui.js?v=2.4.2"></script>
 <script src="app-uiB.js?v=2.5.5"></script>
 <script src="app-ui2.js?v=2.5.4"></script>
-<script src="app-ui2B.js?v=2.4.2"></script>
+<script src="app-ui2B.js?v=2.4.3"></script>
 <script src="app-game.js?v=2.3.0"></script>
 <script src="app-game2.js?v=2.3.0"></script>
 <script src="app-tools.js?v=2.5.5"></script>
