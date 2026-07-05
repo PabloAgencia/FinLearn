@@ -29,10 +29,11 @@ const AI_COACH = (() => {
           + ' | Cash: €' + Math.round(S.cash||0)
           + ' | Patrimonio: €' + Math.round(S.patrimony||0)
           + ' | Carrera: ' + (S.career||'junior');
+        const _sbu = typeof getSBUser === 'function' ? getSBUser() : null;
         const res = await fetch('/api/coach', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ question: userQuestion, context }),
+          body: JSON.stringify({ question: userQuestion, context, userId: _sbu?.id || '' }),
           signal: AbortSignal.timeout(10000),
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);

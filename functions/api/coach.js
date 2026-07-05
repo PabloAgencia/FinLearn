@@ -1,5 +1,5 @@
 // POST /api/coach — FinAI Coach usando Groq (llama-3.3-70b-versatile)
-// Cloudflare Pages Function — env.GROQ_API_KEY
+// Cloudflare Pages Function — env.GROQ_API_KEY, env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -9,9 +9,25 @@ export async function onRequestPost(context) {
   let body;
   try { body = await request.json(); } catch { return json({ error: 'Invalid JSON' }, 400); }
 
-  const { question, context: userContext } = body || {};
+  const { question, context: userContext, userId } = body || {};
   if (!question) return json({ error: 'No question' }, 400);
   if (!env.GROQ_API_KEY) return json({ error: 'Coach no disponible', text: 'El coach no está configurado en este momento.' }, 503);
+
+  // Verificar premium en el SERVIDOR (antes solo se comprobaba en el navegador,
+  // asi que cualquiera que supiera la URL podia llamar al endpoint sin pagar).
+  if (env.SUPABASE_URL && env.SUPABASE_SERVICE_KEY) {
+    if (!userId) return json({ error: 'No autenticado', text: 'Inicia sesión para usar el coach.' }, 401);
+    try {
+      const r = await fetch(`${env.SUPABASE_URL}/rest/v1/user_state?user_id=eq.${userId}&select=state`, {
+        headers: { apikey: env.SUPABASE_SERVICE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}` },
+      });
+      const rows = await r.json();
+      const isPrem = rows?.[0]?.state?._premium === '1';
+      if (!isPrem) return json({ error: 'No premium', text: 'Esta función es solo para usuarios Elite.' }, 403);
+    } catch (e) {
+      return json({ error: 'Error verificando cuenta', text: 'No se pudo verificar tu cuenta. Inténtalo de nuevo.' }, 500);
+    }
+  }
 
   const systemPrompt = `Eres FinAI, el coach financiero personal dentro de FinLearn. Responde SIEMPRE en español, de forma concisa (máximo 3 frases), práctica y personalizada según el contexto del usuario. No uses markdown, solo texto plano.`;
 
