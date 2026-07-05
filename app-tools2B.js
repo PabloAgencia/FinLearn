@@ -6,6 +6,26 @@ const AI_COACH = (() => {
   function _getApiKey()      { return localStorage.getItem('finai_api_key') || ''; }
   function _getApiProvider() { return localStorage.getItem('finai_api_provider') || 'anthropic'; }
 
+  /**
+   * _getEffectiveFinancials — Usa datos REALES (F25 + presupuesto) si el
+   * usuario los ha rellenado; si no, cae al simulador de juego. Antes el
+   * Coach analizaba SIEMPRE el simulador aunque el paywall prometiera
+   * "analiza tus datos reales" — esto lo hace cierto de verdad.
+   */
+  function _getEffectiveFinancials() {
+    const usingReal = S.realPatrimony !== null && S.realPatrimony !== undefined;
+    const realA = S.realAssets || {};
+    const realD = S.realDebts  || {};
+    return {
+      usingReal: usingReal,
+      patrimony: usingReal ? S.realPatrimony : (S.patrimony || 0),
+      cash:      usingReal ? (realA.checking || 0) : (S.cash || 0),
+      invested:  usingReal ? ((realA.funds||0) + (realA.stocks||0)) : (S.invested || 0),
+      totalDebt: usingReal ? ((realD.mortgage||0)+(realD.loans||0)+(realD.cards||0)) : (S.debts||[]).reduce(function(a,d){return a+(d.balance||0);},0),
+      salary:    (S._budget && S._budget.income) ? S._budget.income : (S.lifeSalary || (typeof calcMonthlySalary === 'function' ? calcMonthlySalary() : 0) || 0),
+    };
+  }
+
   /* ── fetchFinAIResponse ─────────────────────────────────────
      Llama a la API con contexto real del jugador.
      Soporta: anthropic (Claude) | deepseek | openai
@@ -21,13 +41,16 @@ const AI_COACH = (() => {
     if (!FINAI_API_KEY && isPremium()) {
       try {
         if (!navigator.onLine) return '📵 Sin conexión. El FinAI Coach no está disponible offline.';
-        const context = 'Nombre: ' + (S.userName||'Explorador')
+        const _fin = _getEffectiveFinancials();
+        const context = (_fin.usingReal ? '[DATOS REALES del usuario, tratalos en serio] ' : '[Datos del simulador de practica] ')
+          + 'Nombre: ' + (S.userName||'Explorador')
           + ' | Nivel: ' + (S.level||1)
           + ' | XP: ' + (S.xp||0)
           + ' | Racha: ' + (S.streak||0) + 'd'
           + ' | Módulos: ' + (S.completedMods||[]).length
-          + ' | Cash: €' + Math.round(S.cash||0)
-          + ' | Patrimonio: €' + Math.round(S.patrimony||0)
+          + ' | Cash: €' + Math.round(_fin.cash)
+          + ' | Patrimonio: €' + Math.round(_fin.patrimony)
+          + ' | Deuda: €' + Math.round(_fin.totalDebt)
           + ' | Carrera: ' + (S.career||'junior');
         const _sbu = typeof getSBUser === 'function' ? getSBUser() : null;
         const res = await fetch('/api/coach', {
@@ -51,17 +74,18 @@ const AI_COACH = (() => {
 
     if (!FINAI_API_KEY) return staticFallback;
 
-    // Construir contexto financiero del jugador
-    const totalDebt  = (S.debts||[]).reduce((a,d)=>a+(d.balance||0),0);
+    // Construir contexto financiero del jugador (real si el usuario lo rellenó, si no simulado)
+    const _fin       = _getEffectiveFinancials();
+    const totalDebt  = _fin.totalDebt;
     const bizIncome  = Math.round((S.yearBizIncome||0)/12);
     const holdings   = Object.keys(S.portfolio||{}).filter(k=>S.portfolio[k]>0).join(', ') || 'ninguna';
     const gameYear   = S.gameYear || 1;
 
     // ── Contexto enriquecido del jugador ─────────────────────
     const healthScore    = typeof calcHealthScore === 'function' ? calcHealthScore() : 0;
-    const savingsRate    = (S.lifeSalary||0) > 0 ? Math.round(((S.monthlyContribution||0)/(S.lifeSalary||1))*100) : 0;
-    const fireNumber     = Math.round((S.lifeSalary||1800)*0.6*12*25);
-    const firePct        = fireNumber > 0 ? Math.round((S.patrimony||0)/fireNumber*100) : 0;
+    const savingsRate    = _fin.salary > 0 ? Math.round(((S.monthlyContribution||0)/_fin.salary)*100) : 0;
+    const fireNumber     = Math.round((_fin.salary||1800)*0.6*12*25);
+    const firePct        = fireNumber > 0 ? Math.round(_fin.patrimony/fireNumber*100) : 0;
     const portfolioBreakdown = Object.entries(S.portfolio||{})
       .filter(function(e){ return e[1].shares > 0; })
       .map(function(e){ var tk=e[0],p=e[1]; var price=(GAME.stockPrices&&GAME.stockPrices[tk])||(typeof STOCKS!=='undefined'&&STOCKS.find(function(s){return s.ticker===tk;})?.price)||0; return tk+':'+p.shares+'acc(€'+Math.round(price*p.shares)+')'; })
@@ -86,10 +110,13 @@ const AI_COACH = (() => {
       + '\nRespondes SIEMPRE en español, de forma directa y concisa (2-3 frases máximo).'
       + '\nUsas los números EXACTOS del jugador. Nunca das disclaimers legales. Eres directo, útil, motivador.'
       + '\nSi el usuario hace pregunta de seguimiento, tienes en cuenta la conversación previa.'
+      + (_fin.usingReal
+          ? '\nIMPORTANTE: los datos financieros de abajo son REALES (los introdujo el propio usuario en su tracker de patrimonio), no un juego — trátalos con la seriedad de un asesor de verdad.'
+          : '\nAVISO: los datos de abajo son del SIMULADOR de práctica de FinLearn, no las finanzas reales del usuario — puedes mencionarlo si es relevante para la respuesta.')
       + '\n\nESTADO DEL JUGADOR:'
       + '\nNombre: ' + (S.userName||'Explorador') + ' | Edad: ' + (S.lifeAge||25) + 'a | Año juego: ' + gameYear
-      + '\nPatrimonio: €' + Math.round(S.patrimony||0).toLocaleString('es') + ' | Cash: €' + Math.round(S.cash||0).toLocaleString('es') + ' | Invertido: €' + Math.round(S.invested||0).toLocaleString('es')
-      + '\nSalario/mes: €' + Math.round(S.lifeSalary||0).toLocaleString('es') + ' | Tasa ahorro: ' + savingsRate + '% | Deuda: €' + Math.round(totalDebt).toLocaleString('es')
+      + '\nPatrimonio: €' + Math.round(_fin.patrimony).toLocaleString('es') + ' | Cash: €' + Math.round(_fin.cash).toLocaleString('es') + ' | Invertido: €' + Math.round(_fin.invested).toLocaleString('es')
+      + '\nSalario/mes: €' + Math.round(_fin.salary).toLocaleString('es') + ' | Tasa ahorro: ' + savingsRate + '% | Deuda: €' + Math.round(totalDebt).toLocaleString('es')
       + '\nCartera: ' + portfolioBreakdown
       + '\nNegocios: ' + bizDetails + ' | Ingresos biz/mes: €' + bizIncome.toLocaleString('es')
       + '\nSalud financiera: ' + healthScore + '/100 | Racha: ' + (S.streak||0) + 'd | XP: ' + (S.xp||0)
@@ -168,13 +195,18 @@ const AI_COACH = (() => {
      Sin API key. Analiza S en tiempo real y genera consejos personalizados.
   ─────────────────────────────────────────────────────────────────── */
   function _analyze() {
-    const patrimony   = S.patrimony   || 0;
-    const cash        = S.cash        || 0;
-    const invested    = S.invested    || 0;
-    const salary      = S.lifeSalary  || calcMonthlySalary?.() || 0;
-    const totalDebt   = (S.debts||[]).reduce((a,d)=>a+(d.balance||0),0);
-    const highDebt    = (S.debts||[]).filter(d=>(d.rate||0)>=15);
-    const mortgage    = (S.mortgages||[]).filter(m=>!m.paid);
+    const _fin        = _getEffectiveFinancials();
+    const patrimony   = _fin.patrimony;
+    const cash        = _fin.cash;
+    const invested    = _fin.invested;
+    const salary      = _fin.salary;
+    const totalDebt   = _fin.totalDebt;
+    // highDebt/mortgage necesitan tipo de interes por deuda, dato que el
+    // tracker de patrimonio real no pide — solo se rellenan con datos del
+    // simulador (si el usuario usa datos reales, estas reglas simplemente
+    // no se disparan, no rompen nada).
+    const highDebt    = _fin.usingReal ? [] : (S.debts||[]).filter(d=>(d.rate||0)>=15);
+    const mortgage    = _fin.usingReal ? [] : (S.mortgages||[]).filter(m=>!m.paid);
     const savingsRate = salary > 0 ? Math.round((S.monthlyContribution||0)/salary*100) : 0;
     const cashPct     = patrimony > 0 ? Math.round(cash/patrimony*100) : 100;
     const career      = getCurrentCareer?.() || { id:'junior' };
@@ -1019,11 +1051,12 @@ const AI_COACH = (() => {
       document.body.appendChild(modal);
     }
 
+    const _finQ     = _getEffectiveFinancials();
     const tips      = _prioritizeTips(_analyze()); // ordenados por urgencia
-    const totalDebt = (S.debts||[]).reduce((a,d)=>a+(d.balance||0),0);
+    const totalDebt = _finQ.totalDebt;
     const healthScore = typeof calcHealthScore === 'function' ? calcHealthScore() : 0;
-    const savRate   = (S.lifeSalary||0) > 0 ? Math.round(((S.monthlyContribution||0)/(S.lifeSalary||1))*100) : 0;
-    const firePct   = Math.round((S.patrimony||0)/Math.max(1,(S.lifeSalary||1800)*0.6*12*25)*100);
+    const savRate   = _finQ.salary > 0 ? Math.round(((S.monthlyContribution||0)/_finQ.salary)*100) : 0;
+    const firePct   = Math.round(_finQ.patrimony/Math.max(1,(_finQ.salary||1800)*0.6*12*25)*100);
 
     // Top 3 insights prioritizados
     const insights = tips.slice(0,3);
@@ -1044,9 +1077,14 @@ const AI_COACH = (() => {
           '<button style="background:none;border:none;color:rgba(255,255,255,.4);font-size:18px;cursor:pointer;padding:4px 6px;line-height:1;flex-shrink:0;" onclick="document.getElementById(\'m-coach\').style.display=\'none\'">✕</button>' +
         '</div>' +
 
+        // Fuente de datos: real (tracker de patrimonio) vs simulador de practica
+        (_finQ.usingReal
+          ? '<div class="coach-data-badge coach-data-real">🏦 Analizando tu patrimonio real</div>'
+          : '<div class="coach-data-badge coach-data-sim">🎮 Analizando el simulador · <a href="#" onclick="closeModal(\'m-coach\');F25_open();" style="color:var(--accent);">Mete tus datos reales →</a></div>') +
+
         // Stats bar
         '<div class="coach-stats-bar">' +
-          '<div class="coach-stat-pill"><span class="coach-stat-icon">💰</span><span>€' + _fmt(S.patrimony||0) + '</span></div>' +
+          '<div class="coach-stat-pill"><span class="coach-stat-icon">💰</span><span>€' + _fmt(_finQ.patrimony) + '</span></div>' +
           '<div class="coach-stat-pill"><span class="coach-stat-icon">💚</span><span>' + healthScore + '/100</span></div>' +
           '<div class="coach-stat-pill"><span class="coach-stat-icon">📈</span><span>' + firePct + '% FIRE</span></div>' +
           '<div class="coach-stat-pill"><span class="coach-stat-icon">🔥</span><span>' + (S.streak||0) + 'd racha</span></div>' +

@@ -109,6 +109,7 @@ const DEFAULTS = {
   realDebts:  null,         // { mortgage, loans, cards }
   realPatrimony: null,      // número: patrimonio neto real calculado
   realPatrimonyDate: null,  // ISO date de última actualización
+  realPatrimonyHistory: [], // [{date:'YYYY-MM-DD', value}] — 1 snapshot por día que guardas
   /* ── F27 Plan de Acción Personalizado ── */
   actionPlan: null,           // [{ id, status, title, ... }]
   _actionPlanHash: null,      // hash de datos para detectar cambios

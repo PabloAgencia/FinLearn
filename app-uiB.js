@@ -1406,9 +1406,14 @@ window.renderLearningPathCard = renderLearningPathCard;
    · F25_save()          → guarda, calcula y va al summary
 ══════════════════════════════════════════════════════════════════ */
 
-/** Abre el modal y precarga valores guardados si existen. */
+/**
+ * Abre el modal y precarga valores guardados si existen.
+ * Meter y ver tu patrimonio real es gratis para todos — es el gancho
+ * de retencion mas fuerte de la app (tu dinero real, no un juego) y
+ * necesita enganchar ANTES de pedir pago, no despues. Elite anade el
+ * coach IA sobre estos datos, proyecciones avanzadas y comparativas.
+ */
 function F25_open() {
-  if (!isPremium()) { PM_showPaywall('f25'); return; }
   openModal('m-real-patrimony');
   F25_tab('assets');
   F25_preload();
@@ -1507,6 +1512,13 @@ function F25_save() {
   S.realDebts        = debts;
   S.realPatrimony    = realNet;
   S.realPatrimonyDate = new Date().toISOString();
+
+  // Snapshot para el historico (1 punto por dia — si ya guardaste hoy, lo actualiza en vez de duplicar)
+  if (!Array.isArray(S.realPatrimonyHistory)) S.realPatrimonyHistory = [];
+  var _todayKey = new Date().toLocaleDateString('sv');
+  var _existing = S.realPatrimonyHistory.find(function(p) { return p.date === _todayKey; });
+  if (_existing) { _existing.value = realNet; }
+  else { S.realPatrimonyHistory.push({ date: _todayKey, value: realNet }); }
 
   // Regenerar hero message con datos reales
   S.onboardHeroMsg = _ob_buildHeroMsg();
@@ -1642,8 +1654,77 @@ function F25_renderSummary() {
       ${advice.map(a => `<div class="rpt-adv-item">${a}</div>`).join('')}`;
   }
 
+  // Grafica de evolucion del patrimonio real
+  _f25_renderHistoryChart();
+
   // Actualizar hero badge tras guardar
   _f25_renderHeroBadge();
+}
+
+/**
+ * Dibuja la evolucion del patrimonio neto REAL a lo largo del tiempo.
+ * Es el snapshot mas importante de la app: ver TU dinero real creciendo
+ * mes a mes es lo que hace que abandonar la app duela de verdad, mucho
+ * mas que cualquier racha o XP simulados.
+ */
+function _f25_renderHistoryChart() {
+  const wrap = document.getElementById('rpt-history-card');
+  if (!wrap) return;
+  const pts = Array.isArray(S.realPatrimonyHistory) ? S.realPatrimonyHistory : [];
+  if (pts.length < 2) {
+    wrap.innerHTML = '<div class="rpt-history-empty">📈 Vuelve a actualizar tus datos otro día para ver aquí tu evolución real.</div>';
+    return;
+  }
+
+  const values  = pts.map(p => p.value);
+  const minV    = Math.min.apply(null, values);
+  const maxV    = Math.max.apply(null, values);
+  const rangeV  = (maxV - minV) || 1;
+  const firstV  = values[0];
+  const lastV   = values[values.length - 1];
+  const deltaV  = lastV - firstV;
+  const deltaPos = deltaV >= 0;
+
+  const VW = 320, VH = 110, PL = 8, PR = 8, PT = 14, PB = 8;
+  const CW = VW - PL - PR, CH = VH - PT - PB;
+  const n  = pts.length;
+  const xOf = i => PL + (n === 1 ? 0 : (i / (n - 1)) * CW);
+  const yOf = v => PT + CH - ((v - minV) / rangeV) * CH;
+
+  const coords = values.map((v, i) => [xOf(i), yOf(v)]);
+  let linePath = 'M' + coords[0][0].toFixed(1) + ',' + coords[0][1].toFixed(1);
+  for (let i = 1; i < coords.length; i++) {
+    const prev = coords[i-1], curr = coords[i];
+    const cpx = (prev[0] + curr[0]) / 2;
+    linePath += ' C' + cpx.toFixed(1) + ',' + prev[1].toFixed(1) + ' ' + cpx.toFixed(1) + ',' + curr[1].toFixed(1) + ' ' + curr[0].toFixed(1) + ',' + curr[1].toFixed(1);
+  }
+  const lastX = coords[n-1][0].toFixed(1), lastY = coords[n-1][1].toFixed(1);
+  const fillPath = linePath + ' L' + lastX + ',' + (PT+CH).toFixed(1) + ' L' + PL + ',' + (PT+CH).toFixed(1) + ' Z';
+
+  function fmtV(v) {
+    return Math.abs(v) >= 1000000 ? (v/1000000).toFixed(1)+'M' :
+           Math.abs(v) >= 1000    ? (v/1000).toFixed(0)+'k'    : Math.round(v).toString();
+  }
+  const col = deltaPos ? '#00e5a0' : '#ef4444';
+  const gid = 'rhg' + (Date.now() % 99999);
+  const fmtDate = d => new Date(d).toLocaleDateString('es-ES', { day:'numeric', month:'short' });
+
+  wrap.innerHTML =
+    '<div class="rpt-history-head">'
+    + '<div class="rpt-history-title">📈 Tu evolución real</div>'
+    + '<div class="rpt-history-delta" style="color:' + col + '">' + (deltaPos ? '+' : '') + '€' + fmtV(Math.abs(deltaV)).replace('-','') + ' desde ' + fmtDate(pts[0].date) + '</div>'
+    + '</div>'
+    + '<svg viewBox="0 0 ' + VW + ' ' + VH + '" preserveAspectRatio="none" style="width:100%;height:110px;display:block;">'
+    + '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0%" stop-color="' + col + '" stop-opacity="0.28"/>'
+    + '<stop offset="100%" stop-color="' + col + '" stop-opacity="0"/>'
+    + '</linearGradient></defs>'
+    + '<path d="' + fillPath + '" fill="url(#' + gid + ')"/>'
+    + '<path d="' + linePath + '" fill="none" stroke="' + col + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
+    + '<circle cx="' + lastX + '" cy="' + lastY + '" r="4" fill="' + col + '"/>'
+    + '<circle cx="' + lastX + '" cy="' + lastY + '" r="8" fill="' + col + '" opacity="0.15"/>'
+    + '</svg>'
+    + '<div class="rpt-history-range">' + fmtDate(pts[0].date) + ' → ' + fmtDate(pts[n-1].date) + ' · ' + n + ' actualizaciones</div>';
 }
 
 /**

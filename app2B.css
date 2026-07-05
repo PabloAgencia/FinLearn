@@ -22,6 +22,16 @@
 .coach-modal-title  { font-size: 17px; font-weight: 800; font-family: 'Syne', sans-serif; }
 .coach-modal-sub    { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
+.coach-data-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 7px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.coach-data-real { background: rgba(0,229,160,.08); color: var(--accent); }
+.coach-data-sim  { background: rgba(255,255,255,.03); color: var(--text3); }
+
 .coach-stats-bar {
   display: flex;
   gap: 6px;
@@ -1312,6 +1322,31 @@
   margin-bottom: 4px;
 }
 .rpt-sn-date   { font-size: 11px; color: var(--text3); }
+
+/* Historial / evolución del patrimonio real */
+.rpt-history-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 14px 6px;
+  margin-bottom: 14px;
+}
+.rpt-history-empty {
+  font-size: 13px;
+  color: var(--text3);
+  text-align: center;
+  padding: 20px 10px;
+  line-height: 1.5;
+}
+.rpt-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.rpt-history-title { font-size: 12px; font-weight: 700; color: var(--text2); }
+.rpt-history-delta { font-size: 11px; font-weight: 700; font-family: 'DM Mono', monospace; }
+.rpt-history-range { font-size: 10px; color: var(--text3); text-align: center; margin-top: 4px; }
 
 /* Breakdown */
 .rpt-breakdown {
