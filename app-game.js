@@ -1062,19 +1062,6 @@ function _updateSliderFill(sliderId, fillId, min, max) {
 
 
 /* ══════════════════════════════════════════════════════════════════
-   FinAI — ASISTENTE DE IA FINANCIERO (STUB)
-   ─────────────────────────────────────────────────────────────────
-   Actualmente es un stub: abre/cierra el modal de FinAI.
-   En futuras versiones contendrá la lógica del chat con IA.
-══════════════════════════════════════════════════════════════════ */
-
-const FinAI = {
-  open()  { openModal('m-finai'); },
-  close() { closeModal('m-finai'); },
-};
-
-
-/* ══════════════════════════════════════════════════════════════════
    DYNCERT — CERTIFICADO DINÁMICO EN CANVAS
    ─────────────────────────────────────────────────────────────────
    Genera un certificado personalizado usando Canvas 2D.

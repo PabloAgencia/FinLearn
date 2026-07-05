@@ -2516,47 +2516,6 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════
-     MODAL: FINAI — Asistente Financiero Inteligente
-     Abierto por FinAI.open(). Chat con insights del módulo activo.
-     Eliminar: borrar este bloque + FinAI en script.js
-════════════════════════════════════════════════════════ -->
-<div class="modal-bg" id="m-finai">
-  <div class="modal finai-modal" style="max-width:440px;padding:0;overflow:hidden;">
-
-    <!-- Header -->
-    <div class="finai-header" style="padding:18px 20px 14px;">
-      <div class="finai-header-left">
-        <div class="finai-avatar">🤖</div>
-        <div>
-          <div class="finai-name">FinAI <span class="badge-pro">EXPERT</span></div>
-          <div class="finai-status">
-            <span class="finai-status-dot"></span>
-            <span id="finai-modal-status">Analizando lección...</span>
-          </div>
-        </div>
-      </div>
-      <div class="finai-header-right">
-        <div class="finai-elite-badge">✦ ELITE</div>
-        <button class="modal-close" style="position:static;margin-left:8px;" onclick="FinAI.close()">✕</button>
-      </div>
-    </div>
-
-    <!-- Chat body — mensajes inyectados por FinAI._addMessage() -->
-    <div id="finai-chat" class="finai-chat-body" style="min-height:200px;max-height:340px;border-top:1px solid var(--border);"></div>
-
-    <!-- Input bloqueado (desbloqueable con Elite) -->
-    <div class="finai-input-wrap">
-      <div class="finai-input-locked" onclick="upgradeToPremium()">
-        <span class="finai-input-icon">🔒</span>
-        <span class="finai-input-text">Chat libre disponible en FinLearn Elite ✦</span>
-        <span class="finai-input-cta">Desbloquear →</span>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════
      MODAL: LÍMITE DIARIO — Daily lesson cap para usuarios Free
      Abierto por checkDailyLimit() en script.js cuando
      S.lessonsToday >= FREE_DAILY_LIMIT (3).
@@ -2651,7 +2610,7 @@
 <script src="app-uiB.js?v=2.5.5"></script>
 <script src="app-ui2.js?v=2.5.4"></script>
 <script src="app-ui2B.js?v=2.4.3"></script>
-<script src="app-game.js?v=2.3.2"></script>
+<script src="app-game.js?v=2.3.3"></script>
 <script src="app-game2.js?v=2.3.0"></script>
 <script src="app-tools.js?v=2.5.5"></script>
 <script src="app-toolsB.js?v=2.4.0"></script>
