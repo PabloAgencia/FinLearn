@@ -752,6 +752,9 @@ body.light-mode .sc-card { background: #fff; border-color: #e0e0e0; }
   z-index: 999;
   padding: 0;
 }
+@media (min-width: 480px) {
+  .sc-modal-backdrop { align-items: center; padding: 20px; }
+}
 
 /* ── Modal box ── */
 .sc-modal-box {
@@ -767,6 +770,9 @@ body.light-mode .sc-card { background: #fff; border-color: #e0e0e0; }
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+@media (min-width: 480px) {
+  .sc-modal-box { border-radius: 28px; }
 }
 body.light-mode .sc-modal-box { background: #fff; }
 
