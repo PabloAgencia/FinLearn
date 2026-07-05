@@ -763,8 +763,8 @@ function SAAS_selectPlan(plan) {
 async function SAAS_startPayment() {
   const isAnnual = _saasPlan === 'annual';
   const priceId  = isAnnual
-    ? 'price_1TLWFZQn1UY1PTsHHL5W0XCU'
-    : 'price_1TLSi1Qn1UY1PTsHdQ5YOmX5';
+    ? 'price_1Tps6RQn1UY1PTsHZmWgJw9y'
+    : 'price_1Tps6DQn1UY1PTsHXXuXss39';
 
   document.getElementById('saas-step-plan')?.style?.setProperty('display', 'none');
   const loading = document.getElementById('saas-step-loading');
