@@ -1,7 +1,57 @@
 # AUDITORÍA FINLEARN — Documento Completo
-**Fecha:** 10 junio 2026  
+**Fecha:** 10 junio 2026 (actualizado 5 julio 2026 — ver sección 0)
 **Versión de estado:** `finlearn_v9_state`  
 **Arquitectura:** Vanilla JS PWA · ~40 archivos JS · Sin framework
+
+---
+
+## 0. ACTUALIZACIÓN — 5 JULIO 2026 (rama `develop`, pendiente merge a `main`)
+
+Sesión de lanzamiento: paywall unificado, onboarding recortado, home reorganizado
+con acordeones, micro-animaciones, y QA real en navegador (móvil + escritorio)
+que encontró y corrigió varios bugs de producción no detectados en esta auditoría.
+
+### Resuelto desde esta auditoría
+- **5.1 / P1 — Calc-gate genérico** → ✅ RESUELTO. Las 11 calculadoras muestran ahora
+  2 beneficios específicos de lo que se bloquea (`_CG_PERKS` en `app-calc-gate.js`).
+- **5.9 — Paywall sin coherencia** → ✅ RESUELTO. `m-paywall` y `m-premium-saas`
+  muestran los mismos 6 beneficios y el mismo nombre ("Elite"); antes prometía
+  "gratis ahora" y llevaba a un pago real de 7,99€/mes.
+- **6.2 — MODULES con entradas null** → ✅ RESUELTO. Blindados todos los
+  `.map`/`.find` sin guardia en `app-ui.js`, `app-supabase.js`, `app-state.js`,
+  `app-ui2.js`, `app-ui2B.js`, `app-uiB.js`. El origen exacto de las 2 entradas
+  inválidas al final del array no se identificó (no está en el código fuente
+  como literal, posible artefacto del pipeline de generación de contenido).
+- **B6 — Sin referral UI** → ✅ YA NO APLICA. Se encontró en QA que la UI de
+  referidos (código para compartir + campo "añadir amigo") ya existe en el
+  home, contradiciendo esta auditoría — verificar antes de repetir este punto.
+
+### Bugs nuevos encontrados y corregidos (no estaban en esta auditoría)
+- Handoff roto entre pantalla de subir de nivel y modal de celebración si el
+  usuario no clicaba antes del auto-cierre a 5s (`_dismissLevelUpOverlay()`).
+- Modal de racha diaria (`.sc-modal-backdrop`) sin `align-items:center` en
+  pantallas anchas — aparecía pegado abajo en vez de centrado.
+- Rejilla de avatares del onboarding (4 columnas) desbordaba a la derecha en
+  móviles <400px de ancho.
+- Los botones "Continuar" de onboarding (objetivo y nombre) solo se veían
+  desactivados pero dejaban avanzar sin elegir nada — el guard de JS
+  comprobaba `S.goal`, que tiene un default no-vacío en `DEFAULTS`.
+- Enlaces de "Acciones de hoy" que apuntaban a secciones movidas dentro de
+  los nuevos acordeones "Explorar más" no hacían nada (`scrollIntoView`
+  sobre un elemento con `display:none` no funciona) — nueva función
+  `scrollToHomeTarget()` en `app-tools3.js` abre el acordeón antes de scrollear.
+- Escudos de racha: protegían la racha entera sin importar cuántos días
+  llevaras fuera (podía ser 1 semana). Ahora solo cubren 1 día de ausencia,
+  como Duolingo — 2+ días seguidos rompen la racha igual.
+- Lección aprendida sobre caché: un fix en el repo no basta si no se
+  bumpea `?v=X.X.X` del archivo en `index.html` — el CDN/SW puede seguir
+  sirviendo la versión vieja aunque el deploy sea correcto.
+
+### Pendiente de esta sesión
+- Unificar los 3 estilos de botón "atrás" distintos que coexisten (`.nav-back`
+  circular glassmorphism, `.tool-back` chip naranja en calculadoras, `.btn
+  btn-ghost` de texto plano en varias pantallas) — en progreso.
+- Merge `develop` → `main` (pendiente de confirmación explícita del usuario).
 
 ---
 
@@ -302,7 +352,7 @@ Hay **11 calculadoras** organizadas en 3 grupos + 3 simuladores vinculados.
 
 ## 5. PROBLEMAS UX/UI DETECTABLES
 
-### 5.1 Fricción de registro — Alta
+### 5.1 Fricción de registro — Alta — ✅ RESUELTO 5 jul 2026 (ver sección 0)
 **Problema:** El calc-gate muestra el CTA de registro dentro del modal de la calculadora, sin contexto de por qué registrarse o qué valor adicional obtiene el usuario al hacerlo. El CTA es genérico.  
 **Impacto:** Alta tasa de abandono en el punto de mayor intención del usuario (acaba de calcular algo).  
 **Sugerencia:** Personalizar el mensaje del gate según la calculadora. "Regístrate para ver tu fecha exacta de libertad financiera" > "Para ver el resultado completo".
@@ -337,7 +387,7 @@ Hay **11 calculadoras** organizadas en 3 grupos + 3 simuladores vinculados.
 **Problema:** El home muestra proyecciones a 10/20/30 años con rentabilidad fija elegida por el usuario (default 7%). Sin ningún aviso de que es una estimación y puede variar.  
 **Impacto:** Puede crear expectativas irrealistas. Riesgo regulatorio en el futuro.
 
-### 5.9 Premium paywall — Sin prueba gratuita clara
+### 5.9 Premium paywall — Sin prueba gratuita clara — ✅ COHERENCIA RESUELTA 5 jul 2026 (ver sección 0; el trial de 7 días sigue sin implementar, ver P8)
 **Problema:** El paywall aparece sin haber mostrado claramente qué funciones son premium antes de llegar al muro. El usuario no sabe qué pierde.  
 **Impacto:** Conversión baja: el usuario no percibe el valor diferencial antes de pagar.
 
@@ -351,7 +401,7 @@ Hay **11 calculadoras** organizadas en 3 grupos + 3 simuladores vinculados.
 **Mitigación actual:** Campos nuevos tienen valores default en DEFAULTS. Insuficiente para cambios de estructura.  
 **Recomendación:** Añadir un campo `_schemaVersion` en DEFAULTS y un migration runner en `loadState()`.
 
-### 6.2 MODULES — 2 entradas null
+### 6.2 MODULES — 2 entradas null — ✅ RESUELTO 5 jul 2026 (ver sección 0)
 **Riesgo:** `MODULES` contiene 2 entradas `null` o `undefined`. Cualquier `.find()`, `.filter()` o acceso a `.id` sin null-guard crashea.  
 **Severidad:** Media. Ya corregido en `_getNextRecommendedMod`. Pueden existir otros puntos sin null-guard.  
 **Recomendación:** Limpiar el array de datos eliminando los nulls, o añadir null-guard en todos los iteradores de MODULES.
@@ -407,7 +457,7 @@ La app es una SPA con onboarding directo. No hay páginas de contenido indexable
 El free tier da acceso parcial a calculadoras (via gate), pero el usuario no experimenta qué es premium antes de ver el paywall. No hay trial gratuito de 7 días.  
 **Impacto:** CAC alto, LTV incierto.
 
-### B6 — Sin referral visible en UI
+### B6 — Sin referral visible en UI — ❌ YA NO APLICA, ver sección 0
 El sistema de referidos existe en backend (`/api/referral-complete`, detección de código en URL) pero no hay UI visible para que el usuario genere y comparta su propio código de referido.  
 **Impacto:** El canal viral más barato no está activo.
 
@@ -415,7 +465,7 @@ El sistema de referidos existe en backend (`/api/referral-complete`, detección 
 
 ## 8. PRIORIDADES DE CONVERSIÓN (mayor impacto primero)
 
-### P1 — Personalizar el calc-gate por calculadora ⭐⭐⭐⭐⭐
+### P1 — Personalizar el calc-gate por calculadora ⭐⭐⭐⭐⭐ — ✅ HECHO 5 jul 2026
 **Por qué es el #1:** Es el punto de mayor intención en toda la app. El usuario acaba de calcular algo importante para su vida. El CTA genérico desperdicia ese momento.  
 **Qué hacer:** En cada calculadora, el gate muestra el dato bloqueado que más duele ("Tu fecha de libertad financiera es... [desbloqueada]") y el CTA es específico ("Descubre cuándo te liberas").  
 **Esfuerzo:** Bajo. Es cambiar el texto del gate por calculadora.  

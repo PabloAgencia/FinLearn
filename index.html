@@ -76,7 +76,7 @@
 <link rel="stylesheet" href="app2B.css?v=2.3.0">
 <link rel="stylesheet" href="app2C.css?v=2.3.0">
 <link rel="stylesheet" href="app2D.css?v=2.3.0">
-<link rel="stylesheet" href="app-extra.css?v=2.4.2">
+<link rel="stylesheet" href="app-extra.css?v=2.4.3">
 </head>
 <body>
 
@@ -877,7 +877,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-rank">
       <div class="top-nav">
-        <button class="btn btn-ghost btn-sm" onclick="goTo('home')" style="padding:8px 12px;">← Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="logo">Ranking</div>
         <div class="tag tag-gold" id="rank-week-badge">Semana 1</div>
       </div>
@@ -917,7 +917,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-profile">
       <div class="top-nav">
-        <button class="btn btn-ghost btn-sm" onclick="goTo('home')" style="padding:8px 12px;">← Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="logo">Perfil</div>
         <button class="btn btn-secondary btn-sm" onclick="goTo('stats')" style="font-size:11px;">📊 Estadísticas</button>
         <button class="btn btn-secondary btn-sm" onclick="shareProgress()">📸 Compartir</button>
@@ -1259,7 +1259,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-realmoney" style="overflow-y:auto;">
       <div class="nav">
-        <button class="nav-back" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="nav-title">💰 Mi Dinero Real</div>
         <div></div>
       </div>
@@ -1369,7 +1369,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-community" style="overflow-y:auto;">
       <div class="nav">
-        <button class="nav-back" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="nav-title">👥 Comunidad</div>
         <div></div>
       </div>
@@ -1557,7 +1557,7 @@
     <div class="screen" id="s-life">
       <div class="top-nav">
         <div class="logo">🌱 Simulador de vida</div>
-        <button class="btn btn-ghost btn-sm" onclick="goTo('home')" style="padding:8px 12px;">← Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
       </div>
       <div class="life-inner">
         <div class="life-header">
@@ -1628,9 +1628,9 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-future">
       <div class="top-nav">
-        <button class="btn btn-ghost btn-sm" onclick="goTo('profile')" style="padding:8px 12px;">← Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="logo">🔮 Mi Futuro</div>
-        <div style="width:70px;"></div><!-- spacer para centrar logo -->
+        <div style="width:36px;"></div><!-- spacer para centrar logo -->
       </div>
       <div style="padding:16px 16px 80px;" id="fl-future-content">
 <!-- ══ FIRE CALCULATOR ══════════════════════════════════ -->
@@ -1743,9 +1743,9 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-lifestyle">
       <div class="top-nav">
-        <button class="btn btn-ghost btn-sm" onclick="goTo('home')" style="padding:8px 12px;">← Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="logo">📊 Estilos de Vida</div>
-        <div style="width:70px;"></div>
+        <div style="width:36px;"></div>
       </div>
       <div class="lifestyle-inner">
         <div class="lsc-intro">
@@ -2650,10 +2650,10 @@
 <script src="app-ui.js?v=2.4.1"></script>
 <script src="app-uiB.js?v=2.5.5"></script>
 <script src="app-ui2.js?v=2.5.3"></script>
-<script src="app-ui2B.js?v=2.4.1"></script>
+<script src="app-ui2B.js?v=2.4.2"></script>
 <script src="app-game.js?v=2.3.0"></script>
 <script src="app-game2.js?v=2.3.0"></script>
-<script src="app-tools.js?v=2.5.3"></script>
+<script src="app-tools.js?v=2.5.4"></script>
 <script src="app-toolsB.js?v=2.4.0"></script>
 <script src="app-toolsC.js?v=2.3.0"></script>
 <script src="app-tools2.js?v=2.4.0"></script>
@@ -2664,8 +2664,8 @@
 <script src="app-boss-weekly.js?v=1.0.0"></script>
 <script src="app-calc-gate.js?v=1.2.0"></script>
 <script src="app-extras.js?v=2.3.0"></script>
-<script src="app-extrasB.js?v=2.3.0"></script>
-<script src="app-extras2.js?v=2.3.0"></script>
+<script src="app-extrasB.js?v=2.3.1"></script>
+<script src="app-extras2.js?v=2.3.1"></script>
 <script src="app-extras2B.js?v=2.5.0"></script>
 <script src="app-onboarding.js?v=2.3.0"></script>
 <script src="app-share.js?v=2.3.0"></script>

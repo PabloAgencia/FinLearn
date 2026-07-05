@@ -138,7 +138,7 @@ function T1_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>🧾 Simulador IRPF 2025</h3>
       </div>
       <div class="tool-body">
@@ -306,7 +306,7 @@ function T2_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>🏠 Hipoteca vs Alquiler</h3>
       </div>
       <div class="tool-body">
@@ -478,7 +478,7 @@ function T3_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>🔥 Proyector FIRE</h3>
       </div>
       <div class="tool-body">
@@ -601,7 +601,7 @@ function T4_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>❄️ Bola de Nieve de Deudas</h3>
       </div>
       <div class="tool-body">
@@ -762,7 +762,7 @@ function T5_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>📈 Interés Compuesto</h3>
       </div>
       <div class="tool-body">
@@ -911,7 +911,7 @@ function T6_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>💎 Net Worth Tracker</h3>
       </div>
       <div class="tool-body">
@@ -1112,7 +1112,7 @@ function T7_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>🏦 Simulador de Hipoteca</h3>
       </div>
       <div class="tool-body">

@@ -4,7 +4,7 @@ function T8_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>📆 DCA vs Inversión Única</h3>
       </div>
       <div class="tool-body">
@@ -96,7 +96,7 @@ function T9_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>⚡ Regla del 72</h3>
       </div>
       <div class="tool-body">
@@ -205,7 +205,7 @@ function T10_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>🛡️ Fondo de Emergencia</h3>
       </div>
       <div class="tool-body">
@@ -324,7 +324,7 @@ function T11_open() {
   modal.innerHTML = `
     <div class="tool-modal-inner">
       <div class="tool-modal-head">
-        <button class="tool-back" onclick="closeToolModal()">‹ Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeToolModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <h3>💳 Coste Real de la Deuda</h3>
       </div>
       <div class="tool-body">

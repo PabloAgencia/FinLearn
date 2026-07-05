@@ -2060,7 +2060,7 @@ function renderGuidesScreen() {
   el.innerHTML = `
     <div class="guide-screen">
       <div class="top-nav">
-        <button class="btn btn-ghost btn-sm" onclick="goTo('home')" style="padding:8px 12px;">← Volver</button>
+        <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="logo">📖 Guías</div>
         <div style="font-size:12px;color:var(--text3);">${read.length}/${GUIDE_ARTICLES.length} <span style="color:var(--accent);font-weight:700;">${pct}%</span></div>
       </div>
@@ -2144,7 +2144,7 @@ function openGuide(id) {
   reader.innerHTML = `
     <div class="guide-reader-scrollbar" id="guide-reader-scrollbar"></div>
     <div class="guide-reader-topbar">
-      <button class="guide-reader-back-btn" onclick="closeGuideReader()">← Volver</button>
+      <button class="nav-back" onclick="if(typeof SFX!=='undefined')SFX.back();closeGuideReader()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="guide-reader-topcat">${catInfo?.icon || ''} ${catInfo?.label || article.cat}</div>
       <div class="guide-reader-toptime">⏱ ${article.readTime || 3} min</div>
     </div>

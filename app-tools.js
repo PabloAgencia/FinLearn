@@ -2107,6 +2107,11 @@ const SFX = (() => {
     levelUp() {
       [523,659,784,1047,1319,1568].forEach((f,i) => _tone(f,'sine',0.15,0.12,i*0.09));
     },
+    // Boton "atras" — tick descendente suave y corto
+    back() {
+      _tone(392, 'sine', 0.05, 0.05, 0.00);
+      _tone(311, 'sine', 0.07, 0.04, 0.03);
+    },
   };
 })();
 
