@@ -829,9 +829,17 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
 .av-opt{
   background:var(--surface);border:2px solid var(--border);border-radius:12px;
   padding:12px;text-align:center;cursor:pointer;transition:all .2s;
+  min-width:0;
 }
 .av-opt:hover{border-color:var(--border2);}
 .av-opt.sel{border-color:var(--accent);background:rgba(0,229,160,.06);}
+/* En moviles estrechos, 4 columnas de 56px+padding no caben y desbordan a la derecha */
+@media (max-width:400px){
+  .av-grid{gap:6px;}
+  .av-opt{padding:7px 4px;}
+  .av-opt .av-sprite{width:42px;height:42px;}
+  .av-opt .av-nm{font-size:9px;}
+}
 .av-opt .av-em{font-size:28px;display:block;margin-bottom:4px;}
 .av-opt .av-nm{font-size:10px;color:var(--text2);}
 .av-opt .av-sprite{width:56px;height:56px;display:block;margin:0 auto 4px;object-fit:contain;image-rendering:pixelated;image-rendering:crisp-edges;}

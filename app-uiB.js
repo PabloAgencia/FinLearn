@@ -990,7 +990,7 @@ function renderDailyHub() {
         ? `Racha de ${streak} día${streak > 1 ? 's' : ''} en riesgo — tienes ${shields} escudo${shields > 1 ? 's' : ''}`
         : `¡Racha de ${streak} día${streak > 1 ? 's' : ''} en riesgo — sin escudos!`,
       sub: `${streak} día${streak > 1 ? 's' : ''} de racha en juego`,
-      onclick: "var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
+      onclick: "if(typeof scrollToHomeTarget==='function')scrollToHomeTarget('dca-card','center');"
     });
   }
 
@@ -1002,7 +1002,7 @@ function renderDailyHub() {
       icon: '💡',
       label: 'Pregunta del día sin responder',
       sub: '+80 XP si aciertas · mantiene tu racha',
-      onclick: "var el=document.getElementById('dca-card');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
+      onclick: "if(typeof scrollToHomeTarget==='function')scrollToHomeTarget('dca-card','center');"
     });
   }
 
@@ -1015,7 +1015,7 @@ function renderDailyHub() {
       icon: '🧩',
       label: 'Problema del día sin resolver',
       sub: 'Entrena tu mente financiera · +50 XP',
-      onclick: "var el=document.getElementById('f42-daily-problem');if(el)el.scrollIntoView({behavior:'smooth',block:'center'});"
+      onclick: "if(typeof scrollToHomeTarget==='function')scrollToHomeTarget('f42-daily-problem','center');"
     });
   }
 
@@ -1059,7 +1059,7 @@ function renderDailyHub() {
         icon: '🎯',
         label: `${nearMission.title} al ${pct}%`,
         sub: `Faltan ${nearMission.goal - nearMission.progress} para +${nearMission.xp} XP`,
-        onclick: `var el=document.getElementById('${_mt}');if(el)el.scrollIntoView({behavior:'smooth',block:'${_mb}'});`
+        onclick: `if(typeof scrollToHomeTarget==='function')scrollToHomeTarget('${_mt}','${_mb}');`
       });
     }
   }

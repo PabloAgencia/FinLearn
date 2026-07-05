@@ -817,9 +817,9 @@ function renderStreakCard() {
     +       '<div class="sc-card-sublabel">d\xEDas de racha' + bonusTag + '</div>'
     +     '</div>'
     +   '</div>'
-    +   '<div class="sc-shields-row">'
+    +   '<div class="sc-shields-row" onclick="showShieldInfo()" style="cursor:pointer;">'
     +     [1,2,3].map(function(i){ return '<span class="sc-shield-pip' + (i <= shields ? '' : ' sc-shield-pip-off') + '">🛡️</span>'; }).join('')
-    +     '<div class="sc-shield-label">' + (shields > 0 ? 'Escudos: ' + shields + '/3' : 'Sin escudos') + '</div>'
+    +     '<div class="sc-shield-label">' + (shields > 0 ? 'Escudos: ' + shields + '/3' : 'Sin escudos') + ' <span style="opacity:.5;">ⓘ</span></div>'
     +   '</div>'
     + '</div>'
     + hotBadge
@@ -843,6 +843,43 @@ function renderStreakCard() {
   _scLastRenderedStreak = streak;
 }
 window.renderStreakCard = renderStreakCard;
+
+/**
+ * showShieldInfo — Explica que son los escudos de racha y como conseguirlos.
+ * ─────────────────────────────────────────────────────────────────
+ * Los escudos ya se pueden comprar en la Tienda (F50), ganar en la
+ * recompensa diaria, en la caja sorpresa y al subir de nivel, pero
+ * no habia ningun sitio que lo explicara — se abre al tocar el
+ * contador de escudos en la tarjeta de racha.
+ */
+function showShieldInfo() {
+  var shields = S.streakShields || 0;
+  var modal = document.getElementById('m-shield-info');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'm-shield-info';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = '<div class="modal-box" style="max-width:380px;text-align:center;position:relative;">'
+    + '<button class="modal-close-btn" onclick="closeModal(\'m-shield-info\')" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:var(--text3);cursor:pointer;line-height:1;">✕</button>'
+    + '<div style="font-size:48px;margin-bottom:10px;">🛡️</div>'
+    + '<div style="font-family:\'Syne\',sans-serif;font-weight:800;font-size:19px;margin-bottom:6px;">Escudos de racha</div>'
+    + '<div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px;">Si un día se te olvida completar tu acción diaria, un escudo protege tu racha automáticamente — no la pierdes. Tienes <strong style="color:var(--accent);">' + shields + '/3</strong> ahora mismo.</div>'
+    + '<div style="text-align:left;background:var(--bg2);border-radius:14px;padding:14px 16px;margin-bottom:16px;">'
+    +   '<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Cómo conseguirlos</div>'
+    +   '<div style="font-size:13px;color:var(--text1);line-height:1.9;">'
+    +     '⚡ Comprándolos en la Tienda — 200 XP cada uno<br>'
+    +     '🎁 Al azar en la recompensa diaria<br>'
+    +     '📦 Al azar en la caja sorpresa<br>'
+    +     '⭐ Algunos niveles los regalan al subir'
+    +   '</div>'
+    + '</div>'
+    + '<button class="btn btn-primary btn-block" onclick="closeModal(\'m-shield-info\');if(typeof F50_open===\'function\')F50_open();">⚡ Ir a la Tienda</button>'
+    + '</div>';
+  openModal('m-shield-info');
+}
+window.showShieldInfo = showShieldInfo;
 
 /* ══════════════════════════════════════════════════════════════════
    WRAPPED MENSUAL — resumen del mes + share al cambiar de mes
@@ -1203,8 +1240,7 @@ const FIRST_PATH_STEPS = [
     rewardCol: '#818cf8',
     cta:    'Ver misiones',
     action: function() {
-      var mc = document.getElementById('missions-card');
-      if (mc) { mc.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      if (typeof scrollToHomeTarget === 'function') scrollToHomeTarget('missions-card', 'center');
       if (typeof toggleMissionsPanel === 'function') setTimeout(function() {
         var body = document.getElementById('missions-body');
         if (body && body.style.display === 'none') toggleMissionsPanel();

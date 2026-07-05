@@ -587,6 +587,33 @@ function toggleHomeSection(id, btn) {
 }
 window.toggleHomeSection = toggleHomeSection;
 
+/**
+ * scrollToHomeTarget — Hace scroll a un elemento del home aunque este
+ * dentro de un acordeon "Explorar mas" colapsado: lo abre primero
+ * (y actualiza su flecha) y luego hace scroll con un pequeno delay
+ * para dar tiempo al reflow.
+ */
+function scrollToHomeTarget(id, block) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let opened = false;
+  let node = el.parentElement;
+  while (node) {
+    if (node.id && node.id.indexOf('home-sec-') === 0 && getComputedStyle(node).display === 'none') {
+      node.style.display = 'block';
+      const btn = node.previousElementSibling;
+      const arrow = btn && btn.querySelector && btn.querySelector('.hs-arrow');
+      if (arrow) arrow.textContent = '▴';
+      opened = true;
+    }
+    node = node.parentElement;
+  }
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: block || 'center' });
+  }, opened ? 60 : 0);
+}
+window.scrollToHomeTarget = scrollToHomeTarget;
+
 /* ── Hooks ───────────────────────────────────────────────────── */
 (function _hookMissions() {
   // executeBuy

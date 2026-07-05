@@ -68,7 +68,7 @@
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <!-- Nuestros estilos -->
-<link rel="stylesheet" href="app.css?v=2.5.1">
+<link rel="stylesheet" href="app.css?v=2.5.2">
 <link rel="stylesheet" href="appB.css?v=2.3.0">
 <link rel="stylesheet" href="appC.css?v=2.3.0">
 <link rel="stylesheet" href="appD.css?v=2.4.0">
@@ -76,7 +76,7 @@
 <link rel="stylesheet" href="app2B.css?v=2.3.0">
 <link rel="stylesheet" href="app2C.css?v=2.3.0">
 <link rel="stylesheet" href="app2D.css?v=2.3.0">
-<link rel="stylesheet" href="app-extra.css?v=2.4.1">
+<link rel="stylesheet" href="app-extra.css?v=2.4.2">
 </head>
 <body>
 
@@ -169,7 +169,7 @@
               <div class="goal-desc">Un colchón de 3-6 meses</div>
             </div>
           </div>
-          <button class="btn btn-primary btn-block" id="ob-s1-btn" onclick="obNext(2)" style="opacity:.4;cursor:not-allowed;">
+          <button class="btn btn-primary btn-block" id="ob-s1-btn" onclick="if(!S.goal){if(typeof toast==='function')toast('⚠️ Elige un objetivo','Selecciona una de las opciones para continuar','t-warn');return;}obNext(2)" style="opacity:.4;cursor:not-allowed;">
             Continuar →
           </button>
           <p class="ob-legal-note">Al continuar aceptas nuestros <a href="privacy.html" target="_blank">Términos de uso y Política de privacidad</a>. Tus datos nunca salen de tu dispositivo.</p>
@@ -197,7 +197,7 @@
             <div class="av-opt" onclick="pickAvatar('⚡','Relámpago')" data-av="⚡"><img class="av-sprite" data-sprite="rayo" src="icons/Sprites/rayo.png" alt=""><span class="av-nm">Rayo</span></div>
           </div>
           <input class="ob-input" type="text" placeholder="Tu nombre o apodo..." id="ob-name-input" maxlength="20" oninput="validateObs2()">
-          <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="if(typeof _obShowProfile==='function')_obShowProfile();obNext(5)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
+          <button class="btn btn-primary btn-block" id="ob-s2-btn" onclick="if(document.getElementById('ob-name-input').value.trim().length&lt;2){if(typeof toast==='function')toast('⚠️ Escribe tu nombre','Necesitamos al menos 2 caracteres para continuar','t-warn');return;}if(typeof _obShowProfile==='function')_obShowProfile();obNext(5)" style="opacity:.4;cursor:not-allowed;">Siguiente →</button>
         </div>
 
         <!-- STEP 3: Mini-quiz de nivel financiero -->
@@ -1259,7 +1259,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-realmoney" style="overflow-y:auto;">
       <div class="nav">
-        <button class="nav-back" onclick="goTo('home')">←</button>
+        <button class="nav-back" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="nav-title">💰 Mi Dinero Real</div>
         <div></div>
       </div>
@@ -1369,7 +1369,7 @@
     ══════════════════════════════════════ -->
     <div class="screen" id="s-community" style="overflow-y:auto;">
       <div class="nav">
-        <button class="nav-back" onclick="goTo('home')">←</button>
+        <button class="nav-back" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
         <div class="nav-title">👥 Comunidad</div>
         <div></div>
       </div>
@@ -2648,18 +2648,18 @@
 <script src="app-state.js?v=2.4.1"></script>
 <script src="app-supabase.js?v=2.4.1"></script>
 <script src="app-ui.js?v=2.4.1"></script>
-<script src="app-uiB.js?v=2.5.4"></script>
+<script src="app-uiB.js?v=2.5.5"></script>
 <script src="app-ui2.js?v=2.5.3"></script>
 <script src="app-ui2B.js?v=2.4.1"></script>
 <script src="app-game.js?v=2.3.0"></script>
 <script src="app-game2.js?v=2.3.0"></script>
-<script src="app-tools.js?v=2.5.2"></script>
+<script src="app-tools.js?v=2.5.3"></script>
 <script src="app-toolsB.js?v=2.4.0"></script>
 <script src="app-toolsC.js?v=2.3.0"></script>
 <script src="app-tools2.js?v=2.4.0"></script>
 <script src="app-tools2B.js?v=2.3.0"></script>
 <script src="app-tools2C.js?v=2.4.0"></script>
-<script src="app-tools3.js?v=2.3.1"></script>
+<script src="app-tools3.js?v=2.3.2"></script>
 <script src="app-tools3B.js?v=2.3.0"></script>
 <script src="app-boss-weekly.js?v=1.0.0"></script>
 <script src="app-calc-gate.js?v=1.1.0"></script>
