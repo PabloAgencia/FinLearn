@@ -169,7 +169,7 @@
               <div class="goal-desc">Un colchón de 3-6 meses</div>
             </div>
           </div>
-          <button class="btn btn-primary btn-block" id="ob-s1-btn" onclick="if(!S.goal){if(typeof toast==='function')toast('⚠️ Elige un objetivo','Selecciona una de las opciones para continuar','t-warn');return;}obNext(2)" style="opacity:.4;cursor:not-allowed;">
+          <button class="btn btn-primary btn-block" id="ob-s1-btn" onclick="if(!document.querySelector('.goal-card.selected')){if(typeof toast==='function')toast('⚠️ Elige un objetivo','Selecciona una de las opciones para continuar','t-warn');return;}obNext(2)" style="opacity:.4;cursor:not-allowed;">
             Continuar →
           </button>
           <p class="ob-legal-note">Al continuar aceptas nuestros <a href="privacy.html" target="_blank">Términos de uso y Política de privacidad</a>. Tus datos nunca salen de tu dispositivo.</p>
