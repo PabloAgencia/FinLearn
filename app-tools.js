@@ -2067,6 +2067,22 @@ const SFX = (() => {
     } catch(e) {}
   }
 
+  // Cache de <audio> reales en sfx/ — se clona en cada play() para permitir solapes
+  const _fileCache = {};
+  function _file(name, vol) {
+    if (AUDIO_MUTED) return;
+    try {
+      if (!_fileCache[name]) {
+        const a = new Audio('sfx/' + name);
+        a.preload = 'auto';
+        _fileCache[name] = a;
+      }
+      const node = _fileCache[name].cloneNode();
+      node.volume = vol != null ? vol : 0.6;
+      node.play().catch(() => {});
+    } catch(e) {}
+  }
+
   return {
     // Logro desbloqueado — fanfarria corta ascendente
     achievement() {
@@ -2075,18 +2091,13 @@ const SFX = (() => {
       _tone(784, 'sine', 0.12, 0.12, 0.20);
       _tone(1047,'sine', 0.30, 0.16, 0.30);
     },
-    // Quiz correcto — ding suave
+    // Quiz correcto / accion del dia correcta — archivo real
     correct() {
-      _tone(880, 'sine', 0.15, 0.10, 0.00);
-      _tone(1108,'sine', 0.20, 0.08, 0.12);
+      _file('check1.mp3', 0.55);
     },
-    // Módulo completado — fanfarria completa
+    // Módulo completado — archivo real
     moduleComplete() {
-      _tone(523, 'sine', 0.10, 0.10, 0.00);
-      _tone(659, 'sine', 0.10, 0.10, 0.08);
-      _tone(784, 'sine', 0.10, 0.10, 0.16);
-      _tone(1047,'sine', 0.10, 0.12, 0.24);
-      _tone(1319,'sine', 0.40, 0.15, 0.32);
+      _file('check2.mp3', 0.6);
     },
     // XP ganado — pop breve
     xp() {
@@ -2098,10 +2109,13 @@ const SFX = (() => {
       _tone(1047,'sine', 0.08, 0.07, 0.00);
       _tone(1319,'sine', 0.15, 0.07, 0.07);
     },
-    // Error / quiz incorrecto — buzz suave
+    // Error / quiz incorrecto / accion del dia fallada — archivo real
     wrong() {
-      _tone(220, 'sawtooth', 0.10, 0.06, 0.00);
-      _tone(196, 'sawtooth', 0.12, 0.05, 0.08);
+      _file('checkfail.mp3', 0.5);
+    },
+    // Aviso pasivo (escudo activado, racha recuperada...) — archivo real
+    notification() {
+      _file('notification.mp3', 0.5);
     },
     // Nivel subido — jingle épico
     levelUp() {

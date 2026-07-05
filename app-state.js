@@ -472,6 +472,7 @@ function _applyDailyRollover() {
       S.streakShields--;
       // No resetear racha — el escudo la protege
       setTimeout(function() {
+        if (typeof SFX !== 'undefined' && SFX.notification) SFX.notification();
         if (typeof toast === 'function') toast('🛡️ ¡Escudo activado!',
           'Tu racha de ' + S.streak + ' días se ha salvado. Te queda' + (S.streakShields > 0 ? 'n ' + S.streakShields : ' 0') + ' escudo' + (S.streakShields !== 1 ? 's' : '') + '.',
           't-success');

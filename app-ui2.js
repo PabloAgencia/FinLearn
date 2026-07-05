@@ -1055,6 +1055,7 @@ function answerDCA(chosen, correct, explanation) {
   const _dcaMult  = _comboHit(isCorrect);
   const xpGained  = isCorrect ? Math.round(80 * _dcaMult) : 0;
 
+  if (typeof SFX !== 'undefined') { isCorrect ? SFX.correct() : SFX.wrong(); }
   S.xp           += xpGained;
   S.totalXPtoday += xpGained;
   if (xpGained > 0) F34_onXPGained(xpGained);
