@@ -752,8 +752,8 @@ let _saasPlan = 'annual';
 /** SAAS_selectPlan — Selecciona el plan de suscripción y marca el activo visualmente. */
 function SAAS_selectPlan(plan) {
   _saasPlan = plan;
-  document.querySelectorAll('.saas-plan').forEach(p => p.classList.remove('active'));
-  document.getElementById('plan-' + plan)?.classList.add('active');
+  document.querySelectorAll('.saas-plan').forEach(p => p.classList.remove('saas-plan-active'));
+  document.getElementById('plan-' + plan)?.classList.add('saas-plan-active');
 }
 
 /**

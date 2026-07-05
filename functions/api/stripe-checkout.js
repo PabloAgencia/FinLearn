@@ -18,8 +18,8 @@ export async function onRequestPost(context) {
     'payment_method_types[0]': 'card',
     'line_items[0][price]': priceId,
     'line_items[0][quantity]': '1',
-    success_url: 'https://finlearn.app/?premium=1&session_id={CHECKOUT_SESSION_ID}',
-    cancel_url: 'https://finlearn.app/?cancelled=1',
+    success_url: 'https://finlearn.pages.dev/?premium=1&session_id={CHECKOUT_SESSION_ID}',
+    cancel_url: 'https://finlearn.pages.dev/?cancelled=1',
     'metadata[userId]': userId || '',
   });
   if (userEmail) params.set('customer_email', userEmail);
