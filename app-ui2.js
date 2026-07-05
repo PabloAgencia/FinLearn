@@ -334,7 +334,7 @@ function F27_render() {
         <div style="font-size:28px;margin-bottom:8px;">🗺️</div>
         <div style="font-weight:700;font-size:15px;color:var(--text1);margin-bottom:4px;">Plan de Acción Personalizado</div>
         <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">Pasos concretos según tu situación real.</div>
-        <button class="btn btn-primary btn-sm" onclick="PM_showPaywall('f27')">✦ Desbloquear con Premium</button>
+        <button class="btn btn-primary btn-sm" onclick="PM_showPaywall('f27')">✦ Desbloquear con Elite</button>
       </div>`;
     }
     return;

@@ -1845,7 +1845,7 @@ html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;b
   user-select:none;
 }
 [data-pm-blur].pm-locked-blur::after {
-  content:'✦ Premium';
+  content:'✦ Elite';
   position:absolute; inset:0;
   display:flex; align-items:center; justify-content:center;
   font-family:'DM Mono',monospace; font-size:11px; font-weight:700;

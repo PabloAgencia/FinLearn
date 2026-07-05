@@ -729,7 +729,7 @@ function PM_showPaywall(trigger) {
     'coach':     { title:'Coach FinAI sobre tus números reales', sub:'Tu coach financiero con IA analiza TUS datos y te da consejos personalizados.' },
     'projection':{ title:'Plan de ahorro personalizado mensual', sub:'Un plan de ahorro adaptado a tus ingresos reales, revisado cada mes.' },
     'chest':     { title:'Detector de fugas en tu presupuesto', sub:'Identifica gastos invisibles y patrones que te cuestan dinero sin que lo notes.' },
-    'premium_feature': { title:'Función Premium', sub:'Desbloquea todas las herramientas reales de FinLearn.' },
+    'premium_feature': { title:'Función Elite', sub:'Desbloquea todas las herramientas reales de FinLearn.' },
   };
   const m = msgs[trigger] || msgs['premium_feature'];
   setEl('pm-paywall-title', m.title);

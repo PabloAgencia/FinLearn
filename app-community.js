@@ -72,7 +72,7 @@ var _FEED = (function () {
       case 'savings':
         return { icon: '💰', text: '<strong>' + n + '</strong> ahorró €<strong>' + (p.amount || 0).toLocaleString('es') + '</strong> este mes (' + (p.pct || 0) + '% de tasa)' };
       case 'premium':
-        return { icon: '💎', text: '<strong>' + n + '</strong> se unió a <strong>FinLearn Premium</strong>' };
+        return { icon: '💎', text: '<strong>' + n + '</strong> se unió a <strong>FinLearn Elite</strong>' };
       case 'fire_calc':
         return { icon: '🏝️', text: '<strong>' + n + '</strong> calculó su número FIRE: <strong style="color:var(--gold)">€' + (p.fireNumber || 0).toLocaleString('es') + '</strong>' };
       default:
