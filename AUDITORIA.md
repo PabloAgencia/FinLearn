@@ -47,11 +47,53 @@ que encontró y corrigió varios bugs de producción no detectados en esta audit
   bumpea `?v=X.X.X` del archivo en `index.html` — el CDN/SW puede seguir
   sirviendo la versión vieja aunque el deploy sea correcto.
 
+### ✅ Completado tras el merge a main (misma sesión, rondas siguientes)
+- Botón "atrás" unificado en TODA la app (`.nav-back` circular glassmorphism +
+  icono SVG + `SFX.back()`) — incluye calculadoras, Perfil, Ranking, Simulador
+  de Vida, Mi Futuro, Estilos de Vida, Guías y su lector. Los botones de texto
+  completo dentro de una pila (ej. "Volver al inicio" en certificado/resumen
+  de quiz) solo llevan el sonido, no el icono, porque encogerlos rompía el
+  layout — decisión consciente, no descuido.
+- 4 sonidos reales (`sfx/check1.mp3`, `check2.mp3`, `checkfail.mp3`,
+  `notification.mp3`) sustituyendo los tonos sintetizados de acierto/fallo/
+  módulo completado + nuevo aviso pasivo de racha (escudo auto-activado).
+  La Acción del Día (DCA) no tenía NINGÚN sonido — añadido.
+- **Bug de precio real en Stripe**: el modal de pago (`m-premium-saas`)
+  mostraba "7,99€/mes" pero el price ID real en Stripe cobraba 9€/mes
+  (65€/año) — verificado por Pablo en su Dashboard. Los price ID antiguos
+  tenían suscripciones de test activas y no se podían editar (Stripe
+  los hace inmutables); se archivaron y se crearon 2 nuevos a 7,99€/mes y
+  57,99€/año, decisión de precio para reducir fricción en la semana de
+  lanzamiento (más fácil subir precio después que bajarlo).
+- **Selector de plan Mensual/Anual no daba feedback visual**: `SAAS_selectPlan()`
+  ponía la clase `active` pero el CSS (`appB.css`) esperaba `saas-plan-active`
+  — nunca coincidían. El plan Anual parecía "pegado" solo por su propio
+  borde dorado de "recomendado", sin relación con la selección real.
+- **URL de retorno de Stripe** apuntaba a `https://finlearn.app` (dominio no
+  configurado) en vez de `https://finlearn.pages.dev` — cualquiera que
+  completara un pago real se habría quedado en una URL rota tras pagar.
+- **Tarjeta "Anual" desbordaba el modal**: bug clásico de CSS Grid — los
+  items no se encogen por debajo de su contenido mínimo por defecto
+  (`min-width:auto`). Con el precio/nota más largos que antes, la tarjeta
+  se salía del modal. Arreglado con `min-width:0` + tope de ancho en la
+  insignia dorada.
+
+### 🔴 PENDIENTE ANTES DE LANZAR — Stripe modo LIVE
+Todo el trabajo de pagos de hoy es en modo **test** de Stripe. Antes de
+lanzar de verdad hay que:
+1. Crear el mismo producto + 2 precios (7,99€/mes, 57,99€/año) en el lado
+   **live** del Dashboard de Stripe (test y live son entornos 100% separados,
+   los price ID de hoy NO sirven en live).
+2. Pasar los 2 price ID nuevos (live) para actualizar `SAAS_startPayment()`
+   en `app-game.js`.
+3. Cambiar `STRIPE_SECRET_KEY` en las variables de entorno de Cloudflare
+   Pages de la clave de test a la clave live.
+4. Volver a probar el flujo completo de pago con una tarjeta real (o la
+   primera venta real hace de prueba, con cuidado).
+
 ### Pendiente de esta sesión
-- Unificar los 3 estilos de botón "atrás" distintos que coexisten (`.nav-back`
-  circular glassmorphism, `.tool-back` chip naranja en calculadoras, `.btn
-  btn-ghost` de texto plano en varias pantallas) — en progreso.
-- Merge `develop` → `main` (pendiente de confirmación explícita del usuario).
+- Unificar los 3 estilos de botón "atrás" distintos que coexisten — ✅ HECHO, ver arriba.
+- Merge `develop` → `main` — ✅ HECHO (commit `31ef31b`, verificado en producción).
 
 ---
 
