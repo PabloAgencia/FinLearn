@@ -95,6 +95,43 @@ lanzar de verdad hay que:
 - Unificar los 3 estilos de botón "atrás" distintos que coexisten — ✅ HECHO, ver arriba.
 - Merge `develop` → `main` — ✅ HECHO (commit `31ef31b`, verificado en producción).
 
+### ✅ Ronda "Coach + patrimonio real" — MERGEADA A MAIN (commit `f587186`)
+- F25 "Mi Patrimonio Real" ahora gratis para todos (antes Elite) — es el gancho
+  de retención más fuerte y no puede estar bloqueado antes de pagar.
+- Nuevo histórico (`S.realPatrimonyHistory`) + gráfica de evolución real en el
+  tab Resumen — antes solo se guardaba el último valor y se sobreescribía.
+- FinAI Coach conectado a datos reales cuando existen (`_getEffectiveFinancials`
+  en `app-tools2B.js`), con insignia visual indicando la fuente de datos.
+- Endpoint `/api/coach` ahora verifica premium en el servidor (antes solo en
+  el cliente — cualquiera podía llamarlo sin pagar).
+- Textos de privacidad falsos corregidos (onboarding + modal F25).
+- Modal `FinAI` muerto (stub sin lógica) eliminado.
+
+### 🔴 PENDIENTE — próximas sesiones, por prioridad
+1. **Stripe a modo live antes de lanzar** — ver sección de arriba, es bloqueante
+   para cualquier cobro real.
+2. **Memoria de conversación del Coach**: solo dura la sesión actual (6
+   intercambios en RAM, se pierde al recargar) y solo aplica al flujo de
+   clave propia — el flujo Groq (la mayoría de usuarios Elite) no tiene
+   memoria en absoluto. Para que el Coach se sienta como un asesor de
+   verdad necesitaría persistir el historial (Supabase) en ambos flujos.
+3. **Validación débil de API key en ajustes del Coach**: solo comprueba que
+   empiece por `sk-`, no hace una llamada de prueba real — si el usuario
+   mete una key inválida no se entera hasta que falla en silencio.
+4. **Analítica (PostHog)**: seguimos sin datos reales de dónde abandona la
+   gente — todo son decisiones a ojo. Ya se intentó una vez y rompió la
+   app; repetir con cuidado (carga diferida + try/catch en todo).
+5. **Liga social con usuarios reales**, no solo bots fijos — el mayor
+   multiplicador de retención de Duolingo. Empezar en cuanto haya una base
+   mínima de usuarios activos.
+6. **Notificaciones push personalizadas** por racha/nivel real (requiere
+   sincronizar esos datos a Supabase para poder generarlas server-side).
+7. **Proyecciones Elite sobre datos reales** (20/30 años) — ahora mismo las
+   proyecciones avanzadas siguen siendo del simulador; con patrimonio real
+   ya trackeado, tiene sentido ofrecer esto como valor añadido de pago.
+8. Limpieza cosmética: quedó CSS huérfano del modal `FinAI` eliminado
+   (`.finai-*` en `appB.css`/`app2B.css`) — inofensivo, baja prioridad.
+
 ---
 
 ## 1. MAPA DE NAVEGACIÓN
