@@ -903,11 +903,10 @@ window.doCopyLink         = doCopyLink;
 // ── Crisis
 window.respondToBlackSwan = respondToBlackSwan;
 
-// ── Objetos compuestos (AudioManager, WhiteLabel, CALC, FinAI, DynCert)
+// ── Objetos compuestos (AudioManager, WhiteLabel, CALC, DynCert)
 window.AudioManager       = AudioManager;
 window.WhiteLabel         = WhiteLabel;
 window.CALC               = CALC;
-window.FinAI              = FinAI;
 window.DynCert            = DynCert;
 window._BUDGET            = _BUDGET;
 window._DECISION          = _DECISION;
