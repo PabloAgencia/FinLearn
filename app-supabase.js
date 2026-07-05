@@ -85,7 +85,7 @@ async function sbLoadState() {
     S.patrimony = Math.max(0, parseFloat(S.patrimony) || 0);
     if (!S.patrimony && (S.cash || S.invested)) S.patrimony = recalcPatrimony();
     if (saved.currentModId != null)
-      S.currentMod = MODULES.find(m => m.id === saved.currentModId) || null;
+      S.currentMod = MODULES.find(m => m && m.id === saved.currentModId) || null;
     if (typeof _applyDailyRollover === 'function') _applyDailyRollover();
     return true;
   } catch(e) { console.warn('[SB] loadState exception:', e); return false; }

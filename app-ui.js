@@ -794,7 +794,7 @@ function renderLessonNav() {
   // Module pills — with sequential lock + completion check indicators
   const pills = document.getElementById('lmb-pills');
   if (pills) {
-    pills.innerHTML = MODULES.map(m => {
+    pills.innerHTML = MODULES.filter(m => m && typeof m.id === 'number').map(m => {
       const done     = S.completedMods.includes(m.id);
       const isActive = m.id === mod.id;
       const locked   = !done && !_isModUnlockedByBranch(m.id);

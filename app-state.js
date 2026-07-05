@@ -431,7 +431,7 @@ function loadState() {
 
     // ── Restaurar objeto módulo desde id ──
     if (saved.currentModId != null) {
-      S.currentMod = MODULES.find(m => m.id === saved.currentModId) || null;
+      S.currentMod = MODULES.find(m => m && m.id === saved.currentModId) || null;
     }
 
     // ── Expiración del multiplicador de XP ──

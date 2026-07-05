@@ -388,7 +388,7 @@ function renderActivity() {
   if (!el) return;
   const acts = [];
   (S.completedMods || []).slice().reverse().forEach((modId, i) => {
-    const mod = MODULES.find(m => m.id === modId);
+    const mod = MODULES.find(m => m && m.id === modId);
     if (!mod) return;
     const hoursAgo = (i + 1) * 2;
     const timeStr = hoursAgo < 24 ? (hoursAgo <= 1 ? 'Hace 1h' : 'Hace ' + hoursAgo + 'h')
@@ -956,7 +956,7 @@ function _getNextRecommendedMod() {
   if (typeof MODULES === 'undefined') return null;
   // Prioridad 1: módulo sugerido en onboarding
   if (S.suggestedModuleId) {
-    const suggested = MODULES.find(m => m.id === S.suggestedModuleId && !S.completedMods.includes(m.id));
+    const suggested = MODULES.find(m => m && m.id === S.suggestedModuleId && !S.completedMods.includes(m.id));
     if (suggested) return suggested;
   }
   // Prioridad 2: primer módulo no completado de la rama activa

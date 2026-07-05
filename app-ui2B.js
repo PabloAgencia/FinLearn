@@ -328,7 +328,7 @@ function lessonNextModule() {
     return;
   }
   const nextId = S.currentMod.id + 1;
-  const next   = MODULES.find(m => m.id === nextId);
+  const next   = MODULES.find(m => m && m.id === nextId);
   if (next) { startModule(nextId); }
   else      { goTo('home'); }
 }
@@ -635,7 +635,7 @@ function _showLevelUpScreen(level) {
       <button onclick="_shareLevelUp(${level},\`${rankTitle.title}\`,\`${rankTitle.icon}\`)" style="width:100%;padding:12px;border-radius:14px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.12);color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">
         📤 Compartir nivel
       </button>
-      <button onclick="document.getElementById('level-up-overlay').remove();if(typeof F44_render==='function')F44_render();if(window._celPendingAfterLevelUp){window._celPendingAfterLevelUp=false;if(typeof openModal==='function')openModal('m-cel');}if(typeof _checkShowRating==='function')_checkShowRating();"
+      <button onclick="_dismissLevelUpOverlay()"
         style="width:100%;padding:16px;border-radius:14px;background:var(--accent);border:none;color:#000;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;cursor:pointer;">
         ¡Seguir subiendo! 🚀
       </button>
@@ -647,10 +647,29 @@ function _showLevelUpScreen(level) {
   }
   setTimeout(() => {
     const el = document.getElementById('level-up-overlay');
-    if (el) { el.style.animation = 'fadeOutFast .3s ease forwards'; setTimeout(() => { el.remove(); if(typeof F44_render==='function') F44_render(); }, 300); }
+    if (el) { el.style.animation = 'fadeOutFast .3s ease forwards'; setTimeout(_dismissLevelUpOverlay, 300); }
   }, 5000);
   if (chestReward && !milestone?.chestType && typeof F44_earnChest === 'function') F44_earnChest(chestReward.type);
 }
+
+/**
+ * _dismissLevelUpOverlay — Cierra la pantalla de subida de nivel y continua el flujo.
+ * ─────────────────────────────────────────────────────────────────
+ * Comparte esta logica el boton "Seguir subiendo" y el auto-cierre a los 5s,
+ * para que el modal de celebracion (m-cel) se abra siempre, sin importar
+ * si el usuario hizo click o dejo que se cerrara solo.
+ */
+function _dismissLevelUpOverlay() {
+  const el = document.getElementById('level-up-overlay');
+  if (el) el.remove();
+  if (typeof F44_render === 'function') F44_render();
+  if (window._celPendingAfterLevelUp) {
+    window._celPendingAfterLevelUp = false;
+    if (typeof openModal === 'function') openModal('m-cel');
+  }
+  if (typeof _checkShowRating === 'function') _checkShowRating();
+}
+window._dismissLevelUpOverlay = _dismissLevelUpOverlay;
 
 function _shareLevelUp(level, rankTitle, icon) {
   var text = '¡Acabo de alcanzar el nivel ' + level + ' en FinLearn! ' + (icon || '🚀') + ' ' + (rankTitle || '') + '\nAprendo finanzas personales gratis → ' + window.location.origin;

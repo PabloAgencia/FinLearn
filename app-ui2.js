@@ -531,7 +531,7 @@ function _f27_penaltyShake(id) {
   // Encontrar nombre del módulo vinculado
   const step = (S.actionPlan || []).find(s => s.id === id);
   const modId = step && step.ctaTarget;
-  const mod = (typeof MODULES !== 'undefined') ? MODULES.find(m => m.id === modId) : null;
+  const mod = (typeof MODULES !== 'undefined') ? MODULES.find(m => m && m.id === modId) : null;
   const modName = mod ? mod.title : 'el módulo vinculado';
 
   // Toast informativo, no acusatorio
