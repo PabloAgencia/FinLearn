@@ -6,6 +6,24 @@
 var _cgMode = 'register';
 var _cgCurrentResult = null;
 
+/* ── Beneficios especificos por calculadora ──────────────────────
+   Mensaje generico ("desglose completo, sincroniza tus datos") no
+   convierte tan bien como decir EXACTAMENTE que se esta bloqueando
+   en el momento de mayor intencion del usuario (justo tras calcular). */
+var _CG_PERKS = {
+  'Proyector FIRE':              ['Descubre tu año exacto de libertad financiera', 'Gráfico completo de tu proyección a 30 años'],
+  'Hipoteca vs Alquiler':        ['Tu punto de equilibrio exacto: comprar vs alquilar', 'Comparativa de coste total a largo plazo'],
+  'Simulador Hipoteca':          ['Tabla de amortización completa mes a mes', 'Tu TAE real, no solo el TIN anunciado'],
+  'Fondo de Emergencia':         ['Cuántos meses te faltan para tu colchón de seguridad', 'Plan de ahorro mensual para llegar antes'],
+  'Interés Compuesto':           ['El desglose exacto: cuánto es interés y cuánto aportado', 'Gráfico completo de tu crecimiento'],
+  'DCA vs Lump Sum':             ['Qué estrategia te conviene más según tu horizonte', 'La diferencia exacta en euros entre ambas'],
+  'Regla del 72':                ['Comparativa con otras tasas de interés reales', 'Cuánto tardarías tú en doblar tu capital'],
+  'Bola de Nieve de Deudas':     ['Cuántos meses tardarás en liquidar cada deuda', 'Cuánto ahorras en intereses según la estrategia'],
+  'Coste Real de la Deuda':      ['El coste real en intereses que estás pagando', 'Cuánto ahorrarías pagando más cada mes'],
+  'Simulador IRPF 2025':         ['Tu tipo efectivo exacto y desglose por tramos', 'Cuánto te queda neto al mes de verdad'],
+  'Net Worth Tracker':           ['Histórico de tu patrimonio neto mes a mes', 'Gráfico de tu evolución en el tiempo'],
+};
+
 /* ── Punto de entrada — llamado al final de cada T{N}_calc ── */
 function _calcGate(resultId, toolName, emoji) {
   if (typeof getSBUser === 'function' && getSBUser()) return; // ya autenticado
@@ -47,6 +65,10 @@ function _calcGate(resultId, toolName, emoji) {
 
 /* ── HTML del panel de conversión ── */
 function _cgPanelHTML(toolName, emoji) {
+  var specific = _CG_PERKS[toolName] || [];
+  var perksHTML = specific.map(function(p) { return '<li>✓ <strong>' + p + '</strong></li>'; }).join('')
+    + '<li>✓ Guarda y compara tus simulaciones</li>'
+    + '<li>✓ Sincroniza en todos tus dispositivos</li>';
   return '<div class="cg-fade-bar"></div>'
     + '<div class="cg-card">'
     +   '<div class="cg-card-head">'
@@ -56,12 +78,7 @@ function _cgPanelHTML(toolName, emoji) {
     +       '<div class="cg-sub">Crea tu cuenta gratuita — gratis para siempre</div>'
     +     '</div>'
     +   '</div>'
-    +   '<ul class="cg-perks">'
-    +     '<li>✓ Desglose detallado y gráficas completas</li>'
-    +     '<li>✓ Guarda y compara simulaciones</li>'
-    +     '<li>✓ Historial de cálculos en el tiempo</li>'
-    +     '<li>✓ Sincroniza en todos tus dispositivos</li>'
-    +   '</ul>'
+    +   '<ul class="cg-perks">' + perksHTML + '</ul>'
     +   '<div id="cg-form-inner">' + _cgFormHTML('register') + '</div>'
     + '</div>';
 }
